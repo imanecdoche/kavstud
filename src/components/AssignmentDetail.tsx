@@ -28,7 +28,8 @@ import {
   X,
   Plus
 } from 'lucide-react';
-import { Assignment, Submission, UserProfile, Question } from '../types';
+import { Assignment, Question, UserProfile, Submission } from '../types';
+import CustomDropdown from './CustomDropdown';
 
 interface AssignmentDetailProps {
   assignmentId: string;
@@ -349,12 +350,12 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-8 lg:p-12 max-w-4xl mx-auto" id="assignment-detail-page">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-6 lg:p-8 w-full max-w-6xl mx-auto" id="assignment-detail-page">
       {/* Back button header */}
       <div className="flex items-center gap-4 border-b border-gray-100 pb-6">
         <button
           onClick={handleBack}
-          className="p-2.5 bg-white border border-gray-200 hover:border-gray-300 rounded-xl cursor-pointer transition-colors active:scale-95"
+          className="btn-duo-slate p-2.5 flex items-center justify-center cursor-pointer"
           style={{ minWidth: '44px', minHeight: '44px' }}
           aria-label="Kembali"
         >
@@ -383,19 +384,19 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
       ) : assignment ? (
         <div className="space-y-8 mt-8">
           {/* Assignment Information Card */}
-          <div className="bg-white border border-gray-100 p-6 sm:p-8 rounded-3xl shadow-3xs space-y-6">
+          <div className="card-duo p-4 sm:p-6 lg:p-8 space-y-6">
             <div className="flex items-center gap-3.5 flex-wrap">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100 text-[10px] font-bold uppercase">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-sky-100 text-sky-800 rounded-full border border-sky-200 text-[10px] font-extrabold uppercase">
                 <BookOpen className="w-3.5 h-3.5" />
                 Lembar Soal
               </div>
-              <span className="text-xs text-gray-400 font-medium">
-                Dibuat oleh: <span className="font-bold text-gray-600">{assignment.teacherName}</span>
+              <span className="text-xs text-gray-500 font-medium">
+                Dibuat oleh: <span className="font-extrabold text-gray-800">{assignment.teacherName}</span>
               </span>
             </div>
 
             {/* Assignment Metadata Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4.5 bg-gray-50/50 border border-gray-100/50 rounded-2xl text-xs">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4.5 bg-gray-50 border-2 border-gray-200 border-b-4 border-gray-300 rounded-2xl text-xs">
               {assignment.deadline && (
                 <div className="space-y-0.5">
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Tenggat Waktu</span>
@@ -439,9 +440,9 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
             </div>
 
             {assignment.description && (
-              <div className="space-y-3 bg-gray-50/50 p-5 rounded-2xl border border-gray-100/50">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Petunjuk Pengerjaan:</span>
-                <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">
+              <div className="space-y-3 bg-gray-50 p-5 rounded-2xl border-2 border-gray-200 border-b-4 border-gray-300">
+                <span className="text-[10px] font-black text-gray-500 uppercase tracking-wider block">Petunjuk Pengerjaan:</span>
+                <p className="text-xs font-semibold text-gray-800 leading-relaxed whitespace-pre-wrap">
                   {assignment.description}
                 </p>
               </div>
@@ -694,23 +695,26 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                                       <div key={pIdx} className="flex flex-col sm:flex-row sm:items-center gap-2.5 p-3 bg-gray-50/50 rounded-xl border border-gray-100">
                                         <span className="text-xs font-bold text-gray-700 min-w-[120px]">{pair.left}</span>
                                         <div className="hidden sm:block text-gray-400 font-mono">➡</div>
-                                        <select
+                                        <CustomDropdown
                                           value={selectedRightVal}
-                                          onChange={(e) => {
-                                            const val = e.target.value;
+                                          placeholder="-- Pilih Jawaban --"
+                                          onChange={(val) => {
                                             matchingMap[pair.left] = val;
                                             const serialized = Object.entries(matchingMap)
                                               .map(([l, r]) => `${l}::${r}`)
                                               .join(',');
                                             setAnswersMap({ ...answersMap, [q.id]: serialized });
                                           }}
-                                          className="flex-1 p-2 bg-white border border-gray-200 rounded-lg text-xs"
-                                        >
-                                          <option value="">-- Pilih Jawaban --</option>
-                                          {q.matchingPairs?.map((itemRight, rIdx) => (
-                                            <option key={rIdx} value={itemRight.right}>{itemRight.right}</option>
-                                          ))}
-                                        </select>
+                                          options={[
+                                            { value: '', label: '-- Pilih Jawaban --' },
+                                            ...(q.matchingPairs?.map((itemRight) => ({
+                                              value: itemRight.right,
+                                              label: itemRight.right
+                                            })) || [])
+                                          ]}
+                                          className="flex-1"
+                                          size="sm"
+                                        />
                                       </div>
                                     );
                                   })}
@@ -946,11 +950,11 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                               ? multiAnswers.some(ans => !ans.trim())
                               : !answer.trim())
                       }
-                      className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold rounded-xl text-xs shadow-xs flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all"
+                      className="btn-duo-green px-6 py-3 text-xs font-black flex items-center justify-center gap-2 cursor-pointer"
                       style={{ minHeight: '44px' }}
                     >
                       <Send className="w-4 h-4" />
-                      {isSubmitting ? 'Mengirim Jawaban...' : 'Kirim Jawaban Tugas'}
+                      <span>{isSubmitting ? 'Mengirim Jawaban...' : 'Kirim Jawaban Tugas'}</span>
                     </button>
                   </div>
                 </form>
@@ -961,27 +965,27 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
 
           {/* Teacher View Details Info */}
           {currentUserProfile?.role === 'teacher' && (
-            <div className="bg-white border border-gray-100 p-6 sm:p-8 rounded-3xl shadow-3xs space-y-4">
-              <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+            <div className="card-duo p-6 sm:p-8 space-y-4">
+              <h3 className="text-xs font-black text-gray-900 uppercase tracking-wider">
                 Status Tugas Siswa
               </h3>
 
               {existingSubmission ? (
-                <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl flex items-center justify-between gap-4 flex-wrap">
+                <div className="p-4 bg-sky-50 border-2 border-sky-200 border-b-4 border-sky-300 rounded-2xl flex items-center justify-between gap-4 flex-wrap">
                   <div className="space-y-1">
-                    <p className="text-xs font-bold text-indigo-900">Siswa telah merespon tugas ini!</p>
-                    <p className="text-[11px] text-indigo-700">Klik tombol di samping untuk segera memberikan penilaian dan umpan balik.</p>
+                    <p className="text-xs font-extrabold text-sky-950">Siswa telah merespon tugas ini!</p>
+                    <p className="text-[11px] font-semibold text-sky-800">Klik tombol di samping untuk segera memberikan penilaian dan umpan balik.</p>
                   </div>
                   <button
                     onClick={() => onNavigate(`/submission/${assignmentId}`)}
-                    className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold cursor-pointer"
+                    className="btn-duo-blue px-5 py-2.5 text-xs font-black"
                   >
                     Buka Submisi Siswa
                   </button>
                 </div>
               ) : (
-                <div className="p-4 bg-gray-50 border border-gray-100 rounded-2xl text-xs text-gray-500">
-                  Siswa <span className="font-bold text-gray-700">{assignment.studentName}</span> belum mengirimkan jawaban esai untuk tugas ini.
+                <div className="p-4 bg-gray-50 border-2 border-gray-200 border-b-4 border-gray-300 rounded-2xl text-xs font-semibold text-gray-600">
+                  Siswa <span className="font-extrabold text-gray-900">{assignment.studentName}</span> belum mengirimkan jawaban esai untuk tugas ini.
                 </div>
               )}
             </div>

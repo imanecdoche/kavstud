@@ -35,14 +35,16 @@ import {
   Trash2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { UserProfile, Assignment, Submission } from '../types';
+import { UserProfile, Assignment, Circle, Submission } from '../types';
 import Logo from './Logo';
 import NavigationSidebar from './NavigationSidebar';
 import UserSettings from './UserSettings';
 import CircleManagement from './CircleManagement';
+import StudentManagement from './StudentManagement';
 import EmptyState from './EmptyState';
 import { SkeletonDashboard, SkeletonList } from './Skeletons';
 import CustomDropdown from './CustomDropdown';
+import CustomDatePicker from './CustomDatePicker';
 
 interface TeacherDashboardProps {
   onNavigate: (path: string) => void;
@@ -50,7 +52,7 @@ interface TeacherDashboardProps {
 }
 
 export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'assignments' | 'settings' | 'circles'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'assignments' | 'settings' | 'circles' | 'students'>('dashboard');
   const [teacherProfile, setTeacherProfile] = useState<UserProfile | null>(null);
   const [students, setStudents] = useState<UserProfile[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -493,7 +495,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
                     <button
                       onClick={() => onNavigate('/teacher/assignments/create')}
-                      className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
+                      className="btn-duo-green px-5 py-3 text-xs font-black flex items-center justify-center gap-2 shadow-sm shrink-0 cursor-pointer"
                       style={{ minHeight: '44px' }}
                     >
                       <Plus className="w-4.5 h-4.5" />
@@ -503,41 +505,41 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
                   {/* Stats Block Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-3xs flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
-                        <Users className="w-5 h-5" />
+                    <div className="card-duo p-5 flex items-center gap-4 border-2 border-purple-200 border-b-4 border-purple-300 bg-purple-50/40">
+                      <div className="w-12 h-12 rounded-2xl bg-purple-500 text-white flex items-center justify-center font-black shrink-0 shadow-xs border-b-2 border-purple-700">
+                        <Users className="w-6 h-6" />
                       </div>
                       <div className="space-y-0.5">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Siswa Terdaftar</span>
+                        <span className="text-[10px] font-black text-purple-700 uppercase tracking-wider block">Siswa Terdaftar</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-bold font-display text-gray-900">{students.length}</span>
-                          <span className="text-[10px] text-gray-400 font-semibold">Siswa</span>
+                          <span className="text-3xl font-black font-display text-gray-900">{students.length}</span>
+                          <span className="text-xs text-purple-800 font-extrabold">Siswa</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-3xs flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-600 shrink-0">
-                        <NotebookText className="w-5 h-5" />
+                    <div className="card-duo p-5 flex items-center gap-4 border-2 border-sky-200 border-b-4 border-sky-300 bg-sky-50/40">
+                      <div className="w-12 h-12 rounded-2xl bg-sky-500 text-white flex items-center justify-center font-black shrink-0 shadow-xs border-b-2 border-sky-700">
+                        <NotebookText className="w-6 h-6" />
                       </div>
                       <div className="space-y-0.5">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Total Tugas</span>
+                        <span className="text-[10px] font-black text-sky-700 uppercase tracking-wider block">Total Tugas</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-bold font-display text-gray-900">{assignments.length}</span>
-                          <span className="text-[10px] text-gray-400 font-semibold">Tugas</span>
+                          <span className="text-3xl font-black font-display text-gray-900">{assignments.length}</span>
+                          <span className="text-xs text-sky-800 font-extrabold">Tugas</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-3xs flex items-center gap-4 sm:col-span-2 lg:col-span-1">
-                      <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 shrink-0">
-                        <CheckCircle2 className="w-5 h-5" />
+                    <div className="card-duo p-5 flex items-center gap-4 border-2 border-emerald-200 border-b-4 border-emerald-300 bg-emerald-50/40 sm:col-span-2 lg:col-span-1">
+                      <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-black shrink-0 shadow-xs border-b-2 border-emerald-700">
+                        <CheckCircle2 className="w-6 h-6" />
                       </div>
                       <div className="space-y-0.5">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Total Submisi</span>
+                        <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider block">Total Submisi</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-bold font-display text-gray-900">{submissions.length}</span>
-                          <span className="text-[10px] text-gray-400 font-semibold">Jawaban</span>
+                          <span className="text-3xl font-black font-display text-gray-900">{submissions.length}</span>
+                          <span className="text-xs text-emerald-800 font-extrabold">Jawaban</span>
                         </div>
                       </div>
                     </div>
@@ -549,7 +551,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                     <div className="xl:col-span-2 space-y-8">
                       
                       {/* Section: Submisi Masuk Terbaru */}
-                      <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
+                      <div className="card-duo p-6 space-y-4">
                         <div className="flex items-center justify-between">
                           <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
                             <CheckCircle2 className="w-4.5 h-4.5 text-emerald-500" />
@@ -607,7 +609,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       </div>
 
                       {/* Section: Tugas Terbaru Dibuat */}
-                      <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
+                      <div className="card-duo p-6 space-y-4">
                         <div className="flex items-center justify-between">
                           <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
                             <FileText className="w-4.5 h-4.5 text-indigo-500" />
@@ -652,35 +654,35 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                     {/* Right column: Quick Actions & Student list */}
                     <div className="space-y-8">
                       {/* Quick Actions Panel */}
-                      <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
-                        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">Aksi Cepat</h3>
-                        <div className="grid grid-cols-1 gap-2.5">
+                      <div className="card-duo p-6 space-y-4">
+                        <h3 className="text-xs font-black text-gray-900 uppercase tracking-wider">Aksi Cepat</h3>
+                        <div className="grid grid-cols-1 gap-3">
                           <button
                             onClick={() => onNavigate('/teacher/assignments/create')}
-                            className="w-full p-3 bg-indigo-50/50 hover:bg-indigo-50 border border-indigo-100/30 rounded-xl flex items-center gap-3 transition-colors text-left text-xs font-bold text-indigo-700 cursor-pointer"
+                            className="btn-duo-blue w-full py-3 px-4 text-xs font-black flex items-center gap-3"
                           >
-                            <Plus className="w-4 h-4 text-indigo-500 shrink-0" />
-                            Kirim Tugas Baru
+                            <Plus className="w-4 h-4 shrink-0" />
+                            <span>Kirim Tugas Baru</span>
                           </button>
                           <button
                             onClick={() => setActiveTab('assignments')}
-                            className="w-full p-3 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl flex items-center gap-3 transition-colors text-left text-xs font-semibold text-gray-700 cursor-pointer"
+                            className="w-full py-3 px-4 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-2xl font-black text-xs border-b-4 border-gray-300 flex items-center gap-3 transition-all cursor-pointer active:translate-y-[2px] active:border-b-2"
                           >
-                            <Layers className="w-4 h-4 text-gray-400 shrink-0" />
-                            Kelola Semua Tugas
+                            <Layers className="w-4 h-4 text-gray-500 shrink-0" />
+                            <span>Kelola Semua Tugas</span>
                           </button>
                           <button
                             onClick={() => setActiveTab('settings')}
-                            className="w-full p-3 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl flex items-center gap-3 transition-colors text-left text-xs font-semibold text-gray-700 cursor-pointer"
+                            className="w-full py-3 px-4 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-2xl font-black text-xs border-b-4 border-gray-300 flex items-center gap-3 transition-all cursor-pointer active:translate-y-[2px] active:border-b-2"
                           >
-                            <Award className="w-4 h-4 text-gray-400 shrink-0" />
-                            Pengaturan Profil
+                            <Award className="w-4 h-4 text-gray-500 shrink-0" />
+                            <span>Pengaturan Profil</span>
                           </button>
                         </div>
                       </div>
 
                       {/* Student list */}
-                      <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
+                      <div className="card-duo p-6 space-y-4">
                         <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
                           <Users className="w-4 h-4 text-indigo-500" />
                           Daftar Siswa Kelas
@@ -744,16 +746,16 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
                     <button
                       onClick={() => onNavigate('/teacher/assignments/create')}
-                      className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
+                      className="btn-duo-blue px-5 py-3 text-xs font-black flex items-center justify-center gap-2 shadow-xs shrink-0 cursor-pointer"
                       style={{ minHeight: '44px' }}
                     >
                       <Plus className="w-4.5 h-4.5" />
-                      Buat Tugas
+                      <span>Buat Tugas Baru</span>
                     </button>
                   </div>
 
                   {/* Search and Filters panel */}
-                  <div className="bg-white p-4 sm:p-5 border border-gray-100 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between">
+                  <div className="card-duo p-4 sm:p-5 flex flex-col md:flex-row gap-4 items-center justify-between">
                     <div className="relative w-full md:w-80">
                       <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                       <input
@@ -761,7 +763,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                         placeholder="Cari tugas, tipe, status, atau siswa..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-xs placeholder-gray-400 focus:outline-none focus:bg-white focus:border-indigo-500 transition-all"
+                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-2 border-gray-200 border-b-4 border-gray-300 rounded-2xl text-xs font-bold placeholder-gray-400 focus:outline-none focus:bg-white focus:border-sky-400 focus:border-b-sky-500 transition-all"
                       />
                     </div>
 
@@ -847,7 +849,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                           <div 
                             key={assign.id}
                             onClick={() => onNavigate(`/assignment/${assign.id}`)}
-                            className="bg-white border border-gray-100 hover:border-gray-200 hover:shadow-xs p-5 rounded-2xl flex flex-col justify-between gap-4 transition-all cursor-pointer relative"
+                            className="card-duo-interactive p-5 flex flex-col justify-between gap-4 relative"
                           >
                             <div className="space-y-2">
                               <div className="flex items-center justify-between gap-2">
@@ -940,6 +942,29 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 </>
               )}
 
+              {/* TAB: STUDENT MANAGEMENT */}
+              {activeTab === 'students' && (
+                <div className="max-w-7xl mx-auto">
+                  <StudentManagement
+                    students={students}
+                    assignments={assignments}
+                    submissions={submissions}
+                    circles={circles}
+                    onNavigate={onNavigate}
+                    onSendAssignmentToStudent={(studentId) => {
+                      setSelectedStudentId(studentId);
+                      setAssignmentTarget('INDIVIDUAL');
+                      setIsEditMode(false);
+                      setNewTitle('');
+                      setNewQuestion('');
+                      setDeadline('');
+                      setFormError(null);
+                      setIsModalOpen(true);
+                    }}
+                  />
+                </div>
+              )}
+
               {/* TAB: CIRCLE MANAGEMENT */}
               {activeTab === 'circles' && (
                 <div className="max-w-6xl mx-auto">
@@ -974,22 +999,22 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
       {/* Delete Confirmation Modal */}
       {isDeleteConfirmOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl border border-gray-100 w-full max-w-md p-6 space-y-5 shadow-lg relative animate-scaleUp">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Hapus Tugas Penugasan</h3>
-            <p className="text-xs text-gray-500 leading-relaxed">
-              Apakah Anda yakin ingin menghapus tugas <strong className="text-gray-900">"{deletingAssignmentTitle}"</strong>? Tindakan ini permanen dan akan menghapus semua riwayat pengerjaan serta nilai siswa terkait tugas ini.
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="modal-duo w-[460px] h-[250px] max-w-[95vw] max-h-[90vh] p-6 space-y-5 relative animate-scaleUp flex flex-col justify-between">
+            <h3 className="text-xs font-black text-red-600 uppercase tracking-wider">Hapus Tugas Penugasan</h3>
+            <p className="text-xs text-gray-600 font-medium leading-relaxed">
+              Apakah Anda yakin ingin menghapus tugas <strong className="text-gray-900 font-extrabold">"{deletingAssignmentTitle}"</strong>? Tindakan ini permanen dan akan menghapus semua riwayat pengerjaan serta nilai siswa terkait tugas ini.
             </p>
             <div className="flex gap-3 pt-2">
               <button
                 onClick={() => setIsDeleteConfirmOpen(false)}
-                className="flex-1 py-2.5 border border-gray-200 text-gray-500 font-semibold rounded-xl text-xs hover:bg-gray-50 cursor-pointer transition-colors"
+                className="btn-duo-slate flex-1 py-3 text-xs font-black"
               >
                 Batal
               </button>
               <button
                 onClick={handleDeleteAssignment}
-                className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs cursor-pointer transition-colors"
+                className="btn-duo-red flex-1 py-3 text-xs font-black"
               >
                 Ya, Hapus Permanen
               </button>
@@ -1000,9 +1025,9 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
       {/* Create / Edit Assignment Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto animate-fadeIn">
           <div 
-            className="bg-white rounded-3xl border border-gray-100 w-full max-w-lg p-6 sm:p-8 space-y-5 shadow-lg relative animate-scaleUp my-8"
+            className="modal-duo w-[540px] h-[640px] max-w-[95vw] max-h-[90vh] p-6 sm:p-8 space-y-5 relative animate-scaleUp overflow-y-auto my-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-2 border-b border-gray-50">
@@ -1242,11 +1267,10 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 <label className="block text-xs font-semibold text-gray-700">
                   Batas Waktu Pengumpulan (Deadline) <span className="text-gray-400">(Opsional)</span>
                 </label>
-                <input
-                  type="date"
+                <CustomDatePicker
                   value={deadline}
-                  onChange={(e) => setDeadline(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  onChange={(val) => setDeadline(val)}
+                  placeholder="Pilih Tanggal Tenggat Waktu"
                 />
               </div>
 
@@ -1254,7 +1278,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-3 border border-gray-200 text-gray-500 font-semibold rounded-xl text-xs hover:bg-gray-50 cursor-pointer active:scale-98 transition-colors"
+                  className="btn-duo-slate flex-1 py-3 text-xs font-black"
                   style={{ minHeight: '44px' }}
                 >
                   Batal
@@ -1262,7 +1286,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold rounded-xl text-xs shadow-xs flex items-center justify-center gap-2.5 cursor-pointer active:scale-98 transition-all"
+                  className="btn-duo-blue flex-1 py-3 text-xs font-black"
                   style={{ minHeight: '44px' }}
                 >
                   {isSubmitting ? 'Memproses...' : isEditMode ? 'Simpan Perubahan' : 'Kirim Tugas'}

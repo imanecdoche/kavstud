@@ -44,8 +44,8 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
     <>
       {/* Mobile Header */}
       <header className="lg:hidden h-14 bg-white border-b border-gray-100 px-4 flex items-center justify-between sticky top-0 z-40">
-        <div className="flex items-center gap-2">
-          <Logo className="h-6 w-auto text-indigo-600" />
+        <div className="flex items-center gap-2 min-w-0">
+          <Logo className="h-5 max-w-[130px] w-auto text-indigo-600 shrink-0" />
         </div>
         <button
           onClick={() => setIsOpen(true)}
@@ -93,8 +93,8 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
       >
         {/* Header inside sidebar */}
         <div className="h-16 px-6 border-b border-gray-50 flex items-center justify-between">
-          <div className="flex flex-col">
-            <Logo className="h-6.5 w-auto text-indigo-600" />
+          <div className="flex flex-col min-w-0">
+            <Logo className="h-5 max-w-[135px] w-auto text-indigo-600 shrink-0" />
             <span className="text-[10px] text-gray-400 font-sans tracking-widest uppercase mt-1 font-medium pl-0.5">
               Design System
             </span>

@@ -25,7 +25,6 @@ import {
   UserCheck, 
   HelpCircle, 
   AlertCircle,
-  Sparkles,
   ChevronRight,
   UserX,
   X,
@@ -386,23 +385,23 @@ export default function CircleManagement({
           </p>
         </div>
 
-        <div className="flex gap-2 bg-gray-100/70 p-1.5 rounded-2xl shrink-0 self-start md:self-center">
+        <div className="flex gap-2 bg-gray-100/80 p-1.5 rounded-2xl shrink-0 self-start md:self-center">
           <button
             onClick={() => setSubTab('dashboard')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
               subTab === 'dashboard'
-                ? 'bg-white text-gray-900 shadow-3xs'
-                : 'text-gray-500 hover:text-gray-900'
+                ? 'bg-[#1CB0F6] text-white font-black border-b-4 border-[#0092E0] shadow-xs'
+                : 'text-gray-600 font-bold hover:text-gray-900'
             }`}
           >
             Dashboard Circle
           </button>
           <button
             onClick={() => setSubTab('members')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
               subTab === 'members'
-                ? 'bg-white text-gray-900 shadow-3xs'
-                : 'text-gray-500 hover:text-gray-900'
+                ? 'bg-[#1CB0F6] text-white font-black border-b-4 border-[#0092E0] shadow-xs'
+                : 'text-gray-600 font-bold hover:text-gray-900'
             }`}
           >
             Manajemen Anggota
@@ -445,11 +444,11 @@ export default function CircleManagement({
                     setCircleCapacity(5);
                     setIsModalOpen(true);
                   }}
-                  className="inline-flex items-center justify-center gap-2 px-4.5 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-3xs cursor-pointer"
-                  style={{ minHeight: '40px' }}
+                  className="btn-duo-green px-5 py-3 text-xs font-black flex items-center justify-center gap-2 shadow-xs cursor-pointer"
+                  style={{ minHeight: '44px' }}
                 >
                   <Plus className="w-4 h-4" />
-                  Tambah Circle Baru
+                  <span>Tambah Circle Baru</span>
                 </button>
               </div>
 
@@ -470,8 +469,8 @@ export default function CircleManagement({
                     return (
                       <div
                         key={circle.id}
-                        className={`bg-white border rounded-3xl p-6 shadow-3xs flex flex-col justify-between space-y-5 transition-all relative group hover:border-gray-200 hover:shadow-2xs ${
-                          circle.isArchived ? 'opacity-60 bg-gray-50/50' : 'border-gray-100'
+                        className={`card-duo-interactive p-6 flex flex-col justify-between space-y-5 relative ${
+                          circle.isArchived ? 'opacity-60 bg-gray-50' : ''
                         }`}
                       >
                         <div className="space-y-3.5">
@@ -507,9 +506,14 @@ export default function CircleManagement({
 
                           {/* Members count / capacity slider visual */}
                           <div className="space-y-1.5 pt-1.5">
-                            <div className="flex justify-between text-[10px] text-gray-500 font-bold">
+                            <div className="flex justify-between text-[10px] text-gray-500 font-bold items-center">
                               <span>Anggota Terdaftar</span>
-                              <span className="font-mono">{stats.totalMembers} / {circle.capacity} Siswa</span>
+                              <div className="flex items-center gap-1">
+                                <span className="text-[9px] font-black text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded border border-sky-100 uppercase">
+                                  {circle.capacity === 2 ? 'DUO' : circle.capacity === 3 ? 'TRIO' : 'SQUAD'}
+                                </span>
+                                <span className="font-mono">{stats.totalMembers} / {circle.capacity} Siswa</span>
+                              </div>
                             </div>
                             <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                               <div 
@@ -864,19 +868,23 @@ export default function CircleManagement({
 
       {/* Circle Create / Edit Modal Form */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fadeIn">
           <div 
-            className="bg-white rounded-3xl border border-gray-100 w-full max-w-md p-6 sm:p-8 space-y-5 shadow-lg relative animate-scaleUp"
+            className="modal-duo w-[480px] max-w-[95vw] max-h-[90vh] p-6 sm:p-8 space-y-5 relative overflow-hidden flex flex-col shadow-2xl my-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between pb-2 border-b border-gray-50">
-              <h2 className="text-lg font-display font-bold text-gray-900">
-                {isEditMode ? 'Sunting Kelompok Circle' : 'Tambah Circle Baru'}
-              </h2>
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100 shrink-0">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5 text-sky-600" />
+                <h2 className="text-base font-black text-gray-900 uppercase tracking-wider">
+                  {isEditMode ? 'Sunting Kelompok Circle' : 'Tambah Circle Baru'}
+                </h2>
+              </div>
               <button 
+                type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer"
-                style={{ minWidth: '44px', minHeight: '44px' }}
+                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl cursor-pointer transition-colors"
                 aria-label="Tutup"
               >
                 <X className="w-5 h-5" />
@@ -884,15 +892,16 @@ export default function CircleManagement({
             </div>
 
             {formError && (
-              <div className="p-4 bg-red-50 border border-red-200/50 rounded-2xl text-xs text-red-600">
-                {formError}
+              <div className="p-3.5 bg-red-50 border-2 border-red-200 rounded-2xl text-xs font-bold text-red-600 flex items-center gap-2">
+                <span>⚠️</span>
+                <span>{formError}</span>
               </div>
             )}
 
             <form onSubmit={handleSaveCircle} className="space-y-4">
               {/* Name */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-gray-700">
+                <label className="block text-xs font-black text-gray-700 uppercase tracking-wider">
                   Nama Circle <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -900,44 +909,81 @@ export default function CircleManagement({
                   required
                   value={circleName}
                   onChange={(e) => setCircleName(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="block w-full px-4 py-3 bg-white border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-sky-400"
                   placeholder="Contoh: Kelompok Singa, Circle Aljabar"
                 />
               </div>
 
               {/* Description */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-gray-700">
-                  Deskripsi Kelompok <span className="text-gray-400">(Opsional)</span>
+                <label className="block text-xs font-black text-gray-700 uppercase tracking-wider">
+                  Deskripsi Kelompok <span className="text-gray-400 font-normal lowercase">(opsional)</span>
                 </label>
                 <textarea
                   rows={2}
                   value={circleDescription}
                   onChange={(e) => setCircleDescription(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"
+                  className="block w-full px-4 py-3 bg-white border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-sky-400 resize-none"
                   placeholder="Keterangan mengenai circle belajar ini..."
                 />
               </div>
 
-              {/* Capacity Slider */}
-              <div className="space-y-2">
-                <div className="flex justify-between items-center text-xs text-gray-700 font-semibold">
-                  <span>Kapasitas Maksimal Siswa</span>
-                  <span className="text-indigo-600 font-mono font-bold bg-indigo-50 px-2 py-0.5 rounded-md">
-                    {circleCapacity} Siswa
-                  </span>
+              {/* Capacity Slider (Min 2, Max 5 with Animated DUO, TRIO, SQUAD labels) */}
+              <div className="space-y-2.5 p-3.5 bg-sky-50/50 border-2 border-sky-100 rounded-2xl">
+                <div className="flex justify-between items-center text-xs text-gray-800 font-black">
+                  <span className="uppercase tracking-wider">Kapasitas Maksimal Siswa</span>
+                  <div className="flex items-center gap-1.5">
+                    {/* Animated Vertical Rolling Label */}
+                    <div className="relative overflow-hidden h-6 flex items-center">
+                      <AnimatePresence mode="wait">
+                        <motion.span
+                          key={circleCapacity === 2 ? 'DUO' : circleCapacity === 3 ? 'TRIO' : 'SQUAD'}
+                          initial={{ y: -16, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          exit={{ y: 16, opacity: 0 }}
+                          transition={{ duration: 0.15, ease: 'easeOut' }}
+                          className={`inline-block px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase border shadow-3xs ${
+                            circleCapacity === 2 
+                              ? 'bg-amber-100 text-amber-800 border-amber-300' 
+                              : circleCapacity === 3 
+                                ? 'bg-purple-100 text-purple-800 border-purple-300' 
+                                : 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                          }`}
+                        >
+                          {circleCapacity === 2 ? 'DUO' : circleCapacity === 3 ? 'TRIO' : 'SQUAD'}
+                        </motion.span>
+                      </AnimatePresence>
+                    </div>
+
+                    {/* Animated Vertical Rolling Number */}
+                    <div className="text-sky-700 font-mono font-black bg-sky-100 border border-sky-200 px-2.5 py-0.5 rounded-lg text-xs flex items-center gap-1">
+                      <div className="relative overflow-hidden h-4 w-2.5 inline-flex justify-center items-center">
+                        <AnimatePresence mode="wait">
+                          <motion.span
+                            key={circleCapacity}
+                            initial={{ y: -14, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            exit={{ y: 14, opacity: 0 }}
+                            transition={{ duration: 0.12, ease: 'easeOut' }}
+                            className="inline-block"
+                          >
+                            {circleCapacity}
+                          </motion.span>
+                        </AnimatePresence>
+                      </div>
+                      <span>Siswa</span>
+                    </div>
+                  </div>
                 </div>
+
                 <input
                   type="range"
-                  min="1"
-                  max="20"
-                  value={circleCapacity}
+                  min="2"
+                  max="5"
+                  value={Math.max(2, Math.min(5, circleCapacity))}
                   onChange={(e) => setCircleCapacity(Number(e.target.value))}
-                  className="w-full accent-indigo-600 bg-gray-100 rounded-lg appearance-none h-2"
+                  className="w-full accent-sky-500 bg-gray-200 rounded-lg appearance-none h-2.5 cursor-pointer"
                 />
-                <span className="text-[10px] text-gray-400 block leading-tight">
-                  Batas default adalah 5 siswa, namun Anda dapat mengubahnya sewaktu-waktu sesuai kebutuhan.
-                </span>
               </div>
 
               {/* Submit button */}
@@ -945,18 +991,15 @@ export default function CircleManagement({
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 py-3 border border-gray-200 text-gray-500 font-semibold rounded-xl text-xs hover:bg-gray-50 cursor-pointer active:scale-98 transition-all"
-                  style={{ minHeight: '44px' }}
+                  className="btn-duo-slate flex-1 py-3 text-xs font-black cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  disabled={isSubmitting || !circleName.trim()}
-                  className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold rounded-xl text-xs shadow-3xs flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all"
-                  style={{ minHeight: '44px' }}
+                  disabled={isSubmitting}
+                  className="btn-duo-blue flex-1 py-3 text-xs font-black cursor-pointer"
                 >
-                  <Sparkles className="w-4 h-4" />
                   {isSubmitting ? 'Memproses...' : isEditMode ? 'Simpan Perubahan' : 'Buat Circle'}
                 </button>
               </div>

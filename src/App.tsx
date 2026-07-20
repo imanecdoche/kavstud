@@ -17,7 +17,7 @@ import AssignmentBuilder from './components/AssignmentBuilder';
 import NotFound from './components/NotFound';
 import Logo from './components/Logo';
 import { UserProfile } from './types';
-import { Sparkles } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 export default function App() {
   // Simple & Robust state routing
@@ -132,7 +132,7 @@ export default function App() {
       {globalLoading && (
         <div className="fixed inset-0 bg-black/10 backdrop-blur-3xs flex items-center justify-center z-50 animate-fadeIn">
           <div className="bg-white/80 p-4 rounded-2xl border border-gray-100 flex items-center gap-2 shadow-md">
-            <Sparkles className="w-4 h-4 text-indigo-600 animate-spin" />
+            <Loader2 className="w-4 h-4 text-indigo-600 animate-spin" />
             <span className="text-xs font-bold text-gray-700">Memproses...</span>
           </div>
         </div>

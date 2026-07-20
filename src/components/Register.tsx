@@ -13,10 +13,10 @@ interface RegisterProps {
 
 export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
   const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState<UserRole>('student');
+  const role: UserRole = 'student';
   
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,7 +24,9 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName || !email || !password || !confirmPassword) {
+    const cleanUsername = username.trim().toLowerCase().replace(/[^a-zA-Z0-9._-]/g, '');
+
+    if (!fullName || !cleanUsername || !password || !confirmPassword) {
       setError('Semua kolom wajib diisi.');
       return;
     }
@@ -39,35 +41,34 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
       return;
     }
 
+    const fullEmail = `${cleanUsername}@kavio.stud.edu`;
+
     setIsSubmitting(true);
     setError(null);
     onSetLoading(true);
 
     try {
       // Create user auth
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, fullEmail, password);
       
       // Save profile in Firestore
       await setDoc(doc(db, 'users', userCredential.user.uid), {
         uid: userCredential.user.uid,
         fullName,
-        email,
-        role,
+        email: fullEmail,
+        role: 'student',
+        classType: 'PRIVATE',
         createdAt: new Date().toISOString()
       });
 
-      // Automatically navigate to role dashboard
-      if (role === 'teacher') {
-        onNavigate('/teacher');
-      } else {
-        onNavigate('/student');
-      }
+      // Navigate to student dashboard
+      onNavigate('/student');
     } catch (err: any) {
       console.error(err);
       if (err.code === 'auth/email-already-in-use') {
-        setError('Alamat email sudah digunakan oleh akun lain.');
+        setError(`Email ${fullEmail} sudah terdaftar. Silakan pilih username lain.`);
       } else if (err.code === 'auth/invalid-email') {
-        setError('Format email tidak valid.');
+        setError('Format username email tidak valid.');
       } else if (err.code === 'auth/weak-password') {
         setError('Kata sandi terlalu lemah.');
       } else {
@@ -80,35 +81,35 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8" id="register-page">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-6">
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans" id="register-page">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-4">
         <div className="flex justify-center">
-          <Logo className="h-10 w-auto text-indigo-600" />
+          <Logo className="h-10 w-auto text-sky-600" />
         </div>
 
-        <div className="space-y-2">
-          <h2 className="text-3xl font-display font-bold text-gray-900 tracking-tight">
-            Daftar Akun Baru
+        <div className="space-y-1.5">
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 tracking-tight">
+            Daftar Akun Siswa Baru
           </h2>
           <p className="text-xs text-gray-500 max-w-sm mx-auto">
-            Gabung dengan sistem pendidikan cerdas berbasis real-time bersama ribuan pengajar dan siswa.
+            Daftarkan diri Anda untuk mengakses lembar tugas interaktif dan pembelajaran KAVIO Edu.
           </p>
         </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-6 border border-gray-100 rounded-3xl shadow-xs space-y-6 sm:px-10">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="modal-duo p-6 sm:p-8 space-y-6 shadow-xl relative">
           {error && (
-            <div className="p-4 bg-red-50 border border-red-200/50 rounded-2xl text-xs text-red-600 flex items-start gap-2.5 animate-fadeIn" id="register-error-alert">
-              <span className="font-bold shrink-0">Kesalahan:</span>
-              <p className="leading-relaxed">{error}</p>
+            <div className="p-4 bg-red-50 border-2 border-red-200 rounded-2xl text-xs text-red-600 flex items-start gap-2.5 animate-fadeIn" id="register-error-alert">
+              <span className="font-bold shrink-0">⚠️ Kesalahan:</span>
+              <p className="leading-relaxed font-semibold">{error}</p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5" id="register-form">
+          <form onSubmit={handleSubmit} className="space-y-4" id="register-form">
             {/* Full Name */}
             <div className="space-y-1.5">
-              <label htmlFor="fullName" className="block text-xs font-semibold text-gray-700">
+              <label htmlFor="fullName" className="block text-xs font-black text-gray-700 uppercase tracking-wider">
                 Nama Lengkap <span className="text-red-500">*</span>
               </label>
               <div className="relative rounded-xl shadow-3xs">
@@ -122,72 +123,43 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="block w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
-                  placeholder="Nama Lengkap Anda"
+                  className="block w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-sky-400"
+                  placeholder="Contoh: Jaisyrrahman"
                 />
               </div>
             </div>
 
-            {/* Email */}
+            {/* Fixed Domain Username Email Input */}
             <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-xs font-semibold text-gray-700">
-                Email <span className="text-red-500">*</span>
+              <label htmlFor="username" className="block text-xs font-black text-gray-700 uppercase tracking-wider">
+                Username Email Siswa <span className="text-red-500">*</span>
               </label>
-              <div className="relative rounded-xl shadow-3xs">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+              <div className="flex items-center border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl overflow-hidden focus-within:border-sky-400 bg-white">
+                <div className="pl-3.5 flex items-center pointer-events-none text-gray-400">
                   <Mail className="h-4 w-4" />
                 </div>
                 <input
-                  id="email"
-                  name="email"
-                  type="email"
+                  id="username"
+                  name="username"
+                  type="text"
                   required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
-                  placeholder="name@school.com"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value.replace(/[^a-zA-Z0-9._-]/g, ''))}
+                  className="flex-1 pl-2.5 pr-2 py-3 bg-white text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none font-mono"
+                  placeholder="jais"
                 />
+                <span className="px-3.5 py-3 bg-sky-50 border-l-2 border-sky-100 text-xs font-black text-sky-600 font-mono select-none shrink-0">
+                  @kavio.stud.edu
+                </span>
               </div>
-            </div>
-
-            {/* Role Select */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-semibold text-gray-700">
-                Peran Pengguna <span className="text-red-500">*</span>
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  type="button"
-                  onClick={() => setRole('student')}
-                  className={`py-3 px-4 rounded-xl text-xs font-semibold border flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98 ${
-                    role === 'student'
-                      ? 'border-indigo-500 bg-indigo-50/50 text-indigo-700 font-bold'
-                      : 'border-gray-200 bg-white text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                  style={{ minHeight: '44px' }}
-                >
-                  <User className="w-4 h-4" />
-                  Siswa
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setRole('teacher')}
-                  className={`py-3 px-4 rounded-xl text-xs font-semibold border flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98 ${
-                    role === 'teacher'
-                      ? 'border-indigo-500 bg-indigo-50/50 text-indigo-700 font-bold'
-                      : 'border-gray-200 bg-white text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                  style={{ minHeight: '44px' }}
-                >
-                  <ShieldCheck className="w-4 h-4" />
-                  Guru
-                </button>
-              </div>
+              <p className="text-[10px] text-gray-400">
+                Email Anda akan otomatis menjadi: <span className="font-mono font-bold text-sky-600">{username.trim() ? `${username.trim().toLowerCase()}@kavio.stud.edu` : 'username@kavio.stud.edu'}</span>
+              </p>
             </div>
 
             {/* Password */}
             <div className="space-y-1.5">
-              <label htmlFor="password" className="block text-xs font-semibold text-gray-700">
+              <label htmlFor="password" className="block text-xs font-black text-gray-700 uppercase tracking-wider">
                 Kata Sandi <span className="text-red-500">*</span>
               </label>
               <div className="relative rounded-xl shadow-3xs">
@@ -201,7 +173,7 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                  className="block w-full pl-10 pr-10 py-3 bg-white border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-sky-400"
                   placeholder="Min. 6 karakter"
                 />
                 <button
@@ -218,7 +190,7 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
 
             {/* Confirm Password */}
             <div className="space-y-1.5">
-              <label htmlFor="confirmPassword" className="block text-xs font-semibold text-gray-700">
+              <label htmlFor="confirmPassword" className="block text-xs font-black text-gray-700 uppercase tracking-wider">
                 Konfirmasi Kata Sandi <span className="text-red-500">*</span>
               </label>
               <div className="relative rounded-xl shadow-3xs">
@@ -232,7 +204,7 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="block w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                  className="block w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-sky-400"
                   placeholder="Ulangi kata sandi"
                 />
               </div>
@@ -241,32 +213,25 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-98"
+              className="w-full btn-duo-green py-3 px-4 text-xs font-black flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               style={{ minHeight: '44px' }}
               id="register-submit-button"
             >
-              {isSubmitting ? 'Memproses Daftar...' : 'Buat Akun Baru'}
+              <span>{isSubmitting ? 'Memproses Daftar...' : 'Buat Akun Siswa Baru'}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </form>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-100" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="px-3 bg-white text-gray-400">Sudah memiliki akun?</span>
-            </div>
+          <div className="pt-2 border-t border-gray-100 text-center space-y-3">
+            <p className="text-xs text-gray-500 font-semibold">Sudah memiliki akun Siswa atau Guru?</p>
+            <button
+              type="button"
+              onClick={() => onNavigate('/login')}
+              className="w-full btn-duo-slate py-2.5 text-xs font-black flex items-center justify-center cursor-pointer"
+            >
+              <span>Masuk Sekarang</span>
+            </button>
           </div>
-
-          <button
-            onClick={() => onNavigate('/login')}
-            className="w-full py-3 px-4 border border-gray-200 hover:border-gray-300 text-gray-700 bg-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer transition-colors active:scale-98"
-            style={{ minHeight: '44px' }}
-            id="go-to-login-button"
-          >
-            Masuk Sekarang
-          </button>
         </div>
       </div>
     </div>

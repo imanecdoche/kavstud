@@ -18,7 +18,7 @@ import {
   Award, 
   AlertCircle,
   Clock,
-  Sparkles,
+  ClipboardCheck,
   Volume2,
   Mic,
   UploadCloud
@@ -70,6 +70,8 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
   const [gradeError, setGradeError] = useState<string | null>(null);
 
   const [manualScores, setManualScores] = useState<{[questionId: string]: number}>({});
+  const [questionFeedbacks, setQuestionFeedbacks] = useState<{[questionId: string]: string}>({});
+  const [studentPhotoURL, setStudentPhotoURL] = useState<string | null>(null);
 
   // Compute Auto Score (sum of points for correct auto-gradable questions)
   const autoScore = questions.reduce((sum, q) => {
@@ -188,6 +190,13 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
       if (docSnap.exists()) {
         const subData = { id: docSnap.id, ...docSnap.data() } as Submission;
         setSubmission(subData);
+        if (subData.studentId) {
+          getDoc(doc(db, 'users', subData.studentId)).then(uSnap => {
+            if (uSnap.exists()) {
+              setStudentPhotoURL(uSnap.data().photoURL || null);
+            }
+          }).catch(console.error);
+        }
         if (subData.score !== null) {
           setScore(subData.score);
         }
@@ -199,6 +208,16 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                 loadedManualScores[qId] = val.pointsEarned || 0;
               });
               return loadedManualScores;
+            }
+            return prev;
+          });
+          setQuestionFeedbacks(prev => {
+            if (Object.keys(prev).length === 0) {
+              const loadedFeedbacks: {[questionId: string]: string} = {};
+              Object.entries(subData.answersMap).forEach(([qId, val]: [string, any]) => {
+                loadedFeedbacks[qId] = val.feedback || '';
+              });
+              return loadedFeedbacks;
             }
             return prev;
           });
@@ -267,7 +286,12 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
               answer: submission.answersMap?.[q.id]?.answer || '',
               pointsEarned: earned,
               status: earned === q.points ? 'correct' : earned === 0 ? 'incorrect' : 'correct',
-              feedback: submission.answersMap?.[q.id]?.feedback || ''
+              feedback: questionFeedbacks[q.id] || ''
+            };
+          } else {
+            updatedAnswersMap[q.id] = {
+              ...(updatedAnswersMap[q.id] || {}),
+              feedback: questionFeedbacks[q.id] || ''
             };
           }
         });
@@ -302,12 +326,12 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
   const isTeacher = currentUserProfile?.role === 'teacher';
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-8 lg:p-12 max-w-4xl mx-auto" id="submission-detail-page">
+    <div className="min-h-screen bg-gray-50 p-3 sm:p-6 lg:p-8 w-full max-w-6xl mx-auto" id="submission-detail-page">
       {/* Back Header */}
       <div className="flex items-center gap-4 border-b border-gray-100 pb-6">
         <button
           onClick={handleBack}
-          className="p-2.5 bg-white border border-gray-200 hover:border-gray-300 rounded-xl cursor-pointer transition-colors active:scale-95"
+          className="btn-duo-slate p-2.5 flex items-center justify-center cursor-pointer"
           style={{ minWidth: '44px', minHeight: '44px' }}
           aria-label="Kembali"
         >
@@ -336,11 +360,15 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
       ) : submission ? (
         <div className="space-y-8 mt-8">
           {/* Submission and Student Information */}
-          <div className="bg-white border border-gray-100 p-6 sm:p-8 rounded-3xl shadow-3xs space-y-6">
+          <div className="card-duo p-4 sm:p-6 lg:p-8 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-bold text-sm">
-                  {submission.studentName?.charAt(0).toUpperCase() || 'S'}
+                <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-sm overflow-hidden shrink-0 border border-indigo-100 shadow-3xs">
+                  {studentPhotoURL ? (
+                    <img src={studentPhotoURL} alt={submission.studentName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  ) : (
+                    submission.studentName?.charAt(0).toUpperCase() || 'S'
+                  )}
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-gray-900">{submission.studentName}</h3>
@@ -407,9 +435,11 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                   {q.type?.replace('_', ' ') || 'Pertanyaan'}
                                 </span>
                               </div>
-                              <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50/50 px-2 py-0.5 rounded-md font-mono">
-                                {q.points || 10} Poin
-                              </span>
+                              {isTeacher && (
+                                <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50/50 px-2 py-0.5 rounded-md font-mono">
+                                  {q.points || 10} Poin
+                                </span>
+                              )}
                             </div>
 
                             {/* Question prompt */}
@@ -431,7 +461,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                       <div
                                         key={cIdx}
                                         className={`p-3 rounded-xl border flex items-center gap-3 transition-all ${
-                                          isCorrect
+                                          (isTeacher && isCorrect)
                                             ? 'bg-green-50/60 border-green-200 text-green-900'
                                             : isStudentChoice
                                               ? 'bg-indigo-50/40 border-indigo-200 text-indigo-900'
@@ -439,7 +469,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                         }`}
                                       >
                                         <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold font-mono shrink-0 ${
-                                          isCorrect
+                                          (isTeacher && isCorrect)
                                             ? 'bg-green-600 text-white'
                                             : isStudentChoice
                                               ? 'bg-indigo-600 text-white'
@@ -449,10 +479,10 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                         </span>
                                         <div className="flex-1 min-w-0">
                                           <p className="text-xs font-semibold truncate">{choice}</p>
-                                          {isCorrect && (
+                                          {isTeacher && isCorrect && (
                                             <span className="text-[9px] font-bold text-green-600 uppercase tracking-wide block mt-0.5">Jawaban Benar</span>
                                           )}
-                                          {isStudentChoice && !isCorrect && (
+                                          {isStudentChoice && (!isTeacher || !isCorrect) && (
                                             <span className="text-[9px] font-bold text-indigo-600 uppercase tracking-wide block mt-0.5">Pilihan Siswa</span>
                                           )}
                                         </div>
@@ -478,7 +508,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                       <div
                                         key={option.val}
                                         className={`flex-1 py-3 px-4 rounded-xl border text-center text-xs font-bold ${
-                                          isCorrect
+                                          (isTeacher && isCorrect)
                                             ? 'bg-green-50/60 border-green-200 text-green-700'
                                             : isStudentChoice
                                               ? 'bg-indigo-50/40 border-indigo-200 text-indigo-700'
@@ -486,10 +516,10 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                         }`}
                                       >
                                         <p>{option.label}</p>
-                                        {isCorrect && (
+                                        {isTeacher && isCorrect && (
                                           <span className="text-[8px] font-bold text-green-600 uppercase tracking-wide block mt-1">Benar</span>
                                         )}
-                                        {isStudentChoice && !isCorrect && (
+                                        {isStudentChoice && (!isTeacher || !isCorrect) && (
                                           <span className="text-[8px] font-bold text-indigo-600 uppercase tracking-wide block mt-1">Pilihan Siswa</span>
                                         )}
                                       </div>
@@ -514,12 +544,12 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                           <span className="text-xs font-bold text-gray-700">{pair.left}</span>
                                           <span className="text-gray-400 font-mono text-xs">➡</span>
                                           <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${
-                                            isCorrect 
+                                            (isTeacher && isCorrect) 
                                               ? 'bg-green-50 text-green-700 border border-green-100' 
                                               : 'bg-indigo-50 text-indigo-700 border border-indigo-100'
                                           }`}>{studentMatch}</span>
                                         </div>
-                                        {!isCorrect && (
+                                        {isTeacher && !isCorrect && (
                                           <div className="text-[10px] text-green-600 font-semibold bg-green-50/30 px-2 py-1 rounded-lg border border-green-100">
                                             Kunci: {pair.right}
                                           </div>
@@ -539,7 +569,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                     {studentAns || '(Kosong)'}
                                   </div>
                                 </div>
-                                {q.fillBlankAnswers && q.fillBlankAnswers.length > 0 && (
+                                {isTeacher && q.fillBlankAnswers && q.fillBlankAnswers.length > 0 && (
                                   <div className="space-y-1.5">
                                     <span className="text-[10px] font-bold text-green-600 uppercase tracking-wider block">Kunci Jawaban Benar (Isian):</span>
                                     <div className="p-3 bg-green-50/40 border border-green-100 text-green-800 rounded-xl text-xs font-semibold">
@@ -661,13 +691,32 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                               </div>
                             )}
 
-                            {/* Student Earned Score View */}
-                            {!isTeacher && (submission.status === 'graded' || submission.status === 'remedial') && (
-                              <div className="pt-3.5 border-t border-gray-100 mt-2 flex items-center justify-between bg-gray-50/50 p-2.5 rounded-xl">
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Hasil Penilaian Soal</span>
-                                <div className="text-xs font-bold text-indigo-600 font-mono">
-                                  Skor Anda: {submission?.answersMap?.[q.id]?.pointsEarned || 0} / {q.points || 0} Poin
-                                </div>
+                            {/* Per-question feedback textarea (teacher only) */}
+                            {isTeacher && (
+                              <div className="border-t border-gray-100 mt-1 pt-3 space-y-1.5">
+                                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">
+                                  Komentar / Feedback Soal:
+                                </label>
+                                <textarea
+                                  rows={2}
+                                  value={questionFeedbacks[q.id] || ''}
+                                  onChange={(e) => setQuestionFeedbacks(prev => ({ ...prev, [q.id]: e.target.value }))}
+                                  className="block w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"
+                                  placeholder="Tulis komentar atau feedback untuk soal ini..."
+                                />
+                              </div>
+                            )}
+
+                            {/* Student Per-Question Feedback View */}
+                            {!isTeacher && (submission.status === 'graded' || submission.status === 'remedial') && submission?.answersMap?.[q.id]?.feedback && (
+                              <div className="pt-3.5 border-t border-gray-100 mt-2 bg-gray-50/50 p-3 rounded-xl space-y-1">
+                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+                                  <MessageSquare className="w-3 h-3 text-gray-400" />
+                                  Feedback Guru untuk Soal Ini
+                                </span>
+                                <p className="text-xs text-gray-700 leading-relaxed italic">
+                                  "{submission.answersMap[q.id].feedback}"
+                                </p>
                               </div>
                             )}
                           </div>
@@ -703,7 +752,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                         <div
                           key={opt}
                           className={`p-3.5 rounded-xl border flex items-center gap-3 ${
-                            isCorrect
+                            (isTeacher && isCorrect)
                               ? 'bg-green-50/60 border-green-200 text-green-950 font-semibold'
                               : isStudentChoice
                                 ? 'bg-indigo-50/40 border-indigo-200 text-indigo-950'
@@ -711,7 +760,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                           }`}
                         >
                           <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold font-mono shrink-0 ${
-                            isCorrect
+                            (isTeacher && isCorrect)
                               ? 'bg-green-600 text-white'
                               : isStudentChoice
                                 ? 'bg-indigo-600 text-white'
@@ -721,10 +770,10 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                           </span>
                           <div className="flex-1 min-w-0">
                             <p className="text-xs truncate">{choiceText}</p>
-                            {isCorrect && (
+                            {isTeacher && isCorrect && (
                               <span className="text-[9px] font-bold text-green-600 uppercase tracking-wide block mt-0.5">Jawaban Benar</span>
                             )}
-                            {isStudentChoice && !isCorrect && (
+                            {isStudentChoice && (!isTeacher || !isCorrect) && (
                               <span className="text-[9px] font-bold text-indigo-600 uppercase tracking-wide block mt-0.5">Pilihan Siswa</span>
                             )}
                           </div>
@@ -778,12 +827,12 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
           </div>
 
           {/* Grading Details or Input Panel */}
-          <div className="bg-white border border-gray-100 p-6 sm:p-8 rounded-3xl shadow-3xs space-y-6">
+          <div className="bg-white border border-gray-100 p-4 sm:p-6 lg:p-8 rounded-3xl shadow-3xs space-y-6">
             {(submission.status === 'graded' || submission.status === 'remedial') && !isTeacher ? (
               /* Student View: Graded / Remedial Details */
               <div className="space-y-6">
                 <div className="flex items-center gap-2 border-b border-gray-50 pb-4">
-                  <Sparkles className="w-4.5 h-4.5 text-indigo-500" />
+                  <ClipboardCheck className="w-4.5 h-4.5 text-indigo-500" />
                   <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
                     Evaluasi & Hasil Penilaian
                   </h3>

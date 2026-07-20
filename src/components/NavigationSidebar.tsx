@@ -9,6 +9,7 @@ import {
   Menu, 
   X,
   User,
+  Users,
   CircleDot
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
@@ -17,8 +18,8 @@ import { UserProfile } from '../types';
 
 interface NavigationSidebarProps {
   role: 'teacher' | 'student';
-  activeTab: 'dashboard' | 'assignments' | 'settings' | 'circles';
-  setActiveTab: (tab: 'dashboard' | 'assignments' | 'settings' | 'circles') => void;
+  activeTab: 'dashboard' | 'assignments' | 'settings' | 'circles' | 'students';
+  setActiveTab: (tab: 'dashboard' | 'assignments' | 'settings' | 'circles' | 'students') => void;
   userProfile: UserProfile | null;
   onLogout: () => void;
   isMobileOpen: boolean;
@@ -56,6 +57,11 @@ export default function NavigationSidebar({
     },
     ...(role === 'teacher' ? [
       {
+        id: 'students' as const,
+        label: 'Manajemen Siswa',
+        icon: Users
+      },
+      {
         id: 'circles' as const,
         label: 'Kavio Circle',
         icon: CircleDot
@@ -77,9 +83,9 @@ export default function NavigationSidebar({
     <>
       {/* Mobile Top Navbar (Floating Header) */}
       <header className="lg:hidden h-16 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 flex items-center justify-between sticky top-0 z-40 w-full">
-        <div className="flex items-center gap-2">
-          <Logo className="h-6 w-auto text-indigo-600" />
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-indigo-50 text-[9px] font-bold text-indigo-700 rounded-md border border-indigo-100 uppercase font-sans">
+        <div className="flex items-center gap-2 min-w-0">
+          <Logo className="h-5 max-w-[130px] w-auto text-indigo-600 shrink-0" />
+          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-indigo-50 text-[9px] font-bold text-indigo-700 rounded-md border border-indigo-100 uppercase font-sans shrink-0">
             {role === 'teacher' ? 'Guru' : 'Siswa'}
           </span>
         </div>
@@ -123,9 +129,9 @@ export default function NavigationSidebar({
         }}
       >
         {/* Header inside Sidebar */}
-        <div className="h-16 px-5 border-b border-gray-50 flex items-center justify-between">
-          <div className="flex items-center gap-2.5 overflow-hidden">
-            <Logo className="h-7 w-auto text-indigo-600 shrink-0" />
+        <div className="h-16 px-4 border-b border-gray-50 flex items-center justify-between">
+          <div className="flex items-center gap-2 overflow-hidden min-w-0">
+            <Logo className={`${isCollapsed ? 'h-5 max-w-[42px]' : 'h-5 max-w-[135px]'} w-auto text-indigo-600 shrink-0 transition-all`} />
             {!isCollapsed && (
               <motion.span 
                 initial={{ opacity: 0, x: -10 }}
@@ -150,7 +156,7 @@ export default function NavigationSidebar({
         {/* User Mini Profile Section */}
         <div className="p-4 border-b border-gray-50">
           <div className={`bg-gray-50/70 border border-gray-100 rounded-2xl flex items-center gap-3 transition-all ${isCollapsed ? 'p-2 justify-center' : 'p-3'}`}>
-            <div className="w-9 h-9 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 font-bold text-xs overflow-hidden shrink-0">
+            <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-xs overflow-hidden shrink-0 border border-indigo-200/60 shadow-3xs">
               {userProfile?.photoURL ? (
                 <img 
                   src={userProfile.photoURL} 
@@ -192,33 +198,27 @@ export default function NavigationSidebar({
                   setActiveTab(item.id);
                   setIsMobileOpen(false);
                 }}
-                className={`w-full flex items-center rounded-xl text-xs font-bold transition-all duration-150 group cursor-pointer ${
-                  isCollapsed ? 'justify-center p-2.5' : 'px-3.5 py-2.5 gap-3'
+                className={`w-full flex items-center text-xs font-black transition-all group cursor-pointer ${
+                  isCollapsed ? 'justify-center p-2.5 rounded-xl' : 'px-3.5 py-2.5 gap-3 rounded-2xl'
                 } ${
                   isActive 
-                    ? 'bg-indigo-50/70 text-indigo-600' 
-                    : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50/60'
+                    ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs translate-y-[-1px]' 
+                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100/70 border-b-2 border-transparent'
                 }`}
                 title={isCollapsed ? item.label : undefined}
                 id={`menu-item-${item.id}`}
               >
                 <IconComponent className={`w-4.5 h-4.5 shrink-0 ${
-                  isActive ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600'
+                  isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-700'
                 }`} />
                 {!isCollapsed && (
                   <motion.span
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="truncate"
+                    className="truncate uppercase tracking-wider text-[11px]"
                   >
                     {item.label}
                   </motion.span>
-                )}
-                {!isCollapsed && isActive && (
-                  <motion.div 
-                    layoutId="active-indicator" 
-                    className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-600"
-                  />
                 )}
               </button>
             );

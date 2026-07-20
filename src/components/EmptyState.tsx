@@ -34,8 +34,7 @@ export default function EmptyState({
       {actionText && onActionClick && (
         <button
           onClick={onActionClick}
-          className="mt-2 inline-flex items-center justify-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold text-[11px] rounded-xl transition-all cursor-pointer shadow-xs"
-          style={{ minHeight: '38px' }}
+          className="mt-2 btn-duo-blue px-5 py-2.5 text-xs font-black cursor-pointer shadow-xs"
         >
           {actionText}
         </button>

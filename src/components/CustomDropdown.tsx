@@ -73,15 +73,15 @@ export default function CustomDropdown({
 
   const buttonStyle = variant === 'minimal'
     ? 'bg-transparent border-none p-0 text-gray-700 hover:text-gray-950 font-bold focus:ring-0 focus:outline-none'
-    : `bg-white border border-gray-200 text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-semibold ${sizeClasses[size]}`;
+    : `w-full bg-white border border-gray-200 text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-semibold ${sizeClasses[size]}`;
 
   return (
-    <div ref={dropdownRef} className={`relative ${className}`} id={id}>
+    <div ref={dropdownRef} className={`relative w-full ${className}`} id={id}>
       <button
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center justify-between text-left cursor-pointer disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed ${buttonStyle}`}
+        className={`w-full flex items-center justify-between text-left cursor-pointer disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed ${buttonStyle}`}
       >
         <span className="truncate mr-1">
           {selectedOption ? (

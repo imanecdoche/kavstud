@@ -23,9 +23,13 @@ import {
   Filter,
   Calendar,
   Layers,
-  Sparkles,
+  GraduationCap,
   ArrowRight,
-  Users
+  Users,
+  Flame,
+  Zap,
+  Target,
+  CheckCircle2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { UserProfile, Assignment, Submission } from '../types';
@@ -287,33 +291,87 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
               {/* TAB 1: MAIN DASHBOARD */}
               {activeTab === 'dashboard' && (
                 <>
-                  {/* Top Welcome Panel */}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-6">
-                    <div>
-                      <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 tracking-tight flex items-center gap-2 flex-wrap">
-                        <span>Halo, {studentProfile?.fullName?.split(' ')[0] || 'Siswa'}!</span>
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border shrink-0 ${
+                  {/* Duolingo Style Top Welcome & Action Header */}
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-gray-100 pb-6">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-gray-900 tracking-tight">
+                          Halo, {studentProfile?.fullName?.split(' ')[0] || 'Siswa'}! 🦉
+                        </h1>
+                        <span className={`inline-flex items-center px-3 py-1 rounded-xl text-[10px] font-extrabold uppercase border shadow-3xs ${
                           studentProfile?.classType === 'CIRCLE'
-                            ? 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100'
-                            : 'bg-teal-50 text-teal-700 border-teal-100'
+                            ? 'bg-purple-100 text-purple-800 border-purple-200'
+                            : 'bg-sky-100 text-sky-800 border-sky-200'
                         }`}>
-                          {studentProfile?.classType || 'PRIVATE'}
+                          {studentProfile?.classType === 'CIRCLE' ? 'Kelas Circle ⚡' : 'Kelas Privat 🎯'}
                         </span>
-                        <Sparkles className="w-5 h-5 text-indigo-500 animate-pulse shrink-0" />
-                      </h1>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Selesaikan tugas kelas, tinjau skor evaluasi guru, dan kembangkan pemahaman belajarmu setiap hari.
+                      </div>
+                      <p className="text-xs font-semibold text-gray-500">
+                        Selesaikan tugas harianmu dan tingkatkan streak belajar hari ini!
                       </p>
                     </div>
 
+                    {/* Premium 3D Duolingo Button */}
                     <button
                       onClick={handleDoFirstTask}
-                      className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
-                      style={{ minHeight: '44px' }}
+                      className="btn-duo-green px-6 py-3.5 text-xs font-black flex items-center justify-center gap-2.5 shadow-md shrink-0 cursor-pointer hover:scale-105 active:scale-95 transition-all text-white uppercase tracking-wider"
+                      style={{ minHeight: '48px' }}
                     >
-                      <BookOpen className="w-4.5 h-4.5" />
-                      Kerjakan Tugas
+                      <Zap className="w-5 h-5 text-yellow-300 fill-yellow-300 animate-pulse" />
+                      <span>Kerjakan Tugas SEKARANG</span>
                     </button>
+                  </div>
+
+                  {/* Duolingo Gamified Widgets Grid (Streak + Daily Goal Cards) */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    {/* Widget 1: 3D Yellow Streak Card (Duolingo Style) */}
+                    <div className="card-duo-yellow p-5 flex items-center justify-between shadow-sm relative overflow-hidden">
+                      <div className="space-y-1 z-10">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-4xl font-display font-black text-gray-900 leading-none">
+                            {completedTasksCount > 0 ? completedTasksCount * 3 + 1 : 1}
+                          </span>
+                          <span className="text-xs font-black text-amber-900 uppercase tracking-wider">HARI</span>
+                        </div>
+                        <p className="text-xs font-bold text-amber-900/80">Streak Belajar Aktif 🔥</p>
+                      </div>
+                      <div className="w-14 h-14 bg-amber-400/40 rounded-2xl flex items-center justify-center text-orange-600 shrink-0 z-10">
+                        <Flame className="w-9 h-9 fill-orange-500 text-orange-600 animate-bounce" />
+                      </div>
+                    </div>
+
+                    {/* Widget 2: Daily Goal Progress Card (Duolingo Style) */}
+                    <div className="card-duo p-5 md:col-span-2 flex flex-col justify-between space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Target className="w-5 h-5 text-sky-500" />
+                          <h3 className="text-xs font-extrabold text-gray-800 uppercase tracking-wider">Target Harian (Daily Goal)</h3>
+                        </div>
+                        <span className="text-xs font-black font-mono text-sky-600 bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-100">
+                          {completedTasksCount} / {totalAssigned || 1} Selesai
+                        </span>
+                      </div>
+
+                      {/* Days of Week Streak Tracker */}
+                      <div className="grid grid-cols-7 gap-1.5 pt-1">
+                        {['Sab', 'Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum'].map((day, i) => {
+                          const isActive = i <= (completedTasksCount % 7);
+                          return (
+                            <div 
+                              key={day}
+                              className={`p-2 rounded-xl text-center flex flex-col items-center gap-1 transition-all ${
+                                isActive 
+                                  ? 'bg-emerald-500 text-white shadow-xs border-b-2 border-emerald-700' 
+                                  : 'bg-gray-100 text-gray-400 border-b-2 border-gray-200'
+                              }`}
+                            >
+                              <CheckCircle2 className={`w-3.5 h-3.5 ${isActive ? 'text-white fill-emerald-600' : 'text-gray-300'}`} />
+                              <span className="text-[10px] font-extrabold">{day}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
 
                   {/* Stats Block Grid */}
@@ -364,10 +422,10 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                     <div className="xl:col-span-2 space-y-8">
                       
                       {/* Section: Tugas yang Harus Dikerjakan */}
-                      <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
-                        <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
-                          <Clock className="w-4.5 h-4.5 text-indigo-500" />
-                          Tugas yang Harus Dikerjakan
+                      <div className="card-duo p-6 space-y-4">
+                        <h3 className="text-xs font-black text-gray-900 flex items-center gap-2 uppercase tracking-wider">
+                          <Clock className="w-4.5 h-4.5 text-sky-500" />
+                          <span>Tugas yang Harus Dikerjakan</span>
                         </h3>
 
                         {assignments.filter(a => !submissions.some(s => s.assignmentId === a.id)).length === 0 ? (
@@ -392,10 +450,13 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                                     <p className="text-[10px] text-gray-400 mt-0.5 truncate">Guru: {assign.teacherName}</p>
                                   </div>
                                   <div className="flex items-center gap-2.5 shrink-0">
-                                    <span className="text-[10px] text-indigo-600 font-semibold bg-indigo-50/80 px-2.5 py-1 rounded-lg">
+                                    <button
+                                      type="button"
+                                      className="btn-duo-green px-3.5 py-1.5 text-[11px] font-black cursor-pointer shadow-xs"
+                                    >
                                       Kerjakan
-                                    </span>
-                                    <ChevronRight className="w-4 h-4 text-gray-300" />
+                                    </button>
+                                    <ChevronRight className="w-4 h-4 text-gray-400" />
                                   </div>
                                 </div>
                               ))}
@@ -404,10 +465,10 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                       </div>
 
                       {/* Section: Tugas yang Telah Dikirim */}
-                      <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
-                        <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
-                          <FileCheck className="w-4.5 h-4.5 text-indigo-500" />
-                          Tugas yang Telah Dikirim
+                      <div className="card-duo p-6 space-y-4">
+                        <h3 className="text-xs font-black text-gray-900 flex items-center gap-2 uppercase tracking-wider">
+                          <FileCheck className="w-4.5 h-4.5 text-emerald-500" />
+                          <span>Tugas yang Telah Dikirim</span>
                         </h3>
 
                         {submissions.length === 0 ? (
@@ -460,29 +521,29 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                     {/* Right column: Quick Actions & Evaluation feedback notes */}
                     <div className="space-y-8">
                       {/* Quick Actions Panel */}
-                      <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
-                        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">Aksi Cepat</h3>
-                        <div className="grid grid-cols-1 gap-2.5">
+                      <div className="card-duo p-6 space-y-4">
+                        <h3 className="text-xs font-black text-gray-900 uppercase tracking-wider">Aksi Cepat</h3>
+                        <div className="grid grid-cols-1 gap-3">
                           <button
                             onClick={handleDoFirstTask}
-                            className="w-full p-3 bg-indigo-50/50 hover:bg-indigo-50 border border-indigo-100/30 rounded-xl flex items-center gap-3 transition-colors text-left text-xs font-bold text-indigo-700 cursor-pointer"
+                            className="btn-duo-green w-full py-3 px-4 text-xs font-black flex items-center gap-3"
                           >
-                            <BookOpen className="w-4 h-4 text-indigo-500 shrink-0" />
-                            Mulai Tugas Baru
+                            <BookOpen className="w-4 h-4 shrink-0" />
+                            <span>Mulai Tugas Baru</span>
                           </button>
                           <button
                             onClick={() => setActiveTab('assignments')}
-                            className="w-full p-3 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl flex items-center gap-3 transition-colors text-left text-xs font-semibold text-gray-700 cursor-pointer"
+                            className="w-full py-3 px-4 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-2xl font-black text-xs border-b-4 border-gray-300 flex items-center gap-3 transition-all cursor-pointer active:translate-y-[2px] active:border-b-2"
                           >
-                            <Layers className="w-4 h-4 text-gray-400 shrink-0" />
-                            Buka Semua Tugas Saya
+                            <Layers className="w-4 h-4 text-gray-500 shrink-0" />
+                            <span>Buka Semua Tugas Saya</span>
                           </button>
                           <button
                             onClick={() => setActiveTab('settings')}
-                            className="w-full p-3 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl flex items-center gap-3 transition-colors text-left text-xs font-semibold text-gray-700 cursor-pointer"
+                            className="w-full py-3 px-4 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-2xl font-black text-xs border-b-4 border-gray-300 flex items-center gap-3 transition-all cursor-pointer active:translate-y-[2px] active:border-b-2"
                           >
-                            <Star className="w-4 h-4 text-gray-400 shrink-0" />
-                            Sunting Profil Akun
+                            <Star className="w-4 h-4 text-gray-500 shrink-0" />
+                            <span>Sunting Profil Akun</span>
                           </button>
                         </div>
                       </div>

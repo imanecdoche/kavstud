@@ -25,7 +25,7 @@ import {
   Send, 
   HelpCircle, 
   X, 
-  Sparkles,
+  Loader2,
   GripVertical,
   Check,
   AlertCircle,
@@ -41,8 +41,9 @@ import {
   HelpCircle as QuestionIcon
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Assignment, AssignmentSettings, Question, UserProfile, Circle } from '../types';
+import { UserProfile, Circle, Assignment, Question } from '../types';
 import CustomDropdown from './CustomDropdown';
+import CustomDatePicker from './CustomDatePicker';
 
 interface AssignmentBuilderProps {
   assignmentId?: string; // If provided, we are in Edit Mode
@@ -537,7 +538,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center space-y-4">
-          <Sparkles className="w-8 h-8 text-indigo-600 animate-spin mx-auto" />
+          <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mx-auto" />
           <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Memuat Lembar Kerja Builder...</p>
         </div>
       </div>
@@ -551,10 +552,10 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
         <div className="flex items-center gap-3">
           <button
             onClick={() => onNavigate('/teacher')}
-            className="p-2 bg-gray-50 border border-gray-200 hover:border-gray-300 rounded-xl cursor-pointer transition-colors active:scale-95 shrink-0"
+            className="btn-duo-slate p-2 flex items-center justify-center cursor-pointer shrink-0"
             style={{ minWidth: '40px', minHeight: '40px' }}
           >
-            <ArrowLeft className="w-4 h-4 text-gray-600" />
+            <ArrowLeft className="w-4 h-4 text-gray-700" />
           </button>
           
           <div className="min-w-0">
@@ -576,52 +577,61 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
           </div>
         </div>
 
-        {/* Action Button Row */}
-        <div className="flex items-center gap-2 flex-wrap">
+        {/* Action Button Row - Icon Only, Publish Button Most Prominent */}
+        <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+            className={`p-2.5 text-xs font-black cursor-pointer transition-all rounded-xl ${
               isPreviewMode 
-                ? 'bg-indigo-600 border-indigo-600 text-white shadow-xs' 
-                : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'
+                ? 'btn-duo-blue' 
+                : 'btn-duo-slate'
             }`}
-            style={{ minHeight: '40px' }}
+            style={{ minWidth: '40px', minHeight: '40px' }}
+            title={isPreviewMode ? 'Keluar Pratinjau' : 'Pratinjau Siswa'}
+            aria-label="Pratinjau Siswa"
           >
-            <Eye className="w-4 h-4" />
-            {isPreviewMode ? 'Keluar Pratinjau' : 'Pratinjau Siswa'}
+            <Eye className="w-4.5 h-4.5" />
           </button>
 
           <button
+            type="button"
             onClick={() => setIsSettingsOpen(true)}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl text-xs font-bold transition-all cursor-pointer"
-            style={{ minHeight: '40px' }}
+            className="btn-duo-slate p-2.5 text-xs font-black flex items-center justify-center cursor-pointer rounded-xl"
+            style={{ minWidth: '40px', minHeight: '40px' }}
+            title="Pengaturan Tugas"
+            aria-label="Pengaturan Tugas"
           >
-            <Settings className="w-4 h-4 text-gray-400" />
-            Pengaturan
+            <Settings className="w-4.5 h-4.5 text-gray-700" />
           </button>
 
           <button
+            type="button"
             onClick={() => handleSave('draft')}
             disabled={saveLoading}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 rounded-xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50"
-            style={{ minHeight: '40px' }}
+            className="btn-duo-slate p-2.5 text-xs font-black flex items-center justify-center cursor-pointer disabled:opacity-50 rounded-xl"
+            style={{ minWidth: '40px', minHeight: '40px' }}
+            title="Simpan Draft"
+            aria-label="Simpan Draft"
           >
-            <Save className="w-4 h-4 text-gray-400" />
-            Simpan Draft
+            <Save className="w-4.5 h-4.5 text-gray-700" />
           </button>
 
+          {/* Most Prominent Publish Button */}
           <button
+            type="button"
             onClick={() => handleSave('published')}
             disabled={saveLoading}
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95 cursor-pointer disabled:opacity-50"
-            style={{ minHeight: '40px' }}
+            className="btn-duo-green p-3 text-xs font-black flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-md hover:scale-105 active:scale-95 transition-all rounded-xl"
+            style={{ minHeight: '40px', minWidth: '48px' }}
+            title="Publikasikan Tugas"
+            aria-label="Publikasikan Tugas"
           >
             {saveLoading ? (
-              <Sparkles className="w-4 h-4 animate-spin" />
+              <Loader2 className="w-5 h-5 animate-spin" />
             ) : (
-              <Send className="w-4 h-4" />
+              <Send className="w-5 h-5 text-white" />
             )}
-            Publikasikan
           </button>
         </div>
       </header>
@@ -827,7 +837,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
           <div className="w-full lg:w-3/4 space-y-6">
             
             {/* Quick Title Card */}
-            <div className="bg-white border border-gray-100 p-5 rounded-3xl shadow-3xs flex items-center justify-between gap-4">
+            <div className="card-duo p-5 flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
                   <FileText className="w-5 h-5" />
@@ -866,8 +876,8 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                   onDragStart={(e) => handleDragStart(e, index)}
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, index)}
-                  className={`bg-white border transition-all rounded-2xl p-5 sm:p-6 shadow-3xs space-y-4 relative ${
-                    draggedIndex === index ? 'opacity-40 border-dashed border-indigo-500 bg-indigo-50/20' : 'border-gray-100 hover:border-gray-200'
+                  className={`card-duo p-5 sm:p-6 space-y-4 relative ${
+                    draggedIndex === index ? 'opacity-40 border-dashed border-sky-500 bg-sky-50' : ''
                   }`}
                 >
                   {/* Header Question Actions */}
@@ -1278,7 +1288,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
 
         {/* 3. RIGHT SECTION: STICKY LIVE SUMMARY PANEL */}
         <aside className="w-full lg:w-1/4 lg:sticky lg:top-24 space-y-6">
-          <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-5">
+          <div className="card-duo p-6 space-y-5">
             <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Ringkasan Soal</h3>
             
             <div className="space-y-3.5 divide-y divide-gray-50">
@@ -1325,14 +1335,14 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
               </div>
             </div>
 
-            <div className="pt-2 border-t border-gray-50">
+            <div className="pt-2 border-t border-gray-100">
               <button
                 type="button"
                 onClick={() => setIsSettingsOpen(true)}
-                className="w-full py-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 text-xs font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-colors"
+                className="btn-duo-blue w-full py-3 text-xs font-black flex items-center justify-center gap-2 cursor-pointer"
               >
-                <Settings className="w-4 h-4 text-gray-400" />
-                Ubah Pengaturan Tugas
+                <Settings className="w-4 h-4 shrink-0" />
+                <span>Ubah Pengaturan Tugas</span>
               </button>
             </div>
           </div>
@@ -1342,14 +1352,14 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
       {/* 4. SETTINGS MODAL DIALOG */}
       <AnimatePresence>
         {isSettingsOpen && (
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto animate-fadeIn">
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ duration: 0.15 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-3xl border border-gray-100 w-full max-w-4xl p-6 sm:p-8 space-y-6 shadow-xl relative my-8"
+              className="modal-duo w-[880px] h-[660px] max-w-[95vw] max-h-[90vh] p-6 sm:p-8 space-y-6 relative overflow-y-auto my-auto"
             >
               <div className="flex items-center justify-between pb-4 border-b border-gray-50">
                 <div className="flex items-center gap-2">
@@ -1463,11 +1473,10 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="block text-xs font-semibold text-gray-700">Batas Pengumpulan (Deadline)</label>
-                      <input
-                        type="date"
+                      <CustomDatePicker
                         value={deadline}
-                        onChange={(e) => setDeadline(e.target.value)}
-                        className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs"
+                        onChange={(val) => setDeadline(val)}
+                        placeholder="Pilih Deadline"
                       />
                     </div>
                     <div className="space-y-1.5">

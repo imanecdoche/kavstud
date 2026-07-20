@@ -66,17 +66,17 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
       transition={{ duration: 0.25 }}
-      className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8" 
+      className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans" 
       id="login-page"
     >
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-6">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-4">
         {/* Typemark Logo */}
         <div className="flex justify-center">
-          <Logo className="h-10 w-auto text-indigo-600 animate-pulse" />
+          <Logo className="h-10 w-auto text-sky-600" />
         </div>
 
-        <div className="space-y-2">
-          <h2 className="text-3xl font-display font-bold text-gray-900 tracking-tight">
+        <div className="space-y-1.5">
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 tracking-tight">
             Masuk ke Akun Anda
           </h2>
           <p className="text-xs text-gray-500 max-w-sm mx-auto">
@@ -85,19 +85,19 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
         </div>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-6 border border-gray-100 rounded-3xl shadow-xs space-y-6 sm:px-10">
+      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="modal-duo p-6 sm:p-8 space-y-6 shadow-xl relative">
           {error && (
-            <div className="p-4 bg-red-50 border border-red-200/50 rounded-2xl text-xs text-red-600 flex items-start gap-2.5 animate-fadeIn" id="login-error-alert">
-              <span className="font-bold shrink-0">Kesalahan:</span>
-              <p className="leading-relaxed">{error}</p>
+            <div className="p-4 bg-red-50 border-2 border-red-200 rounded-2xl text-xs text-red-600 flex items-start gap-2.5 animate-fadeIn" id="login-error-alert">
+              <span className="font-bold shrink-0">⚠️ Kesalahan:</span>
+              <p className="leading-relaxed font-semibold">{error}</p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5" id="login-form">
+          <form onSubmit={handleSubmit} className="space-y-4" id="login-form">
             <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-xs font-semibold text-gray-700">
-                Email <span className="text-red-500">*</span>
+              <label htmlFor="email" className="block text-xs font-black text-gray-700 uppercase tracking-wider">
+                Email / Username <span className="text-red-500">*</span>
               </label>
               <div className="relative rounded-xl shadow-3xs">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
@@ -106,20 +106,20 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
                 <input
                   id="email"
                   name="email"
-                  type="email"
+                  type="text"
                   autoComplete="email"
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
-                  placeholder="name@school.com"
+                  className="block w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-sky-400"
+                  placeholder="name@kavio.stud.edu"
                   disabled={isSubmitting}
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="password" className="block text-xs font-semibold text-gray-700">
+              <label htmlFor="password" className="block text-xs font-black text-gray-700 uppercase tracking-wider">
                 Kata Sandi <span className="text-red-500">*</span>
               </label>
               <div className="relative rounded-xl shadow-3xs">
@@ -134,7 +134,7 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
+                  className="block w-full pl-10 pr-10 py-3 bg-white border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-sky-400"
                   placeholder="Masukkan kata sandi"
                   disabled={isSubmitting}
                 />
@@ -154,7 +154,7 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center gap-2.5 cursor-pointer transition-all active:scale-98"
+              className="w-full btn-duo-green py-3 px-4 text-xs font-black flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               style={{ minHeight: '44px' }}
               id="login-submit-button"
             >
@@ -172,24 +172,18 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
             </button>
           </form>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-100" />
-            </div>
-            <div className="relative flex justify-center text-xs">
-              <span className="px-3 bg-white text-gray-400">Belum punya akun?</span>
-            </div>
+          <div className="pt-2 border-t border-gray-100 text-center space-y-3">
+            <p className="text-xs text-gray-500 font-semibold">Belum memiliki akun Siswa?</p>
+            <button
+              type="button"
+              onClick={() => onNavigate('/register')}
+              className="w-full btn-duo-blue py-2.5 text-xs font-black flex items-center justify-center cursor-pointer"
+              id="go-to-register-button"
+              disabled={isSubmitting}
+            >
+              <span>Daftar Akun Baru</span>
+            </button>
           </div>
-
-          <button
-            onClick={() => onNavigate('/register')}
-            className="w-full py-3 px-4 border border-gray-200 hover:border-gray-300 text-gray-700 bg-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer transition-colors active:scale-98"
-            style={{ minHeight: '44px' }}
-            id="go-to-register-button"
-            disabled={isSubmitting}
-          >
-            Daftar Akun Baru
-          </button>
         </div>
       </div>
     </motion.div>
