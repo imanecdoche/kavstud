@@ -36,6 +36,7 @@ import { UserProfile } from '../types';
 import Logo from './Logo';
 import CustomDropdown from './CustomDropdown';
 import CustomDatePicker from './CustomDatePicker';
+import { usePushNotifications } from '../hooks/usePushNotifications';
 
 interface UserSettingsProps {
   onNavigate: (path: string) => void;
@@ -85,6 +86,9 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
   const [emailNotification, setEmailNotification] = useState(true);
   const [assignmentNotification, setAssignmentNotification] = useState(true);
   const [scoreNotification, setScoreNotification] = useState(true);
+
+  // Push Notifications Hook
+  const { fcmToken, notificationPermissionStatus, requestPermission } = usePushNotifications();
 
   // Save changes states
   const [isSaving, setIsSaving] = useState(false);
@@ -1064,6 +1068,31 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                       </div>
 
                       <div className="space-y-4">
+                        {/* PWA Push Notification */}
+                        <div className="flex items-start justify-between gap-4 p-3 bg-indigo-50/50 rounded-xl border border-indigo-100/50">
+                          <div className="space-y-0.5">
+                            <span className="text-xs font-bold text-gray-800 block">Push Notification (FCM)</span>
+                            <span className="text-[10px] text-gray-500 block leading-relaxed">
+                              Terima notifikasi di latar belakang meskipun browser ditutup.
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (notificationPermissionStatus !== 'granted') {
+                                requestPermission();
+                              }
+                            }}
+                            className={`w-10 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none shrink-0 ${
+                              notificationPermissionStatus === 'granted' ? 'bg-indigo-600' : 'bg-gray-200'
+                            }`}
+                          >
+                            <div className={`w-4 h-4 rounded-full bg-white transition-transform duration-200 ${
+                              notificationPermissionStatus === 'granted' ? 'translate-x-5' : 'translate-x-0'
+                            }`} />
+                          </button>
+                        </div>
+
                         {/* Email Notification */}
                         <div className="flex items-start justify-between gap-4 p-3 bg-gray-50/50 rounded-xl border border-gray-100/50">
                           <div className="space-y-0.5">
