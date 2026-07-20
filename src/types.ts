@@ -6,6 +6,20 @@ export interface UserProfile {
   email: string;
   role: UserRole;
   createdAt: any; // Firestore Timestamp
+  updatedAt?: any; // Firestore Timestamp
+  phone?: string;
+  photoURL?: string;
+  dateOfBirth?: string; // YYYY-MM-DD format
+  age?: number;
+  gender?: string;
+  bio?: string;
+  language?: 'English' | 'Bahasa Indonesia';
+  theme?: 'Light' | 'Dark' | 'System';
+  notifications?: {
+    email: boolean;
+    assignment: boolean;
+    score: boolean;
+  };
 }
 
 export interface Assignment {

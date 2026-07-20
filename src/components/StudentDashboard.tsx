@@ -19,7 +19,8 @@ import {
   Sparkles, 
   AlertCircle,
   HelpCircle,
-  MessageSquare
+  MessageSquare,
+  Settings
 } from 'lucide-react';
 import { UserProfile, Assignment, Submission } from '../types';
 import Logo from './Logo';
@@ -184,8 +185,12 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
           {/* Student Profile */}
           <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100/50 space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 font-bold text-sm">
-                {studentProfile?.fullName?.charAt(0).toUpperCase() || 'S'}
+              <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 font-bold text-sm overflow-hidden shrink-0">
+                {studentProfile?.photoURL ? (
+                  <img src={studentProfile.photoURL} alt={studentProfile.fullName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                ) : (
+                  studentProfile?.fullName?.charAt(0).toUpperCase() || 'S'
+                )}
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-gray-900 truncate">
@@ -197,6 +202,13 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
               </div>
             </div>
             <p className="text-[10px] text-gray-400 truncate">{studentProfile?.email}</p>
+            <button
+              onClick={() => { onNavigate('/settings'); setIsSidebarOpen(false); }}
+              className="w-full mt-2 py-1.5 px-3 bg-white hover:bg-gray-100 border border-gray-200/60 rounded-xl text-[10px] font-bold text-gray-700 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <Settings className="w-3.5 h-3.5 text-gray-500" />
+              Pengaturan Profil
+            </button>
           </div>
 
           <nav className="space-y-1">
@@ -205,10 +217,17 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
             </div>
             <button
               onClick={() => { onNavigate('/student'); setIsSidebarOpen(false); }}
-              className="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50/50 flex items-center gap-2.5 transition-all"
+              className="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50/50 flex items-center gap-2.5 transition-all cursor-pointer"
             >
               <BookOpen className="w-4 h-4" />
               Tugas & Aktivitas
+            </button>
+            <button
+              onClick={() => { onNavigate('/settings'); setIsSidebarOpen(false); }}
+              className="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold text-gray-500 hover:text-indigo-600 hover:bg-indigo-50/20 flex items-center gap-2.5 transition-all cursor-pointer"
+            >
+              <Settings className="w-4 h-4" />
+              Pengaturan Akun
             </button>
           </nav>
         </div>

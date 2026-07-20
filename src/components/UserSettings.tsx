@@ -1,0 +1,1211 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { auth, db, storage } from '../firebase';
+import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
+import { 
+  EmailAuthProvider, 
+  reauthenticateWithCredential, 
+  updatePassword 
+} from 'firebase/auth';
+import { 
+  User, 
+  Shield, 
+  Sliders, 
+  UserCheck, 
+  Camera, 
+  Check, 
+  X, 
+  Loader2, 
+  Lock, 
+  Mail, 
+  Phone, 
+  Calendar, 
+  AlertCircle, 
+  CheckCircle2, 
+  Eye, 
+  EyeOff, 
+  ArrowLeft, 
+  Clock, 
+  Sparkles, 
+  Globe, 
+  Palette, 
+  Bell,
+  Trash2
+} from 'lucide-react';
+import { UserProfile } from '../types';
+import Logo from './Logo';
+
+interface UserSettingsProps {
+  onNavigate: (path: string) => void;
+  onSetLoading: (loading: boolean) => void;
+}
+
+type SettingsTab = 'profile' | 'security' | 'preferences' | 'account';
+
+export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsProps) {
+  const [currentUserProfile, setCurrentUserProfile] = useState<UserProfile | null>(null);
+  const [originalProfile, setOriginalProfile] = useState<UserProfile | null>(null);
+  const [activeTab, setActiveTab] = useState<SettingsTab>('profile');
+  const [loading, setLoading] = useState(true);
+  
+  // General feedback toasts
+  const [toast, setToast] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+
+  // Profile Form States
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [dateOfBirth, setDateOfBirth] = useState('');
+  const [calculatedAge, setCalculatedAge] = useState<number | null>(null);
+  const [gender, setGender] = useState('');
+  const [bio, setBio] = useState('');
+  
+  // Profile Picture States
+  const [photoURL, setPhotoURL] = useState('');
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Security Form States
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword] = useState(''); // wait, let's define both state or combine
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState({ score: 0, text: 'Sangat Lemah', color: 'bg-red-500' });
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  // Preferences Form States
+  const [language, setLanguage] = useState<'English' | 'Bahasa Indonesia'>('English');
+  const [theme, setTheme] = useState<'Light' | 'Dark' | 'System'>('Light');
+  const [emailNotification, setEmailNotification] = useState(true);
+  const [assignmentNotification, setAssignmentNotification] = useState(true);
+  const [scoreNotification, setScoreNotification] = useState(true);
+
+  // Save changes states
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Check if there are unsaved changes
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  // Calculate age based on birthdate
+  const getAge = (dobString: string): number | null => {
+    if (!dobString) return null;
+    const today = new Date();
+    const birthDate = new Date(dobString);
+    if (isNaN(birthDate.getTime())) return null;
+    
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age >= 0 ? age : 0;
+  };
+
+  // Load User Profile from Firestore
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (!user) {
+      onNavigate('/login');
+      return;
+    }
+
+    const loadProfileData = async () => {
+      try {
+        setLoading(true);
+        const userDocRef = doc(db, 'users', user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        
+        if (userDocSnap.exists()) {
+          const profile = userDocSnap.data() as UserProfile;
+          setCurrentUserProfile(profile);
+          setOriginalProfile(profile);
+
+          // Populate Form States
+          setFullName(profile.fullName || '');
+          setPhone(profile.phone || '');
+          setDateOfBirth(profile.dateOfBirth || '');
+          setGender(profile.gender || '');
+          setBio(profile.bio || '');
+          setPhotoURL(profile.photoURL || '');
+
+          // Preferences
+          setLanguage(profile.language || 'English');
+          setTheme(profile.theme || 'Light');
+          if (profile.notifications) {
+            setEmailNotification(profile.notifications.email);
+            setAssignmentNotification(profile.notifications.assignment);
+            setScoreNotification(profile.notifications.score);
+          }
+        }
+      } catch (err) {
+        console.error('Error loading user profile settings:', err);
+        showToast('error', 'Gagal memuat profil pengguna.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfileData();
+  }, [onNavigate]);
+
+  // Handle Automatic Age Calculation whenever Date of Birth changes
+  useEffect(() => {
+    if (dateOfBirth) {
+      const calculated = getAge(dateOfBirth);
+      setCalculatedAge(calculated);
+    } else {
+      setCalculatedAge(null);
+    }
+  }, [dateOfBirth]);
+
+  // Monitor Unsaved Changes
+  useEffect(() => {
+    if (!originalProfile) {
+      setHasUnsavedChanges(false);
+      return;
+    }
+
+    const matchesOriginal = 
+      fullName === (originalProfile.fullName || '') &&
+      phone === (originalProfile.phone || '') &&
+      dateOfBirth === (originalProfile.dateOfBirth || '') &&
+      gender === (originalProfile.gender || '') &&
+      bio === (originalProfile.bio || '') &&
+      photoURL === (originalProfile.photoURL || '') &&
+      language === (originalProfile.language || 'English') &&
+      theme === (originalProfile.theme || 'Light') &&
+      emailNotification === (originalProfile.notifications?.email ?? true) &&
+      assignmentNotification === (originalProfile.notifications?.assignment ?? true) &&
+      scoreNotification === (originalProfile.notifications?.score ?? true);
+
+    setHasUnsavedChanges(!matchesOriginal);
+  }, [
+    fullName, phone, dateOfBirth, gender, bio, photoURL, 
+    language, theme, emailNotification, assignmentNotification, scoreNotification, 
+    originalProfile
+  ]);
+
+  // Monitor Password Strength
+  useEffect(() => {
+    if (!newPassword) {
+      setPasswordStrength({ score: 0, text: 'Sangat Lemah', color: 'bg-red-500' });
+      return;
+    }
+
+    let score = 0;
+    if (newPassword.length >= 8) score += 1;
+    if (/[A-Z]/.test(newPassword)) score += 1;
+    if (/[a-z]/.test(newPassword)) score += 1;
+    if (/[0-9]/.test(newPassword)) score += 1;
+    if (/[^A-Za-z0-9]/.test(newPassword)) score += 1;
+
+    let text = 'Sangat Lemah';
+    let color = 'bg-red-500';
+
+    if (score === 5) {
+      text = 'Sangat Kuat (Kavio Fortress)';
+      color = 'bg-emerald-600';
+    } else if (score >= 4) {
+      text = 'Kuat';
+      color = 'bg-green-500';
+    } else if (score >= 3) {
+      text = 'Sedang';
+      color = 'bg-amber-500';
+    } else if (score >= 2) {
+      text = 'Lemah';
+      color = 'bg-orange-500';
+    }
+
+    setPasswordStrength({ score, text, color });
+  }, [newPassword]);
+
+  const showToast = (type: 'success' | 'error', message: string) => {
+    setToast({ type, message });
+    setTimeout(() => setToast(null), 4000);
+  };
+
+  // Handle Profile Photo Upload
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validation
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      setUploadError('Tipe file tidak didukung. Harap unggah file JPG, PNG, atau WEBP.');
+      return;
+    }
+
+    const maxSize = 10 * 1024 * 1024; // Increase tolerance to 10 MB for local resizing
+    if (file.size > maxSize) {
+      setUploadError('Ukuran file terlalu besar. Harap pilih gambar di bawah 10 MB.');
+      return;
+    }
+
+    const user = auth.currentUser;
+    if (!user) return;
+
+    setUploadError(null);
+    setUploadProgress(10); // Start progress bar
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      setUploadProgress(40);
+      const img = new Image();
+      img.onload = () => {
+        setUploadProgress(70);
+        
+        // Canvas resizing to keep base64 string small and light for Firestore
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 250;
+        const MAX_HEIGHT = 250;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height) {
+          if (width > MAX_WIDTH) {
+            height *= MAX_WIDTH / width;
+            width = MAX_WIDTH;
+          }
+        } else {
+          if (height > MAX_HEIGHT) {
+            width *= MAX_HEIGHT / height;
+            height = MAX_HEIGHT;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          // Draw image on canvas
+          ctx.drawImage(img, 0, 0, width, height);
+          
+          // Export canvas to high-quality compressed JPEG
+          try {
+            const dataURL = canvas.toDataURL('image/jpeg', 0.8);
+            setUploadProgress(100);
+            setTimeout(() => {
+              setPhotoURL(dataURL);
+              setUploadProgress(null);
+              showToast('success', 'Foto profil berhasil diunggah secara lokal. Klik "Simpan Perubahan" di bagian bawah untuk menyimpan ke cloud.');
+            }, 300);
+          } catch (err) {
+            console.error('Error generating canvas data URL:', err);
+            // Fallback to original image data URL
+            setPhotoURL(event.target?.result as string);
+            setUploadProgress(null);
+            showToast('success', 'Foto profil berhasil diproses. Klik "Simpan Perubahan" di bagian bawah.');
+          }
+        } else {
+          // Fallback if canvas context is not supported
+          setPhotoURL(event.target?.result as string);
+          setUploadProgress(null);
+          showToast('success', 'Foto profil berhasil diproses. Klik "Simpan Perubahan" di bagian bawah.');
+        }
+      };
+      img.onerror = () => {
+        setUploadError('Gagal memproses file gambar. Silakan coba file lain.');
+        setUploadProgress(null);
+      };
+      if (event.target?.result) {
+        img.src = event.target.result as string;
+      }
+    };
+    reader.onerror = () => {
+      setUploadError('Gagal membaca file.');
+      setUploadProgress(null);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Handle Photo Removal
+  const handleRemovePhoto = async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    try {
+      setUploadProgress(10);
+      setPhotoURL('');
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      setUploadProgress(null);
+      showToast('success', 'Foto profil dilepas. Klik Simpan Perubahan untuk memperbarui database.');
+    } catch (err) {
+      console.error('Error removing profile photo:', err);
+      showToast('error', 'Gagal melepas foto.');
+      setUploadProgress(null);
+    }
+  };
+
+  // Profile Save Action
+  const handleSaveProfile = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const user = auth.currentUser;
+    if (!user) return;
+
+    // Validate Phone Number
+    if (phone.trim()) {
+      const cleanPhone = phone.replace(/\s+/g, '');
+      const phoneRegex = /^\+?[0-9]{8,15}$/;
+      if (!phoneRegex.test(cleanPhone)) {
+        showToast('error', 'Format nomor telepon tidak valid. Gunakan format angka saja atau sertakan kode negara (misal +628123456789).');
+        return;
+      }
+    }
+
+    setIsSaving(true);
+
+    try {
+      const userDocRef = doc(db, 'users', user.uid);
+      
+      const payload: Partial<UserProfile> = {
+        fullName: fullName.trim(),
+        phone: phone.trim(),
+        dateOfBirth: dateOfBirth,
+        age: calculatedAge !== null ? calculatedAge : undefined,
+        gender: gender,
+        bio: bio.trim(),
+        photoURL: photoURL,
+        language: language,
+        theme: theme,
+        notifications: {
+          email: emailNotification,
+          assignment: assignmentNotification,
+          score: scoreNotification
+        },
+        updatedAt: serverTimestamp()
+      };
+
+      await updateDoc(userDocRef, payload);
+
+      // Refresh original profile state to avoid unsaved changes popup
+      const updatedProfile: UserProfile = {
+        ...originalProfile!,
+        ...payload
+      };
+      
+      setOriginalProfile(updatedProfile);
+      setCurrentUserProfile(updatedProfile);
+      setHasUnsavedChanges(false);
+
+      showToast('success', 'Pengaturan profil Anda berhasil disimpan secara real-time!');
+    } catch (err) {
+      console.error('Error saving profile changes:', err);
+      showToast('error', 'Gagal menyimpan perubahan. Silakan coba lagi.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // Reset/Cancel Changes
+  const handleCancelChanges = () => {
+    if (!originalProfile) return;
+
+    // Revert States
+    setFullName(originalProfile.fullName || '');
+    setPhone(originalProfile.phone || '');
+    setDateOfBirth(originalProfile.dateOfBirth || '');
+    setGender(originalProfile.gender || '');
+    setBio(originalProfile.bio || '');
+    setPhotoURL(originalProfile.photoURL || '');
+    setLanguage(originalProfile.language || 'English');
+    setTheme(originalProfile.theme || 'Light');
+    
+    if (originalProfile.notifications) {
+      setEmailNotification(originalProfile.notifications.email);
+      setAssignmentNotification(originalProfile.notifications.assignment);
+      setScoreNotification(originalProfile.notifications.score);
+    }
+
+    setHasUnsavedChanges(false);
+    showToast('success', 'Perubahan dibatalkan dan dikembalikan ke data asli.');
+  };
+
+  // Password Change Handler
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const user = auth.currentUser;
+    if (!user || !user.email) return;
+
+    if (!currentPassword) {
+      setPasswordError('Sandi saat ini wajib diisi untuk keamanan autentikasi.');
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setPasswordError('Sandi baru harus terdiri dari minimal 8 karakter.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('Konfirmasi sandi baru tidak cocok dengan sandi baru.');
+      return;
+    }
+
+    setIsUpdatingPassword(true);
+    setPasswordError(null);
+
+    try {
+      // Reauthenticate user
+      const credential = EmailAuthProvider.credential(user.email, currentPassword);
+      await reauthenticateWithCredential(user, credential);
+
+      // Update password
+      await updatePassword(user, newPassword);
+
+      // Reset fields
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
+      
+      showToast('success', 'Kata sandi Anda berhasil diperbarui.');
+    } catch (err: any) {
+      console.error('Error changing password:', err);
+      if (err.code === 'auth/wrong-password') {
+        setPasswordError('Kata sandi saat ini salah.');
+      } else if (err.code === 'auth/weak-password') {
+        setPasswordError('Kata sandi baru dinilai terlalu lemah oleh sistem keamanan.');
+      } else {
+        setPasswordError('Gagal mengubah kata sandi. Pastikan kredensial Anda benar.');
+      }
+    } finally {
+      setIsUpdatingPassword(false);
+    }
+  };
+
+  const handleBack = () => {
+    if (currentUserProfile?.role === 'teacher') {
+      onNavigate('/teacher');
+    } else {
+      onNavigate('/student');
+    }
+  };
+
+  const isTeacher = currentUserProfile?.role === 'teacher';
+
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col font-sans" id="user-settings-page">
+      {/* Toast Alert Banner */}
+      {toast && (
+        <div 
+          className={`fixed bottom-6 right-6 z-50 p-4 rounded-2xl shadow-lg border text-xs font-semibold flex items-center gap-3 animate-slideIn ${
+            toast.type === 'success' 
+              ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
+              : 'bg-rose-50 text-rose-800 border-rose-200'
+          }`}
+          id="toast-notification"
+        >
+          {toast.type === 'success' ? (
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+          ) : (
+            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
+          )}
+          <span>{toast.message}</span>
+        </div>
+      )}
+
+      {/* Main Header */}
+      <header className="bg-white border-b border-gray-100 px-4 py-4 sticky top-0 z-30">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={handleBack}
+              className="p-2.5 bg-white border border-gray-200 hover:border-gray-300 rounded-xl cursor-pointer transition-colors active:scale-95"
+              style={{ minWidth: '44px', minHeight: '44px' }}
+              aria-label="Kembali"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-700" />
+            </button>
+            
+            <div className="flex flex-col">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Konfigurasi Pengguna</span>
+              <h1 className="text-lg sm:text-xl font-display font-bold text-gray-900 tracking-tight mt-1">
+                Pengaturan Akun & Profil
+              </h1>
+            </div>
+          </div>
+
+          <div className="hidden sm:block">
+            <Logo className="h-6 w-auto text-indigo-600" />
+          </div>
+        </div>
+      </header>
+
+      {/* Main Container */}
+      <div className="flex-1 max-w-6xl w-full mx-auto px-4 py-8 flex flex-col md:flex-row gap-8">
+        
+        {/* Left Side: Sidebar navigation tabs */}
+        <div className="w-full md:w-64 shrink-0 flex flex-col gap-4">
+          
+          {/* User Profile Summary Card */}
+          <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
+            <div className="flex items-center gap-3.5">
+              <div className="relative group">
+                <div className="w-12 h-12 bg-indigo-50 border border-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600 font-bold text-base overflow-hidden">
+                  {photoURL ? (
+                    <img src={photoURL} alt={fullName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                  ) : (
+                    fullName?.charAt(0).toUpperCase() || 'U'
+                  )}
+                </div>
+              </div>
+              <div className="min-w-0">
+                <h3 className="text-xs font-bold text-gray-900 truncate">{fullName || 'Memuat...'}</h3>
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 mt-1 rounded-md text-[9px] font-bold uppercase border ${
+                  isTeacher 
+                    ? 'bg-indigo-50 text-indigo-700 border-indigo-100' 
+                    : 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                }`}>
+                  {isTeacher ? 'Pengajar' : 'Siswa'}
+                </span>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-50 pt-3">
+              <p className="text-[10px] text-gray-400 font-mono truncate">{currentUserProfile?.email}</p>
+            </div>
+          </div>
+
+          {/* Navigation Tabs */}
+          <div className="bg-white border border-gray-100 rounded-3xl p-3 shadow-3xs flex flex-row md:flex-col gap-1 overflow-x-auto">
+            <button
+              onClick={() => setActiveTab('profile')}
+              className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center gap-3 transition-all ${
+                activeTab === 'profile'
+                  ? 'text-indigo-600 bg-indigo-50/50'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50/50'
+              }`}
+            >
+              <User className="w-4 h-4 shrink-0" />
+              <span>Profil Saya</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('security')}
+              className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center gap-3 transition-all ${
+                activeTab === 'security'
+                  ? 'text-indigo-600 bg-indigo-50/50'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50/50'
+              }`}
+            >
+              <Shield className="w-4 h-4 shrink-0" />
+              <span>Keamanan</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('preferences')}
+              className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center gap-3 transition-all ${
+                activeTab === 'preferences'
+                  ? 'text-indigo-600 bg-indigo-50/50'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50/50'
+              }`}
+            >
+              <Sliders className="w-4 h-4 shrink-0" />
+              <span>Preferensi</span>
+            </button>
+
+            <button
+              onClick={() => setActiveTab('account')}
+              className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-2xl text-xs font-bold flex items-center gap-3 transition-all ${
+                activeTab === 'account'
+                  ? 'text-indigo-600 bg-indigo-50/50'
+                  : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50/50'
+              }`}
+            >
+              <UserCheck className="w-4 h-4 shrink-0" />
+              <span>Status Akun</span>
+            </button>
+          </div>
+
+          {/* Unsaved Warning Banner */}
+          {hasUnsavedChanges && (
+            <div className="bg-amber-50/80 border border-amber-200 p-4 rounded-3xl space-y-3">
+              <div className="flex gap-2">
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-bold text-amber-900">Perubahan Belum Disimpan</p>
+                  <p className="text-[10px] text-amber-700/90 leading-relaxed mt-0.5">
+                    Anda memodifikasi beberapa informasi profil. Simpan perubahan sebelum meninggalkan halaman.
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={handleSaveProfile}
+                  disabled={isSaving}
+                  className="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-bold shadow-xs active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1"
+                >
+                  {isSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
+                  Simpan
+                </button>
+                <button
+                  onClick={handleCancelChanges}
+                  className="flex-1 py-1.5 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 rounded-xl text-[10px] font-bold active:scale-95 transition-all cursor-pointer"
+                >
+                  Batalkan
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Right Side: Active Form Container */}
+        <div className="flex-1 min-w-0">
+          
+          {loading ? (
+            /* Loading Skeletons */
+            <div className="bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 space-y-6 shadow-3xs animate-pulse">
+              <div className="h-6 w-48 bg-gray-200 rounded-lg" />
+              <div className="flex items-center gap-4">
+                <div className="w-20 h-20 bg-gray-200 rounded-2xl" />
+                <div className="space-y-2 flex-1">
+                  <div className="h-4 bg-gray-200 rounded-lg w-1/3" />
+                  <div className="h-3 bg-gray-200 rounded-lg w-1/4" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="h-10 bg-gray-200 rounded-xl" />
+                <div className="h-10 bg-gray-200 rounded-xl" />
+                <div className="h-10 bg-gray-200 rounded-xl" />
+                <div className="h-10 bg-gray-200 rounded-xl" />
+              </div>
+            </div>
+          ) : (
+            <div className="bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 shadow-3xs">
+              
+              {/* TAB 1: PROFILE FORM */}
+              {activeTab === 'profile' && (
+                <form onSubmit={handleSaveProfile} className="space-y-6">
+                  <div>
+                    <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Profil Publik Saya</h2>
+                    <p className="text-[11px] text-gray-400 mt-0.5">Kelola foto identitas, nomor kontak, serta deskripsi biografi akademis.</p>
+                  </div>
+
+                  {/* Profile Photo Uploader */}
+                  <div className="bg-gray-50 border border-gray-100 p-5 rounded-2xl flex flex-col sm:flex-row items-center gap-5">
+                    <div className="relative">
+                      <div className="w-20 h-20 bg-indigo-50 border border-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600 font-bold text-2xl overflow-hidden shadow-xs">
+                        {photoURL ? (
+                          <img src={photoURL} alt="Avatar Preview" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                        ) : (
+                          fullName?.charAt(0).toUpperCase() || 'U'
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="absolute -bottom-1.5 -right-1.5 bg-indigo-600 hover:bg-indigo-700 text-white p-1.5 rounded-lg border-2 border-white shadow-xs cursor-pointer transition-transform hover:scale-110 active:scale-95"
+                        style={{ minWidth: '28px', minHeight: '28px' }}
+                        aria-label="Ubah Foto"
+                      >
+                        <Camera className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    <div className="flex-1 text-center sm:text-left space-y-2">
+                      <p className="text-xs font-bold text-gray-800">Foto Identitas Akun</p>
+                      <p className="text-[10px] text-gray-400 leading-relaxed max-w-sm">
+                        Mendukung file format JPG, PNG, atau WEBP. Maksimal ukuran 5 MB.
+                      </p>
+
+                      <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-[10px] font-bold active:scale-95 transition-all cursor-pointer"
+                        >
+                          Pilih Foto Baru
+                        </button>
+                        
+                        {photoURL && (
+                          <button
+                            type="button"
+                            onClick={handleRemovePhoto}
+                            className="px-3 py-1.5 border border-red-200 hover:bg-red-50 text-red-600 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-all cursor-pointer"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                            Lepas Foto
+                          </button>
+                        )}
+                      </div>
+
+                      {uploadProgress !== null && (
+                        <div className="space-y-1.5 max-w-xs pt-1 mx-auto sm:mx-0">
+                          <div className="flex justify-between items-center text-[10px] font-bold text-indigo-500">
+                            <span>Mengunggah file...</span>
+                            <span>{uploadProgress}%</span>
+                          </div>
+                          <div className="w-full h-1.5 bg-indigo-100 rounded-full overflow-hidden">
+                            <div className="h-full bg-indigo-600 transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                          </div>
+                        </div>
+                      )}
+
+                      {uploadError && (
+                        <p className="text-[10px] font-semibold text-rose-600 flex items-center justify-center sm:justify-start gap-1">
+                          <AlertCircle className="w-3.5 h-3.5" />
+                          {uploadError}
+                        </p>
+                      )}
+                    </div>
+
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handlePhotoUpload}
+                      accept="image/jpeg,image/png,image/webp"
+                      className="hidden"
+                    />
+                  </div>
+
+                  {/* Form Fields Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    {/* Full Name */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-gray-700">Nama Lengkap <span className="text-red-500">*</span></label>
+                      <input
+                        type="text"
+                        required
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
+                        className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                        placeholder="Nama lengkap Anda"
+                      />
+                    </div>
+
+                    {/* Email (Read-only) */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-gray-500">Alamat Email (Akun Utama)</label>
+                      <div className="relative">
+                        <input
+                          type="email"
+                          readOnly
+                          value={currentUserProfile?.email || ''}
+                          className="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-400 rounded-xl text-xs cursor-not-allowed"
+                        />
+                        <Mail className="absolute right-3.5 top-3 w-4 h-4 text-gray-300" />
+                      </div>
+                      <p className="text-[9px] text-gray-400 mt-1">Guna mengganti alamat email silakan hubungi administrator Kavio Edu.</p>
+                    </div>
+
+                    {/* Phone Number */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-gray-700">Nomor Telepon</label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          className="block w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                          placeholder="+628123456789"
+                        />
+                        <Phone className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
+                      </div>
+                      <p className="text-[9px] text-gray-400 mt-1">Gunakan format angka internasional (misal +628123456789).</p>
+                    </div>
+
+                    {/* Date of Birth & Age Block */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-gray-700">Tanggal Lahir</label>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="col-span-2 relative">
+                          <input
+                            type="date"
+                            value={dateOfBirth}
+                            onChange={(e) => setDateOfBirth(e.target.value)}
+                            className="block w-full pl-10 pr-3 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                          />
+                          <Calendar className="absolute left-3.5 top-3 w-4 h-4 text-gray-400 pointer-events-none" />
+                        </div>
+                        <div className="col-span-1 bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-2.5 text-center flex flex-col justify-center min-w-0">
+                          <span className="text-[8px] font-bold text-gray-400 uppercase tracking-wider block">Umur</span>
+                          <span className="text-xs font-bold text-gray-800 block truncate">
+                            {calculatedAge !== null ? `${calculatedAge} Tahun` : '-'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Gender */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-gray-700">Jenis Kelamin</label>
+                      <select
+                        value={gender}
+                        onChange={(e) => setGender(e.target.value)}
+                        className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                      >
+                        <option value="">Pilih jenis kelamin</option>
+                        <option value="Laki-laki">Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                        <option value="Lainnya">Lainnya</option>
+                      </select>
+                    </div>
+
+                    {/* Bio / About */}
+                    <div className="space-y-1.5 sm:col-span-2">
+                      <label className="block text-xs font-semibold text-gray-700">Tentang Saya / Bio Singkat</label>
+                      <textarea
+                        value={bio}
+                        onChange={(e) => setBio(e.target.value)}
+                        rows={3}
+                        maxLength={500}
+                        className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"
+                        placeholder="Tuliskan biografi akademis singkat Anda..."
+                      />
+                      <div className="flex justify-end">
+                        <span className="text-[9px] text-gray-400 font-mono">{bio.length} / 500 karakter</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Form Footer Action */}
+                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-50">
+                    <button
+                      type="button"
+                      onClick={handleCancelChanges}
+                      disabled={!hasUnsavedChanges || isSaving}
+                      className="px-5 py-2.5 bg-white border border-gray-200 hover:border-gray-300 text-gray-700 font-bold rounded-xl text-xs transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Batal
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={!hasUnsavedChanges || isSaving}
+                      className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold rounded-xl text-xs shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                    >
+                      {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                      Simpan Perubahan
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* TAB 2: SECURITY (PASSWORD CHANGE) */}
+              {activeTab === 'security' && (
+                <form onSubmit={handleChangePassword} className="space-y-6">
+                  <div>
+                    <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Keamanan & Sandi Akses</h2>
+                    <p className="text-[11px] text-gray-400 mt-0.5">Amankan akses sistem dengan memperbarui kata sandi secara periodik.</p>
+                  </div>
+
+                  {passwordError && (
+                    <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-600 flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
+                      <p className="font-semibold">{passwordError}</p>
+                    </div>
+                  )}
+
+                  <div className="space-y-4 max-w-lg">
+                    {/* Current Password */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-gray-700">Kata Sandi Saat Ini <span className="text-red-500">*</span></label>
+                      <div className="relative">
+                        <input
+                          type={showCurrentPassword ? 'text' : 'password'}
+                          required
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                          className="block w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                          placeholder="Masukkan kata sandi lama"
+                        />
+                        <Lock className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
+                        <button
+                          type="button"
+                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                          className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 p-1 rounded-md"
+                        >
+                          {showCurrentPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* New Password */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-gray-700">Kata Sandi Baru <span className="text-red-500">*</span></label>
+                      <div className="relative">
+                        <input
+                          type={showNewPassword ? 'text' : 'password'}
+                          required
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          className="block w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                          placeholder="Minimal 8 karakter"
+                        />
+                        <Lock className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
+                        <button
+                          type="button"
+                          onClick={() => setShowNewPassword(!showNewPassword)}
+                          className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 p-1 rounded-md"
+                        >
+                          {showNewPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+
+                      {/* Password Strength Indicator */}
+                      {newPassword && (
+                        <div className="space-y-1.5 pt-1">
+                          <div className="flex justify-between items-center text-[10px]">
+                            <span className="font-semibold text-gray-500">Kekuatan Sandi:</span>
+                            <span className="font-bold text-gray-700">{passwordStrength.text}</span>
+                          </div>
+                          <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden flex gap-0.5">
+                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 1 ? passwordStrength.color : 'bg-gray-100'}`} />
+                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 2 ? passwordStrength.color : 'bg-gray-100'}`} />
+                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 3 ? passwordStrength.color : 'bg-gray-100'}`} />
+                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 4 ? passwordStrength.color : 'bg-gray-100'}`} />
+                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 5 ? passwordStrength.color : 'bg-gray-100'}`} />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Confirm Password */}
+                    <div className="space-y-1.5">
+                      <label className="block text-xs font-semibold text-gray-700">Konfirmasi Kata Sandi Baru <span className="text-red-500">*</span></label>
+                      <div className="relative">
+                        <input
+                          type={showConfirmPassword ? 'text' : 'password'}
+                          required
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          className="block w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                          placeholder="Masukkan ulang kata sandi baru"
+                        />
+                        <Lock className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 p-1 rounded-md"
+                        >
+                          {showConfirmPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-50">
+                    <button
+                      type="submit"
+                      disabled={isUpdatingPassword || !newPassword || !currentPassword}
+                      className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold rounded-xl text-xs shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                    >
+                      {isUpdatingPassword && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                      Ubah Kata Sandi
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* TAB 3: PREFERENCES (LANGUAGE, THEME, NOTIFICATIONS) */}
+              {activeTab === 'preferences' && (
+                <div className="space-y-8">
+                  <div>
+                    <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Preferensi Aplikasi</h2>
+                    <p className="text-[11px] text-gray-400 mt-0.5">Atur bahasa tampilan, preferensi visual, dan notifikasi aktivitas kelas digital.</p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                    
+                    {/* Column 1: Localization & Appearance */}
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-2 border-b border-gray-50 pb-3">
+                        <Globe className="w-4 h-4 text-indigo-500" />
+                        <h3 className="text-xs font-bold text-gray-800">Tampilan & Regional</h3>
+                      </div>
+
+                      {/* Language */}
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-semibold text-gray-700">Bahasa Tampilan (Localization)</label>
+                        <select
+                          value={language}
+                          onChange={(e) => setLanguage(e.target.value as any)}
+                          className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                        >
+                          <option value="English">English</option>
+                          <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                        </select>
+                        <p className="text-[9px] text-gray-400 mt-1">Bahasa pengantar sistem yang diutamakan oleh Anda.</p>
+                      </div>
+
+                      {/* Theme selection placeholder */}
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-semibold text-gray-700">Tema Visual (Theme Color)</label>
+                        <div className="grid grid-cols-3 gap-2">
+                          {(['Light', 'Dark', 'System'] as const).map((t) => (
+                            <button
+                              key={t}
+                              type="button"
+                              onClick={() => setTheme(t)}
+                              className={`py-2 px-3 rounded-xl border text-center text-xs font-bold transition-all cursor-pointer ${
+                                theme === t
+                                  ? 'bg-indigo-50 text-indigo-600 border-indigo-200'
+                                  : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                              }`}
+                            >
+                              {t === 'Light' && 'Terang'}
+                              {t === 'Dark' && 'Gelap'}
+                              {t === 'System' && 'Sistem'}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Column 2: Notification Toggle Panel */}
+                    <div className="space-y-6">
+                      <div className="flex items-center gap-2 border-b border-gray-50 pb-3">
+                        <Bell className="w-4 h-4 text-indigo-500" />
+                        <h3 className="text-xs font-bold text-gray-800">Pemberitahuan & Notifikasi</h3>
+                      </div>
+
+                      <div className="space-y-4">
+                        {/* Email Notification */}
+                        <div className="flex items-start justify-between gap-4 p-3 bg-gray-50/50 rounded-xl border border-gray-100/50">
+                          <div className="space-y-0.5">
+                            <span className="text-xs font-bold text-gray-800 block">Notifikasi Email</span>
+                            <span className="text-[10px] text-gray-400 block leading-relaxed">Terima laporan dan pengumuman kelas via email terdaftar.</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setEmailNotification(!emailNotification)}
+                            className={`w-10 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none shrink-0 ${
+                              emailNotification ? 'bg-indigo-600' : 'bg-gray-200'
+                            }`}
+                          >
+                            <div className={`w-4 h-4 rounded-full bg-white transition-transform duration-200 ${
+                              emailNotification ? 'translate-x-5' : 'translate-x-0'
+                            }`} />
+                          </button>
+                        </div>
+
+                        {/* Assignment Notification */}
+                        <div className="flex items-start justify-between gap-4 p-3 bg-gray-50/50 rounded-xl border border-gray-100/50">
+                          <div className="space-y-0.5">
+                            <span className="text-xs font-bold text-gray-800 block">Notifikasi Tugas Baru</span>
+                            <span className="text-[10px] text-gray-400 block leading-relaxed">
+                              {isTeacher 
+                                ? 'Terima notifikasi instan saat siswa mengumpulkan esai tugas.' 
+                                : 'Terima notifikasi instan saat guru merilis esai tugas baru.'}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setAssignmentNotification(!assignmentNotification)}
+                            className={`w-10 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none shrink-0 ${
+                              assignmentNotification ? 'bg-indigo-600' : 'bg-gray-200'
+                            }`}
+                          >
+                            <div className={`w-4 h-4 rounded-full bg-white transition-transform duration-200 ${
+                              assignmentNotification ? 'translate-x-5' : 'translate-x-0'
+                            }`} />
+                          </button>
+                        </div>
+
+                        {/* Score Notification */}
+                        <div className="flex items-start justify-between gap-4 p-3 bg-gray-50/50 rounded-xl border border-gray-100/50">
+                          <div className="space-y-0.5">
+                            <span className="text-xs font-bold text-gray-800 block">Notifikasi Hasil Penilaian</span>
+                            <span className="text-[10px] text-gray-400 block leading-relaxed">
+                              {isTeacher 
+                                ? 'Terima pengingat untuk tugas esai siswa yang belum dinilai.' 
+                                : 'Terima pemberitahuan instan saat guru selesai menilai esai Anda.'}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setScoreNotification(!scoreNotification)}
+                            className={`w-10 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none shrink-0 ${
+                              scoreNotification ? 'bg-indigo-600' : 'bg-gray-200'
+                            }`}
+                          >
+                            <div className={`w-4 h-4 rounded-full bg-white transition-transform duration-200 ${
+                              scoreNotification ? 'translate-x-5' : 'translate-x-0'
+                            }`} />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Save preference button */}
+                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-50">
+                    <button
+                      type="button"
+                      onClick={handleSaveProfile}
+                      disabled={!hasUnsavedChanges || isSaving}
+                      className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold rounded-xl text-xs shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                    >
+                      {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+                      Simpan Preferensi
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 4: ACCOUNT DETAIL (READ-ONLY) */}
+              {activeTab === 'account' && (
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Informasi Status Akun</h2>
+                    <p className="text-[11px] text-gray-400 mt-0.5">Detail pendaftaran akademis, peran pengguna, dan metadata keamanan login.</p>
+                  </div>
+
+                  <div className="bg-gray-50/50 border border-gray-100 rounded-2xl p-5 space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                      
+                      <div className="p-4 bg-white border border-gray-50 rounded-xl space-y-1">
+                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Peran Sistem (Account Role)</span>
+                        <span className="text-xs font-bold text-gray-900 block flex items-center gap-1.5 mt-1">
+                          <UserCheck className={`w-4 h-4 ${isTeacher ? 'text-indigo-500' : 'text-emerald-500'}`} />
+                          {isTeacher ? 'Teacher / Pengajar Utama' : 'Student / Siswa Terdaftar'}
+                        </span>
+                      </div>
+
+                      <div className="p-4 bg-white border border-gray-50 rounded-xl space-y-1">
+                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Tanggal Registrasi (Member Since)</span>
+                        <span className="text-xs font-bold text-gray-900 block flex items-center gap-1.5 mt-1">
+                          <Clock className="w-4 h-4 text-gray-400" />
+                          {currentUserProfile?.createdAt?.seconds 
+                            ? new Date(currentUserProfile.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})
+                            : auth.currentUser?.metadata.creationTime 
+                              ? new Date(auth.currentUser.metadata.creationTime).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})
+                              : 'Baru saja'
+                          }
+                        </span>
+                      </div>
+
+                      <div className="p-4 bg-white border border-gray-50 rounded-xl space-y-1 sm:col-span-2">
+                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Aktivitas Login Terakhir (Last Logged In)</span>
+                        <span className="text-xs font-mono font-bold text-gray-700 block flex items-center gap-1.5 mt-1">
+                          <Sparkles className="w-4 h-4 text-indigo-500" />
+                          {auth.currentUser?.metadata.lastSignInTime 
+                            ? new Date(auth.currentUser.metadata.lastSignInTime).toLocaleString('id-ID', {day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'})
+                            : 'Sekarang'
+                          }
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-indigo-50/25 border border-indigo-100/50 rounded-2xl flex items-start gap-3">
+                    <Sparkles className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-xs font-bold text-indigo-900">Edisi Kavio Enterprise</p>
+                      <p className="text-[10px] text-indigo-700/90 leading-relaxed mt-0.5">
+                        Akun Anda dilindungi oleh enkripsi modern Kavio Edu. Data profil Anda disimpan secara aman dan real-time di server Cloud Firestore Enterprise.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -11,6 +11,7 @@ import StudentDashboard from './components/StudentDashboard';
 import StudentProfile from './components/StudentProfile';
 import AssignmentDetail from './components/AssignmentDetail';
 import SubmissionDetail from './components/SubmissionDetail';
+import UserSettings from './components/UserSettings';
 import NotFound from './components/NotFound';
 import Logo from './components/Logo';
 import { UserProfile } from './types';
@@ -45,6 +46,10 @@ export default function App() {
       if (user) {
         setCurrentUser(user);
         try {
+          if (!db) {
+            console.error("Database 'db' is not initialized! Check firebase.ts");
+            throw new Error("Firestore database instance is undefined.");
+          }
           // Fetch profile document
           const docSnap = await getDoc(doc(db, 'users', user.uid));
           if (docSnap.exists()) {
@@ -130,6 +135,8 @@ export default function App() {
           <TeacherDashboard onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : path === '/student' ? (
           <StudentDashboard onNavigate={navigate} onSetLoading={setGlobalLoading} />
+        ) : path === '/settings' ? (
+          <UserSettings onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : isStudentProfilePath ? (
           <StudentProfile studentId={studentIdParam} onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : isAssignmentDetailPath ? (

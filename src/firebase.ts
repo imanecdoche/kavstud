@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 import firebaseConfigJson from '../firebase-applet-config.json';
 
 const firebaseConfig = {
@@ -19,6 +20,19 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 
 // Initialize Firestore with custom databaseId if provided
-export const db = firebaseConfigJson.firestoreDatabaseId
-  ? getFirestore(app, firebaseConfigJson.firestoreDatabaseId)
-  : getFirestore(app);
+let dbInstance;
+try {
+  if (firebaseConfigJson.firestoreDatabaseId && firebaseConfigJson.firestoreDatabaseId.trim() !== '') {
+    dbInstance = getFirestore(app, firebaseConfigJson.firestoreDatabaseId.trim());
+  } else {
+    dbInstance = getFirestore(app);
+  }
+} catch (error) {
+  console.error("Failed to initialize Firestore with custom databaseId, falling back to default database:", error);
+  dbInstance = getFirestore(app);
+}
+
+export const db = dbInstance;
+
+// Initialize Storage
+export const storage = getStorage(app);

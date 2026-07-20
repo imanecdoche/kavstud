@@ -23,7 +23,8 @@ import {
   Sparkles, 
   CheckCircle2, 
   AlertCircle,
-  HelpCircle
+  HelpCircle,
+  Settings
 } from 'lucide-react';
 import { UserProfile, Assignment, Submission } from '../types';
 import Logo from './Logo';
@@ -251,8 +252,12 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
           {/* Teacher Profile Info Section */}
           <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100/50 space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 font-bold text-sm">
-                {teacherProfile?.fullName?.charAt(0).toUpperCase() || 'G'}
+              <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 font-bold text-sm overflow-hidden shrink-0">
+                {teacherProfile?.photoURL ? (
+                  <img src={teacherProfile.photoURL} alt={teacherProfile.fullName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                ) : (
+                  teacherProfile?.fullName?.charAt(0).toUpperCase() || 'G'
+                )}
               </div>
               <div className="min-w-0">
                 <p className="text-xs font-bold text-gray-900 truncate">
@@ -264,6 +269,13 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
               </div>
             </div>
             <p className="text-[10px] text-gray-400 truncate">{teacherProfile?.email}</p>
+            <button
+              onClick={() => { onNavigate('/settings'); setIsSidebarOpen(false); }}
+              className="w-full mt-2 py-1.5 px-3 bg-white hover:bg-gray-100 border border-gray-200/60 rounded-xl text-[10px] font-bold text-gray-700 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <Settings className="w-3.5 h-3.5 text-gray-500" />
+              Pengaturan Profil
+            </button>
           </div>
 
           {/* Navigation Links */}
@@ -273,10 +285,17 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
             </div>
             <button
               onClick={() => { onNavigate('/teacher'); setIsSidebarOpen(false); }}
-              className="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50/50 flex items-center gap-2.5 transition-all"
+              className="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50/50 flex items-center gap-2.5 transition-all cursor-pointer"
             >
               <BookOpen className="w-4 h-4" />
               Dashboard Utama
+            </button>
+            <button
+              onClick={() => { onNavigate('/settings'); setIsSidebarOpen(false); }}
+              className="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold text-gray-500 hover:text-indigo-600 hover:bg-indigo-50/20 flex items-center gap-2.5 transition-all cursor-pointer"
+            >
+              <Settings className="w-4 h-4" />
+              Pengaturan Akun
             </button>
           </nav>
         </div>

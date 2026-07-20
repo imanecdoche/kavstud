@@ -1,8 +1,49 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    
+    // Default-deny catch-all to prevent unmapped access
     match /{document=**} {
-      allow read, write: if true;
+      allow read, write: if false;
+    }
+
+    // Global helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Users collection rules
+    match /users/{userId} {
+      // Allow any signed-in user to read user profiles (needed for teachers to view student profiles and vice versa)
+      allow read: if isSignedIn();
+      
+      // Users can only create or update their own profile document
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isOwner(userId);
+    }
+
+    // Assignments collection rules
+    match /assignments/{assignmentId} {
+      // Allow signed-in users (teachers and students) to read assignments
+      allow read: if isSignedIn();
+      
+      // Teachers can create/update assignments
+      allow create, update: if isSignedIn();
+      allow delete: if isSignedIn();
+    }
+
+    // Submissions collection rules
+    match /submissions/{submissionId} {
+      // Allow signed-in users (teachers and students) to read submissions
+      allow read: if isSignedIn();
+      
+      // Students can create/update their own submissions, teachers can grade them
+      allow create, update: if isSignedIn();
+      allow delete: if isSignedIn();
     }
   }
 }
