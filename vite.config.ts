@@ -2,10 +2,38 @@ import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 import {defineConfig} from 'vite';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig(() => {
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [
+      react(), 
+      tailwindcss(),
+      VitePWA({
+        registerType: 'autoUpdate',
+        devOptions: { enabled: false }, // we don't strictly need it on in dev, but can enable if testing
+        manifest: {
+          name: 'KAVIO Edu',
+          short_name: 'Kavio Edu',
+          description: 'Aplikasi Pembelajaran Digital KAVIO Edu',
+          theme_color: '#58CC02',
+          background_color: '#ffffff',
+          display: 'standalone',
+          icons: [
+            {
+              src: 'logo.png', // using the existing logo
+              sizes: '192x192',
+              type: 'image/png'
+            },
+            {
+              src: 'logo.png',
+              sizes: '512x512',
+              type: 'image/png'
+            }
+          ]
+        }
+      })
+    ],
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),
