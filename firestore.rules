@@ -99,5 +99,34 @@ service cloud.firestore {
       // Only teachers can create, update, or delete questions
       allow create, update, delete: if isSignedIn() && isTeacher();
     }
+
+    // Modules collection rules
+    match /modules/{moduleId} {
+      // Allow signed-in users to read modules
+      allow read: if isSignedIn();
+
+      // Only teachers can write/modify modules
+      allow write: if isSignedIn() && isTeacher();
+    }
+
+    // Module Access Keys collection rules
+    match /module_access_keys/{keyId} {
+      // Allow signed-in users to read keys (e.g. for claiming vouchers)
+      allow read: if isSignedIn();
+
+      // Teachers can create and delete keys
+      allow create, delete: if isSignedIn() && isTeacher();
+
+      // Students/Teachers can update keys (e.g. to increment usageCount)
+      allow update: if isSignedIn();
+    }
+
+    // System config collection rules
+    match /system/{document} {
+      allow read: if true;
+      allow write: if isSignedIn() && (
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.email == 'fatih@kavio.tec.edu'
+      );
+    }
   }
 }
