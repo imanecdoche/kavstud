@@ -12,6 +12,7 @@ import StudentProfile from './components/StudentProfile';
 import AssignmentDetail from './components/AssignmentDetail';
 import SubmissionDetail from './components/SubmissionDetail';
 import NotFound from './components/NotFound';
+import Logo from './components/Logo';
 import { UserProfile } from './types';
 import { Sparkles } from 'lucide-react';
 
@@ -85,14 +86,9 @@ export default function App() {
   // Show a beautiful full-screen loader during initial auth check
   if (isAuthChecking) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center space-y-4 animate-pulse">
-        <div className="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600">
-          <Sparkles className="w-6 h-6 animate-spin" />
-        </div>
-        <div className="text-center space-y-1">
-          <h2 className="font-logo font-black text-xl tracking-wider text-gray-900">
-            KAVIO<span className="text-indigo-600">EDU</span>
-          </h2>
+      <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center space-y-4">
+        <div className="text-center space-y-3">
+          <Logo className="h-10 w-auto text-indigo-600 animate-pulse mx-auto" />
           <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Mengautentikasi Sistem...</p>
         </div>
       </div>

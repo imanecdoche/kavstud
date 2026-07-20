@@ -24,6 +24,7 @@ import {
   Check
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import Logo from './Logo';
 
 export default function LayoutPreviews() {
   const [activeLayout, setActiveLayout] = useState<'teacher-dash' | 'student-dash' | 'login' | 'register' | 'assignment-detail' | 'profile' | '404-page'>('teacher-dash');
@@ -344,14 +345,9 @@ export default function LayoutPreviews() {
           <div className="flex items-center justify-center py-6">
             <div className="w-full max-w-sm bg-white border border-gray-100 p-6 sm:p-8 rounded-2xl shadow-sm space-y-6">
               
-              {/* Header logo typemark Montserrat */}
-              <div className="text-center space-y-1.5">
-                <div className="w-10 h-10 rounded-xl bg-indigo-600 text-white font-logo font-black text-lg flex items-center justify-center mx-auto shadow-sm">
-                  K
-                </div>
-                <h3 className="font-logo font-black text-xl tracking-tight text-gray-900">
-                  KAVIO <span className="text-indigo-600">EDU</span>
-                </h3>
+              {/* Header logo */}
+              <div className="text-center space-y-2">
+                <Logo className="h-8 w-auto text-indigo-600 mx-auto" />
                 <p className="text-xs text-gray-400">Masuk ke ruang kelas digital Anda.</p>
               </div>
 
@@ -398,10 +394,8 @@ export default function LayoutPreviews() {
           <div className="flex items-center justify-center py-4">
             <div className="w-full max-w-sm bg-white border border-gray-100 p-6 sm:p-8 rounded-2xl shadow-sm space-y-5">
               
-              <div className="text-center space-y-1">
-                <h3 className="font-logo font-black text-xl tracking-tight text-gray-900">
-                  KAVIO <span className="text-indigo-600">EDU</span>
-                </h3>
+              <div className="text-center space-y-2">
+                <Logo className="h-8 w-auto text-indigo-600 mx-auto" />
                 <p className="text-xs text-gray-400">Registrasi akun mahasiswa baru.</p>
               </div>
 

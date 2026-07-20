@@ -3,6 +3,7 @@ import { auth, db } from '../firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { Sparkles, ArrowRight, Lock, Mail, User, ShieldCheck, Eye, EyeOff } from 'lucide-react';
+import Logo from './Logo';
 import { UserRole } from '../types';
 
 interface RegisterProps {
@@ -81,13 +82,8 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8" id="register-page">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-6">
-        <div className="inline-flex items-center justify-center gap-2">
-          <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-md">
-            <Sparkles className="w-5 h-5" />
-          </div>
-          <span className="font-logo font-black text-2xl tracking-wider text-gray-900">
-            KAVIO<span className="text-indigo-600">EDU</span>
-          </span>
+        <div className="flex justify-center">
+          <Logo className="h-10 w-auto text-indigo-600" />
         </div>
 
         <div className="space-y-2">

@@ -22,6 +22,7 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { UserProfile, Assignment, Submission } from '../types';
+import Logo from './Logo';
 
 interface StudentDashboardProps {
   onNavigate: (path: string) => void;
@@ -145,12 +146,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
       {/* Mobile Header */}
       <header className="lg:hidden bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
         <div className="inline-flex items-center gap-1.5">
-          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white">
-            <Sparkles className="w-4 h-4" />
-          </div>
-          <span className="font-logo font-black text-lg tracking-wider text-gray-900">
-            KAVIO<span className="text-indigo-600">EDU</span>
-          </span>
+          <Logo className="h-6 w-auto text-indigo-600" />
         </div>
 
         <button
@@ -172,12 +168,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
         <div className="space-y-8">
           <div className="flex items-center justify-between">
             <div className="inline-flex items-center gap-2">
-              <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-xs">
-                <Sparkles className="w-5 h-5" />
-              </div>
-              <span className="font-logo font-black text-xl tracking-wider text-gray-900">
-                KAVIO<span className="text-indigo-600">EDU</span>
-              </span>
+              <Logo className="h-7 w-auto text-indigo-600" />
             </div>
             
             <button

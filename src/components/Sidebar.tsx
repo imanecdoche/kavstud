@@ -13,6 +13,7 @@ import {
   Compass
 } from 'lucide-react';
 import { ActiveTab } from '../types';
+import Logo from './Logo';
 
 interface SidebarProps {
   activeTab: ActiveTab;
@@ -44,12 +45,7 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
       {/* Mobile Header */}
       <header className="lg:hidden h-14 bg-white border-b border-gray-100 px-4 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-logo font-black text-sm">
-            K
-          </div>
-          <span className="font-logo font-black text-lg tracking-tight text-black">
-            KAVIO <span className="text-indigo-600">EDU</span>
-          </span>
+          <Logo className="h-6 w-auto text-indigo-600" />
         </div>
         <button
           onClick={() => setIsOpen(true)}
@@ -97,18 +93,11 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
       >
         {/* Header inside sidebar */}
         <div className="h-16 px-6 border-b border-gray-50 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-logo font-black text-base shadow-sm">
-              K
-            </div>
-            <div className="flex flex-col">
-              <span className="font-logo font-black text-lg leading-none tracking-tight text-black">
-                KAVIO <span className="text-indigo-600">EDU</span>
-              </span>
-              <span className="text-[10px] text-gray-400 font-sans tracking-widest uppercase mt-0.5 font-medium">
-                Design System
-              </span>
-            </div>
+          <div className="flex flex-col">
+            <Logo className="h-6.5 w-auto text-indigo-600" />
+            <span className="text-[10px] text-gray-400 font-sans tracking-widest uppercase mt-1 font-medium pl-0.5">
+              Design System
+            </span>
           </div>
           <button
             onClick={() => setIsOpen(false)}
