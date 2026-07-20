@@ -18,6 +18,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { Submission, UserProfile } from '../types';
+import CustomDropdown from './CustomDropdown';
 
 interface SubmissionDetailProps {
   submissionId: string;
@@ -320,15 +321,15 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                       <label className="block text-xs font-semibold text-gray-700">
                         Hasil Review Tugas <span className="text-red-500">*</span>
                       </label>
-                      <select
+                      <CustomDropdown
                         value={reviewStatus}
-                        onChange={(e) => setReviewStatus(e.target.value as any)}
-                        className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 font-bold"
-                      >
-                        <option value="correct">Selesai (Benar / Tepat)</option>
-                        <option value="incorrect">Selesai (Kurang Tepat)</option>
-                        <option value="remedial">Harus Perbaikan (Remedial)</option>
-                      </select>
+                        onChange={(val) => setReviewStatus(val as any)}
+                        options={[
+                          { value: 'correct', label: 'Selesai (Benar / Tepat)' },
+                          { value: 'incorrect', label: 'Selesai (Kurang Tepat)' },
+                          { value: 'remedial', label: 'Harus Perbaikan (Remedial)' }
+                        ]}
+                      />
                     </div>
 
                     {/* Feedback comment field */}

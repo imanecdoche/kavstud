@@ -34,6 +34,7 @@ import NavigationSidebar from './NavigationSidebar';
 import UserSettings from './UserSettings';
 import EmptyState from './EmptyState';
 import { SkeletonDashboard, SkeletonList } from './Skeletons';
+import CustomDropdown from './CustomDropdown';
 
 interface StudentDashboardProps {
   onNavigate: (path: string) => void;
@@ -592,18 +593,22 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
 
                     <div className="flex items-center gap-1.5 bg-gray-50/50 border border-gray-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600 w-full sm:w-auto">
                       <Filter className="w-3.5 h-3.5 text-gray-400" />
-                      <select
+                      <CustomDropdown
+                        variant="minimal"
+                        size="sm"
+                        dropdownWidth="w-48"
+                        className="w-full sm:w-auto"
                         value={statusFilter}
-                        onChange={(e) => setStatusFilter(e.target.value as any)}
-                        className="bg-transparent focus:outline-none cursor-pointer text-xs font-bold w-full sm:w-auto"
-                      >
-                        <option value="all">Semua Status</option>
-                        <option value="pending">Belum Dikerjakan</option>
-                        <option value="submitted">Menunggu Penilaian</option>
-                        <option value="completed">Selesai / Dinilai</option>
-                        <option value="remedial">Harus Remedial</option>
-                        <option value="expired">Kedaluwarsa</option>
-                      </select>
+                        onChange={(val) => setStatusFilter(val as any)}
+                        options={[
+                          { value: 'all', label: 'Semua Status' },
+                          { value: 'pending', label: 'Belum Dikerjakan' },
+                          { value: 'submitted', label: 'Menunggu Penilaian' },
+                          { value: 'completed', label: 'Selesai / Dinilai' },
+                          { value: 'remedial', label: 'Harus Remedial' },
+                          { value: 'expired', label: 'Kedaluwarsa' }
+                        ]}
+                      />
                     </div>
                   </div>
 

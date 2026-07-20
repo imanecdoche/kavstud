@@ -42,6 +42,7 @@ import UserSettings from './UserSettings';
 import CircleManagement from './CircleManagement';
 import EmptyState from './EmptyState';
 import { SkeletonDashboard, SkeletonList } from './Skeletons';
+import CustomDropdown from './CustomDropdown';
 
 interface TeacherDashboardProps {
   onNavigate: (path: string) => void;
@@ -769,48 +770,55 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       {/* Filter by Status */}
                       <div className="flex items-center gap-1.5 bg-gray-50/50 border border-gray-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600">
                         <Filter className="w-3.5 h-3.5 text-gray-400" />
-                        <select
+                        <CustomDropdown
+                          variant="minimal"
+                          size="sm"
+                          dropdownWidth="w-40"
                           value={statusFilter}
-                          onChange={(e) => setStatusFilter(e.target.value as any)}
-                          className="bg-transparent focus:outline-none cursor-pointer text-xs font-bold"
-                        >
-                          <option value="all">Semua Status</option>
-                          <option value="sent">Dikirim</option>
-                          <option value="review">Perlu Ditinjau</option>
-                          <option value="completed">Selesai</option>
-                          <option value="remedial">Remedial</option>
-                          <option value="expired">Kedaluwarsa</option>
-                        </select>
+                          onChange={(val) => setStatusFilter(val as any)}
+                          options={[
+                            { value: 'all', label: 'Semua Status' },
+                            { value: 'sent', label: 'Dikirim' },
+                            { value: 'review', label: 'Perlu Ditinjau' },
+                            { value: 'completed', label: 'Selesai' },
+                            { value: 'remedial', label: 'Remedial' },
+                            { value: 'expired', label: 'Kedaluwarsa' }
+                          ]}
+                        />
                       </div>
 
                       {/* Filter by Type */}
                       <div className="flex items-center gap-1.5 bg-gray-50/50 border border-gray-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600">
                         <Layers className="w-3.5 h-3.5 text-gray-400" />
-                        <select
+                        <CustomDropdown
+                          variant="minimal"
+                          size="sm"
+                          dropdownWidth="w-48"
                           value={typeFilter}
-                          onChange={(e) => setTypeFilter(e.target.value as any)}
-                          className="bg-transparent focus:outline-none cursor-pointer text-xs font-bold"
-                        >
-                          <option value="all">Semua Tipe</option>
-                          <option value="short_answer">Jawaban Singkat</option>
-                          <option value="multiple_choice">Pilihan Ganda</option>
-                          <option value="multi_short_answer">Multi Jawaban Singkat</option>
-                        </select>
+                          onChange={(val) => setTypeFilter(val as any)}
+                          options={[
+                            { value: 'all', label: 'Semua Tipe' },
+                            { value: 'short_answer', label: 'Jawaban Singkat' },
+                            { value: 'multiple_choice', label: 'Pilihan Ganda' },
+                            { value: 'multi_short_answer', label: 'Multi Jawaban Singkat' }
+                          ]}
+                        />
                       </div>
 
                       {/* Filter by Student */}
                       <div className="flex items-center gap-1.5 bg-gray-50/50 border border-gray-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600">
                         <UserCheck className="w-3.5 h-3.5 text-gray-400" />
-                        <select
+                        <CustomDropdown
+                          variant="minimal"
+                          size="sm"
+                          dropdownWidth="w-56"
                           value={studentFilter}
-                          onChange={(e) => setStudentFilter(e.target.value)}
-                          className="bg-transparent focus:outline-none cursor-pointer text-xs font-bold max-w-[150px] truncate"
-                        >
-                          <option value="all">Semua Siswa</option>
-                          {students.map(s => (
-                            <option key={s.uid} value={s.uid}>{s.fullName}</option>
-                          ))}
-                        </select>
+                          onChange={(val) => setStudentFilter(val)}
+                          options={[
+                            { value: 'all', label: 'Semua Siswa' },
+                            ...students.map(s => ({ value: s.uid, label: s.fullName }))
+                          ]}
+                        />
                       </div>
                     </div>
                   </div>
@@ -1079,43 +1087,42 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                   <label className="block text-xs font-semibold text-gray-700">
                     Pilih Siswa <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    required
+                  <CustomDropdown
                     disabled={isEditMode}
                     value={selectedStudentId}
-                    onChange={(e) => setSelectedStudentId(e.target.value)}
-                    className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
-                  >
-                    <option value="">-- Pilih Siswa Penerima --</option>
-                    {students.map(s => (
-                      <option key={s.uid} value={s.uid}>
-                        {s.fullName} ({s.classType || 'PRIVATE'})
-                      </option>
-                    ))}
-                  </select>
+                    placeholder="-- Pilih Siswa Penerima --"
+                    onChange={(val) => setSelectedStudentId(val)}
+                    options={students.map(s => ({
+                      value: s.uid,
+                      label: s.fullName,
+                      badge: {
+                        text: s.classType || 'PRIVATE',
+                        className: s.classType === 'CIRCLE'
+                          ? 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100'
+                          : 'bg-teal-50 text-teal-700 border border-teal-100'
+                      }
+                    }))}
+                  />
                 </div>
               ) : (
                 <div className="space-y-1.5">
                   <label className="block text-xs font-semibold text-gray-700">
                     Pilih Kelompok Belajar (Circle) <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    required
+                  <CustomDropdown
                     disabled={isEditMode}
                     value={selectedCircleId}
-                    onChange={(e) => setSelectedCircleId(e.target.value)}
-                    className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
-                  >
-                    <option value="">-- Pilih Circle Penerima --</option>
-                    {circles.map(c => {
+                    placeholder="-- Pilih Circle Penerima --"
+                    onChange={(val) => setSelectedCircleId(val)}
+                    options={circles.map(c => {
                       const memberCount = students.filter(s => s.circleId === c.id && s.classType === 'CIRCLE').length;
-                      return (
-                        <option key={c.id} value={c.id}>
-                          {c.name} ({memberCount} Siswa)
-                        </option>
-                      );
+                      return {
+                        value: c.id,
+                        label: c.name,
+                        sublabel: `${memberCount} Siswa`
+                      };
                     })}
-                  </select>
+                  />
                 </div>
               )}
 
@@ -1124,15 +1131,15 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 <label className="block text-xs font-semibold text-gray-700">
                   Jenis Tugas <span className="text-red-500">*</span>
                 </label>
-                <select
+                <CustomDropdown
                   value={assignmentType}
-                  onChange={(e) => setAssignmentType(e.target.value as any)}
-                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                >
-                  <option value="short_answer">Jawaban Singkat (Esai)</option>
-                  <option value="multiple_choice">Pilihan Ganda (A-D)</option>
-                  <option value="multi_short_answer">Multi Jawaban Singkat</option>
-                </select>
+                  onChange={(val) => setAssignmentType(val as any)}
+                  options={[
+                    { value: 'short_answer', label: 'Jawaban Singkat (Esai)' },
+                    { value: 'multiple_choice', label: 'Pilihan Ganda (A-D)' },
+                    { value: 'multi_short_answer', label: 'Multi Jawaban Singkat' }
+                  ]}
+                />
               </div>
 
               {/* Conditional Fields: Multiple Choice */}
@@ -1156,16 +1163,16 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                   </div>
                   <div className="space-y-1.5 pt-2 border-t border-gray-100">
                     <span className="text-[10px] font-bold text-gray-400 uppercase">Pilihan Kunci Jawaban Benar</span>
-                    <select
+                    <CustomDropdown
                       value={correctChoice}
-                      onChange={(e) => setCorrectChoice(e.target.value as any)}
-                      className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold"
-                    >
-                      <option value="A">Opsi A</option>
-                      <option value="B">Opsi B</option>
-                      <option value="C">Opsi C</option>
-                      <option value="D">Opsi D</option>
-                    </select>
+                      onChange={(val) => setCorrectChoice(val as any)}
+                      options={[
+                        { value: 'A', label: 'Opsi A' },
+                        { value: 'B', label: 'Opsi B' },
+                        { value: 'C', label: 'Opsi C' },
+                        { value: 'D', label: 'Opsi D' }
+                      ]}
+                    />
                   </div>
                 </div>
               )}

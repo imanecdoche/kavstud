@@ -34,6 +34,7 @@ import {
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import Logo from './Logo';
+import CustomDropdown from './CustomDropdown';
 
 interface UserSettingsProps {
   onNavigate: (path: string) => void;
@@ -833,16 +834,17 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                     {/* Gender */}
                     <div className="space-y-1.5">
                       <label className="block text-xs font-semibold text-gray-700">Jenis Kelamin</label>
-                      <select
+                      <CustomDropdown
                         value={gender}
-                        onChange={(e) => setGender(e.target.value)}
-                        className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                      >
-                        <option value="">Pilih jenis kelamin</option>
-                        <option value="Laki-laki">Laki-laki</option>
-                        <option value="Perempuan">Perempuan</option>
-                        <option value="Lainnya">Lainnya</option>
-                      </select>
+                        placeholder="Pilih jenis kelamin"
+                        onChange={(val) => setGender(val)}
+                        options={[
+                          { value: '', label: 'Pilih jenis kelamin' },
+                          { value: 'Laki-laki', label: 'Laki-laki' },
+                          { value: 'Perempuan', label: 'Perempuan' },
+                          { value: 'Lainnya', label: 'Lainnya' }
+                        ]}
+                      />
                     </div>
 
                     {/* Bio / About */}
@@ -1020,14 +1022,14 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                       {/* Language */}
                       <div className="space-y-1.5">
                         <label className="block text-xs font-semibold text-gray-700">Bahasa Tampilan (Localization)</label>
-                        <select
+                        <CustomDropdown
                           value={language}
-                          onChange={(e) => setLanguage(e.target.value as any)}
-                          className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
-                        >
-                          <option value="English">English</option>
-                          <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-                        </select>
+                          onChange={(val) => setLanguage(val as any)}
+                          options={[
+                            { value: 'English', label: 'English' },
+                            { value: 'Bahasa Indonesia', label: 'Bahasa Indonesia' }
+                          ]}
+                        />
                         <p className="text-[9px] text-gray-400 mt-1">Bahasa pengantar sistem yang diutamakan oleh Anda.</p>
                       </div>
 

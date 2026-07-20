@@ -35,6 +35,7 @@ import {
 import { motion, AnimatePresence } from 'motion/react';
 import { UserProfile, Circle, Assignment, Submission } from '../types';
 import EmptyState from './EmptyState';
+import CustomDropdown from './CustomDropdown';
 
 interface CircleManagementProps {
   students: UserProfile[];
@@ -664,17 +665,15 @@ export default function CircleManagement({
                     {/* Circle assignment filter */}
                     <div className="space-y-1">
                       <label className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">Filter Kelompok</label>
-                      <select
+                      <CustomDropdown
                         value={circleFilter}
-                        onChange={(e) => setCircleFilter(e.target.value)}
-                        className="block w-full px-2.5 py-2 bg-gray-50 border border-gray-100 rounded-xl text-xs focus:outline-none focus:border-indigo-500 text-gray-700 font-semibold"
-                      >
-                        <option value="all">Semua Siswa</option>
-                        <option value="unassigned">Siswa Tanpa Circle</option>
-                        {circles.map(c => (
-                          <option key={c.id} value={c.id}>{c.name}</option>
-                        ))}
-                      </select>
+                        onChange={(val) => setCircleFilter(val)}
+                        options={[
+                          { value: 'all', label: 'Semua Siswa' },
+                          { value: 'unassigned', label: 'Siswa Tanpa Circle' },
+                          ...circles.map(c => ({ value: c.id, label: c.name }))
+                        ]}
+                      />
                     </div>
                   </div>
 
@@ -742,27 +741,30 @@ export default function CircleManagement({
                             {/* Mobile action dropdown */}
                             <div className="pt-2 border-t border-gray-100 flex items-center justify-between gap-2">
                               {/* ClassType Changer */}
-                              <select
+                              <CustomDropdown
+                                size="sm"
+                                className="w-[85px]"
                                 value={student.classType || 'PRIVATE'}
-                                onChange={(e) => handleChangeClassType(student.uid, e.target.value as any)}
-                                className="bg-white border border-gray-100 rounded-lg text-[9px] font-bold p-1 text-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
-                              >
-                                <option value="PRIVATE">PRIVATE</option>
-                                <option value="CIRCLE">CIRCLE</option>
-                              </select>
+                                onChange={(val) => handleChangeClassType(student.uid, val as any)}
+                                options={[
+                                  { value: 'PRIVATE', label: 'PRIVATE' },
+                                  { value: 'CIRCLE', label: 'CIRCLE' }
+                                ]}
+                              />
 
                               {/* Circle assignment dropdown */}
-                              <select
+                              <CustomDropdown
+                                size="sm"
+                                className="w-[115px]"
                                 disabled={student.classType === 'PRIVATE'}
                                 value={student.circleId || ''}
-                                onChange={(e) => handleAssignStudentToCircle(student.uid, e.target.value || null)}
-                                className="bg-white border border-gray-100 rounded-lg text-[9px] font-bold p-1 text-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-300 cursor-pointer max-w-[90px] truncate"
-                              >
-                                <option value="">Keluar Circle</option>
-                                {circles.map(c => (
-                                  <option key={c.id} value={c.id}>{c.name}</option>
-                                ))}
-                              </select>
+                                placeholder="Keluar Circle"
+                                onChange={(val) => handleAssignStudentToCircle(student.uid, val || null)}
+                                options={[
+                                  { value: '', label: 'Keluar Circle' },
+                                  ...circles.map(c => ({ value: c.id, label: c.name }))
+                                ]}
+                              />
                             </div>
                           </div>
                         );

@@ -11,6 +11,7 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import CustomDropdown from './CustomDropdown';
 
 export default function FormShowcase() {
   // Form State
@@ -158,16 +159,16 @@ export default function FormShowcase() {
             <label className="text-xs font-medium text-gray-700 block">
               Mata Pelajaran <span className="text-rose-500">*</span>
             </label>
-            <select
+            <CustomDropdown
               value={subject}
-              onChange={(e) => setSubject(e.target.value)}
-              className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 cursor-pointer"
-            >
-              <option value="Kimia Dasar">Kimia Dasar (Genap)</option>
-              <option value="Kimia Lanjutan">Kimia Analisis Lanjutan</option>
-              <option value="Biologi Molekuler">Biologi Sel & Genetika</option>
-              <option value="Fisika Kuantum">Fisika Modern & Termodinamika</option>
-            </select>
+              onChange={(val) => setSubject(val)}
+              options={[
+                { value: 'Kimia Dasar', label: 'Kimia Dasar (Genap)' },
+                { value: 'Kimia Lanjutan', label: 'Kimia Analisis Lanjutan' },
+                { value: 'Biologi Molekuler', label: 'Biologi Sel & Genetika' },
+                { value: 'Fisika Kuantum', label: 'Fisika Modern & Termodinamika' }
+              ]}
+            />
           </div>
 
           {/* Form: Title with dynamic error */}
