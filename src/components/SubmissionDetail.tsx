@@ -69,6 +69,54 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
   const [isGrading, setIsGrading] = useState(false);
   const [gradeError, setGradeError] = useState<string | null>(null);
 
+  const [manualScores, setManualScores] = useState<{[questionId: string]: number}>({});
+
+  // Compute Auto Score (sum of points for correct auto-gradable questions)
+  const autoScore = questions.reduce((sum, q) => {
+    const isAutoGradable = ['multiple_choice', 'true_false', 'matching', 'fill_blank'].includes(q.type);
+    if (!isAutoGradable) return sum;
+    
+    // Get score from submission.answersMap
+    const qAns = submission?.answersMap?.[q.id];
+    return sum + (qAns?.pointsEarned || 0);
+  }, 0);
+
+  // Compute Manual Score (sum of manual question scores entered by teacher)
+  const manualScore = questions.reduce((sum, q) => {
+    const isAutoGradable = ['multiple_choice', 'true_false', 'matching', 'fill_blank'].includes(q.type);
+    if (isAutoGradable) return sum;
+    
+    const scoreVal = manualScores[q.id] !== undefined ? manualScores[q.id] : 0;
+    return sum + scoreVal;
+  }, 0);
+
+  // Total possible points for the whole assignment
+  const totalPossiblePoints = questions.reduce((sum, q) => sum + (q.points || 0), 0);
+
+  // Total points of auto-graded questions
+  const totalAutoPoints = questions.reduce((sum, q) => {
+    const isAutoGradable = ['multiple_choice', 'true_false', 'matching', 'fill_blank'].includes(q.type);
+    return isAutoGradable ? sum + (q.points || 0) : sum;
+  }, 0);
+
+  // Total points of manual-graded questions
+  const totalManualPoints = questions.reduce((sum, q) => {
+    const isAutoGradable = ['multiple_choice', 'true_false', 'matching', 'fill_blank'].includes(q.type);
+    return !isAutoGradable ? sum + (q.points || 0) : sum;
+  }, 0);
+
+  // Compute final score as a percentage out of 100
+  const calculatedPercentage = totalPossiblePoints > 0 
+    ? Math.round(((autoScore + manualScore) / totalPossiblePoints) * 100)
+    : 0;
+
+  // Synchronize score with calculatedPercentage for lms_composite assignments
+  useEffect(() => {
+    if (assignment?.assignmentType === 'lms_composite') {
+      setScore(calculatedPercentage);
+    }
+  }, [calculatedPercentage, assignment?.assignmentType]);
+
   useEffect(() => {
     const user = auth.currentUser;
     if (!user) {
@@ -143,6 +191,18 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
         if (subData.score !== null) {
           setScore(subData.score);
         }
+        if (subData.answersMap) {
+          setManualScores(prev => {
+            if (Object.keys(prev).length === 0) {
+              const loadedManualScores: {[questionId: string]: number} = {};
+              Object.entries(subData.answersMap).forEach(([qId, val]: [string, any]) => {
+                loadedManualScores[qId] = val.pointsEarned || 0;
+              });
+              return loadedManualScores;
+            }
+            return prev;
+          });
+        }
         if (subData.feedback !== null) {
           setFeedback(subData.feedback);
         }
@@ -188,15 +248,35 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
 
     try {
       const nextStatus = reviewStatus === 'remedial' ? 'remedial' : 'graded';
-
-      // Update submission with grade, feedback, reviewStatus, and timestamp in Firestore
-      await updateDoc(doc(db, 'submissions', submissionId), {
+      const updatePayload: any = {
         status: nextStatus,
         reviewStatus: reviewStatus,
         score: Number(score),
         feedback: feedback.trim(),
         gradedAt: serverTimestamp()
-      });
+      };
+
+      if (assignment?.assignmentType === 'lms_composite' && submission?.answersMap) {
+        const updatedAnswersMap = { ...submission.answersMap };
+        questions.forEach(q => {
+          const isAutoGradable = ['multiple_choice', 'true_false', 'matching', 'fill_blank'].includes(q.type);
+          if (!isAutoGradable) {
+            const earned = manualScores[q.id] !== undefined ? manualScores[q.id] : 0;
+            updatedAnswersMap[q.id] = {
+              ...(updatedAnswersMap[q.id] || {}),
+              answer: submission.answersMap?.[q.id]?.answer || '',
+              pointsEarned: earned,
+              status: earned === q.points ? 'correct' : earned === 0 ? 'incorrect' : 'correct',
+              feedback: submission.answersMap?.[q.id]?.feedback || ''
+            };
+          }
+        });
+        updatePayload.answersMap = updatedAnswersMap;
+        updatePayload.totalPointsEarned = autoScore + manualScore;
+      }
+
+      // Update submission with grade, feedback, reviewStatus, and timestamp in Firestore
+      await updateDoc(doc(db, 'submissions', submissionId), updatePayload);
       
       // Update the assignment status accordingly
       await updateDoc(doc(db, 'assignments', submissionId), {
@@ -392,7 +472,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                     { val: 'false', label: 'SALAH / FALSE' }
                                   ].map((option) => {
                                     const isStudentChoice = studentAns === option.val;
-                                    const isCorrect = q.trueFalseCorrect === option.val;
+                                    const isCorrect = (q.correctAnswer || q.trueFalseCorrect) === option.val;
 
                                     return (
                                       <div
@@ -532,6 +612,62 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                               <div className="p-3.5 bg-amber-50/40 border border-amber-100 rounded-xl text-xs text-amber-800 space-y-1">
                                 <span className="text-[9px] font-bold text-amber-800 uppercase tracking-wide block">Panduan Koreksi / Rubrik Guru:</span>
                                 <p className="italic font-medium leading-relaxed">"{q.answerGuide}"</p>
+                              </div>
+                            )}
+
+                            {/* Individual Question Scoring/Feedback */}
+                            {isTeacher && (
+                              <div className="pt-3.5 border-t border-gray-100 mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gray-50/30 p-3 rounded-xl">
+                                <div className="flex items-center gap-2">
+                                  <div className={`w-2 h-2 rounded-full ${
+                                    ['multiple_choice', 'true_false', 'matching', 'fill_blank'].includes(q.type)
+                                      ? 'bg-green-500'
+                                      : 'bg-indigo-500'
+                                  }`} />
+                                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                                    {['multiple_choice', 'true_false', 'matching', 'fill_blank'].includes(q.type)
+                                      ? 'Penilaian Otomatis (Objektif)'
+                                      : 'Penilaian Manual (Subjektif)'
+                                    }
+                                  </span>
+                                </div>
+
+                                <div className="flex items-center gap-2.5">
+                                  <span className="text-xs font-semibold text-gray-700">Skor Soal:</span>
+                                  {['multiple_choice', 'true_false', 'matching', 'fill_blank'].includes(q.type) ? (
+                                    <div className="px-3 py-1.5 bg-gray-100 border border-gray-200 rounded-xl text-xs font-bold text-gray-600 font-mono">
+                                      {(submission?.answersMap?.[q.id]?.pointsEarned || 0)} / {q.points || 0} Poin
+                                    </div>
+                                  ) : (
+                                    <div className="flex items-center gap-1.5">
+                                      <input
+                                        type="number"
+                                        min={0}
+                                        max={q.points || 0}
+                                        value={manualScores[q.id] !== undefined ? manualScores[q.id] : 0}
+                                        onChange={(e) => {
+                                          const val = e.target.value === '' ? 0 : Math.min(q.points || 0, Math.max(0, Number(e.target.value)));
+                                          setManualScores(prev => ({
+                                            ...prev,
+                                            [q.id]: val
+                                          }));
+                                        }}
+                                        className="w-16 px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-indigo-700 font-mono text-center focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                      />
+                                      <span className="text-xs text-gray-400 font-medium font-sans">/ {q.points || 0} Poin</span>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Student Earned Score View */}
+                            {!isTeacher && (submission.status === 'graded' || submission.status === 'remedial') && (
+                              <div className="pt-3.5 border-t border-gray-100 mt-2 flex items-center justify-between bg-gray-50/50 p-2.5 rounded-xl">
+                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Hasil Penilaian Soal</span>
+                                <div className="text-xs font-bold text-indigo-600 font-mono">
+                                  Skor Anda: {submission?.answersMap?.[q.id]?.pointsEarned || 0} / {q.points || 0} Poin
+                                </div>
                               </div>
                             )}
                           </div>
@@ -716,6 +852,30 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                   </div>
                 )}
 
+                {/* Score Summary Panel */}
+                {assignment?.assignmentType === 'lms_composite' && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 bg-indigo-50/20 border border-indigo-100/50 rounded-2xl">
+                    <div className="bg-white p-3.5 rounded-xl border border-gray-100/50 flex flex-col justify-between">
+                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Auto Score (Objektif)</span>
+                      <span className="text-xl font-bold text-indigo-600 font-mono mt-1">
+                        {autoScore} <span className="text-xs text-gray-400 font-sans font-medium">/ {totalAutoPoints} Poin</span>
+                      </span>
+                    </div>
+                    <div className="bg-white p-3.5 rounded-xl border border-gray-100/50 flex flex-col justify-between">
+                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Manual Score (Subjektif)</span>
+                      <span className="text-xl font-bold text-indigo-600 font-mono mt-1">
+                        {manualScore} <span className="text-xs text-gray-400 font-sans font-medium">/ {totalManualPoints} Poin</span>
+                      </span>
+                    </div>
+                    <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 p-3.5 rounded-xl text-white flex flex-col justify-between shadow-3xs">
+                      <span className="text-[10px] font-bold opacity-85 uppercase tracking-wider">Final Total Score</span>
+                      <span className="text-2xl font-bold font-mono mt-1">
+                        {calculatedPercentage} <span className="text-xs opacity-85 font-sans font-medium">/ 100</span>
+                      </span>
+                    </div>
+                  </div>
+                )}
+
                 <form onSubmit={handleGradeSubmission} className="space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                     {/* Score field */}
@@ -728,11 +888,21 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                         min={0}
                         max={100}
                         required
+                        disabled={assignment?.assignmentType === 'lms_composite'}
                         value={score}
                         onChange={(e) => setScore(e.target.value === '' ? '' : Number(e.target.value))}
-                        className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                        className={`block w-full px-4 py-3 border rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none ${
+                          assignment?.assignmentType === 'lms_composite'
+                            ? 'bg-gray-100 border-gray-200 cursor-not-allowed text-gray-500 font-mono font-bold'
+                            : 'bg-white border-gray-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500'
+                        }`}
                         placeholder="Nilai esai"
                       />
+                      {assignment?.assignmentType === 'lms_composite' && (
+                        <p className="text-[10px] text-indigo-600 font-semibold">
+                          Dihitung otomatis berdasarkan akumulasi poin di atas.
+                        </p>
+                      )}
                     </div>
 
                     {/* Status Review selection */}

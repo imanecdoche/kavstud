@@ -180,16 +180,101 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
     if (assignment?.assignmentType === 'lms_composite') {
       const finalAnswersMap: any = {};
       let unansweredCount = 0;
+      let autoScoreEarned = 0;
+
       questions.forEach(q => {
-        const studentAns = answersMap[q.id] || '';
-        if (!studentAns.trim()) {
+        const studentAns = (answersMap[q.id] || '').trim();
+        if (!studentAns) {
           unansweredCount++;
         }
+
+        let pointsEarned = 0;
+        let status: 'correct' | 'incorrect' | 'pending' = 'pending';
+        let feedback = '';
+
+        // Auto-gradable types: 'multiple_choice' | 'true_false' | 'matching' | 'fill_blank'
+        if (q.type === 'multiple_choice') {
+          if (q.correctAnswer && studentAns) {
+            const correctLetter = String.fromCharCode(65 + Number(q.correctAnswer));
+            if (studentAns.toUpperCase() === correctLetter.toUpperCase()) {
+              status = 'correct';
+              pointsEarned = q.points || 0;
+            } else {
+              status = 'incorrect';
+              pointsEarned = 0;
+            }
+          } else {
+            status = 'incorrect';
+            pointsEarned = 0;
+          }
+        } else if (q.type === 'true_false') {
+          const correctTF = q.correctAnswer || q.trueFalseCorrect;
+          if (correctTF && studentAns) {
+            if (studentAns.toLowerCase() === correctTF.toLowerCase()) {
+              status = 'correct';
+              pointsEarned = q.points || 0;
+            } else {
+              status = 'incorrect';
+              pointsEarned = 0;
+            }
+          } else {
+            status = 'incorrect';
+            pointsEarned = 0;
+          }
+        } else if (q.type === 'matching') {
+          if (q.matchingPairs && q.matchingPairs.length > 0 && studentAns) {
+            const currentAnswersList = studentAns.split(',');
+            const studentMatchingMap: {[left: string]: string} = {};
+            currentAnswersList.forEach(item => {
+              const [l, r] = item.split('::');
+              if (l) studentMatchingMap[l.trim()] = (r || '').trim();
+            });
+
+            const isAllCorrect = q.matchingPairs.every(pair => {
+              const studentRight = studentMatchingMap[pair.left.trim()];
+              return studentRight && studentRight.toLowerCase() === pair.right.trim().toLowerCase();
+            });
+
+            if (isAllCorrect) {
+              status = 'correct';
+              pointsEarned = q.points || 0;
+            } else {
+              status = 'incorrect';
+              pointsEarned = 0;
+            }
+          } else {
+            status = 'incorrect';
+            pointsEarned = 0;
+          }
+        } else if (q.type === 'fill_blank') {
+          if (q.fillBlankAnswers && q.fillBlankAnswers.length > 0 && studentAns) {
+            const isMatched = q.fillBlankAnswers.some(ans => ans.trim().toLowerCase() === studentAns.toLowerCase());
+            if (isMatched) {
+              status = 'correct';
+              pointsEarned = q.points || 0;
+            } else {
+              status = 'incorrect';
+              pointsEarned = 0;
+            }
+          } else {
+            status = 'incorrect';
+            pointsEarned = 0;
+          }
+        } else {
+          // Subjective/manual graded: 'essay', 'listening', 'speaking', 'file_upload'
+          status = 'pending';
+          pointsEarned = 0;
+        }
+
+        if (status === 'correct' || status === 'incorrect') {
+          autoScoreEarned += pointsEarned;
+        }
+
         finalAnswersMap[q.id] = {
           answer: studentAns,
-          pointsEarned: 0,
-          status: 'pending',
-          feedback: ''
+          pointsEarned: pointsEarned,
+          status: status,
+          feedback: feedback
         };
       });
 
@@ -200,7 +285,7 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
 
       payload.answersMap = finalAnswersMap;
       payload.totalPossiblePoints = assignment.totalPoints || questions.reduce((sum, q) => sum + (q.points || 0), 0);
-      payload.totalPointsEarned = 0;
+      payload.totalPointsEarned = autoScoreEarned;
       answerText = `Kuis LMS Composite: ${questions.length} Soal dikirimkan.`;
     } else if (assignment?.assignmentType === 'multiple_choice') {
       if (!selectedChoice) {
@@ -209,6 +294,12 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
       }
       answerText = `Pilihan Terpilih: ${selectedChoice}. ${assignment.choices?.[selectedChoice]}`;
       payload.selectedChoice = selectedChoice;
+      
+      // Auto-grade standard multiple choice
+      const isCorrect = selectedChoice === assignment.correctChoice;
+      payload.score = isCorrect ? 100 : 0;
+      payload.reviewStatus = isCorrect ? 'correct' : 'incorrect';
+      payload.feedback = isCorrect ? 'Sistem: Jawaban Benar (Otomatis)' : 'Sistem: Jawaban Salah (Otomatis)';
     } else if (assignment?.assignmentType === 'multi_short_answer') {
       if (multiAnswers.some(ans => !ans.trim())) {
         setSubmitError('Semua bagian pertanyaan wajib dijawab.');

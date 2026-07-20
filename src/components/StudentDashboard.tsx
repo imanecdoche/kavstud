@@ -441,7 +441,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                                 </div>
 
                                 <div className="flex items-center gap-3 shrink-0">
-                                  {sub.score !== null && (
+                                  {sub.status === 'graded' && sub.score !== null && (
                                     <div className="text-right">
                                       <p className="text-[10px] text-gray-400">Nilai</p>
                                       <p className="text-xs font-bold text-indigo-600 font-display">{sub.score} / 100</p>

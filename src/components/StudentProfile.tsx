@@ -344,7 +344,7 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
                       </div>
 
                       <div className="flex items-center justify-between sm:justify-end gap-3.5">
-                        {matchingSubmission?.score !== undefined && matchingSubmission?.score !== null ? (
+                        {matchingSubmission?.status === 'graded' && matchingSubmission?.score !== undefined && matchingSubmission?.score !== null ? (
                           <div className="text-right">
                             <p className="text-[10px] text-gray-400">Skor</p>
                             <p className="text-xs font-bold text-indigo-600 font-display">{matchingSubmission.score} / 100</p>
