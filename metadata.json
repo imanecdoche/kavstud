@@ -1,0 +1,6 @@
+{
+  "name": "Kavio Edu Design System",
+  "description": "A complete, interactive design system sandbox, token spec, and UI/UX explorer for KAVIO EDU educational web application.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
