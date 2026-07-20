@@ -72,8 +72,8 @@ export default function CustomDropdown({
   };
 
   const buttonStyle = variant === 'minimal'
-    ? 'bg-transparent border-none p-0 text-gray-700 hover:text-gray-950 font-bold focus:ring-0 focus:outline-none'
-    : `w-full bg-white border border-gray-200 text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-semibold ${sizeClasses[size]}`;
+    ? 'bg-transparent border-none p-0 text-gray-700 dark:text-slate-200 hover:text-gray-950 font-bold focus:ring-0 focus:outline-none'
+    : `w-full bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all font-semibold ${sizeClasses[size]}`;
 
   return (
     <div ref={dropdownRef} className={`relative w-full ${className}`} id={id}>
@@ -81,7 +81,7 @@ export default function CustomDropdown({
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between text-left cursor-pointer disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed ${buttonStyle}`}
+        className={`w-full flex items-center justify-between text-left cursor-pointer disabled:bg-gray-50 dark:bg-slate-900 disabled:text-gray-400 disabled:cursor-not-allowed ${buttonStyle}`}
       >
         <span className="truncate mr-1">
           {selectedOption ? (
@@ -101,7 +101,7 @@ export default function CustomDropdown({
       </button>
 
       {isOpen && (
-        <div className={`absolute right-0 z-50 bg-white border border-gray-100 rounded-xl shadow-lg py-1 overflow-y-auto focus:outline-none ${dropdownWidth} ${listPaddingClasses[size]}`}>
+        <div className={`absolute right-0 z-50 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 rounded-xl shadow-lg py-1 overflow-y-auto focus:outline-none ${dropdownWidth} ${listPaddingClasses[size]}`}>
           {options.length === 0 ? (
             <div className="px-4 py-2 text-xs text-gray-400 text-center">Tidak ada pilihan</div>
           ) : (
@@ -112,8 +112,8 @@ export default function CustomDropdown({
                   key={option.value}
                   type="button"
                   onClick={() => handleSelect(option.value)}
-                  className={`w-full flex items-center justify-between px-3.5 py-2 text-left text-xs transition-colors hover:bg-gray-50 cursor-pointer ${
-                    isSelected ? 'bg-indigo-50/50 text-indigo-600 font-semibold' : 'text-gray-700'
+                  className={`w-full flex items-center justify-between px-3.5 py-2 text-left text-xs transition-colors hover:bg-gray-50 dark:bg-slate-900 cursor-pointer ${
+                    isSelected ? 'bg-indigo-50 dark:bg-indigo-900/30/50 text-indigo-600 dark:text-indigo-400 font-semibold' : 'text-gray-700 dark:text-slate-200'
                   }`}
                 >
                   <div className="flex flex-col min-w-0 pr-2">
@@ -129,7 +129,7 @@ export default function CustomDropdown({
                       <span className="text-[10px] text-gray-400 truncate mt-0.5">{option.sublabel}</span>
                     )}
                   </div>
-                  {isSelected && <Check className="w-3.5 h-3.5 text-indigo-600 shrink-0 ml-1" />}
+                  {isSelected && <Check className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0 ml-1" />}
                 </button>
               );
             })

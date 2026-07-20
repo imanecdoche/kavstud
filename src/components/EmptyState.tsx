@@ -22,13 +22,13 @@ export default function EmptyState({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      className="py-12 px-6 text-center space-y-4 border border-dashed border-gray-100 rounded-3xl bg-white flex flex-col items-center justify-center max-w-md mx-auto"
+      className="py-12 px-6 text-center space-y-4 border border-dashed border-gray-100 dark:border-slate-700/50 rounded-3xl bg-white dark:bg-slate-800 flex flex-col items-center justify-center max-w-md mx-auto"
     >
-      <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 animate-pulse">
+      <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 animate-pulse">
         <Icon className="w-6 h-6" />
       </div>
       <div className="space-y-1">
-        <h4 className="text-sm font-bold text-gray-900">{title}</h4>
+        <h4 className="text-sm font-bold text-gray-900 dark:text-white">{title}</h4>
         <p className="text-xs text-gray-400 max-w-xs mx-auto leading-relaxed">{description}</p>
       </div>
       {actionText && onActionClick && (

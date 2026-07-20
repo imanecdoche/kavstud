@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from './firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 
 // Component Imports
 import Login from './components/Login';
@@ -26,6 +26,20 @@ export default function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [isAuthChecking, setIsAuthChecking] = useState(true);
   const [globalLoading, setGlobalLoading] = useState(false);
+  const [isMaintenanceActive, setIsMaintenanceActive] = useState(false);
+
+  // Listen to maintenance mode config
+  useEffect(() => {
+    if (!db) return;
+    const unsub = onSnapshot(doc(db, 'modules', 'system_config'), (docSnap) => {
+      if (docSnap.exists()) {
+        setIsMaintenanceActive(docSnap.data().maintenanceMode || false);
+      }
+    }, (err) => {
+      console.warn("Could not listen to system config:", err);
+    });
+    return () => unsub();
+  }, []);
 
   // Synchronization with browser history API
   useEffect(() => {
@@ -90,18 +104,6 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-  // Show a beautiful full-screen loader during initial auth check
-  if (isAuthChecking) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center space-y-4">
-        <div className="text-center space-y-3">
-          <Logo className="h-10 w-auto text-indigo-600 animate-pulse mx-auto" />
-          <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Mengautentikasi Sistem...</p>
-        </div>
-      </div>
-    );
-  }
-
   // Parameter parsing logic for dynamic routes
   // Matches: /student/:id
   const isStudentProfilePath = path.startsWith('/student/') && path !== '/student';
@@ -126,14 +128,74 @@ export default function App() {
   const isEditAssignmentPath = path.startsWith('/teacher/assignments/') && path.endsWith('/edit');
   const editAssignmentIdParam = isEditAssignmentPath ? path.split('/')[3] : '';
 
+  // Dynamic Document Title Update
+  useEffect(() => {
+    let title = 'KAVIO Edu';
+    if (path === '/login') title = 'Masuk - KAVIO Edu';
+    else if (path === '/register') title = 'Daftar - KAVIO Edu';
+    else if (path === '/teacher') title = 'Dashboard Guru - KAVIO Edu';
+    else if (path === '/student') title = 'Dashboard Siswa - KAVIO Edu';
+    else if (path === '/settings') title = 'Pengaturan - KAVIO Edu';
+    else if (isStudentProfilePath) title = 'Profil Siswa - KAVIO Edu';
+    else if (isCircleProfilePath) title = 'KAVIO Circle - KAVIO Edu';
+    else if (isAssignmentDetailPath) title = 'Detail Tugas - KAVIO Edu';
+    else if (isSubmissionDetailPath) title = 'Evaluasi - KAVIO Edu';
+    else if (isCreateAssignmentPath || isEditAssignmentPath) title = 'Editor Tugas - KAVIO Edu';
+
+    document.title = title;
+  }, [
+    path,
+    isStudentProfilePath,
+    isCircleProfilePath,
+    isAssignmentDetailPath,
+    isSubmissionDetailPath,
+    isCreateAssignmentPath,
+    isEditAssignmentPath
+  ]);
+
+  // Show a beautiful full-screen loader during initial auth check
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col justify-center items-center space-y-4">
+        <div className="text-center space-y-3">
+          <Logo className="h-10 w-auto text-indigo-600 dark:text-indigo-400 animate-pulse mx-auto" />
+          <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Mengautentikasi Sistem...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show Maintenance screen for students if active
+  if (isMaintenanceActive && userProfile && userProfile.role === 'student' && userProfile.email !== 'fatih@kavio.tec.edu') {
+    return (
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col justify-center items-center p-6 space-y-6 text-center select-none" id="maintenance-mode-page">
+        <div className="p-4 bg-indigo-50 dark:bg-indigo-900/30 border-2 border-indigo-100 dark:border-indigo-800/50 rounded-3xl shrink-0">
+          <Logo className="h-12 w-auto text-indigo-650 animate-bounce mx-auto" />
+        </div>
+        <div className="max-w-md space-y-2">
+          <h1 className="text-xl sm:text-2xl font-display font-black text-gray-900 dark:text-white leading-tight uppercase">SISTEM SEDANG DIPELIHARA 🛠️</h1>
+          <p className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed font-medium">
+            Halo! Kavio Edu sedang ditingkatkan demi performa belajar yang lebih baik. Kami akan kembali online secepatnya. Terima kasih atas kesabaran Anda!
+          </p>
+        </div>
+        <button
+          onClick={() => auth.signOut()}
+          className="btn-duo-slate px-6 py-2.5 text-xs font-black cursor-pointer"
+        >
+          Keluar dari Akun
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-white text-gray-900 flex flex-col relative" id="app-root">
+    <div className="min-h-screen bg-white dark:bg-slate-800 text-gray-900 dark:text-white flex flex-col relative" id="app-root">
       {/* Global Loading Overlay */}
       {globalLoading && (
         <div className="fixed inset-0 bg-black/10 backdrop-blur-3xs flex items-center justify-center z-50 animate-fadeIn">
-          <div className="bg-white/80 p-4 rounded-2xl border border-gray-100 flex items-center gap-2 shadow-md">
-            <Loader2 className="w-4 h-4 text-indigo-600 animate-spin" />
-            <span className="text-xs font-bold text-gray-700">Memproses...</span>
+          <div className="bg-white dark:bg-slate-800/80 p-4 rounded-2xl border border-gray-100 dark:border-slate-700/50 flex items-center gap-2 shadow-md">
+            <Loader2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400 animate-spin" />
+            <span className="text-xs font-bold text-gray-700 dark:text-slate-200">Memproses...</span>
           </div>
         </div>
       )}

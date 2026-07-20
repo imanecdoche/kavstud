@@ -81,17 +81,17 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans" id="register-page">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans" id="register-page">
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-4">
         <div className="flex justify-center">
           <Logo className="h-10 w-auto text-sky-600" />
         </div>
 
         <div className="space-y-1.5">
-          <h2 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 dark:text-white tracking-tight">
             Daftar Akun Siswa Baru
           </h2>
-          <p className="text-xs text-gray-500 max-w-sm mx-auto">
+          <p className="text-xs text-gray-500 dark:text-slate-400 max-w-sm mx-auto">
             Daftarkan diri Anda untuk mengakses lembar tugas interaktif dan pembelajaran KAVIO Edu.
           </p>
         </div>
@@ -109,7 +109,7 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
           <form onSubmit={handleSubmit} className="space-y-4" id="register-form">
             {/* Full Name */}
             <div className="space-y-1.5">
-              <label htmlFor="fullName" className="block text-xs font-black text-gray-700 uppercase tracking-wider">
+              <label htmlFor="fullName" className="block text-xs font-black text-gray-700 dark:text-slate-200 uppercase tracking-wider">
                 Nama Lengkap <span className="text-red-500">*</span>
               </label>
               <div className="relative rounded-xl shadow-3xs">
@@ -123,7 +123,7 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
                   required
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="block w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-sky-400"
+                  className="block w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600 rounded-xl text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-sky-400"
                   placeholder="Contoh: Jaisyrrahman"
                 />
               </div>
@@ -131,10 +131,10 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
 
             {/* Fixed Domain Username Email Input */}
             <div className="space-y-1.5">
-              <label htmlFor="username" className="block text-xs font-black text-gray-700 uppercase tracking-wider">
+              <label htmlFor="username" className="block text-xs font-black text-gray-700 dark:text-slate-200 uppercase tracking-wider">
                 Username Email Siswa <span className="text-red-500">*</span>
               </label>
-              <div className="flex items-center border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl overflow-hidden focus-within:border-sky-400 bg-white">
+              <div className="flex items-center border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600 rounded-xl overflow-hidden focus-within:border-sky-400 bg-white dark:bg-slate-800">
                 <div className="pl-3.5 flex items-center pointer-events-none text-gray-400">
                   <Mail className="h-4 w-4" />
                 </div>
@@ -145,7 +145,7 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value.replace(/[^a-zA-Z0-9._-]/g, ''))}
-                  className="flex-1 pl-2.5 pr-2 py-3 bg-white text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none font-mono"
+                  className="flex-1 pl-2.5 pr-2 py-3 bg-white dark:bg-slate-800 text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none font-mono"
                   placeholder="jais"
                 />
                 <span className="px-3.5 py-3 bg-sky-50 border-l-2 border-sky-100 text-xs font-black text-sky-600 font-mono select-none shrink-0">
@@ -159,7 +159,7 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
 
             {/* Password */}
             <div className="space-y-1.5">
-              <label htmlFor="password" className="block text-xs font-black text-gray-700 uppercase tracking-wider">
+              <label htmlFor="password" className="block text-xs font-black text-gray-700 dark:text-slate-200 uppercase tracking-wider">
                 Kata Sandi <span className="text-red-500">*</span>
               </label>
               <div className="relative rounded-xl shadow-3xs">
@@ -173,13 +173,13 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-10 py-3 bg-white border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-sky-400"
+                  className="block w-full pl-10 pr-10 py-3 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600 rounded-xl text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-sky-400"
                   placeholder="Min. 6 karakter"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
+                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 dark:text-slate-300 transition-colors cursor-pointer"
                   style={{ minWidth: '44px', minHeight: '44px' }}
                   aria-label={showPassword ? 'Sembunyikan sandi' : 'Tampilkan sandi'}
                 >
@@ -190,7 +190,7 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
 
             {/* Confirm Password */}
             <div className="space-y-1.5">
-              <label htmlFor="confirmPassword" className="block text-xs font-black text-gray-700 uppercase tracking-wider">
+              <label htmlFor="confirmPassword" className="block text-xs font-black text-gray-700 dark:text-slate-200 uppercase tracking-wider">
                 Konfirmasi Kata Sandi <span className="text-red-500">*</span>
               </label>
               <div className="relative rounded-xl shadow-3xs">
@@ -204,7 +204,7 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
                   required
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="block w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-sky-400"
+                  className="block w-full pl-10 pr-4 py-3 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600 rounded-xl text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-sky-400"
                   placeholder="Ulangi kata sandi"
                 />
               </div>
@@ -222,8 +222,8 @@ export default function Register({ onNavigate, onSetLoading }: RegisterProps) {
             </button>
           </form>
 
-          <div className="pt-2 border-t border-gray-100 text-center space-y-3">
-            <p className="text-xs text-gray-500 font-semibold">Sudah memiliki akun Siswa atau Guru?</p>
+          <div className="pt-2 border-t border-gray-100 dark:border-slate-700/50 text-center space-y-3">
+            <p className="text-xs text-gray-500 dark:text-slate-400 font-semibold">Sudah memiliki akun Siswa atau Guru?</p>
             <button
               type="button"
               onClick={() => onNavigate('/login')}

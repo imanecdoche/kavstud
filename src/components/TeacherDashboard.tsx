@@ -45,6 +45,7 @@ import EmptyState from './EmptyState';
 import { SkeletonDashboard, SkeletonList } from './Skeletons';
 import CustomDropdown from './CustomDropdown';
 import CustomDatePicker from './CustomDatePicker';
+import ModuleManager from './ModuleManager';
 
 interface TeacherDashboardProps {
   onNavigate: (path: string) => void;
@@ -52,7 +53,7 @@ interface TeacherDashboardProps {
 }
 
 export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'assignments' | 'settings' | 'circles' | 'students'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'assignments' | 'settings' | 'circles' | 'students' | 'modules'>('dashboard');
   const [teacherProfile, setTeacherProfile] = useState<UserProfile | null>(null);
   const [students, setStudents] = useState<UserProfile[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -445,7 +446,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row font-sans" id="teacher-dashboard">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col lg:flex-row font-sans" id="teacher-dashboard">
       <NavigationSidebar 
         role="teacher"
         activeTab={activeTab}
@@ -483,12 +484,12 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
               {activeTab === 'dashboard' && (
                 <>
                   {/* Top Welcome Panel */}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 dark:border-slate-700/50 pb-6">
                     <div>
-                      <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 tracking-tight flex items-center gap-2">
+                      <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 dark:text-white tracking-tight flex items-center gap-2">
                         <span>Halo, {teacherProfile?.fullName?.split(' ')[0] || 'Guru'}!</span>
                       </h1>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
                         Kelola tugas kelas, evaluasi jawaban siswa, dan pantau perkembangan belajar secara langsung.
                       </p>
                     </div>
@@ -512,7 +513,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       <div className="space-y-0.5">
                         <span className="text-[10px] font-black text-purple-700 uppercase tracking-wider block">Siswa Terdaftar</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-3xl font-black font-display text-gray-900">{students.length}</span>
+                          <span className="text-3xl font-black font-display text-gray-900 dark:text-white">{students.length}</span>
                           <span className="text-xs text-purple-800 font-extrabold">Siswa</span>
                         </div>
                       </div>
@@ -525,20 +526,20 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       <div className="space-y-0.5">
                         <span className="text-[10px] font-black text-sky-700 uppercase tracking-wider block">Total Tugas</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-3xl font-black font-display text-gray-900">{assignments.length}</span>
+                          <span className="text-3xl font-black font-display text-gray-900 dark:text-white">{assignments.length}</span>
                           <span className="text-xs text-sky-800 font-extrabold">Tugas</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="card-duo p-5 flex items-center gap-4 border-2 border-emerald-200 border-b-4 border-emerald-300 bg-emerald-50/40 sm:col-span-2 lg:col-span-1">
+                    <div className="card-duo p-5 flex items-center gap-4 border-2 border-emerald-200 border-b-4 border-emerald-300 bg-emerald-50 dark:bg-emerald-900/30/40 sm:col-span-2 lg:col-span-1">
                       <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-black shrink-0 shadow-xs border-b-2 border-emerald-700">
                         <CheckCircle2 className="w-6 h-6" />
                       </div>
                       <div className="space-y-0.5">
                         <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider block">Total Submisi</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-3xl font-black font-display text-gray-900">{submissions.length}</span>
+                          <span className="text-3xl font-black font-display text-gray-900 dark:text-white">{submissions.length}</span>
                           <span className="text-xs text-emerald-800 font-extrabold">Jawaban</span>
                         </div>
                       </div>
@@ -553,7 +554,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       {/* Section: Submisi Masuk Terbaru */}
                       <div className="card-duo p-6 space-y-4">
                         <div className="flex items-center justify-between">
-                          <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
+                          <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 uppercase tracking-wide">
                             <CheckCircle2 className="w-4.5 h-4.5 text-emerald-500" />
                             Submisi Masuk Terbaru
                           </h3>
@@ -571,21 +572,21 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                               <div 
                                 key={sub.id}
                                 onClick={() => onNavigate(`/submission/${sub.id}`)}
-                                className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-gray-50/50 px-2 rounded-xl transition-colors cursor-pointer"
+                                className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-gray-50 dark:bg-slate-900/50 px-2 rounded-xl transition-colors cursor-pointer"
                               >
                                 <div className="min-w-0">
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <h4 className="text-xs font-bold text-gray-900 truncate">{sub.assignmentTitle}</h4>
+                                    <h4 className="text-xs font-bold text-gray-900 dark:text-white truncate">{sub.assignmentTitle}</h4>
                                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
                                       sub.status === 'graded' 
                                         ? 'bg-green-50 text-green-700 border border-green-100' 
-                                        : 'bg-amber-50 text-amber-700 border border-amber-100 animate-pulse'
+                                        : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 border border-amber-100 dark:border-amber-800/50 animate-pulse'
                                     }`}>
                                       {sub.status === 'graded' ? 'Sudah Dinilai' : 'Butuh Dinilai'}
                                     </span>
                                   </div>
                                   <p className="text-[10px] text-gray-400 mt-1 truncate">
-                                    Oleh: <span className="font-semibold text-gray-600">{sub.studentName}</span>
+                                    Oleh: <span className="font-semibold text-gray-600 dark:text-slate-300">{sub.studentName}</span>
                                   </p>
                                 </div>
 
@@ -593,10 +594,10 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                                   {sub.score !== null ? (
                                     <div className="text-right">
                                       <p className="text-[10px] text-gray-400">Skor</p>
-                                      <p className="text-xs font-bold text-indigo-600 font-display">{sub.score} / 100</p>
+                                      <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 font-display">{sub.score} / 100</p>
                                     </div>
                                   ) : (
-                                    <span className="text-[10px] text-indigo-600 font-semibold bg-indigo-50 px-2.5 py-1 rounded-lg">
+                                    <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-1 rounded-lg">
                                       Nilai Sekarang
                                     </span>
                                   )}
@@ -611,7 +612,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       {/* Section: Tugas Terbaru Dibuat */}
                       <div className="card-duo p-6 space-y-4">
                         <div className="flex items-center justify-between">
-                          <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
+                          <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 uppercase tracking-wide">
                             <FileText className="w-4.5 h-4.5 text-indigo-500" />
                             Daftar Tugas Baru
                           </h3>
@@ -630,11 +631,11 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                             {assignments.slice(0, 5).map((assign) => (
                               <div 
                                 key={assign.id}
-                                className="py-3.5 flex items-center justify-between gap-4 hover:bg-gray-50/50 px-2 rounded-xl transition-colors cursor-pointer"
+                                className="py-3.5 flex items-center justify-between gap-4 hover:bg-gray-50 dark:bg-slate-900/50 px-2 rounded-xl transition-colors cursor-pointer"
                                 onClick={() => onNavigate(`/assignment/${assign.id}`)}
                               >
                                 <div className="min-w-0">
-                                  <h4 className="text-xs font-bold text-gray-900 truncate">{assign.title}</h4>
+                                  <h4 className="text-xs font-bold text-gray-900 dark:text-white truncate">{assign.title}</h4>
                                   <p className="text-[10px] text-gray-400 mt-0.5 truncate">Siswa: {assign.studentName}</p>
                                 </div>
                                 <div className="flex items-center gap-2 shrink-0">
@@ -655,7 +656,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                     <div className="space-y-8">
                       {/* Quick Actions Panel */}
                       <div className="card-duo p-6 space-y-4">
-                        <h3 className="text-xs font-black text-gray-900 uppercase tracking-wider">Aksi Cepat</h3>
+                        <h3 className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider">Aksi Cepat</h3>
                         <div className="grid grid-cols-1 gap-3">
                           <button
                             onClick={() => onNavigate('/teacher/assignments/create')}
@@ -666,16 +667,16 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                           </button>
                           <button
                             onClick={() => setActiveTab('assignments')}
-                            className="w-full py-3 px-4 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-2xl font-black text-xs border-b-4 border-gray-300 flex items-center gap-3 transition-all cursor-pointer active:translate-y-[2px] active:border-b-2"
+                            className="w-full py-3 px-4 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:bg-slate-600 rounded-2xl font-black text-xs border-b-4 border-gray-300 dark:border-slate-600 flex items-center gap-3 transition-all cursor-pointer active:translate-y-[2px] active:border-b-2"
                           >
-                            <Layers className="w-4 h-4 text-gray-500 shrink-0" />
+                            <Layers className="w-4 h-4 text-gray-500 dark:text-slate-400 shrink-0" />
                             <span>Kelola Semua Tugas</span>
                           </button>
                           <button
                             onClick={() => setActiveTab('settings')}
-                            className="w-full py-3 px-4 bg-gray-100 text-gray-700 hover:bg-gray-200 rounded-2xl font-black text-xs border-b-4 border-gray-300 flex items-center gap-3 transition-all cursor-pointer active:translate-y-[2px] active:border-b-2"
+                            className="w-full py-3 px-4 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:bg-slate-600 rounded-2xl font-black text-xs border-b-4 border-gray-300 dark:border-slate-600 flex items-center gap-3 transition-all cursor-pointer active:translate-y-[2px] active:border-b-2"
                           >
-                            <Award className="w-4 h-4 text-gray-500 shrink-0" />
+                            <Award className="w-4 h-4 text-gray-500 dark:text-slate-400 shrink-0" />
                             <span>Pengaturan Profil</span>
                           </button>
                         </div>
@@ -683,7 +684,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
                       {/* Student list */}
                       <div className="card-duo p-6 space-y-4">
-                        <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
+                        <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 uppercase tracking-wide">
                           <Users className="w-4 h-4 text-indigo-500" />
                           Daftar Siswa Kelas
                         </h3>
@@ -700,15 +701,15 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                               <div 
                                 key={stud.uid}
                                 onClick={() => onNavigate(`/student/${stud.uid}`)}
-                                className="p-3 bg-gray-50/50 hover:bg-gray-50 border border-gray-100/50 rounded-2xl flex items-center justify-between gap-3 cursor-pointer transition-colors"
+                                className="p-3 bg-gray-50 dark:bg-slate-900/50 hover:bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-700/50 rounded-2xl flex items-center justify-between gap-3 cursor-pointer transition-colors"
                               >
                                 <div className="flex items-center gap-3 min-w-0">
-                                  <div className="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-bold text-xs shrink-0">
+                                  <div className="w-8 h-8 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center font-bold text-xs shrink-0">
                                     {stud.fullName?.charAt(0).toUpperCase() || 'S'}
                                   </div>
                                   <div className="min-w-0">
                                     <div className="flex items-center gap-1.5 flex-wrap">
-                                      <p className="text-xs font-bold text-gray-900 truncate leading-tight">{stud.fullName}</p>
+                                      <p className="text-xs font-bold text-gray-900 dark:text-white truncate leading-tight">{stud.fullName}</p>
                                       <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold uppercase ${
                                         stud.classType === 'PRIVATE'
                                           ? 'bg-teal-50 text-teal-700 border border-teal-100'
@@ -734,12 +735,12 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
               {/* TAB 2: FULL ASSIGNMENTS MANAGER */}
               {activeTab === 'assignments' && (
                 <>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 dark:border-slate-700/50 pb-6">
                     <div>
-                      <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 tracking-tight">
+                      <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 dark:text-white tracking-tight">
                         Daftar Penugasan Kelas
                       </h1>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
                         Cari, saring, dan tinjau seluruh tugas belajar yang telah didistribusikan ke siswa.
                       </p>
                     </div>
@@ -763,13 +764,13 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                         placeholder="Cari tugas, tipe, status, atau siswa..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-2 border-gray-200 border-b-4 border-gray-300 rounded-2xl text-xs font-bold placeholder-gray-400 focus:outline-none focus:bg-white focus:border-sky-400 focus:border-b-sky-500 transition-all"
+                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600 rounded-2xl text-xs font-bold placeholder-gray-400 focus:outline-none focus:bg-white dark:bg-slate-800 focus:border-sky-400 focus:border-b-sky-500 transition-all"
                       />
                     </div>
 
                     <div className="flex flex-wrap gap-3 w-full md:w-auto">
                       {/* Filter by Status */}
-                      <div className="flex items-center gap-1.5 bg-gray-50/50 border border-gray-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600">
+                      <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600 dark:text-slate-300">
                         <Filter className="w-3.5 h-3.5 text-gray-400" />
                         <CustomDropdown
                           variant="minimal"
@@ -789,7 +790,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       </div>
 
                       {/* Filter by Type */}
-                      <div className="flex items-center gap-1.5 bg-gray-50/50 border border-gray-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600">
+                      <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600 dark:text-slate-300">
                         <Layers className="w-3.5 h-3.5 text-gray-400" />
                         <CustomDropdown
                           variant="minimal"
@@ -807,7 +808,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       </div>
 
                       {/* Filter by Student */}
-                      <div className="flex items-center gap-1.5 bg-gray-50/50 border border-gray-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600">
+                      <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600 dark:text-slate-300">
                         <UserCheck className="w-3.5 h-3.5 text-gray-400" />
                         <CustomDropdown
                           variant="minimal"
@@ -858,12 +859,12 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                                     status === 'completed' 
                                       ? 'bg-green-50 text-green-700' 
                                       : status === 'review' 
-                                        ? 'bg-amber-50 text-amber-700 animate-pulse' 
+                                        ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 animate-pulse' 
                                         : status === 'remedial'
                                           ? 'bg-orange-50 text-orange-700'
                                           : status === 'expired'
                                             ? 'bg-red-50 text-red-700'
-                                            : 'bg-gray-100 text-gray-500'
+                                            : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400'
                                   }`}>
                                     {status === 'completed' 
                                       ? 'Selesai' 
@@ -876,7 +877,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                                             : 'Dikirim'}
                                   </span>
 
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-50 text-indigo-700">
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700">
                                     {type === 'short_answer' 
                                       ? 'Jawaban Singkat' 
                                       : type === 'multiple_choice' 
@@ -888,7 +889,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                                 <div className="flex items-center gap-2">
                                   <button
                                     onClick={(e) => { e.stopPropagation(); onNavigate(`/teacher/assignments/${assign.id}/edit`); }}
-                                    className="p-1 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors cursor-pointer"
+                                    className="p-1 text-gray-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-900/30 rounded-md transition-colors cursor-pointer"
                                     title="Edit Tugas"
                                   >
                                     <Pencil className="w-3.5 h-3.5" />
@@ -903,7 +904,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                                 </div>
                               </div>
 
-                              <h3 className="text-sm font-bold text-gray-900 leading-tight">{assign.title}</h3>
+                              <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-tight">{assign.title}</h3>
                               <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">{assign.question}</p>
                             </div>
 
@@ -914,7 +915,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                                   Diberikan: {assign.createdAt ? new Date(assign.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) : 'Baru saja'}
                                 </span>
                                 {assign.deadline && (
-                                  <span className={`flex items-center gap-1 font-bold ${status === 'expired' ? 'text-red-500' : 'text-gray-500'}`}>
+                                  <span className={`flex items-center gap-1 font-bold ${status === 'expired' ? 'text-red-500' : 'text-gray-500 dark:text-slate-400'}`}>
                                     Batas: {new Date(assign.deadline).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'})}
                                   </span>
                                 )}
@@ -922,13 +923,13 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                  <div className="w-6 h-6 bg-indigo-50 text-indigo-600 rounded-md flex items-center justify-center text-[10px] font-bold uppercase shrink-0">
+                                  <div className="w-6 h-6 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-md flex items-center justify-center text-[10px] font-bold uppercase shrink-0">
                                     {assign.studentName?.charAt(0).toUpperCase()}
                                   </div>
-                                  <span className="font-semibold text-gray-600 truncate max-w-[120px]">{assign.studentName}</span>
+                                  <span className="font-semibold text-gray-600 dark:text-slate-300 truncate max-w-[120px]">{assign.studentName}</span>
                                 </div>
                                 
-                                <span className="text-[10px] font-bold text-indigo-600 hover:underline inline-flex items-center gap-0.5">
+                                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center gap-0.5">
                                   Detail Tugas
                                   <ArrowRight className="w-3.5 h-3.5" />
                                 </span>
@@ -977,6 +978,13 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 </div>
               )}
 
+              {/* TAB: MODULE MANAGEMENT */}
+              {activeTab === 'modules' && (
+                <ModuleManager 
+                  onSetLoading={onSetLoading}
+                />
+              )}
+
               {/* TAB 3: SETTINGS INLINE */}
               {activeTab === 'settings' && (
                 <div className="max-w-4xl mx-auto space-y-6">
@@ -1002,8 +1010,8 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fadeIn">
           <div className="modal-duo w-[460px] h-[250px] max-w-[95vw] max-h-[90vh] p-6 space-y-5 relative animate-scaleUp flex flex-col justify-between">
             <h3 className="text-xs font-black text-red-600 uppercase tracking-wider">Hapus Tugas Penugasan</h3>
-            <p className="text-xs text-gray-600 font-medium leading-relaxed">
-              Apakah Anda yakin ingin menghapus tugas <strong className="text-gray-900 font-extrabold">"{deletingAssignmentTitle}"</strong>? Tindakan ini permanen dan akan menghapus semua riwayat pengerjaan serta nilai siswa terkait tugas ini.
+            <p className="text-xs text-gray-600 dark:text-slate-300 font-medium leading-relaxed">
+              Apakah Anda yakin ingin menghapus tugas <strong className="text-gray-900 dark:text-white font-extrabold">"{deletingAssignmentTitle}"</strong>? Tindakan ini permanen dan akan menghapus semua riwayat pengerjaan serta nilai siswa terkait tugas ini.
             </p>
             <div className="flex gap-3 pt-2">
               <button
@@ -1031,12 +1039,12 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-2 border-b border-gray-50">
-              <h2 className="text-lg font-display font-bold text-gray-900">
+              <h2 className="text-lg font-display font-bold text-gray-900 dark:text-white">
                 {isEditMode ? 'Sunting Tugas Kelas' : 'Buat Tugas Baru'}
               </h2>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer"
+                className="p-2 text-gray-400 hover:text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:bg-slate-900 rounded-lg cursor-pointer"
                 style={{ minWidth: '44px', minHeight: '44px' }}
                 aria-label="Tutup"
               >
@@ -1053,7 +1061,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
             <form onSubmit={handleSaveAssignment} className="space-y-4">
               {/* Title */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-gray-700">
+                <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
                   Judul Tugas <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1061,7 +1069,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                   required
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="block w-full px-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                   placeholder="Contoh: Esai Refleksi Sejarah Indonesia"
                 />
               </div>
@@ -1069,7 +1077,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
               {/* Target Selection (Individual vs. Circle) */}
               {!isEditMode && (
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-gray-700">
+                  <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
                     Target Penerima Tugas <span className="text-red-500">*</span>
                   </label>
                   <div className="flex gap-2">
@@ -1081,8 +1089,8 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       }}
                       className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                         assignmentTarget === 'INDIVIDUAL'
-                          ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
-                          : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                          ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 border-indigo-200'
+                          : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:bg-slate-900'
                       }`}
                     >
                       Individu Siswa
@@ -1095,8 +1103,8 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       }}
                       className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
                         assignmentTarget === 'CIRCLE'
-                          ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
-                          : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                          ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 border-indigo-200'
+                          : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:bg-slate-900'
                       }`}
                     >
                       Kavio Circle
@@ -1108,7 +1116,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
               {/* Conditional Recipient Field */}
               {assignmentTarget === 'INDIVIDUAL' ? (
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-gray-700">
+                  <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
                     Pilih Siswa <span className="text-red-500">*</span>
                   </label>
                   <CustomDropdown
@@ -1130,7 +1138,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 </div>
               ) : (
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-gray-700">
+                  <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
                     Pilih Kelompok Belajar (Circle) <span className="text-red-500">*</span>
                   </label>
                   <CustomDropdown
@@ -1152,7 +1160,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
               {/* Assignment Type Selector */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-gray-700">
+                <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
                   Jenis Tugas <span className="text-red-500">*</span>
                 </label>
                 <CustomDropdown
@@ -1168,8 +1176,8 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
               {/* Conditional Fields: Multiple Choice */}
               {assignmentType === 'multiple_choice' && (
-                <div className="space-y-3 border-l-2 border-indigo-100 pl-4 py-1.5 bg-gray-50/30 p-3 rounded-xl">
-                  <span className="block text-xs font-bold text-gray-700">Opsi Jawaban & Kunci Jawaban</span>
+                <div className="space-y-3 border-l-2 border-indigo-100 dark:border-indigo-800/50 pl-4 py-1.5 bg-gray-50 dark:bg-slate-900/30 p-3 rounded-xl">
+                  <span className="block text-xs font-bold text-gray-700 dark:text-slate-200">Opsi Jawaban & Kunci Jawaban</span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     {['A', 'B', 'C', 'D'].map((opt) => (
                       <div key={opt} className="space-y-1">
@@ -1179,13 +1187,13 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                           required
                           value={choices[opt as 'A' | 'B' | 'C' | 'D']}
                           onChange={(e) => setChoices({ ...choices, [opt]: e.target.value })}
-                          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-indigo-500"
+                          className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:border-indigo-500"
                           placeholder={`Jawaban opsi ${opt}...`}
                         />
                       </div>
                     ))}
                   </div>
-                  <div className="space-y-1.5 pt-2 border-t border-gray-100">
+                  <div className="space-y-1.5 pt-2 border-t border-gray-100 dark:border-slate-700/50">
                     <span className="text-[10px] font-bold text-gray-400 uppercase">Pilihan Kunci Jawaban Benar</span>
                     <CustomDropdown
                       value={correctChoice}
@@ -1203,13 +1211,13 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
               {/* Conditional Fields: Multi Short Answer */}
               {assignmentType === 'multi_short_answer' && (
-                <div className="space-y-3.5 border-l-2 border-indigo-100 pl-4 py-1.5 bg-gray-50/30 p-3 rounded-xl">
+                <div className="space-y-3.5 border-l-2 border-indigo-100 dark:border-indigo-800/50 pl-4 py-1.5 bg-gray-50 dark:bg-slate-900/30 p-3 rounded-xl">
                   <div className="flex items-center justify-between">
-                    <span className="block text-xs font-bold text-gray-700">Sub-Pertanyaan ({subQuestions.length})</span>
+                    <span className="block text-xs font-bold text-gray-700 dark:text-slate-200">Sub-Pertanyaan ({subQuestions.length})</span>
                     <button
                       type="button"
                       onClick={() => setSubQuestions([...subQuestions, ''])}
-                      className="text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2.5 py-1 rounded-lg transition-colors"
+                      className="text-[10px] bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 text-indigo-700 font-bold px-2.5 py-1 rounded-lg transition-colors"
                     >
                       + Tambah Soal
                     </button>
@@ -1227,7 +1235,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                             next[idx] = e.target.value;
                             setSubQuestions(next);
                           }}
-                          className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-indigo-500"
+                          className="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:border-indigo-500"
                           placeholder={`Pertanyaan sub-soal #${idx + 1}...`}
                         />
                         {subQuestions.length > 1 && (
@@ -1247,7 +1255,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
               {/* Question Text Area / Main Instructions */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-gray-700">
+                <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
                   {assignmentType === 'multiple_choice' 
                     ? 'Pertanyaan Soal / Instruksi Penyelenggaraan' 
                     : 'Pertanyaan Utama / Detail Instruksi Tugas'} <span className="text-red-500">*</span>
@@ -1257,14 +1265,14 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                   rows={4}
                   value={newQuestion}
                   onChange={(e) => setNewQuestion(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"
+                  className="block w-full px-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"
                   placeholder="Tuliskan detail pertanyaan atau instruksi tugas secara rinci di sini..."
                 />
               </div>
 
               {/* Deadline Date Input */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-gray-700">
+                <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
                   Batas Waktu Pengumpulan (Deadline) <span className="text-gray-400">(Opsional)</span>
                 </label>
                 <CustomDatePicker

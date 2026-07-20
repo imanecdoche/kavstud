@@ -536,26 +536,26 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
 
   if (initialLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center p-4">
         <div className="text-center space-y-4">
-          <Loader2 className="w-8 h-8 text-indigo-600 animate-spin mx-auto" />
-          <p className="text-xs font-bold text-gray-500 uppercase tracking-widest">Memuat Lembar Kerja Builder...</p>
+          <Loader2 className="w-8 h-8 text-indigo-600 dark:text-indigo-400 animate-spin mx-auto" />
+          <p className="text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest">Memuat Lembar Kerja Builder...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/60 flex flex-col font-sans" id="assignment-builder">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900/60 flex flex-col font-sans" id="assignment-builder">
       {/* 1. TOP HEADER SECTION */}
-      <header className="sticky top-0 bg-white border-b border-gray-100 px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-40 shadow-xs">
+      <header className="sticky top-0 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700/50 px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-40 shadow-xs">
         <div className="flex items-center gap-3">
           <button
             onClick={() => onNavigate('/teacher')}
             className="btn-duo-slate p-2 flex items-center justify-center cursor-pointer shrink-0"
             style={{ minWidth: '40px', minHeight: '40px' }}
           >
-            <ArrowLeft className="w-4 h-4 text-gray-700" />
+            <ArrowLeft className="w-4 h-4 text-gray-700 dark:text-slate-200" />
           </button>
           
           <div className="min-w-0">
@@ -565,13 +565,13 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                 status === 'published' 
                   ? 'bg-green-50 text-green-700 border border-green-100' 
                   : status === 'scheduled'
-                    ? 'bg-blue-50 text-blue-700 border border-blue-100'
-                    : 'bg-amber-50 text-amber-700 border border-amber-100'
+                    ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 border border-blue-100'
+                    : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 border border-amber-100 dark:border-amber-800/50'
               }`}>
                 {status === 'published' ? 'Dipublikasikan' : status === 'scheduled' ? 'Djadwalkan' : 'Draft'}
               </span>
             </div>
-            <h1 className="text-md sm:text-lg font-display font-bold text-gray-900 truncate tracking-tight mt-0.5">
+            <h1 className="text-md sm:text-lg font-display font-bold text-gray-900 dark:text-white truncate tracking-tight mt-0.5">
               {title || 'Tugas Baru Tanpa Judul'}
             </h1>
           </div>
@@ -602,7 +602,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
             title="Pengaturan Tugas"
             aria-label="Pengaturan Tugas"
           >
-            <Settings className="w-4.5 h-4.5 text-gray-700" />
+            <Settings className="w-4.5 h-4.5 text-gray-700 dark:text-slate-200" />
           </button>
 
           <button
@@ -614,7 +614,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
             title="Simpan Draft"
             aria-label="Simpan Draft"
           >
-            <Save className="w-4.5 h-4.5 text-gray-700" />
+            <Save className="w-4.5 h-4.5 text-gray-700 dark:text-slate-200" />
           </button>
 
           {/* Most Prominent Publish Button */}
@@ -652,8 +652,8 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
         {/* PREVIEW MODE SCREEN OVERLAY */}
         {isPreviewMode ? (
           <div className="w-full lg:w-3/4 space-y-6">
-            <div className="bg-amber-50 border border-amber-200 p-4 rounded-2xl text-xs text-amber-800 flex items-center gap-2.5">
-              <Eye className="w-5 h-5 text-amber-600 shrink-0" />
+            <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 p-4 rounded-2xl text-xs text-amber-800 flex items-center gap-2.5">
+              <Eye className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0" />
               <div>
                 <p className="font-bold">Mode Pratinjau (Hanya Baca)</p>
                 <p className="text-amber-700 mt-0.5">Siswa akan melihat dan menjawab lembar ujian Anda dengan format interaktif di bawah ini.</p>
@@ -661,11 +661,11 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
             </div>
 
             {/* Simulated Student Exam Header */}
-            <div className="bg-white border border-gray-100 p-6 sm:p-8 rounded-3xl shadow-3xs space-y-4">
-              <h2 className="text-xl font-display font-bold text-gray-900">{title || 'Tugas Baru Tanpa Judul'}</h2>
-              {description && <p className="text-xs text-gray-500 leading-relaxed">{description}</p>}
+            <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-6 sm:p-8 rounded-3xl shadow-3xs space-y-4">
+              <h2 className="text-xl font-display font-bold text-gray-900 dark:text-white">{title || 'Tugas Baru Tanpa Judul'}</h2>
+              {description && <p className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed">{description}</p>}
               
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-gray-50 text-[11px] font-semibold text-gray-600">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-gray-50 text-[11px] font-semibold text-gray-600 dark:text-slate-300">
                 <div className="flex items-center gap-2">
                   <Clock className="w-4 h-4 text-indigo-500" />
                   <span>Durasi: {estimatedDuration} Menit</span>
@@ -688,13 +688,13 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
             {/* Questions list preview */}
             <div className="space-y-4">
               {questions.map((q, idx) => (
-                <div key={q.id} className="bg-white border border-gray-100 p-6 rounded-2xl space-y-4">
+                <div key={q.id} className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-6 rounded-2xl space-y-4">
                   <div className="flex items-center justify-between border-b border-gray-50 pb-2">
-                    <span className="text-[11px] font-bold text-indigo-600 font-mono uppercase tracking-wider">Soal #{idx + 1} ({q.type.replace('_', ' ')})</span>
-                    <span className="text-[10px] font-bold text-gray-400 bg-gray-50 px-2 py-0.5 rounded-md">{q.points} Poin</span>
+                    <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 font-mono uppercase tracking-wider">Soal #{idx + 1} ({q.type.replace('_', ' ')})</span>
+                    <span className="text-[10px] font-bold text-gray-400 bg-gray-50 dark:bg-slate-900 px-2 py-0.5 rounded-md">{q.points} Poin</span>
                   </div>
 
-                  <p className="text-xs font-semibold text-gray-800 leading-relaxed whitespace-pre-wrap">{q.question || '(Soal belum ditulis)'}</p>
+                  <p className="text-xs font-semibold text-gray-800 dark:text-slate-100 leading-relaxed whitespace-pre-wrap">{q.question || '(Soal belum ditulis)'}</p>
 
                   {/* MCQ Choices */}
                   {q.type === 'multiple_choice' && (
@@ -709,12 +709,12 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                             onClick={() => setPreviewAnswers(p => ({ ...p, [q.id]: String(cIdx) }))}
                             className={`p-3.5 rounded-xl border text-left text-xs font-semibold flex items-center gap-2.5 transition-all cursor-pointer ${
                               isSelected 
-                                ? 'bg-indigo-50/50 border-indigo-600 text-indigo-900 ring-1 ring-indigo-600' 
-                                : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'
+                                ? 'bg-indigo-50 dark:bg-indigo-900/30/50 border-indigo-600 text-indigo-900 dark:text-indigo-100 ring-1 ring-indigo-600' 
+                                : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 hover:border-gray-300 dark:border-slate-600'
                             }`}
                           >
                             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold font-mono ${
-                              isSelected ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-400'
+                              isSelected ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-400'
                             }`}>{label}</span>
                             <span>{choice || `Pilihan ${label}`}</span>
                           </button>
@@ -730,7 +730,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                       value={previewAnswers[q.id] || ''}
                       onChange={(e) => setPreviewAnswers(p => ({ ...p, [q.id]: e.target.value }))}
                       placeholder="Ketik jawaban esai Anda di sini..."
-                      className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none"
+                      className="w-full p-3 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none"
                     />
                   )}
 
@@ -748,7 +748,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                             className={`px-6 py-2.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
                               isSelected 
                                 ? 'bg-indigo-600 border-indigo-600 text-white shadow-xs' 
-                                : 'bg-white border-gray-200 text-gray-700 hover:border-gray-300'
+                                : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 hover:border-gray-300 dark:border-slate-600'
                             }`}
                           >
                             {val}
@@ -760,12 +760,12 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
 
                   {/* Matching mock layout */}
                   {q.type === 'matching' && (
-                    <div className="space-y-2 mt-2 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+                    <div className="space-y-2 mt-2 bg-gray-50 dark:bg-slate-900/50 p-4 rounded-xl border border-gray-100 dark:border-slate-700/50">
                       {q.matchingPairs?.map((pair, pIdx) => (
                         <div key={pIdx} className="flex items-center justify-between gap-4 text-xs">
-                          <span className="font-semibold text-gray-700">{pair.left || 'Kiri'}</span>
+                          <span className="font-semibold text-gray-700 dark:text-slate-200">{pair.left || 'Kiri'}</span>
                           <span className="text-gray-400">➔</span>
-                          <span className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-gray-600 font-bold">{pair.right || 'Kanan'}</span>
+                          <span className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-gray-600 dark:text-slate-300 font-bold">{pair.right || 'Kanan'}</span>
                         </div>
                       ))}
                     </div>
@@ -774,22 +774,22 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                   {/* Fill in blank mock */}
                   {q.type === 'fill_blank' && (
                     <div className="flex items-center gap-2 mt-2">
-                      <span className="text-xs text-gray-500">Tulis Jawaban Isian:</span>
+                      <span className="text-xs text-gray-500 dark:text-slate-400">Tulis Jawaban Isian:</span>
                       <input
                         type="text"
                         value={previewAnswers[q.id] || ''}
                         onChange={(e) => setPreviewAnswers(p => ({ ...p, [q.id]: e.target.value }))}
                         placeholder="Ketik kata/frasa kunci..."
-                        className="p-2 bg-white border border-gray-200 rounded-lg text-xs"
+                        className="p-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-xs"
                       />
                     </div>
                   )}
 
                   {/* Listening Mock */}
                   {q.type === 'listening' && (
-                    <div className="space-y-3 mt-2 bg-gray-50 p-4 rounded-xl">
-                      <div className="flex items-center gap-2 text-xs font-bold text-gray-700">
-                        <Volume2 className="w-4 h-4 text-indigo-600" />
+                    <div className="space-y-3 mt-2 bg-gray-50 dark:bg-slate-900 p-4 rounded-xl">
+                      <div className="flex items-center gap-2 text-xs font-bold text-gray-700 dark:text-slate-200">
+                        <Volume2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                         <span>Dengarkan Audio Soal:</span>
                       </div>
                       <audio controls src={q.audioUrl} className="w-full max-w-md h-8" />
@@ -798,19 +798,19 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                         value={previewAnswers[q.id] || ''}
                         onChange={(e) => setPreviewAnswers(p => ({ ...p, [q.id]: e.target.value }))}
                         placeholder="Tulis apa yang Anda dengar..."
-                        className="w-full p-2.5 bg-white border border-gray-200 rounded-xl text-xs"
+                        className="w-full p-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs"
                       />
                     </div>
                   )}
 
                   {/* Speaking Mock */}
                   {q.type === 'speaking' && (
-                    <div className="space-y-3 mt-2 bg-gray-50 p-4 rounded-xl">
-                      <div className="flex items-center gap-2 text-xs font-bold text-gray-700">
-                        <Mic className="w-4 h-4 text-indigo-600" />
+                    <div className="space-y-3 mt-2 bg-gray-50 dark:bg-slate-900 p-4 rounded-xl">
+                      <div className="flex items-center gap-2 text-xs font-bold text-gray-700 dark:text-slate-200">
+                        <Mic className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                         <span>Instruksi Berbicara:</span>
                       </div>
-                      {q.speakingPrompt && <p className="text-xs italic text-gray-600 font-medium">"{q.speakingPrompt}"</p>}
+                      {q.speakingPrompt && <p className="text-xs italic text-gray-600 dark:text-slate-300 font-medium">"{q.speakingPrompt}"</p>}
                       <button type="button" className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-xs font-bold rounded-xl">
                         <Mic className="w-3.5 h-3.5" /> Rekam Suara (Preview)
                       </button>
@@ -819,13 +819,13 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
 
                   {/* File Upload Mock */}
                   {q.type === 'file_upload' && (
-                    <div className="space-y-3 mt-2 bg-gray-50/50 p-6 rounded-2xl border border-dashed border-gray-200 text-center">
+                    <div className="space-y-3 mt-2 bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-dashed border-gray-200 dark:border-slate-700 text-center">
                       <Upload className="w-8 h-8 text-indigo-500 mx-auto" />
                       <div>
-                        <p className="text-xs font-bold text-gray-700">Tarik atau Pilih Berkas Pengerjaan</p>
+                        <p className="text-xs font-bold text-gray-700 dark:text-slate-200">Tarik atau Pilih Berkas Pengerjaan</p>
                         <p className="text-[10px] text-gray-400 mt-1">Berkas yang diizinkan: {q.allowedFileTypes?.join(', ') || 'Semua'}</p>
                       </div>
-                      <button type="button" className="px-4 py-2 bg-white border border-gray-200 text-xs font-bold rounded-xl">Pilih Berkas</button>
+                      <button type="button" className="px-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 text-xs font-bold rounded-xl">Pilih Berkas</button>
                     </div>
                   )}
                 </div>
@@ -839,28 +839,28 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
             {/* Quick Title Card */}
             <div className="card-duo p-5 flex items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-gray-900">Workspace Soal Aktif</h2>
+                  <h2 className="text-sm font-bold text-gray-900 dark:text-white">Workspace Soal Aktif</h2>
                   <p className="text-[10px] text-gray-400 mt-0.5">Tarik dan susun urutan soal secara fleksibel. Klik setiap kartu untuk detail input.</p>
                 </div>
               </div>
 
               {/* Add Question Shortcut Dropdown */}
-              <div className="flex items-center gap-1 bg-gray-50 p-1 rounded-xl border border-gray-200/50">
+              <div className="flex items-center gap-1 bg-gray-50 dark:bg-slate-900 p-1 rounded-xl border border-gray-200 dark:border-slate-700/50">
                 <button
                   type="button"
                   onClick={() => addQuestion('multiple_choice')}
-                  className="px-3 py-1.5 bg-white text-indigo-600 rounded-lg border border-indigo-100/40 text-[10px] font-bold shadow-3xs hover:bg-indigo-50/30 cursor-pointer"
+                  className="px-3 py-1.5 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 rounded-lg border border-indigo-100 dark:border-indigo-800/50/40 text-[10px] font-bold shadow-3xs hover:bg-indigo-50 dark:bg-indigo-900/30/30 cursor-pointer"
                 >
                   + Pilihan Ganda
                 </button>
                 <button
                   type="button"
                   onClick={() => addQuestion('essay')}
-                  className="px-3 py-1.5 bg-white text-indigo-600 rounded-lg border border-indigo-100/40 text-[10px] font-bold shadow-3xs hover:bg-indigo-50/30 cursor-pointer"
+                  className="px-3 py-1.5 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 rounded-lg border border-indigo-100 dark:border-indigo-800/50/40 text-[10px] font-bold shadow-3xs hover:bg-indigo-50 dark:bg-indigo-900/30/30 cursor-pointer"
                 >
                   + Esai / Jawaban Singkat
                 </button>
@@ -883,14 +883,14 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                   {/* Header Question Actions */}
                   <div className="flex items-center justify-between gap-4 pb-3 border-b border-gray-50">
                     <div className="flex items-center gap-2.5">
-                      <div className="cursor-grab text-gray-300 hover:text-gray-500 shrink-0" title="Tarik untuk Reorder">
+                      <div className="cursor-grab text-gray-300 hover:text-gray-500 dark:text-slate-400 shrink-0" title="Tarik untuk Reorder">
                         <GripVertical className="w-4 h-4" />
                       </div>
-                      <span className="w-6 h-6 rounded-full bg-indigo-50 text-indigo-600 text-xs font-bold font-mono flex items-center justify-center">
+                      <span className="w-6 h-6 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs font-bold font-mono flex items-center justify-center">
                         {index + 1}
                       </span>
                       <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-bold text-gray-800 uppercase tracking-wider">
+                        <span className="text-xs font-bold text-gray-800 dark:text-slate-100 uppercase tracking-wider">
                           {q.type === 'multiple_choice' ? 'Pilihan Ganda' : q.type === 'essay' ? 'Jawaban Singkat (Esai)' : q.type.replace('_', ' ')}
                         </span>
                         
@@ -920,7 +920,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                         type="button"
                         onClick={() => moveUp(index)}
                         disabled={index === 0}
-                        className="p-1.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 cursor-pointer"
+                        className="p-1.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 disabled:opacity-30 cursor-pointer"
                         title="Geser ke Atas"
                       >
                         <ChevronUp className="w-4 h-4" />
@@ -929,7 +929,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                         type="button"
                         onClick={() => moveDown(index)}
                         disabled={index === questions.length - 1}
-                        className="p-1.5 text-gray-400 hover:text-gray-600 disabled:opacity-30 cursor-pointer"
+                        className="p-1.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 disabled:opacity-30 cursor-pointer"
                         title="Geser ke Bawah"
                       >
                         <ChevronDown className="w-4 h-4" />
@@ -937,7 +937,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                       <button
                         type="button"
                         onClick={() => duplicateQuestion(index)}
-                        className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg cursor-pointer"
+                        className="p-1.5 text-gray-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-900/30 rounded-lg cursor-pointer"
                         title="Duplikat Soal"
                       >
                         <Copy className="w-3.5 h-3.5" />
@@ -953,7 +953,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                       <button
                         type="button"
                         onClick={() => updateQuestionField(index, 'isCollapsed', !q.isCollapsed)}
-                        className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg font-bold text-[10px] uppercase cursor-pointer"
+                        className="p-1.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:bg-slate-700 rounded-lg font-bold text-[10px] uppercase cursor-pointer"
                       >
                         {q.isCollapsed ? 'Expand' : 'Collapse'}
                       </button>
@@ -965,20 +965,20 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                     <div className="space-y-4 pt-1 animate-fadeIn">
                       {/* Question Prompt Field */}
                       <div className="space-y-1.5">
-                        <label className="block text-xs font-semibold text-gray-700">Pertanyaan Soal</label>
+                        <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Pertanyaan Soal</label>
                         <textarea
                           rows={3}
                           value={q.question}
                           onChange={(e) => updateQuestionField(index, 'question', e.target.value)}
                           placeholder="Tulis isi pertanyaan secara lengkap, jelas, dan lugas di sini..."
-                          className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 resize-none font-sans"
+                          className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 resize-none font-sans"
                         />
                       </div>
 
                       {/* 1. Multiple Choice Specific Inputs */}
                       {q.type === 'multiple_choice' && (
                         <div className="space-y-3 pt-2 border-t border-gray-50">
-                          <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider block">Opsi Pilihan Jawaban</span>
+                          <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">Opsi Pilihan Jawaban</span>
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {q.choices.map((choice, choiceIdx) => {
                               const optLabel = String.fromCharCode(65 + choiceIdx); // A, B, C, D
@@ -994,7 +994,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                                       updateQuestionField(index, 'choices', nextChoices);
                                     }}
                                     placeholder={`Jawaban Pilihan ${optLabel}...`}
-                                    className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500"
+                                    className="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500"
                                   />
                                 </div>
                               );
@@ -1003,7 +1003,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
 
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                             <div className="space-y-1.5">
-                              <label className="block text-xs font-semibold text-gray-700">Kunci Jawaban Benar</label>
+                              <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Kunci Jawaban Benar</label>
                               <CustomDropdown
                                 value={q.correctAnswer}
                                 onChange={(val) => updateQuestionField(index, 'correctAnswer', val)}
@@ -1023,13 +1023,13 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                       {q.type === 'essay' && (
                         <div className="space-y-2 pt-2 border-t border-gray-50">
                           <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-700">Panduan Kunci Jawaban / Kisi-kisi (Opsional)</label>
+                            <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Panduan Kunci Jawaban / Kisi-kisi (Opsional)</label>
                             <textarea
                               rows={2}
                               value={q.answerGuide}
                               onChange={(e) => updateQuestionField(index, 'answerGuide', e.target.value)}
                               placeholder="Tulis indikator utama atau kata kunci yang diutamakan dari pengerjaan siswa..."
-                              className="block w-full px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none resize-none font-sans"
+                              className="block w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none resize-none font-sans"
                             />
                           </div>
                         </div>
@@ -1038,7 +1038,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                       {/* 3. True / False Specific Inputs */}
                       {q.type === 'true_false' && (
                         <div className="space-y-2 pt-2 border-t border-gray-50">
-                          <label className="block text-xs font-semibold text-gray-700">Kunci Jawaban Benar</label>
+                          <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Kunci Jawaban Benar</label>
                           <div className="flex gap-3">
                             {['true', 'false'].map((tfVal) => (
                               <button
@@ -1047,8 +1047,8 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                                 onClick={() => updateQuestionField(index, 'correctAnswer', tfVal)}
                                 className={`px-4 py-2 rounded-xl border text-xs font-bold cursor-pointer transition-all ${
                                   q.correctAnswer === tfVal 
-                                    ? 'bg-indigo-50 border-indigo-500 text-indigo-700 ring-1 ring-indigo-500' 
-                                    : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                                    ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-500 text-indigo-700 ring-1 ring-indigo-500' 
+                                    : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:border-gray-300 dark:border-slate-600'
                                 }`}
                               >
                                 {tfVal === 'true' ? 'Benar (True)' : 'Salah (False)'}
@@ -1061,7 +1061,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                       {/* 4. Matching Specific Inputs */}
                       {q.type === 'matching' && (
                         <div className="space-y-3 pt-2 border-t border-gray-50">
-                          <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider block">Pasangan Menjodohkan</span>
+                          <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">Pasangan Menjodohkan</span>
                           {q.matchingPairs?.map((pair, pIdx) => (
                             <div key={pIdx} className="flex items-center gap-3">
                               <input
@@ -1073,7 +1073,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                                   updateQuestionField(index, 'matchingPairs', nextPairs);
                                 }}
                                 placeholder="Kiri (Pertanyaan)..."
-                                className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-900"
+                                className="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white"
                               />
                               <span className="text-gray-400">➔</span>
                               <input
@@ -1085,7 +1085,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                                   updateQuestionField(index, 'matchingPairs', nextPairs);
                                 }}
                                 placeholder="Kanan (Jawaban)..."
-                                className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-900"
+                                className="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white"
                               />
                               <button
                                 type="button"
@@ -1105,7 +1105,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                               const nextPairs = [...(q.matchingPairs || []), { left: '', right: '' }];
                               updateQuestionField(index, 'matchingPairs', nextPairs);
                             }}
-                            className="text-xs text-indigo-600 hover:underline font-bold inline-flex items-center gap-1 cursor-pointer"
+                            className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-bold inline-flex items-center gap-1 cursor-pointer"
                           >
                             + Tambah Pasangan Menjodohkan
                           </button>
@@ -1115,7 +1115,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                       {/* 5. Fill in the Blank Specific Inputs */}
                       {q.type === 'fill_blank' && (
                         <div className="space-y-3 pt-2 border-t border-gray-50">
-                          <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-wider block">Kunci Jawaban Singkat</span>
+                          <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">Kunci Jawaban Singkat</span>
                           <p className="text-[9px] text-gray-400">Masukkan satu atau beberapa alternatif jawaban benar yang dapat diterima oleh sistem.</p>
                           {q.fillBlankAnswers?.map((ans, aIdx) => (
                             <div key={aIdx} className="flex items-center gap-2">
@@ -1128,7 +1128,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                                   updateQuestionField(index, 'fillBlankAnswers', nextAns);
                                 }}
                                 placeholder={`Alternatif Jawaban #${aIdx + 1}...`}
-                                className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-900"
+                                className="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white"
                               />
                               <button
                                 type="button"
@@ -1148,7 +1148,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                               const nextAns = [...(q.fillBlankAnswers || []), ''];
                               updateQuestionField(index, 'fillBlankAnswers', nextAns);
                             }}
-                            className="text-xs text-indigo-600 hover:underline font-bold inline-flex items-center gap-1 cursor-pointer"
+                            className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-bold inline-flex items-center gap-1 cursor-pointer"
                           >
                             + Tambah Alternatif Jawaban Benar
                           </button>
@@ -1159,13 +1159,13 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                       {q.type === 'listening' && (
                         <div className="space-y-3 pt-2 border-t border-gray-50">
                           <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-700">Tautan Berkas Audio Soal (URL)</label>
+                            <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Tautan Berkas Audio Soal (URL)</label>
                             <input
                               type="text"
                               value={q.audioUrl}
                               onChange={(e) => updateQuestionField(index, 'audioUrl', e.target.value)}
                               placeholder="Masukkan link hosting audio (mp3/wav) untuk diputar siswa..."
-                              className="block w-full px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs"
+                              className="block w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs"
                             />
                           </div>
                         </div>
@@ -1175,13 +1175,13 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                       {q.type === 'speaking' && (
                         <div className="space-y-3 pt-2 border-t border-gray-50">
                           <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-700">Teks / Kalimat yang Harus Dibaca Siswa</label>
+                            <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Teks / Kalimat yang Harus Dibaca Siswa</label>
                             <textarea
                               rows={2}
                               value={q.speakingPrompt}
                               onChange={(e) => updateQuestionField(index, 'speakingPrompt', e.target.value)}
                               placeholder="Tulis kalimat bahasa inggris atau kalimat lainnya untuk dilatih siswa..."
-                              className="block w-full px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs resize-none"
+                              className="block w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs resize-none"
                             />
                           </div>
                         </div>
@@ -1191,13 +1191,13 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                       {q.type === 'file_upload' && (
                         <div className="space-y-3 pt-2 border-t border-gray-50">
                           <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-700">Ekstensi Berkas yang Diizinkan (Koma-Terpisah)</label>
+                            <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Ekstensi Berkas yang Diizinkan (Koma-Terpisah)</label>
                             <input
                               type="text"
                               value={q.allowedFileTypes?.join(', ')}
                               onChange={(e) => updateQuestionField(index, 'allowedFileTypes', e.target.value.split(',').map(s => s.trim()))}
                               placeholder="pdf, doc, docx, png, jpg..."
-                              className="block w-full px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs"
+                              className="block w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs"
                             />
                           </div>
                         </div>
@@ -1206,14 +1206,14 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                       {/* General Question Parameters */}
                       <div className="pt-3 border-t border-gray-50 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-semibold text-gray-600">Bobot Nilai (Poin):</span>
+                          <span className="text-xs font-semibold text-gray-600 dark:text-slate-300">Bobot Nilai (Poin):</span>
                           <input
                             type="number"
                             min={1}
                             max={100}
                             value={q.points}
                             onChange={(e) => updateQuestionField(index, 'points', Number(e.target.value))}
-                            className="w-16 px-2.5 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-xs font-bold text-center text-indigo-700 focus:outline-none"
+                            className="w-16 px-2.5 py-1.5 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-xs font-bold text-center text-indigo-700 focus:outline-none"
                           />
                         </div>
                       </div>
@@ -1231,12 +1231,12 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
             </div>
 
             {/* Bottom Add Question Callout */}
-            <div className="bg-white border border-dashed border-gray-200 rounded-3xl p-6 text-center space-y-4">
-              <div className="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto">
+            <div className="bg-white dark:bg-slate-800 border border-dashed border-gray-200 dark:border-slate-700 rounded-3xl p-6 text-center space-y-4">
+              <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center mx-auto">
                 <Plus className="w-6 h-6" />
               </div>
               <div className="space-y-1">
-                <h3 className="text-sm font-bold text-gray-800">Tambah Pertanyaan Soal</h3>
+                <h3 className="text-sm font-bold text-gray-800 dark:text-slate-100">Tambah Pertanyaan Soal</h3>
                 <p className="text-xs text-gray-400">Pilih jenis pertanyaan yang ingin Anda rancang ke dalam lembar kerja.</p>
               </div>
 
@@ -1244,7 +1244,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                 <button
                   type="button"
                   onClick={() => addQuestion('multiple_choice')}
-                  className="px-4 py-2.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100/75 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+                  className="px-4 py-2.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 hover:bg-indigo-100/75 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
                 >
                   <BookOpen className="w-4 h-4 shrink-0" />
                   + Pilihan Ganda
@@ -1252,7 +1252,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                 <button
                   type="button"
                   onClick={() => addQuestion('essay')}
-                  className="px-4 py-2.5 bg-indigo-50 text-indigo-700 hover:bg-indigo-100/75 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+                  className="px-4 py-2.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 hover:bg-indigo-100/75 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
                 >
                   <FileText className="w-4 h-4 shrink-0" />
                   + Esai (Jawaban Singkat)
@@ -1260,7 +1260,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                 <button
                   type="button"
                   onClick={() => addQuestion('true_false')}
-                  className="px-4 py-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+                  className="px-4 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:bg-slate-600 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
                 >
                   <Check className="w-4 h-4 shrink-0" />
                   + Benar / Salah
@@ -1268,7 +1268,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                 <button
                   type="button"
                   onClick={() => addQuestion('matching')}
-                  className="px-4 py-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+                  className="px-4 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:bg-slate-600 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
                 >
                   <Layers className="w-4 h-4 shrink-0" />
                   + Menjodohkan
@@ -1276,7 +1276,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                 <button
                   type="button"
                   onClick={() => addQuestion('fill_blank')}
-                  className="px-4 py-2.5 bg-gray-100 text-gray-700 hover:bg-gray-200 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
+                  className="px-4 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:bg-slate-600 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
                 >
                   <QuestionIcon className="w-4 h-4 shrink-0" />
                   + Isian Singkat
@@ -1293,40 +1293,40 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
             
             <div className="space-y-3.5 divide-y divide-gray-50">
               <div className="flex items-center justify-between text-xs pt-1">
-                <span className="text-gray-500 font-medium">Total Pertanyaan:</span>
-                <span className="font-bold text-gray-800 font-mono text-sm">{questions.length} Soal</span>
+                <span className="text-gray-500 dark:text-slate-400 font-medium">Total Pertanyaan:</span>
+                <span className="font-bold text-gray-800 dark:text-slate-100 font-mono text-sm">{questions.length} Soal</span>
               </div>
               <div className="flex items-center justify-between text-xs pt-3">
-                <span className="text-gray-500 font-medium">Pilihan Ganda:</span>
-                <span className="font-bold text-gray-800 font-mono">{mcCount}</span>
+                <span className="text-gray-500 dark:text-slate-400 font-medium">Pilihan Ganda:</span>
+                <span className="font-bold text-gray-800 dark:text-slate-100 font-mono">{mcCount}</span>
               </div>
               <div className="flex items-center justify-between text-xs pt-3">
-                <span className="text-gray-500 font-medium">Jawaban Singkat (Esai):</span>
-                <span className="font-bold text-gray-800 font-mono">{essayCount}</span>
+                <span className="text-gray-500 dark:text-slate-400 font-medium">Jawaban Singkat (Esai):</span>
+                <span className="font-bold text-gray-800 dark:text-slate-100 font-mono">{essayCount}</span>
               </div>
               {otherCount > 0 && (
                 <div className="flex items-center justify-between text-xs pt-3">
-                  <span className="text-gray-500 font-medium">Tipe Lainnya (Scalable):</span>
-                  <span className="font-bold text-indigo-600 font-mono">+{otherCount}</span>
+                  <span className="text-gray-500 dark:text-slate-400 font-medium">Tipe Lainnya (Scalable):</span>
+                  <span className="font-bold text-indigo-600 dark:text-indigo-400 font-mono">+{otherCount}</span>
                 </div>
               )}
               <div className="flex items-center justify-between text-xs pt-3">
-                <span className="text-gray-500 font-medium">Akumulasi Nilai:</span>
-                <span className="font-extrabold text-indigo-600 font-mono text-sm">{totalPoints} Poin</span>
+                <span className="text-gray-500 dark:text-slate-400 font-medium">Akumulasi Nilai:</span>
+                <span className="font-extrabold text-indigo-600 dark:text-indigo-400 font-mono text-sm">{totalPoints} Poin</span>
               </div>
               <div className="flex items-center justify-between text-xs pt-3">
-                <span className="text-gray-500 font-medium">Estimasi Durasi:</span>
-                <span className="font-bold text-gray-800 font-mono">{estimatedDuration} Menit</span>
+                <span className="text-gray-500 dark:text-slate-400 font-medium">Estimasi Durasi:</span>
+                <span className="font-bold text-gray-800 dark:text-slate-100 font-mono">{estimatedDuration} Menit</span>
               </div>
               <div className="flex items-center justify-between text-xs pt-3">
-                <span className="text-gray-500 font-medium">Tingkat Kesulitan:</span>
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-gray-100 text-gray-600">
+                <span className="text-gray-500 dark:text-slate-400 font-medium">Tingkat Kesulitan:</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300">
                   {difficulty}
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs pt-3">
-                <span className="text-gray-500 font-medium">Penerima Tugas:</span>
-                <span className="font-bold text-gray-800 truncate max-w-[120px]">
+                <span className="text-gray-500 dark:text-slate-400 font-medium">Penerima Tugas:</span>
+                <span className="font-bold text-gray-800 dark:text-slate-100 truncate max-w-[120px]">
                   {targetType === 'INDIVIDUAL' 
                     ? (students.find(s => s.uid === selectedStudentId)?.fullName || 'Belum dipilih')
                     : (circles.find(c => c.id === selectedCircleId)?.name || 'Belum dipilih')
@@ -1335,7 +1335,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
               </div>
             </div>
 
-            <div className="pt-2 border-t border-gray-100">
+            <div className="pt-2 border-t border-gray-100 dark:border-slate-700/50">
               <button
                 type="button"
                 onClick={() => setIsSettingsOpen(true)}
@@ -1363,12 +1363,12 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
             >
               <div className="flex items-center justify-between pb-4 border-b border-gray-50">
                 <div className="flex items-center gap-2">
-                  <Settings className="w-5 h-5 text-indigo-600" />
-                  <h2 className="text-lg font-display font-bold text-gray-900">Pengaturan Lembar Tugas</h2>
+                  <Settings className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                  <h2 className="text-lg font-display font-bold text-gray-900 dark:text-white">Pengaturan Lembar Tugas</h2>
                 </div>
                 <button
                   onClick={() => setIsSettingsOpen(false)}
-                  className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer"
+                  className="p-1.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:bg-slate-900 rounded-lg cursor-pointer"
                   style={{ minWidth: '40px', minHeight: '40px' }}
                 >
                   <X className="w-5 h-5" />
@@ -1382,38 +1382,38 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
 
                   {/* Title */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-gray-700">Judul Ujian / Tugas <span className="text-red-500">*</span></label>
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Judul Ujian / Tugas <span className="text-red-500">*</span></label>
                     <input
                       type="text"
                       required
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       placeholder="Contoh: English Mid-Semester Examination..."
-                      className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500"
+                      className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500"
                     />
                   </div>
 
                   {/* Description */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-gray-700">Petunjuk & Deskripsi Pengerjaan</label>
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Petunjuk & Deskripsi Pengerjaan</label>
                     <textarea
                       rows={3}
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="Contoh: Bacalah setiap soal dengan teliti. Jawablah soal esai dengan detail..."
-                      className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none resize-none"
+                      className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none resize-none"
                     />
                   </div>
 
                   {/* Target selection */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-gray-700">Target Penerima Tugas</label>
-                    <div className="flex bg-gray-50 p-1 rounded-xl border border-gray-200/50">
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Target Penerima Tugas</label>
+                    <div className="flex bg-gray-50 dark:bg-slate-900 p-1 rounded-xl border border-gray-200 dark:border-slate-700/50">
                       <button
                         type="button"
                         onClick={() => setTargetType('INDIVIDUAL')}
                         className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                          targetType === 'INDIVIDUAL' ? 'bg-white text-indigo-600 shadow-3xs' : 'text-gray-500 hover:text-gray-800'
+                          targetType === 'INDIVIDUAL' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-3xs' : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:text-slate-100'
                         }`}
                       >
                         Siswa Individu
@@ -1422,7 +1422,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                         type="button"
                         onClick={() => setTargetType('CIRCLE')}
                         className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                          targetType === 'CIRCLE' ? 'bg-white text-indigo-600 shadow-3xs' : 'text-gray-500 hover:text-gray-800'
+                          targetType === 'CIRCLE' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-3xs' : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:text-slate-100'
                         }`}
                       >
                         Kelompok Belajar (Circle)
@@ -1433,7 +1433,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                   {/* Dynamic selector student / circle */}
                   {targetType === 'INDIVIDUAL' ? (
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700">Pilih Siswa Penerima <span className="text-red-500">*</span></label>
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Pilih Siswa Penerima <span className="text-red-500">*</span></label>
                       <CustomDropdown
                         value={selectedStudentId}
                         placeholder="-- Pilih Siswa Penerima --"
@@ -1452,7 +1452,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                     </div>
                   ) : (
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700">Pilih Kelompok Belajar Circle <span className="text-red-500">*</span></label>
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Pilih Kelompok Belajar Circle <span className="text-red-500">*</span></label>
                       <CustomDropdown
                         value={selectedCircleId}
                         placeholder="-- Pilih Circle Penerima --"
@@ -1472,7 +1472,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                   {/* Deadline & Duration */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700">Batas Pengumpulan (Deadline)</label>
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Batas Pengumpulan (Deadline)</label>
                       <CustomDatePicker
                         value={deadline}
                         onChange={(val) => setDeadline(val)}
@@ -1480,21 +1480,21 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700">Durasi Pengerjaan (Menit)</label>
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Durasi Pengerjaan (Menit)</label>
                       <input
                         type="number"
                         min={5}
                         max={300}
                         value={estimatedDuration}
                         onChange={(e) => setEstimatedDuration(Number(e.target.value))}
-                        className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs"
+                        className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs"
                       />
                     </div>
                   </div>
 
                   {/* Difficulty */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-gray-700">Tingkat Kesulitan</label>
+                    <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Tingkat Kesulitan</label>
                     <CustomDropdown
                       value={difficulty}
                       onChange={(val) => setDifficulty(val as any)}
@@ -1513,67 +1513,67 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
 
                   <div className="space-y-3 pt-1">
                     {/* Checkbox settings */}
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors cursor-pointer">
+                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700/50 transition-colors cursor-pointer">
                       <input
                         type="checkbox"
                         checked={allowResubmission}
                         onChange={(e) => setAllowResubmission(e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500 mt-0.5"
+                        className="w-4 h-4 text-indigo-600 dark:text-indigo-400 rounded border-gray-300 dark:border-slate-600 focus:ring-indigo-500 mt-0.5"
                       />
                       <div className="text-xs">
-                        <p className="font-semibold text-gray-800">Izinkan Pengumpulan Ulang (Resubmission)</p>
+                        <p className="font-semibold text-gray-800 dark:text-slate-100">Izinkan Pengumpulan Ulang (Resubmission)</p>
                         <p className="text-[10px] text-gray-400 mt-0.5">Siswa dapat mengirimkan pengerjaan revisi / perbaikan.</p>
                       </div>
                     </label>
 
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors cursor-pointer">
+                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700/50 transition-colors cursor-pointer">
                       <input
                         type="checkbox"
                         checked={shuffleQuestions}
                         onChange={(e) => setShuffleQuestions(e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500 mt-0.5"
+                        className="w-4 h-4 text-indigo-600 dark:text-indigo-400 rounded border-gray-300 dark:border-slate-600 focus:ring-indigo-500 mt-0.5"
                       />
                       <div className="text-xs">
-                        <p className="font-semibold text-gray-800">Acak Urutan Pertanyaan (Shuffle Questions)</p>
+                        <p className="font-semibold text-gray-800 dark:text-slate-100">Acak Urutan Pertanyaan (Shuffle Questions)</p>
                         <p className="text-[10px] text-gray-400 mt-0.5">Urutan pertanyaan akan diacak untuk setiap siswa secara acak.</p>
                       </div>
                     </label>
 
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors cursor-pointer">
+                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700/50 transition-colors cursor-pointer">
                       <input
                         type="checkbox"
                         checked={shuffleChoices}
                         onChange={(e) => setShuffleChoices(e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500 mt-0.5"
+                        className="w-4 h-4 text-indigo-600 dark:text-indigo-400 rounded border-gray-300 dark:border-slate-600 focus:ring-indigo-500 mt-0.5"
                       />
                       <div className="text-xs">
-                        <p className="font-semibold text-gray-800">Acak Opsi Pilihan Ganda (Shuffle Choices)</p>
+                        <p className="font-semibold text-gray-800 dark:text-slate-100">Acak Opsi Pilihan Ganda (Shuffle Choices)</p>
                         <p className="text-[10px] text-gray-400 mt-0.5">Mencegah siswa menyontek dengan mengacak posisi opsi pilihan ganda A, B, C, D.</p>
                       </div>
                     </label>
 
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors cursor-pointer">
+                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700/50 transition-colors cursor-pointer">
                       <input
                         type="checkbox"
                         checked={requireAll}
                         onChange={(e) => setRequireAll(e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500 mt-0.5"
+                        className="w-4 h-4 text-indigo-600 dark:text-indigo-400 rounded border-gray-300 dark:border-slate-600 focus:ring-indigo-500 mt-0.5"
                       />
                       <div className="text-xs">
-                        <p className="font-semibold text-gray-800">Wajibkan Menjawab Semua Pertanyaan</p>
+                        <p className="font-semibold text-gray-800 dark:text-slate-100">Wajibkan Menjawab Semua Pertanyaan</p>
                         <p className="text-[10px] text-gray-400 mt-0.5">Siswa tidak dapat mengumpulkan lembar ujian jika ada soal kosong.</p>
                       </div>
                     </label>
 
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors cursor-pointer">
+                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700/50 transition-colors cursor-pointer">
                       <input
                         type="checkbox"
                         checked={showScore}
                         onChange={(e) => setShowScore(e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500 mt-0.5"
+                        className="w-4 h-4 text-indigo-600 dark:text-indigo-400 rounded border-gray-300 dark:border-slate-600 focus:ring-indigo-500 mt-0.5"
                       />
                       <div className="text-xs">
-                        <p className="font-semibold text-gray-800">Tampilkan Nilai Langsung Ke Siswa</p>
+                        <p className="font-semibold text-gray-800 dark:text-slate-100">Tampilkan Nilai Langsung Ke Siswa</p>
                         <p className="text-[10px] text-gray-400 mt-0.5">Siswa dapat langsung melihat skor autograde setelah selesai mengumpulkan.</p>
                       </div>
                     </label>
@@ -1595,7 +1595,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                           className={`p-2.5 rounded-xl border text-[10px] font-bold uppercase transition-all cursor-pointer text-center ${
                             status === item.val 
                               ? 'bg-indigo-600 border-indigo-600 text-white shadow-xs' 
-                              : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'
+                              : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:border-gray-300 dark:border-slate-600'
                           }`}
                         >
                           {item.label}
@@ -1610,7 +1610,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                           type="datetime-local"
                           value={scheduledDate}
                           onChange={(e) => setScheduledDate(e.target.value)}
-                          className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs"
+                          className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs"
                         />
                       </div>
                     )}

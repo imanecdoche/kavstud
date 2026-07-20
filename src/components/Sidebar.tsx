@@ -43,13 +43,13 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
   return (
     <>
       {/* Mobile Header */}
-      <header className="lg:hidden h-14 bg-white border-b border-gray-100 px-4 flex items-center justify-between sticky top-0 z-40">
+      <header className="lg:hidden h-14 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700/50 px-4 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-2 min-w-0">
-          <Logo className="h-5 max-w-[130px] w-auto text-indigo-600 shrink-0" />
+          <Logo className="h-5 max-w-[130px] w-auto text-indigo-600 dark:text-indigo-400 shrink-0" />
         </div>
         <button
           onClick={() => setIsOpen(true)}
-          className="p-2 -mr-2 text-gray-500 hover:text-black hover:bg-gray-50 rounded-lg active:scale-95 transition-all"
+          className="p-2 -mr-2 text-gray-500 dark:text-slate-400 hover:text-black hover:bg-gray-50 dark:bg-slate-900 rounded-lg active:scale-95 transition-all"
           aria-label="Open navigation menu"
           id="btn-mobile-menu"
         >
@@ -84,7 +84,7 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
             setIsOpen(false);
           }
         }}
-        className={`fixed inset-y-0 left-0 w-[280px] bg-white border-r border-gray-100 flex flex-col z-50 lg:sticky lg:translate-x-0 lg:opacity-100 transition-none`}
+        className={`fixed inset-y-0 left-0 w-[280px] bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700/50 flex flex-col z-50 lg:sticky lg:translate-x-0 lg:opacity-100 transition-none`}
         id="app-sidebar"
         style={{
           // Override position-fixed on desktop so it embeds naturally in layout
@@ -94,14 +94,14 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
         {/* Header inside sidebar */}
         <div className="h-16 px-6 border-b border-gray-50 flex items-center justify-between">
           <div className="flex flex-col min-w-0">
-            <Logo className="h-5 max-w-[135px] w-auto text-indigo-600 shrink-0" />
+            <Logo className="h-5 max-w-[135px] w-auto text-indigo-600 dark:text-indigo-400 shrink-0" />
             <span className="text-[10px] text-gray-400 font-sans tracking-widest uppercase mt-1 font-medium pl-0.5">
               Design System
             </span>
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="lg:hidden p-1.5 text-gray-400 hover:text-black hover:bg-gray-50 rounded-lg"
+            className="lg:hidden p-1.5 text-gray-400 hover:text-black hover:bg-gray-50 dark:bg-slate-900 rounded-lg"
             aria-label="Close menu"
             id="btn-close-sidebar"
           >
@@ -123,13 +123,13 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
                 }}
                 className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group cursor-pointer ${
                   isActive 
-                    ? 'bg-indigo-50/75 text-indigo-600' 
-                    : 'text-gray-500 hover:text-black hover:bg-gray-50'
+                    ? 'bg-indigo-50 dark:bg-indigo-900/30/75 text-indigo-600 dark:text-indigo-400' 
+                    : 'text-gray-500 dark:text-slate-400 hover:text-black hover:bg-gray-50 dark:bg-slate-900'
                 }`}
                 id={`menu-item-${item.id}`}
               >
                 <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${
-                  isActive ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-600'
+                  isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-400 group-hover:text-gray-600 dark:text-slate-300'
                 }`} />
                 <span>{item.label}</span>
                 {isActive && (
@@ -144,11 +144,11 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
         </nav>
 
         {/* Footer info inside sidebar */}
-        <div className="p-4 border-t border-gray-50 bg-gray-50/50">
+        <div className="p-4 border-t border-gray-50 bg-gray-50 dark:bg-slate-900/50">
           <div className="flex items-center gap-2.5 px-2">
             <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <div className="flex flex-col">
-              <span className="text-[11px] font-semibold text-gray-700">Sandbox v1.2.0</span>
+              <span className="text-[11px] font-semibold text-gray-700 dark:text-slate-200">Sandbox v1.2.0</span>
               <span className="text-[9px] text-gray-400">Environment: Dev</span>
             </div>
           </div>

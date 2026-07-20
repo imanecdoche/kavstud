@@ -35,6 +35,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { UserProfile, Circle, Assignment, Submission } from '../types';
 import EmptyState from './EmptyState';
 import CustomDropdown from './CustomDropdown';
+import { Dialog } from '@capacitor/dialog';
 
 interface CircleManagementProps {
   students: UserProfile[];
@@ -186,15 +187,22 @@ export default function CircleManagement({
       });
     } catch (err) {
       console.error(err);
-      alert('Gagal memperbarui status Circle.');
+      await Dialog.alert({
+        title: 'Error',
+        message: 'Gagal memperbarui status Circle.'
+      });
     }
   };
 
   // Delete Circle
   const handleDeleteCircle = async (circleId: string) => {
-    if (!window.confirm('Apakah Anda yakin ingin menghapus Circle ini secara permanen? Semua siswa di dalam Circle ini akan dialihkan menjadi tanpa Circle.')) {
-      return;
-    }
+    const { value } = await Dialog.confirm({
+      title: 'Hapus Circle Permanen',
+      message: 'Apakah Anda yakin ingin menghapus Circle ini secara permanen? Semua siswa di dalam Circle ini akan dialihkan menjadi tanpa Circle.',
+      okButtonTitle: 'Hapus',
+      cancelButtonTitle: 'Batal'
+    });
+    if (!value) return;
 
     try {
       onSetLoading(true);
@@ -210,7 +218,10 @@ export default function CircleManagement({
       await deleteDoc(doc(db, 'circles', circleId));
     } catch (err) {
       console.error(err);
-      alert('Gagal menghapus Circle.');
+      await Dialog.alert({
+        title: 'Error',
+        message: 'Gagal menghapus Circle.'
+      });
     } finally {
       onSetLoading(false);
     }
@@ -241,7 +252,10 @@ export default function CircleManagement({
       await updateDoc(doc(db, 'users', studentId), updatePayload);
     } catch (err) {
       console.error(err);
-      alert('Gagal memperbarui Tipe Kelas siswa.');
+      await Dialog.alert({
+        title: 'Error',
+        message: 'Gagal memperbarui Tipe Kelas siswa.'
+      });
     }
   };
 
@@ -254,7 +268,10 @@ export default function CircleManagement({
 
       // Rule: Students with PRIVATE class type cannot belong to any Circle
       if (circleId && student.classType === 'PRIVATE') {
-        alert('Siswa dengan Tipe Kelas PRIVATE tidak dapat dimasukkan ke dalam Circle. Silakan ubah tipe kelas siswa menjadi CIRCLE terlebih dahulu.');
+        await Dialog.alert({
+          title: 'Akses Ditolak',
+          message: 'Siswa dengan Tipe Kelas PRIVATE tidak dapat dimasukkan ke dalam Circle. Silakan ubah tipe kelas siswa menjadi CIRCLE terlebih dahulu.'
+        });
         return;
       }
 
@@ -264,7 +281,10 @@ export default function CircleManagement({
         if (targetCircle) {
           const currentMembers = students.filter(s => s.circleId === circleId).length;
           if (currentMembers >= targetCircle.capacity) {
-            alert(`Circle "${targetCircle.name}" sudah mencapai kapasitas maksimal (${targetCircle.capacity} siswa).`);
+            await Dialog.alert({
+              title: 'Kapasitas Penuh',
+              message: `Circle "${targetCircle.name}" sudah mencapai kapasitas maksimal (${targetCircle.capacity} siswa).`
+            });
             return;
           }
         }
@@ -277,7 +297,10 @@ export default function CircleManagement({
       });
     } catch (err) {
       console.error(err);
-      alert('Gagal memindahkan siswa.');
+      await Dialog.alert({
+        title: 'Error',
+        message: 'Gagal memindahkan siswa.'
+      });
     }
   };
 
@@ -374,24 +397,24 @@ export default function CircleManagement({
   return (
     <div className="space-y-8" id="circle-management-module">
       {/* Module Title & Subtabs Selector */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-gray-100 pb-5">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-gray-100 dark:border-slate-700/50 pb-5">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 tracking-tight flex items-center gap-2">
-            <CircleDot className="w-8 h-8 text-indigo-600 animate-pulse" />
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 dark:text-white tracking-tight flex items-center gap-2">
+            <CircleDot className="w-8 h-8 text-indigo-600 dark:text-indigo-400 animate-pulse" />
             <span>Kavio Circle</span>
           </h1>
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
             Kelola lingkaran belajar kecil, penugasan kelompok, dan pantau statistik perkembangan siswa secara kolektif.
           </p>
         </div>
 
-        <div className="flex gap-2 bg-gray-100/80 p-1.5 rounded-2xl shrink-0 self-start md:self-center">
+        <div className="flex gap-2 bg-gray-100 dark:bg-slate-700/80 p-1.5 rounded-2xl shrink-0 self-start md:self-center">
           <button
             onClick={() => setSubTab('dashboard')}
             className={`px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
               subTab === 'dashboard'
                 ? 'bg-[#1CB0F6] text-white font-black border-b-4 border-[#0092E0] shadow-xs'
-                : 'text-gray-600 font-bold hover:text-gray-900'
+                : 'text-gray-600 dark:text-slate-300 font-bold hover:text-gray-900 dark:text-white'
             }`}
           >
             Dashboard Circle
@@ -401,7 +424,7 @@ export default function CircleManagement({
             className={`px-4 py-2.5 rounded-xl text-xs transition-all cursor-pointer ${
               subTab === 'members'
                 ? 'bg-[#1CB0F6] text-white font-black border-b-4 border-[#0092E0] shadow-xs'
-                : 'text-gray-600 font-bold hover:text-gray-900'
+                : 'text-gray-600 dark:text-slate-300 font-bold hover:text-gray-900 dark:text-white'
             }`}
           >
             Manajemen Anggota
@@ -411,9 +434,9 @@ export default function CircleManagement({
 
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-pulse">
-          <div className="h-48 bg-gray-200/60 rounded-3xl" />
-          <div className="h-48 bg-gray-200/60 rounded-3xl" />
-          <div className="h-48 bg-gray-200/60 rounded-3xl" />
+          <div className="h-48 bg-gray-200 dark:bg-slate-600/60 rounded-3xl" />
+          <div className="h-48 bg-gray-200 dark:bg-slate-600/60 rounded-3xl" />
+          <div className="h-48 bg-gray-200 dark:bg-slate-600/60 rounded-3xl" />
         </div>
       ) : error ? (
         <div className="p-4 bg-red-50 border border-red-200/50 rounded-2xl text-xs text-red-600 flex items-center gap-2">
@@ -432,7 +455,7 @@ export default function CircleManagement({
               className="space-y-6"
             >
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+                <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                   <span>Daftar Kelompok Belajar ({circles.length})</span>
                 </h2>
 
@@ -470,14 +493,14 @@ export default function CircleManagement({
                       <div
                         key={circle.id}
                         className={`card-duo-interactive p-6 flex flex-col justify-between space-y-5 relative ${
-                          circle.isArchived ? 'opacity-60 bg-gray-50' : ''
+                          circle.isArchived ? 'opacity-60 bg-gray-50 dark:bg-slate-900' : ''
                         }`}
                       >
                         <div className="space-y-3.5">
                           {/* Title & Archival/Badge */}
                           <div className="flex items-start justify-between gap-2">
                             <div className="min-w-0">
-                              <h3 className="text-sm font-bold text-gray-900 leading-tight truncate group-hover:text-indigo-600 transition-colors">
+                              <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-tight truncate group-hover:text-indigo-600 dark:text-indigo-400 transition-colors">
                                 {circle.name}
                               </h3>
                               <p className="text-[10px] text-gray-400 mt-1 flex items-center gap-1 font-mono">
@@ -488,7 +511,7 @@ export default function CircleManagement({
 
                             <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold shrink-0 uppercase tracking-wider ${
                               circle.isArchived 
-                                ? 'bg-gray-100 text-gray-500' 
+                                ? 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400' 
                                 : isFull 
                                   ? 'bg-red-50 text-red-600 border border-red-100'
                                   : 'bg-green-50 text-green-700 border border-green-100'
@@ -506,7 +529,7 @@ export default function CircleManagement({
 
                           {/* Members count / capacity slider visual */}
                           <div className="space-y-1.5 pt-1.5">
-                            <div className="flex justify-between text-[10px] text-gray-500 font-bold items-center">
+                            <div className="flex justify-between text-[10px] text-gray-500 dark:text-slate-400 font-bold items-center">
                               <span>Anggota Terdaftar</span>
                               <div className="flex items-center gap-1">
                                 <span className="text-[9px] font-black text-sky-700 bg-sky-50 px-1.5 py-0.5 rounded border border-sky-100 uppercase">
@@ -515,7 +538,7 @@ export default function CircleManagement({
                                 <span className="font-mono">{stats.totalMembers} / {circle.capacity} Siswa</span>
                               </div>
                             </div>
-                            <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
+                            <div className="h-1.5 w-full bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden">
                               <div 
                                 className={`h-full rounded-full transition-all duration-300 ${isFull ? 'bg-red-500' : 'bg-indigo-600'}`} 
                                 style={{ width: `${Math.min(100, (stats.totalMembers / circle.capacity) * 100)}%` }}
@@ -525,13 +548,13 @@ export default function CircleManagement({
 
                           {/* Mini Stats Banner */}
                           <div className="grid grid-cols-2 gap-2 pt-2 border-t border-gray-50 text-center">
-                            <div className="p-2 bg-gray-50/70 border border-gray-100/30 rounded-xl">
+                            <div className="p-2 bg-gray-50 dark:bg-slate-900/70 border border-gray-100 dark:border-slate-700/50/30 rounded-xl">
                               <span className="text-[9px] text-gray-400 font-bold block uppercase tracking-wider">Tugas Circle</span>
-                              <span className="text-xs font-bold text-gray-800 block mt-0.5 font-mono">{stats.assignmentsCount}</span>
+                              <span className="text-xs font-bold text-gray-800 dark:text-slate-100 block mt-0.5 font-mono">{stats.assignmentsCount}</span>
                             </div>
-                            <div className="p-2 bg-gray-50/70 border border-gray-100/30 rounded-xl">
+                            <div className="p-2 bg-gray-50 dark:bg-slate-900/70 border border-gray-100 dark:border-slate-700/50/30 rounded-xl">
                               <span className="text-[9px] text-gray-400 font-bold block uppercase tracking-wider">Nilai Rata2</span>
-                              <span className="text-xs font-bold text-indigo-600 block mt-0.5 font-mono">
+                              <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 block mt-0.5 font-mono">
                                 {stats.averageScore !== null ? stats.averageScore : '-'}
                               </span>
                             </div>
@@ -541,15 +564,15 @@ export default function CircleManagement({
                           <div className="flex items-center justify-between text-[10px] text-gray-400 font-medium">
                             <span className="flex items-center gap-1">
                               <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                              Selesai: <strong className="text-gray-600 font-mono">{stats.completed}</strong>
+                              Selesai: <strong className="text-gray-600 dark:text-slate-300 font-mono">{stats.completed}</strong>
                             </span>
                             <span className="flex items-center gap-1">
                               <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                              Menunggu: <strong className="text-gray-600 font-mono">{stats.pending}</strong>
+                              Menunggu: <strong className="text-gray-600 dark:text-slate-300 font-mono">{stats.pending}</strong>
                             </span>
                             <span className="flex items-center gap-1">
                               <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                              Remedial: <strong className="text-gray-600 font-mono">{stats.remedialCount}</strong>
+                              Remedial: <strong className="text-gray-600 dark:text-slate-300 font-mono">{stats.remedialCount}</strong>
                             </span>
                           </div>
                         </div>
@@ -558,7 +581,7 @@ export default function CircleManagement({
                         <div className="flex items-center gap-2 pt-3 border-t border-gray-50">
                           <button
                             onClick={() => onNavigate(`/circle/${circle.id}`)}
-                            className="flex-1 py-2 bg-indigo-50/50 hover:bg-indigo-50 text-indigo-700 text-[10px] font-bold rounded-xl uppercase tracking-wider flex items-center justify-center gap-1 cursor-pointer transition-colors active:scale-98"
+                            className="flex-1 py-2 bg-indigo-50 dark:bg-indigo-900/30/50 hover:bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 text-[10px] font-bold rounded-xl uppercase tracking-wider flex items-center justify-center gap-1 cursor-pointer transition-colors active:scale-98"
                           >
                             <FolderOpen className="w-3.5 h-3.5" />
                             Buka Profile
@@ -566,7 +589,7 @@ export default function CircleManagement({
 
                           <button
                             onClick={() => openEditModal(circle)}
-                            className="p-2 bg-gray-50 hover:bg-gray-100 text-gray-500 hover:text-gray-700 rounded-xl cursor-pointer transition-colors"
+                            className="p-2 bg-gray-50 dark:bg-slate-900 hover:bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:text-slate-200 rounded-xl cursor-pointer transition-colors"
                             title="Edit Circle"
                           >
                             <Pencil className="w-3.5 h-3.5" />
@@ -576,8 +599,8 @@ export default function CircleManagement({
                             onClick={() => handleToggleArchiveCircle(circle)}
                             className={`p-2 rounded-xl cursor-pointer transition-colors ${
                               circle.isArchived 
-                                ? 'bg-amber-50 hover:bg-amber-100 text-amber-600' 
-                                : 'bg-gray-50 hover:bg-gray-100 text-gray-400 hover:text-gray-600'
+                                ? 'bg-amber-50 dark:bg-amber-900/30 hover:bg-amber-100 text-amber-600 dark:text-amber-400' 
+                                : 'bg-gray-50 dark:bg-slate-900 hover:bg-gray-100 dark:bg-slate-700 text-gray-400 hover:text-gray-600 dark:text-slate-300'
                             }`}
                             title={circle.isArchived ? 'Pulihkan dari Arsip' : 'Arsipkan Circle'}
                           >
@@ -610,7 +633,7 @@ export default function CircleManagement({
               className="space-y-6"
             >
               {/* Info Tips Alert */}
-              <div className="p-4 bg-indigo-50/40 border border-indigo-100/30 rounded-2xl flex gap-3 text-xs text-indigo-800">
+              <div className="p-4 bg-indigo-50 dark:bg-indigo-900/30/40 border border-indigo-100 dark:border-indigo-800/50/30 rounded-2xl flex gap-3 text-xs text-indigo-800">
                 <Info className="w-5 h-5 text-indigo-500 shrink-0" />
                 <div className="space-y-1">
                   <p className="font-bold">💡 Tips Manajemen Anggota Circle:</p>
@@ -624,9 +647,9 @@ export default function CircleManagement({
               {/* Layout splits */}
               <div className="grid grid-cols-1 xl:grid-cols-4 gap-8 items-start">
                 {/* Left Pool column: Students Directory */}
-                <div className="xl:col-span-1 bg-white border border-gray-100 rounded-3xl p-5 shadow-3xs space-y-4">
+                <div className="xl:col-span-1 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 rounded-3xl p-5 shadow-3xs space-y-4">
                   <div className="space-y-1">
-                    <h3 className="text-xs font-bold text-gray-900 uppercase tracking-wider flex items-center gap-1.5">
+                    <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
                       <Users className="w-4 h-4 text-indigo-500" />
                       Daftar Siswa ({filteredStudents.length})
                     </h3>
@@ -645,20 +668,20 @@ export default function CircleManagement({
                         placeholder="Cari nama siswa..."
                         value={memberSearch}
                         onChange={(e) => setMemberSearch(e.target.value)}
-                        className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all font-medium"
+                        className="w-full pl-9 pr-3 py-2 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl text-xs placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:bg-white dark:bg-slate-800 transition-all font-medium"
                       />
                     </div>
 
                     {/* Class Type Filters */}
-                    <div className="grid grid-cols-3 gap-1 bg-gray-50 p-1 rounded-xl">
+                    <div className="grid grid-cols-3 gap-1 bg-gray-50 dark:bg-slate-900 p-1 rounded-xl">
                       {(['all', 'PRIVATE', 'CIRCLE'] as const).map(type => (
                         <button
                           key={type}
                           onClick={() => setClassTypeFilter(type)}
                           className={`py-1 rounded-lg text-[9px] font-bold uppercase transition-all cursor-pointer text-center ${
                             classTypeFilter === type
-                              ? 'bg-white text-gray-900 shadow-3xs'
-                              : 'text-gray-400 hover:text-gray-700'
+                              ? 'bg-white dark:bg-slate-800 text-gray-900 dark:text-white shadow-3xs'
+                              : 'text-gray-400 hover:text-gray-700 dark:text-slate-200'
                           }`}
                         >
                           {type === 'all' ? 'Semua' : type}
@@ -687,7 +710,7 @@ export default function CircleManagement({
                     onDrop={(e) => handleDrop(e, null)}
                     className={`space-y-2 max-h-96 overflow-y-auto pr-1 p-2 rounded-2xl border transition-all ${
                       activeDropZoneId === 'unassigned'
-                        ? 'border-indigo-500 bg-indigo-50/20'
+                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30/20'
                         : 'border-transparent'
                     }`}
                   >
@@ -706,13 +729,13 @@ export default function CircleManagement({
                             draggable
                             onDragStart={(e) => handleDragStart(e, student.uid)}
                             onDragEnd={handleDragEnd}
-                            className={`p-3 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl flex flex-col gap-2.5 transition-all cursor-grab active:cursor-grabbing hover:shadow-3xs ${
+                            className={`p-3 bg-gray-50 dark:bg-slate-900 hover:bg-gray-100 dark:bg-slate-700 border border-gray-100 dark:border-slate-700/50 rounded-xl flex flex-col gap-2.5 transition-all cursor-grab active:cursor-grabbing hover:shadow-3xs ${
                               draggedStudentId === student.uid ? 'opacity-40 border-indigo-400' : ''
                             }`}
                           >
                             <div className="flex items-center justify-between gap-1.5">
                               <div className="min-w-0">
-                                <p className="text-xs font-bold text-gray-900 truncate">{student.fullName}</p>
+                                <p className="text-xs font-bold text-gray-900 dark:text-white truncate">{student.fullName}</p>
                                 <p className="text-[9px] text-gray-400 truncate leading-normal">{student.email}</p>
                               </div>
 
@@ -730,7 +753,7 @@ export default function CircleManagement({
                               </span>
 
                               {inCircle ? (
-                                <span className="inline-flex items-center px-1.5 py-0.5 bg-indigo-50 border border-indigo-100 text-indigo-700 rounded text-[8px] font-bold truncate max-w-[80px]">
+                                <span className="inline-flex items-center px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/50 text-indigo-700 rounded text-[8px] font-bold truncate max-w-[80px]">
                                   {inCircle.name}
                                 </span>
                               ) : (
@@ -743,7 +766,7 @@ export default function CircleManagement({
                             </div>
 
                             {/* Mobile action dropdown */}
-                            <div className="pt-2 border-t border-gray-100 flex items-center justify-between gap-2">
+                            <div className="pt-2 border-t border-gray-100 dark:border-slate-700/50 flex items-center justify-between gap-2">
                               {/* ClassType Changer */}
                               <CustomDropdown
                                 size="sm"
@@ -789,16 +812,16 @@ export default function CircleManagement({
                         key={circle.id}
                         onDragOver={(e) => handleDragOver(e, circle.id)}
                         onDrop={(e) => handleDrop(e, circle.id)}
-                        className={`bg-white border rounded-3xl p-5 shadow-3xs flex flex-col justify-between space-y-4 min-h-[320px] transition-all ${
+                        className={`bg-white dark:bg-slate-800 border rounded-3xl p-5 shadow-3xs flex flex-col justify-between space-y-4 min-h-[320px] transition-all ${
                           isOver 
-                            ? 'border-indigo-500 ring-2 ring-indigo-500/10 bg-indigo-50/10' 
-                            : 'border-gray-100'
+                            ? 'border-indigo-500 ring-2 ring-indigo-500/10 bg-indigo-50 dark:bg-indigo-900/30/10' 
+                            : 'border-gray-100 dark:border-slate-700/50'
                         }`}
                       >
                         {/* Circle Header */}
                         <div className="flex justify-between items-center pb-2 border-b border-gray-50">
                           <div>
-                            <h4 className="text-xs font-bold text-gray-900 flex items-center gap-1">
+                            <h4 className="text-xs font-bold text-gray-900 dark:text-white flex items-center gap-1">
                               <span className="w-1.5 h-1.5 bg-indigo-500 rounded-full" />
                               {circle.name}
                             </h4>
@@ -810,7 +833,7 @@ export default function CircleManagement({
                           <span className={`px-2 py-0.5 text-[8px] font-mono font-bold rounded-full ${
                             isFull 
                               ? 'bg-red-50 text-red-600' 
-                              : 'bg-indigo-50 text-indigo-700'
+                              : 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700'
                           }`}>
                             {members.length} / {circle.capacity}
                           </span>
@@ -819,7 +842,7 @@ export default function CircleManagement({
                         {/* Drag and drop target member items */}
                         <div className="flex-1 space-y-2 overflow-y-auto max-h-64 pr-1">
                           {members.length === 0 ? (
-                            <div className="h-full flex flex-col items-center justify-center text-center py-12 border-2 border-dashed border-gray-100 rounded-2xl bg-gray-50/30">
+                            <div className="h-full flex flex-col items-center justify-center text-center py-12 border-2 border-dashed border-gray-100 dark:border-slate-700/50 rounded-2xl bg-gray-50 dark:bg-slate-900/30">
                               <UserCheck className="w-6 h-6 text-gray-300" />
                               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2">Letakkan Siswa</p>
                               <p className="text-[8px] text-gray-400 mt-1 max-w-[120px]">Seret & letakkan nama siswa ke area ini.</p>
@@ -831,12 +854,12 @@ export default function CircleManagement({
                                 draggable
                                 onDragStart={(e) => handleDragStart(e, memb.uid)}
                                 onDragEnd={handleDragEnd}
-                                className={`p-2.5 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl flex items-center justify-between gap-2.5 cursor-grab active:cursor-grabbing transition-all hover:shadow-4xs ${
+                                className={`p-2.5 bg-gray-50 dark:bg-slate-900 hover:bg-gray-100 dark:bg-slate-700 border border-gray-100 dark:border-slate-700/50 rounded-xl flex items-center justify-between gap-2.5 cursor-grab active:cursor-grabbing transition-all hover:shadow-4xs ${
                                   draggedStudentId === memb.uid ? 'opacity-40 border-indigo-300' : ''
                                 }`}
                               >
                                 <div className="min-w-0 flex-1">
-                                  <p className="text-xs font-bold text-gray-800 truncate leading-tight">{memb.fullName}</p>
+                                  <p className="text-xs font-bold text-gray-800 dark:text-slate-100 truncate leading-tight">{memb.fullName}</p>
                                   <p className="text-[9px] text-gray-400 truncate mt-0.5">{memb.email}</p>
                                 </div>
 
@@ -874,17 +897,17 @@ export default function CircleManagement({
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="flex items-center justify-between pb-3 border-b border-gray-100 shrink-0">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-slate-700/50 shrink-0">
               <div className="flex items-center gap-2">
                 <Users className="w-5 h-5 text-sky-600" />
-                <h2 className="text-base font-black text-gray-900 uppercase tracking-wider">
+                <h2 className="text-base font-black text-gray-900 dark:text-white uppercase tracking-wider">
                   {isEditMode ? 'Sunting Kelompok Circle' : 'Tambah Circle Baru'}
                 </h2>
               </div>
               <button 
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-xl cursor-pointer transition-colors"
+                className="p-1.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:bg-slate-700 rounded-xl cursor-pointer transition-colors"
                 aria-label="Tutup"
               >
                 <X className="w-5 h-5" />
@@ -901,7 +924,7 @@ export default function CircleManagement({
             <form onSubmit={handleSaveCircle} className="space-y-4">
               {/* Name */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-black text-gray-700 uppercase tracking-wider">
+                <label className="block text-xs font-black text-gray-700 dark:text-slate-200 uppercase tracking-wider">
                   Nama Circle <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -909,28 +932,28 @@ export default function CircleManagement({
                   required
                   value={circleName}
                   onChange={(e) => setCircleName(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-sky-400"
+                  className="block w-full px-4 py-3 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600 rounded-xl text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-sky-400"
                   placeholder="Contoh: Kelompok Singa, Circle Aljabar"
                 />
               </div>
 
               {/* Description */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-black text-gray-700 uppercase tracking-wider">
+                <label className="block text-xs font-black text-gray-700 dark:text-slate-200 uppercase tracking-wider">
                   Deskripsi Kelompok <span className="text-gray-400 font-normal lowercase">(opsional)</span>
                 </label>
                 <textarea
                   rows={2}
                   value={circleDescription}
                   onChange={(e) => setCircleDescription(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-sky-400 resize-none"
+                  className="block w-full px-4 py-3 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600 rounded-xl text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-sky-400 resize-none"
                   placeholder="Keterangan mengenai circle belajar ini..."
                 />
               </div>
 
               {/* Capacity Slider (Min 2, Max 5 with Animated DUO, TRIO, SQUAD labels) */}
               <div className="space-y-2.5 p-3.5 bg-sky-50/50 border-2 border-sky-100 rounded-2xl">
-                <div className="flex justify-between items-center text-xs text-gray-800 font-black">
+                <div className="flex justify-between items-center text-xs text-gray-800 dark:text-slate-100 font-black">
                   <span className="uppercase tracking-wider">Kapasitas Maksimal Siswa</span>
                   <div className="flex items-center gap-1.5">
                     {/* Animated Vertical Rolling Label */}
@@ -982,7 +1005,7 @@ export default function CircleManagement({
                   max="5"
                   value={Math.max(2, Math.min(5, circleCapacity))}
                   onChange={(e) => setCircleCapacity(Number(e.target.value))}
-                  className="w-full accent-sky-500 bg-gray-200 rounded-lg appearance-none h-2.5 cursor-pointer"
+                  className="w-full accent-sky-500 bg-gray-200 dark:bg-slate-600 rounded-lg appearance-none h-2.5 cursor-pointer"
                 />
               </div>
 

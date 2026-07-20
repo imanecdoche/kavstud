@@ -111,11 +111,11 @@ export default function SettingsPanel({
   return (
     <div className="space-y-8 max-w-4xl" id="settings-panel">
       {/* Page Header */}
-      <div className="border-b border-gray-100 pb-5">
-        <h1 className="text-2xl font-display font-semibold tracking-tight text-gray-900">
+      <div className="border-b border-gray-100 dark:border-slate-700/50 pb-5">
+        <h1 className="text-2xl font-display font-semibold tracking-tight text-gray-900 dark:text-white">
           Settings & Sandbox Developer Control
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
           Monitor configuration tokens, storage indicators, and manage applet backup payloads safely.
         </p>
       </div>
@@ -123,36 +123,36 @@ export default function SettingsPanel({
       {/* Grid: App Details & Actions */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Box 1: App Info Card */}
-        <div className="border border-gray-100 bg-white rounded-2xl p-6 shadow-xs space-y-4">
-          <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+        <div className="border border-gray-100 dark:border-slate-700/50 bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-xs space-y-4">
+          <h2 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
             <Info className="w-4 h-4 text-indigo-500" />
             Application Information
           </h2>
           <div className="divide-y divide-gray-50 text-xs">
             <div className="py-2.5 flex justify-between items-center">
-              <span className="text-gray-500">App Name</span>
-              <span className="font-medium text-gray-900">KAVIO EDU</span>
+              <span className="text-gray-500 dark:text-slate-400">App Name</span>
+              <span className="font-medium text-gray-900 dark:text-white">KAVIO EDU</span>
             </div>
             <div className="py-2.5 flex justify-between items-center">
-              <span className="text-gray-500">Framework</span>
-              <span className="font-medium text-gray-900">React + Vite + Tailwind v4</span>
+              <span className="text-gray-500 dark:text-slate-400">Framework</span>
+              <span className="font-medium text-gray-900 dark:text-white">React + Vite + Tailwind v4</span>
             </div>
             <div className="py-2.5 flex justify-between items-center">
-              <span className="text-gray-500">Build Target Date</span>
-              <span className="font-medium text-gray-900 flex items-center gap-1.5">
+              <span className="text-gray-500 dark:text-slate-400">Build Target Date</span>
+              <span className="font-medium text-gray-900 dark:text-white flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-gray-400" />
                 {buildDate}
               </span>
             </div>
             <div className="py-2.5 flex justify-between items-center">
-              <span className="text-gray-500">Environment</span>
-              <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200/50 font-medium">
+              <span className="text-gray-500 dark:text-slate-400">Environment</span>
+              <span className="px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-900/30 text-amber-700 border border-amber-200/50 font-medium">
                 {appEnvironment}
               </span>
             </div>
             <div className="py-2.5 flex justify-between items-center">
-              <span className="text-gray-500">Storage Usage</span>
-              <span className="font-mono text-gray-700 flex items-center gap-1.5">
+              <span className="text-gray-500 dark:text-slate-400">Storage Usage</span>
+              <span className="font-mono text-gray-700 dark:text-slate-200 flex items-center gap-1.5">
                 <Database className="w-3.5 h-3.5 text-gray-400" />
                 {storageUsage}
               </span>
@@ -162,14 +162,14 @@ export default function SettingsPanel({
           <div className="pt-2 flex flex-wrap gap-2">
             <button
               onClick={toggleFullscreen}
-              className="px-3 py-1.5 border border-gray-200 hover:border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:text-black flex items-center gap-1.5 transition-all cursor-pointer bg-white active:scale-95"
+              className="px-3 py-1.5 border border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:border-slate-600 rounded-lg text-xs font-medium text-gray-700 dark:text-slate-200 hover:text-black flex items-center gap-1.5 transition-all cursor-pointer bg-white dark:bg-slate-800 active:scale-95"
             >
               {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
               {isFullscreen ? 'Exit Fullscreen' : 'Toggle Fullscreen'}
             </button>
             <button
               onClick={handleClearCache}
-              className="px-3 py-1.5 border border-gray-200 hover:border-gray-300 rounded-lg text-xs font-medium text-gray-700 hover:text-black flex items-center gap-1.5 transition-all cursor-pointer bg-white active:scale-95"
+              className="px-3 py-1.5 border border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:border-slate-600 rounded-lg text-xs font-medium text-gray-700 dark:text-slate-200 hover:text-black flex items-center gap-1.5 transition-all cursor-pointer bg-white dark:bg-slate-800 active:scale-95"
             >
               <Cpu className={`w-3.5 h-3.5 text-indigo-500 ${cacheCleared ? 'animate-spin' : ''}`} />
               Clear Cache
@@ -178,12 +178,12 @@ export default function SettingsPanel({
         </div>
 
         {/* Box 2: Actions Sandbox */}
-        <div className="border border-gray-100 bg-white rounded-2xl p-6 shadow-xs space-y-4">
-          <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+        <div className="border border-gray-100 dark:border-slate-700/50 bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-xs space-y-4">
+          <h2 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
             <Database className="w-4 h-4 text-indigo-500" />
             Import / Export Data
           </h2>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-gray-500 dark:text-slate-400">
             Export all sandbox mock data structures, active assignment states, and settings to a JSON format.
           </p>
 
@@ -208,12 +208,12 @@ export default function SettingsPanel({
           </div>
 
           <div className="space-y-2 pt-2 border-t border-gray-50">
-            <label className="block text-[11px] font-semibold text-gray-700">Import JSON Schema Data</label>
+            <label className="block text-[11px] font-semibold text-gray-700 dark:text-slate-200">Import JSON Schema Data</label>
             <textarea
               value={importText}
               onChange={(e) => setImportText(e.target.value)}
               placeholder='Paste JSON data here (e.g. {"version": "1.2.0", "data": ...})'
-              className="w-full h-16 p-2 text-xs font-mono border border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-gray-400 bg-gray-50/50 resize-none"
+              className="w-full h-16 p-2 text-xs font-mono border border-gray-200 dark:border-slate-700 rounded-lg focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-gray-400 bg-gray-50 dark:bg-slate-900/50 resize-none"
             />
             <button
               onClick={handleImportSubmit}
@@ -230,7 +230,7 @@ export default function SettingsPanel({
       {toastMessage && (
         <div className={`p-3 rounded-xl text-xs flex items-center gap-2 border ${
           toastMessage.type === 'success' 
-            ? 'bg-emerald-50 text-emerald-800 border-emerald-200/50' 
+            ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-800 border-emerald-200/50' 
             : 'bg-rose-50 text-rose-800 border-rose-200/50'
         }`}>
           {toastMessage.type === 'success' ? <CheckCircle className="w-4 h-4 shrink-0" /> : <AlertTriangle className="w-4 h-4 shrink-0" />}
@@ -239,19 +239,19 @@ export default function SettingsPanel({
       )}
 
       {/* Changelog Section conforming to the prompt rules */}
-      <div className="border border-gray-100 bg-white rounded-2xl p-6 shadow-xs space-y-4">
-        <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+      <div className="border border-gray-100 dark:border-slate-700/50 bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-xs space-y-4">
+        <h2 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
           <Layers3 className="w-4 h-4 text-indigo-500" />
           App Changelog System
         </h2>
         <div className="space-y-6">
           {changelog.map((entry, index) => (
-            <div key={entry.version} className="relative pl-6 pb-2 border-l-2 border-gray-100 last:border-0 last:pb-0">
+            <div key={entry.version} className="relative pl-6 pb-2 border-l-2 border-gray-100 dark:border-slate-700/50 last:border-0 last:pb-0">
               {/* Bullet node */}
-              <div className="absolute -left-[7px] top-1 w-3.5 h-3.5 rounded-full bg-white border-2 border-indigo-500 flex items-center justify-center" />
+              <div className="absolute -left-[7px] top-1 w-3.5 h-3.5 rounded-full bg-white dark:bg-slate-800 border-2 border-indigo-500 flex items-center justify-center" />
               
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-1 mb-3">
-                <span className="font-display font-semibold text-sm text-gray-900">
+                <span className="font-display font-semibold text-sm text-gray-900 dark:text-white">
                   Version {entry.version}
                 </span>
                 <span className="text-[10px] text-gray-400 font-mono">
@@ -269,7 +269,7 @@ export default function SettingsPanel({
                     }`}>
                       {change.type === 'add' ? '+' : change.type === 'change' ? '*' : '-'}
                     </span>
-                    <span className="text-gray-600 font-sans">{change.text}</span>
+                    <span className="text-gray-600 dark:text-slate-300 font-sans">{change.text}</span>
                   </li>
                 ))}
               </ul>

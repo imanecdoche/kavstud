@@ -30,20 +30,24 @@ import {
   Globe, 
   Palette, 
   Bell,
-  Trash2
+  Trash2,
+  Terminal,
+  ShieldAlert,
+  RefreshCw
 } from 'lucide-react';
 import { UserProfile } from '../types';
 import Logo from './Logo';
 import CustomDropdown from './CustomDropdown';
 import CustomDatePicker from './CustomDatePicker';
 import { usePushNotifications } from '../hooks/usePushNotifications';
+import { Dialog } from '@capacitor/dialog';
 
 interface UserSettingsProps {
   onNavigate: (path: string) => void;
   onSetLoading: (loading: boolean) => void;
 }
 
-type SettingsTab = 'profile' | 'security' | 'preferences' | 'account';
+type SettingsTab = 'profile' | 'security' | 'preferences' | 'account' | 'dev';
 
 export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsProps) {
   const [currentUserProfile, setCurrentUserProfile] = useState<UserProfile | null>(null);
@@ -95,6 +99,119 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
   // Check if there are unsaved changes
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+
+  // Developer Tools States
+  const [devUsers, setDevUsers] = useState<UserProfile[]>([]);
+  const [devLoading, setDevLoading] = useState(false);
+  const [editingDevUser, setEditingDevUser] = useState<UserProfile | null>(null);
+  const [devNewEmail, setDevNewEmail] = useState('');
+  const [devEditFullName, setDevEditFullName] = useState('');
+  const [devEditPhone, setDevEditPhone] = useState('');
+  const [systemMaintenance, setSystemMaintenance] = useState(false);
+
+  // Load all users for Developer Tools
+  useEffect(() => {
+    if (activeTab === 'dev' && currentUserProfile?.email === 'fatih@kavio.tec.edu') {
+      const fetchAllUsers = async () => {
+        try {
+          setDevLoading(true);
+          const { collection, getDocs, query, orderBy, doc, getDoc } = await import('firebase/firestore');
+          const snap = await getDocs(query(collection(db, 'users'), orderBy('role', 'asc')));
+          const fetched: UserProfile[] = [];
+          snap.forEach((doc) => {
+            fetched.push({ uid: doc.id, ...doc.data() } as UserProfile);
+          });
+          setDevUsers(fetched);
+          
+          const sysSnap = await getDoc(doc(db, 'modules', 'system_config'));
+          if (sysSnap.exists()) {
+            setSystemMaintenance(sysSnap.data().maintenanceMode || false);
+          }
+        } catch (err) {
+          console.error('Error fetching dev tools data:', err);
+          showToast('error', 'Gagal memuat data Developer Tools.');
+        } finally {
+          setDevLoading(false);
+        }
+      };
+      fetchAllUsers();
+    }
+  }, [activeTab, currentUserProfile]);
+
+  // Dev actions handlers
+  const handleDevUpdateEmail = async (u: UserProfile) => {
+    if (!devNewEmail.trim()) return;
+    try {
+      const { doc, updateDoc } = await import('firebase/firestore');
+      await updateDoc(doc(db, 'users', u.uid), { email: devNewEmail.trim() });
+      setDevUsers(prev => prev.map(usr => usr.uid === u.uid ? { ...usr, email: devNewEmail.trim() } : usr));
+      setEditingDevUser(null);
+      showToast('success', `Email untuk ${u.fullName} berhasil diperbarui di database!`);
+    } catch (err) {
+      console.error(err);
+      showToast('error', 'Gagal memperbarui email.');
+    }
+  };
+
+  const handleDevUpdateProfile = async (u: UserProfile) => {
+    if (!devEditFullName.trim()) return;
+    try {
+      const { doc, updateDoc } = await import('firebase/firestore');
+      await updateDoc(doc(db, 'users', u.uid), {
+        fullName: devEditFullName.trim(),
+        phone: devEditPhone.trim()
+      });
+      setDevUsers(prev => prev.map(usr => usr.uid === u.uid ? { ...usr, fullName: devEditFullName.trim(), phone: devEditPhone.trim() } : usr));
+      setEditingDevUser(null);
+      showToast('success', `Profil ${u.fullName} berhasil diperbarui!`);
+    } catch (err) {
+      console.error(err);
+      showToast('error', 'Gagal memperbarui profil.');
+    }
+  };
+
+  const handleDevResetPassword = async (u: UserProfile) => {
+    try {
+      const { sendPasswordResetEmail } = await import('firebase/auth');
+      await sendPasswordResetEmail(auth, u.email);
+      showToast('success', `Email reset kata sandi telah dikirim ke ${u.email}!`);
+    } catch (err) {
+      console.error(err);
+      showToast('error', 'Gagal mengirim email reset.');
+    }
+  };
+
+  const handleDevDeleteUser = async (u: UserProfile) => {
+    const { value } = await Dialog.confirm({
+      title: 'Hapus Akun Permanen',
+      message: `Apakah Anda yakin ingin menghapus akun ${u.fullName} secara permanen dari database? Tindakan ini tidak dapat dibatalkan.`,
+      okButtonTitle: 'Hapus',
+      cancelButtonTitle: 'Batal'
+    });
+    if (!value) return;
+    try {
+      const { doc, deleteDoc } = await import('firebase/firestore');
+      await deleteDoc(doc(db, 'users', u.uid));
+      setDevUsers(prev => prev.filter(usr => usr.uid !== u.uid));
+      showToast('success', `Akun ${u.fullName} berhasil dihapus permanen.`);
+    } catch (err) {
+      console.error(err);
+      showToast('error', 'Gagal menghapus akun.');
+    }
+  };
+
+  const handleToggleMaintenance = async () => {
+    try {
+      const { doc, setDoc } = await import('firebase/firestore');
+      const next = !systemMaintenance;
+      await setDoc(doc(db, 'modules', 'system_config'), { maintenanceMode: next }, { merge: true });
+      setSystemMaintenance(next);
+      showToast('success', `Mode Pemeliharaan (Maintenance) berhasil ${next ? 'Diaktifkan' : 'Dinonaktifkan'}.`);
+    } catch (err) {
+      console.error(err);
+      showToast('error', 'Gagal memperbarui mode pemeliharaan.');
+    }
+  };
 
   // Calculate age based on birthdate
   const getAge = (dobString: string): number | null => {
@@ -494,19 +611,19 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
   const isTeacher = currentUserProfile?.role === 'teacher';
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans" id="user-settings-page">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col font-sans" id="user-settings-page">
       {/* Toast Alert Banner */}
       {toast && (
         <div 
           className={`fixed bottom-6 right-6 z-50 p-4 rounded-2xl shadow-lg border text-xs font-semibold flex items-center gap-3 animate-slideIn ${
             toast.type === 'success' 
-              ? 'bg-emerald-50 text-emerald-800 border-emerald-200' 
+              ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-800 border-emerald-200' 
               : 'bg-rose-50 text-rose-800 border-rose-200'
           }`}
           id="toast-notification"
         >
           {toast.type === 'success' ? (
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
           ) : (
             <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
           )}
@@ -515,7 +632,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
       )}
 
       {/* Main Header */}
-      <header className="bg-white border-b border-gray-100 px-4 py-4 sticky top-0 z-30">
+      <header className="bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700/50 px-4 py-4 sticky top-0 z-30">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
@@ -524,19 +641,19 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
               style={{ minWidth: '44px', minHeight: '44px' }}
               aria-label="Kembali"
             >
-              <ArrowLeft className="w-5 h-5 text-gray-700" />
+              <ArrowLeft className="w-5 h-5 text-gray-700 dark:text-slate-200" />
             </button>
             
             <div className="flex flex-col">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Konfigurasi Pengguna</span>
-              <h1 className="text-lg sm:text-xl font-display font-bold text-gray-900 tracking-tight mt-1">
+              <h1 className="text-lg sm:text-xl font-display font-bold text-gray-900 dark:text-white tracking-tight mt-1">
                 Pengaturan Akun & Profil
               </h1>
             </div>
           </div>
 
           <div className="hidden sm:block">
-            <Logo className="h-6 w-auto text-indigo-600" />
+            <Logo className="h-6 w-auto text-indigo-600 dark:text-indigo-400" />
           </div>
         </div>
       </header>
@@ -551,7 +668,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
           <div className="card-duo p-6 space-y-4">
             <div className="flex items-center gap-3.5">
               <div className="relative group">
-                <div className="w-12 h-12 bg-indigo-50 border-2 border-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-base overflow-hidden shrink-0 shadow-3xs">
+                <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 border-2 border-indigo-100 dark:border-indigo-800/50 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-base overflow-hidden shrink-0 shadow-3xs">
                   {photoURL ? (
                     <img src={photoURL} alt={fullName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                   ) : (
@@ -560,11 +677,11 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                 </div>
               </div>
               <div className="min-w-0">
-                <h3 className="text-xs font-bold text-gray-900 truncate">{fullName || 'Memuat...'}</h3>
+                <h3 className="text-xs font-bold text-gray-900 dark:text-white truncate">{fullName || 'Memuat...'}</h3>
                 <span className={`inline-flex items-center gap-1 px-2 py-0.5 mt-1 rounded-md text-[9px] font-bold uppercase border ${
                   isTeacher 
-                    ? 'bg-indigo-50 text-indigo-700 border-indigo-100' 
-                    : 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                    ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 border-indigo-100 dark:border-indigo-800/50' 
+                    : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 border-emerald-100 dark:border-emerald-800/50'
                 }`}>
                   {isTeacher ? 'Pengajar' : 'Siswa'}
                 </span>
@@ -583,7 +700,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
               className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-2xl text-xs font-black flex items-center gap-3 transition-all ${
                 activeTab === 'profile'
                   ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-slate-700'
               }`}
             >
               <User className="w-4 h-4 shrink-0" />
@@ -595,7 +712,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
               className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-2xl text-xs font-black flex items-center gap-3 transition-all ${
                 activeTab === 'security'
                   ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-slate-700'
               }`}
             >
               <Shield className="w-4 h-4 shrink-0" />
@@ -607,7 +724,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
               className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-2xl text-xs font-black flex items-center gap-3 transition-all ${
                 activeTab === 'preferences'
                   ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-slate-700'
               }`}
             >
               <Sliders className="w-4 h-4 shrink-0" />
@@ -619,21 +736,36 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
               className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-2xl text-xs font-black flex items-center gap-3 transition-all ${
                 activeTab === 'account'
                   ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                  : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-slate-700'
               }`}
             >
               <UserCheck className="w-4 h-4 shrink-0" />
               <span>Status Akun</span>
             </button>
+
+            {currentUserProfile?.email === 'fatih@kavio.tec.edu' && (
+              <button
+                type="button"
+                onClick={() => setActiveTab('dev')}
+                className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-2xl text-xs font-black flex items-center gap-3 transition-all ${
+                  activeTab === 'dev'
+                    ? 'bg-[#E53E3E] text-white border-b-4 border-[#C53030] shadow-xs'
+                    : 'text-red-600 hover:text-red-700 hover:bg-red-50 border border-dashed border-red-200'
+                }`}
+              >
+                <Terminal className="w-4 h-4 shrink-0" />
+                <span>Dev Tools 🛠️</span>
+              </button>
+            )}
           </div>
 
           {/* Unsaved Warning Banner */}
           {hasUnsavedChanges && (
-            <div className="bg-amber-50/80 border border-amber-200 p-4 rounded-3xl space-y-3">
+            <div className="bg-amber-50 dark:bg-amber-900/30/80 border border-amber-200 p-4 rounded-3xl space-y-3">
               <div className="flex gap-2">
-                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-xs font-bold text-amber-900">Perubahan Belum Disimpan</p>
+                  <p className="text-xs font-bold text-amber-900 dark:text-amber-100">Perubahan Belum Disimpan</p>
                   <p className="text-[10px] text-amber-700/90 leading-relaxed mt-0.5">
                     Anda memodifikasi beberapa informasi profil. Simpan perubahan sebelum meninggalkan halaman.
                   </p>
@@ -650,7 +782,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                 </button>
                 <button
                   onClick={handleCancelChanges}
-                  className="flex-1 py-1.5 bg-white hover:bg-gray-50 border border-gray-200 text-gray-700 rounded-xl text-[10px] font-bold active:scale-95 transition-all cursor-pointer"
+                  className="flex-1 py-1.5 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 rounded-xl text-[10px] font-bold active:scale-95 transition-all cursor-pointer"
                 >
                   Batalkan
                 </button>
@@ -664,20 +796,20 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
           
           {loading ? (
             /* Loading Skeletons */
-            <div className="bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 space-y-6 shadow-3xs animate-pulse">
-              <div className="h-6 w-48 bg-gray-200 rounded-lg" />
+            <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 rounded-3xl p-6 sm:p-8 space-y-6 shadow-3xs animate-pulse">
+              <div className="h-6 w-48 bg-gray-200 dark:bg-slate-600 rounded-lg" />
               <div className="flex items-center gap-4">
-                <div className="w-20 h-20 bg-gray-200 rounded-2xl" />
+                <div className="w-20 h-20 bg-gray-200 dark:bg-slate-600 rounded-2xl" />
                 <div className="space-y-2 flex-1">
-                  <div className="h-4 bg-gray-200 rounded-lg w-1/3" />
-                  <div className="h-3 bg-gray-200 rounded-lg w-1/4" />
+                  <div className="h-4 bg-gray-200 dark:bg-slate-600 rounded-lg w-1/3" />
+                  <div className="h-3 bg-gray-200 dark:bg-slate-600 rounded-lg w-1/4" />
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="h-10 bg-gray-200 rounded-xl" />
-                <div className="h-10 bg-gray-200 rounded-xl" />
-                <div className="h-10 bg-gray-200 rounded-xl" />
-                <div className="h-10 bg-gray-200 rounded-xl" />
+                <div className="h-10 bg-gray-200 dark:bg-slate-600 rounded-xl" />
+                <div className="h-10 bg-gray-200 dark:bg-slate-600 rounded-xl" />
+                <div className="h-10 bg-gray-200 dark:bg-slate-600 rounded-xl" />
+                <div className="h-10 bg-gray-200 dark:bg-slate-600 rounded-xl" />
               </div>
             </div>
           ) : (
@@ -687,14 +819,14 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
               {activeTab === 'profile' && (
                 <form onSubmit={handleSaveProfile} className="space-y-6">
                   <div>
-                    <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Profil Publik Saya</h2>
+                    <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Profil Publik Saya</h2>
                     <p className="text-[11px] text-gray-400 mt-0.5">Kelola foto identitas, nomor kontak, serta deskripsi biografi akademis.</p>
                   </div>
 
                   {/* Profile Photo Uploader */}
-                  <div className="p-5 bg-gray-50 border-2 border-gray-200 border-b-4 border-gray-300 rounded-2xl flex flex-col sm:flex-row items-center gap-5">
+                  <div className="p-5 bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600 rounded-2xl flex flex-col sm:flex-row items-center gap-5">
                     <div className="relative">
-                      <div className="w-20 h-20 bg-indigo-50 border-2 border-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-2xl overflow-hidden shadow-xs">
+                      <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-900/30 border-2 border-indigo-100 dark:border-indigo-800/50 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-2xl overflow-hidden shadow-xs">
                         {photoURL ? (
                           <img src={photoURL} alt="Avatar Preview" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                         ) : (
@@ -713,7 +845,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                     </div>
 
                     <div className="flex-1 text-center sm:text-left space-y-2">
-                      <p className="text-xs font-bold text-gray-800">Foto Identitas Akun</p>
+                      <p className="text-xs font-bold text-gray-800 dark:text-slate-100">Foto Identitas Akun</p>
                       <p className="text-[10px] text-gray-400 leading-relaxed max-w-sm">
                         Mendukung file format JPG, PNG, atau WEBP. Maksimal ukuran 5 MB.
                       </p>
@@ -772,26 +904,26 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {/* Full Name */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700">Nama Lengkap <span className="text-red-500">*</span></label>
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Nama Lengkap <span className="text-red-500">*</span></label>
                       <input
                         type="text"
                         required
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                        className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                         placeholder="Nama lengkap Anda"
                       />
                     </div>
 
                     {/* Email (Read-only) */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-500">Alamat Email (Akun Utama)</label>
+                      <label className="block text-xs font-semibold text-gray-500 dark:text-slate-400">Alamat Email (Akun Utama)</label>
                       <div className="relative">
                         <input
                           type="email"
                           readOnly
                           value={currentUserProfile?.email || ''}
-                          className="block w-full px-4 py-2.5 bg-gray-50 border border-gray-200 text-gray-400 rounded-xl text-xs cursor-not-allowed"
+                          className="block w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 text-gray-400 rounded-xl text-xs cursor-not-allowed"
                         />
                         <Mail className="absolute right-3.5 top-3 w-4 h-4 text-gray-300" />
                       </div>
@@ -800,13 +932,13 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
                     {/* Phone Number */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700">Nomor Telepon</label>
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Nomor Telepon</label>
                       <div className="relative">
                         <input
                           type="text"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
-                          className="block w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                          className="block w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                           placeholder="+628123456789"
                         />
                         <Phone className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
@@ -816,7 +948,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
                     {/* Date of Birth & Age Block */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700">Tanggal Lahir</label>
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Tanggal Lahir</label>
                       <div className="grid grid-cols-3 gap-2">
                         <div className="col-span-2">
                           <CustomDatePicker
@@ -825,9 +957,9 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                             placeholder="Pilih Tanggal Lahir"
                           />
                         </div>
-                        <div className="col-span-1 bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-2 text-center flex flex-col justify-center min-w-0">
+                        <div className="col-span-1 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl px-2.5 py-2 text-center flex flex-col justify-center min-w-0">
                           <span className="text-[8px] font-bold text-gray-400 uppercase tracking-wider block">Umur</span>
-                          <span className="text-xs font-bold text-gray-800 block truncate">
+                          <span className="text-xs font-bold text-gray-800 dark:text-slate-100 block truncate">
                             {calculatedAge !== null ? `${calculatedAge} Thn` : '-'}
                           </span>
                         </div>
@@ -836,7 +968,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
                     {/* Gender */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700">Jenis Kelamin</label>
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Jenis Kelamin</label>
                       <CustomDropdown
                         value={gender}
                         placeholder="Pilih jenis kelamin"
@@ -852,13 +984,13 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
                     {/* Bio / About */}
                     <div className="space-y-1.5 sm:col-span-2">
-                      <label className="block text-xs font-semibold text-gray-700">Tentang Saya / Bio Singkat</label>
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Tentang Saya / Bio Singkat</label>
                       <textarea
                         value={bio}
                         onChange={(e) => setBio(e.target.value)}
                         rows={3}
                         maxLength={500}
-                        className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"
+                        className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"
                         placeholder="Tuliskan biografi akademis singkat Anda..."
                       />
                       <div className="flex justify-end">
@@ -868,7 +1000,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                   </div>
 
                   {/* Form Footer Action */}
-                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-700/50">
                     <button
                       type="button"
                       onClick={handleCancelChanges}
@@ -893,7 +1025,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
               {activeTab === 'security' && (
                 <form onSubmit={handleChangePassword} className="space-y-6">
                   <div>
-                    <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Keamanan & Sandi Akses</h2>
+                    <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Keamanan & Sandi Akses</h2>
                     <p className="text-[11px] text-gray-400 mt-0.5">Amankan akses sistem dengan memperbarui kata sandi secara periodik.</p>
                   </div>
 
@@ -907,21 +1039,21 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                   <div className="space-y-4 max-w-lg">
                     {/* Current Password */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700">Kata Sandi Saat Ini <span className="text-red-500">*</span></label>
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Kata Sandi Saat Ini <span className="text-red-500">*</span></label>
                       <div className="relative">
                         <input
                           type={showCurrentPassword ? 'text' : 'password'}
                           required
                           value={currentPassword}
                           onChange={(e) => setCurrentPassword(e.target.value)}
-                          className="block w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                          className="block w-full pl-10 pr-10 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                           placeholder="Masukkan kata sandi lama"
                         />
                         <Lock className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
                         <button
                           type="button"
                           onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                          className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 p-1 rounded-md"
+                          className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 p-1 rounded-md"
                         >
                           {showCurrentPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                         </button>
@@ -930,21 +1062,21 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
                     {/* New Password */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700">Kata Sandi Baru <span className="text-red-500">*</span></label>
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Kata Sandi Baru <span className="text-red-500">*</span></label>
                       <div className="relative">
                         <input
                           type={showNewPassword ? 'text' : 'password'}
                           required
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
-                          className="block w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                          className="block w-full pl-10 pr-10 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                           placeholder="Minimal 8 karakter"
                         />
                         <Lock className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
                         <button
                           type="button"
                           onClick={() => setShowNewPassword(!showNewPassword)}
-                          className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 p-1 rounded-md"
+                          className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 p-1 rounded-md"
                         >
                           {showNewPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                         </button>
@@ -954,15 +1086,15 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                       {newPassword && (
                         <div className="space-y-1.5 pt-1">
                           <div className="flex justify-between items-center text-[10px]">
-                            <span className="font-semibold text-gray-500">Kekuatan Sandi:</span>
-                            <span className="font-bold text-gray-700">{passwordStrength.text}</span>
+                            <span className="font-semibold text-gray-500 dark:text-slate-400">Kekuatan Sandi:</span>
+                            <span className="font-bold text-gray-700 dark:text-slate-200">{passwordStrength.text}</span>
                           </div>
-                          <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden flex gap-0.5">
-                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 1 ? passwordStrength.color : 'bg-gray-100'}`} />
-                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 2 ? passwordStrength.color : 'bg-gray-100'}`} />
-                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 3 ? passwordStrength.color : 'bg-gray-100'}`} />
-                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 4 ? passwordStrength.color : 'bg-gray-100'}`} />
-                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 5 ? passwordStrength.color : 'bg-gray-100'}`} />
+                          <div className="w-full h-1.5 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden flex gap-0.5">
+                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 1 ? passwordStrength.color : 'bg-gray-100 dark:bg-slate-700'}`} />
+                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 2 ? passwordStrength.color : 'bg-gray-100 dark:bg-slate-700'}`} />
+                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 3 ? passwordStrength.color : 'bg-gray-100 dark:bg-slate-700'}`} />
+                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 4 ? passwordStrength.color : 'bg-gray-100 dark:bg-slate-700'}`} />
+                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 5 ? passwordStrength.color : 'bg-gray-100 dark:bg-slate-700'}`} />
                           </div>
                         </div>
                       )}
@@ -970,21 +1102,21 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
                     {/* Confirm Password */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700">Konfirmasi Kata Sandi Baru <span className="text-red-500">*</span></label>
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Konfirmasi Kata Sandi Baru <span className="text-red-500">*</span></label>
                       <div className="relative">
                         <input
                           type={showConfirmPassword ? 'text' : 'password'}
                           required
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="block w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                          className="block w-full pl-10 pr-10 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                           placeholder="Masukkan ulang kata sandi baru"
                         />
                         <Lock className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
                         <button
                           type="button"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 p-1 rounded-md"
+                          className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 p-1 rounded-md"
                         >
                           {showConfirmPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                         </button>
@@ -1009,7 +1141,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
               {activeTab === 'preferences' && (
                 <div className="space-y-8">
                   <div>
-                    <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Preferensi Aplikasi</h2>
+                    <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Preferensi Aplikasi</h2>
                     <p className="text-[11px] text-gray-400 mt-0.5">Atur bahasa tampilan, preferensi visual, dan notifikasi aktivitas kelas digital.</p>
                   </div>
 
@@ -1019,12 +1151,12 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                     <div className="space-y-6">
                       <div className="flex items-center gap-2 border-b border-gray-50 pb-3">
                         <Globe className="w-4 h-4 text-indigo-500" />
-                        <h3 className="text-xs font-bold text-gray-800">Tampilan & Regional</h3>
+                        <h3 className="text-xs font-bold text-gray-800 dark:text-slate-100">Tampilan & Regional</h3>
                       </div>
 
                       {/* Language */}
                       <div className="space-y-1.5">
-                        <label className="block text-xs font-semibold text-gray-700">Bahasa Tampilan (Localization)</label>
+                        <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Bahasa Tampilan (Localization)</label>
                         <CustomDropdown
                           value={language}
                           onChange={(val) => setLanguage(val as any)}
@@ -1038,7 +1170,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
                       {/* Theme selection placeholder */}
                       <div className="space-y-1.5">
-                        <label className="block text-xs font-semibold text-gray-700">Tema Visual (Theme Color)</label>
+                        <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Tema Visual (Theme Color)</label>
                         <div className="grid grid-cols-3 gap-2">
                           {(['Light', 'Dark', 'System'] as const).map((t) => (
                             <button
@@ -1047,8 +1179,8 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                               onClick={() => setTheme(t)}
                               className={`py-2 px-3 rounded-xl border text-center text-xs font-bold transition-all cursor-pointer ${
                                 theme === t
-                                  ? 'bg-indigo-50 text-indigo-600 border-indigo-200'
-                                  : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'
+                                  ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-indigo-200'
+                                  : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:bg-slate-900'
                               }`}
                             >
                               {t === 'Light' && 'Terang'}
@@ -1064,15 +1196,15 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                     <div className="space-y-6">
                       <div className="flex items-center gap-2 border-b border-gray-50 pb-3">
                         <Bell className="w-4 h-4 text-indigo-500" />
-                        <h3 className="text-xs font-bold text-gray-800">Pemberitahuan & Notifikasi</h3>
+                        <h3 className="text-xs font-bold text-gray-800 dark:text-slate-100">Pemberitahuan & Notifikasi</h3>
                       </div>
 
                       <div className="space-y-4">
                         {/* PWA Push Notification */}
-                        <div className="flex items-start justify-between gap-4 p-3 bg-indigo-50/50 rounded-xl border border-indigo-100/50">
+                        <div className="flex items-start justify-between gap-4 p-3 bg-indigo-50 dark:bg-indigo-900/30/50 rounded-xl border border-indigo-100 dark:border-indigo-800/50">
                           <div className="space-y-0.5">
-                            <span className="text-xs font-bold text-gray-800 block">Push Notification (FCM)</span>
-                            <span className="text-[10px] text-gray-500 block leading-relaxed">
+                            <span className="text-xs font-bold text-gray-800 dark:text-slate-100 block">Push Notification (FCM)</span>
+                            <span className="text-[10px] text-gray-500 dark:text-slate-400 block leading-relaxed">
                               Terima notifikasi di latar belakang meskipun browser ditutup.
                             </span>
                           </div>
@@ -1084,38 +1216,38 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                               }
                             }}
                             className={`w-10 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none shrink-0 ${
-                              notificationPermissionStatus === 'granted' ? 'bg-indigo-600' : 'bg-gray-200'
+                              notificationPermissionStatus === 'granted' ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-slate-600'
                             }`}
                           >
-                            <div className={`w-4 h-4 rounded-full bg-white transition-transform duration-200 ${
+                            <div className={`w-4 h-4 rounded-full bg-white dark:bg-slate-800 transition-transform duration-200 ${
                               notificationPermissionStatus === 'granted' ? 'translate-x-5' : 'translate-x-0'
                             }`} />
                           </button>
                         </div>
 
                         {/* Email Notification */}
-                        <div className="flex items-start justify-between gap-4 p-3 bg-gray-50/50 rounded-xl border border-gray-100/50">
+                        <div className="flex items-start justify-between gap-4 p-3 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700/50">
                           <div className="space-y-0.5">
-                            <span className="text-xs font-bold text-gray-800 block">Notifikasi Email</span>
+                            <span className="text-xs font-bold text-gray-800 dark:text-slate-100 block">Notifikasi Email</span>
                             <span className="text-[10px] text-gray-400 block leading-relaxed">Terima laporan dan pengumuman kelas via email terdaftar.</span>
                           </div>
                           <button
                             type="button"
                             onClick={() => setEmailNotification(!emailNotification)}
                             className={`w-10 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none shrink-0 ${
-                              emailNotification ? 'bg-indigo-600' : 'bg-gray-200'
+                              emailNotification ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-slate-600'
                             }`}
                           >
-                            <div className={`w-4 h-4 rounded-full bg-white transition-transform duration-200 ${
+                            <div className={`w-4 h-4 rounded-full bg-white dark:bg-slate-800 transition-transform duration-200 ${
                               emailNotification ? 'translate-x-5' : 'translate-x-0'
                             }`} />
                           </button>
                         </div>
 
                         {/* Assignment Notification */}
-                        <div className="flex items-start justify-between gap-4 p-3 bg-gray-50/50 rounded-xl border border-gray-100/50">
+                        <div className="flex items-start justify-between gap-4 p-3 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700/50">
                           <div className="space-y-0.5">
-                            <span className="text-xs font-bold text-gray-800 block">Notifikasi Tugas Baru</span>
+                            <span className="text-xs font-bold text-gray-800 dark:text-slate-100 block">Notifikasi Tugas Baru</span>
                             <span className="text-[10px] text-gray-400 block leading-relaxed">
                               {isTeacher 
                                 ? 'Terima notifikasi instan saat siswa mengumpulkan esai tugas.' 
@@ -1126,19 +1258,19 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                             type="button"
                             onClick={() => setAssignmentNotification(!assignmentNotification)}
                             className={`w-10 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none shrink-0 ${
-                              assignmentNotification ? 'bg-indigo-600' : 'bg-gray-200'
+                              assignmentNotification ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-slate-600'
                             }`}
                           >
-                            <div className={`w-4 h-4 rounded-full bg-white transition-transform duration-200 ${
+                            <div className={`w-4 h-4 rounded-full bg-white dark:bg-slate-800 transition-transform duration-200 ${
                               assignmentNotification ? 'translate-x-5' : 'translate-x-0'
                             }`} />
                           </button>
                         </div>
 
                         {/* Score Notification */}
-                        <div className="flex items-start justify-between gap-4 p-3 bg-gray-50/50 rounded-xl border border-gray-100/50">
+                        <div className="flex items-start justify-between gap-4 p-3 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700/50">
                           <div className="space-y-0.5">
-                            <span className="text-xs font-bold text-gray-800 block">Notifikasi Hasil Penilaian</span>
+                            <span className="text-xs font-bold text-gray-800 dark:text-slate-100 block">Notifikasi Hasil Penilaian</span>
                             <span className="text-[10px] text-gray-400 block leading-relaxed">
                               {isTeacher 
                                 ? 'Terima pengingat untuk tugas esai siswa yang belum dinilai.' 
@@ -1149,10 +1281,10 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                             type="button"
                             onClick={() => setScoreNotification(!scoreNotification)}
                             className={`w-10 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none shrink-0 ${
-                              scoreNotification ? 'bg-indigo-600' : 'bg-gray-200'
+                              scoreNotification ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-slate-600'
                             }`}
                           >
-                            <div className={`w-4 h-4 rounded-full bg-white transition-transform duration-200 ${
+                            <div className={`w-4 h-4 rounded-full bg-white dark:bg-slate-800 transition-transform duration-200 ${
                               scoreNotification ? 'translate-x-5' : 'translate-x-0'
                             }`} />
                           </button>
@@ -1180,24 +1312,24 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
               {activeTab === 'account' && (
                 <div className="space-y-6">
                   <div>
-                    <h2 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Informasi Status Akun</h2>
+                    <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Informasi Status Akun</h2>
                     <p className="text-[11px] text-gray-400 mt-0.5">Detail pendaftaran akademis, peran pengguna, dan metadata keamanan login.</p>
                   </div>
 
-                  <div className="bg-gray-50/50 border border-gray-100 rounded-2xl p-5 space-y-4">
+                  <div className="bg-gray-50 dark:bg-slate-900/50 border border-gray-100 dark:border-slate-700/50 rounded-2xl p-5 space-y-4">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                       
-                      <div className="p-4 bg-white border border-gray-50 rounded-xl space-y-1">
+                      <div className="p-4 bg-white dark:bg-slate-800 border border-gray-50 rounded-xl space-y-1">
                         <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Peran Sistem (Account Role)</span>
-                        <span className="text-xs font-bold text-gray-900 block flex items-center gap-1.5 mt-1">
+                        <span className="text-xs font-bold text-gray-900 dark:text-white block flex items-center gap-1.5 mt-1">
                           <UserCheck className={`w-4 h-4 ${isTeacher ? 'text-indigo-500' : 'text-emerald-500'}`} />
                           {isTeacher ? 'Teacher / Pengajar Utama' : 'Student / Siswa Terdaftar'}
                         </span>
                       </div>
 
-                      <div className="p-4 bg-white border border-gray-50 rounded-xl space-y-1">
+                      <div className="p-4 bg-white dark:bg-slate-800 border border-gray-50 rounded-xl space-y-1">
                         <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Tanggal Registrasi (Member Since)</span>
-                        <span className="text-xs font-bold text-gray-900 block flex items-center gap-1.5 mt-1">
+                        <span className="text-xs font-bold text-gray-900 dark:text-white block flex items-center gap-1.5 mt-1">
                           <Clock className="w-4 h-4 text-gray-400" />
                           {currentUserProfile?.createdAt?.seconds 
                             ? new Date(currentUserProfile.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})
@@ -1208,9 +1340,9 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                         </span>
                       </div>
 
-                      <div className="p-4 bg-white border border-gray-50 rounded-xl space-y-1 sm:col-span-2">
+                      <div className="p-4 bg-white dark:bg-slate-800 border border-gray-50 rounded-xl space-y-1 sm:col-span-2">
                         <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Aktivitas Login Terakhir (Last Logged In)</span>
-                        <span className="text-xs font-mono font-bold text-gray-700 block flex items-center gap-1.5 mt-1">
+                        <span className="text-xs font-mono font-bold text-gray-700 dark:text-slate-200 block flex items-center gap-1.5 mt-1">
                           <Clock className="w-4 h-4 text-indigo-500" />
                           {auth.currentUser?.metadata.lastSignInTime 
                             ? new Date(auth.currentUser.metadata.lastSignInTime).toLocaleString('id-ID', {day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'})
@@ -1221,14 +1353,228 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                     </div>
                   </div>
 
-                  <div className="p-4 bg-indigo-50/25 border border-indigo-100/50 rounded-2xl flex items-start gap-3">
+                  <div className="p-4 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/50 rounded-2xl flex items-start gap-3">
                     <ShieldCheck className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs font-bold text-indigo-900">Edisi Kavio Enterprise</p>
+                      <p className="text-xs font-bold text-indigo-900 dark:text-indigo-100">Edisi Kavio Enterprise</p>
                       <p className="text-[10px] text-indigo-700/90 leading-relaxed mt-0.5">
                         Akun Anda dilindungi oleh enkripsi modern Kavio Edu. Data profil Anda disimpan secara aman dan real-time di server Cloud Firestore Enterprise.
                       </p>
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'dev' && currentUserProfile?.email === 'fatih@kavio.tec.edu' && (
+                <div className="space-y-6">
+                  <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-700/50 pb-3">
+                    <div>
+                      <h2 className="text-sm font-black text-red-650 uppercase tracking-wider">DEVELOPER & ADMINISTRATOR TOOLS</h2>
+                      <p className="text-[10px] text-gray-400 mt-0.5">Akses bypass tingkat sistem untuk manajemen pengguna dan konfigurasi global.</p>
+                    </div>
+                    
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setActiveTab('account');
+                        setTimeout(() => setActiveTab('dev'), 100);
+                      }}
+                      className="p-2 text-gray-500 dark:text-slate-400 hover:text-indigo-650 hover:bg-gray-100 dark:bg-slate-700 rounded-xl transition-all cursor-pointer"
+                      title="Segarkan Data"
+                    >
+                      <RefreshCw className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Dev Settings Blocks */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Maintenance Mode */}
+                    <div className="p-5 bg-red-50/30 border border-red-100 rounded-2xl space-y-3">
+                      <div className="flex gap-2.5">
+                        <ShieldAlert className="w-5 h-5 text-red-600 shrink-0" />
+                        <div>
+                          <h4 className="text-xs font-black text-red-950 uppercase tracking-wide">Mode Pemeliharaan (Maintenance)</h4>
+                          <p className="text-[10px] text-red-700/90 leading-relaxed mt-0.5">
+                            Aktifkan ini untuk memblokir siswa masuk ke dashboard sementara sistem diperbarui.
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-2">
+                        <span className="text-[10px] font-black uppercase text-gray-400">Status: {systemMaintenance ? 'AKTIF (BLOCKED)' : 'NONAKTIF'}</span>
+                        <button
+                          type="button"
+                          onClick={handleToggleMaintenance}
+                          className={`px-4 py-2 rounded-xl text-[10px] font-black cursor-pointer shadow-xs transition-all ${
+                            systemMaintenance
+                              ? 'bg-red-600 hover:bg-red-700 text-white border-b-4 border-red-800'
+                              : 'bg-white dark:bg-slate-800 hover:bg-gray-50 dark:bg-slate-900 text-gray-700 dark:text-slate-200 border border-gray-250'
+                          }`}
+                        >
+                          {systemMaintenance ? 'Matikan Mode' : 'Aktifkan Mode'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Stats summary */}
+                    <div className="p-5 bg-gray-50 dark:bg-slate-900 border border-gray-150 rounded-2xl flex flex-col justify-between">
+                      <div>
+                        <h4 className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wide">Informasi DB Kavio</h4>
+                        <p className="text-[10px] text-gray-400 mt-0.5">Data terdaftar di cloud database saat ini.</p>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-center pt-2">
+                        <div className="p-2 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700/50">
+                          <span className="block text-base font-black text-indigo-650">{devUsers.length}</span>
+                          <span className="block text-[8px] font-bold text-gray-400 uppercase">Pengguna</span>
+                        </div>
+                        <div className="p-2 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700/50">
+                          <span className="block text-base font-black text-amber-600 dark:text-amber-400">{devUsers.filter(u => u.role === 'teacher').length}</span>
+                          <span className="block text-[8px] font-bold text-gray-400 uppercase">Guru</span>
+                        </div>
+                        <div className="p-2 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700/50">
+                          <span className="block text-base font-black text-emerald-600 dark:text-emerald-400">{devUsers.filter(u => u.role === 'student').length}</span>
+                          <span className="block text-[8px] font-bold text-gray-400 uppercase">Siswa</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Users Management list */}
+                  <div className="space-y-4">
+                    <h3 className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider">Kelola Seluruh Pengguna ({devUsers.length})</h3>
+
+                    {devLoading ? (
+                      <div className="flex items-center justify-center p-12"><Loader2 className="w-8 h-8 text-indigo-600 dark:text-indigo-400 animate-spin" /></div>
+                    ) : (
+                      <div className="space-y-3">
+                        {devUsers.map((u) => {
+                          const isTargetEditing = editingDevUser?.uid === u.uid;
+
+                          return (
+                            <div key={u.uid} className="p-5 bg-white dark:bg-slate-800 border border-gray-150 rounded-2xl space-y-4 hover:border-gray-300 dark:border-slate-600 transition-colors shadow-3xs">
+                              {/* Header info */}
+                              <div className="flex items-start justify-between gap-4">
+                                <div className="min-w-0 space-y-1">
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs font-black text-gray-900 dark:text-white">{u.fullName}</span>
+                                    <span className={`inline-flex items-center px-1.5 py-0.2 rounded text-[8px] font-black uppercase border ${
+                                      u.role === 'teacher' ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 border-indigo-200' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 border-emerald-200'
+                                    }`}>
+                                      {u.role}
+                                    </span>
+                                  </div>
+                                  <p className="text-[10px] text-gray-400 font-mono">{u.email}</p>
+                                  {u.phone && <p className="text-[9px] text-gray-500 dark:text-slate-400 font-medium">Tlp: {u.phone}</p>}
+                                </div>
+
+                                <div className="flex items-center gap-2 shrink-0">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      if (isTargetEditing) {
+                                        setEditingDevUser(null);
+                                      } else {
+                                        setEditingDevUser(u);
+                                        setDevNewEmail(u.email || '');
+                                        setDevEditFullName(u.fullName || '');
+                                        setDevEditPhone(u.phone || '');
+                                      }
+                                    }}
+                                    className="px-3 py-1.5 bg-gray-50 dark:bg-slate-900 hover:bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 rounded-xl text-[10px] font-bold border border-gray-250 cursor-pointer"
+                                  >
+                                    {isTargetEditing ? 'Batal' : 'Edit / Bypass'}
+                                  </button>
+                                  
+                                  {u.email !== 'fatih@fatihfarhat.com' && u.email !== 'fatih@kavio.tec.edu' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleDevDeleteUser(u)}
+                                      className="p-2 bg-red-50 hover:bg-red-100 text-red-650 rounded-xl cursor-pointer transition-colors"
+                                      title="Hapus Permanen"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Action Options (If Editing) */}
+                              {isTargetEditing && (
+                                <div className="p-4 bg-gray-50 dark:bg-slate-900 rounded-xl space-y-4 border border-gray-200 dark:border-slate-700 text-xs text-gray-800 dark:text-slate-100 animate-fadeIn">
+                                  {/* Bypass Password resetting */}
+                                  <div className="flex items-center justify-between gap-4 border-b border-gray-200 dark:border-slate-700 pb-3">
+                                    <div>
+                                      <h5 className="font-black text-gray-900 dark:text-white uppercase text-[9px] tracking-wider">Autentikasi & Sandi</h5>
+                                      <p className="text-[9px] text-gray-500 dark:text-slate-400 mt-0.5">Kirim email reset bypass instan ke kotak masuk siswa.</p>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleDevResetPassword(u)}
+                                      className="px-3.5 py-2 bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-250 text-indigo-750 text-[10px] font-black rounded-lg transition-colors cursor-pointer shadow-3xs"
+                                    >
+                                      Kirim Reset Password
+                                    </button>
+                                  </div>
+
+                                  {/* Change Email Form */}
+                                  <div className="space-y-2 border-b border-gray-200 dark:border-slate-700 pb-3">
+                                    <h5 className="font-black text-gray-900 dark:text-white uppercase text-[9px] tracking-wider">Ubah Email Database</h5>
+                                    <div className="flex gap-2">
+                                      <input
+                                        type="email"
+                                        value={devNewEmail}
+                                        onChange={(e) => setDevNewEmail(e.target.value)}
+                                        placeholder="Email baru"
+                                        className="flex-1 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-250 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none"
+                                      />
+                                      <button
+                                        type="button"
+                                        onClick={() => handleDevUpdateEmail(u)}
+                                        className="px-3 py-1.5 bg-indigo-650 hover:bg-indigo-700 text-white rounded-lg font-bold cursor-pointer"
+                                      >
+                                        Update Email
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {/* Change Profile Details Form */}
+                                  <div className="space-y-2">
+                                    <h5 className="font-black text-gray-900 dark:text-white uppercase text-[9px] tracking-wider">Ubah Profil (Nama & Telepon)</h5>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                      <div className="space-y-1">
+                                        <label className="text-[8px] uppercase tracking-wider text-gray-400 font-bold">Nama Lengkap</label>
+                                        <input
+                                          type="text"
+                                          value={devEditFullName}
+                                          onChange={(e) => setDevEditFullName(e.target.value)}
+                                          className="w-full px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-250 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none"
+                                        />
+                                      </div>
+                                      <div className="space-y-1">
+                                        <label className="text-[8px] uppercase tracking-wider text-gray-400 font-bold">No. Telepon</label>
+                                        <input
+                                          type="text"
+                                          value={devEditPhone}
+                                          onChange={(e) => setDevEditPhone(e.target.value)}
+                                          className="w-full px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-250 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none"
+                                        />
+                                      </div>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleDevUpdateProfile(u)}
+                                      className="px-4 py-2 mt-2 bg-indigo-650 hover:bg-indigo-700 text-white rounded-lg font-bold cursor-pointer inline-flex items-center"
+                                    >
+                                      Simpan Profil
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

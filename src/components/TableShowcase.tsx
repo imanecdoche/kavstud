@@ -110,11 +110,11 @@ export default function TableShowcase() {
   return (
     <div className="space-y-12 max-w-5xl" id="table-showcase">
       {/* Page Header */}
-      <div className="border-b border-gray-100 pb-5">
-        <h1 className="text-2xl font-display font-semibold tracking-tight text-gray-900">
+      <div className="border-b border-gray-100 dark:border-slate-700/50 pb-5">
+        <h1 className="text-2xl font-display font-semibold tracking-tight text-gray-900 dark:text-white">
           Tables & Lists Sandbox
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
           Demo tabel performa tinggi dengan sorting dinamis, pencarian realtime, bulk select, dan responsive stacking di mobile.
         </p>
       </div>
@@ -123,11 +123,11 @@ export default function TableShowcase() {
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+            <h2 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
               <FileSpreadsheet className="w-4 h-4 text-indigo-500" />
               Daftar Siswa Aktif (Student Database)
             </h2>
-            <p className="text-xs text-gray-500">Mendukung multi-select delete & sorting rata-rata nilai.</p>
+            <p className="text-xs text-gray-500 dark:text-slate-400">Mendukung multi-select delete & sorting rata-rata nilai.</p>
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -139,7 +139,7 @@ export default function TableShowcase() {
                 placeholder="Cari nama, kelas, email..."
                 value={studentSearch}
                 onChange={(e) => setStudentSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white"
+                className="w-full pl-9 pr-4 py-2 text-xs border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500 bg-white dark:bg-slate-800"
               />
             </div>
 
@@ -158,19 +158,19 @@ export default function TableShowcase() {
         </div>
 
         {/* Outer Container (Guarantees NO Horizontal Scroll on outer margins, responds fluidly) */}
-        <div className="border border-gray-100 bg-white rounded-2xl overflow-hidden shadow-2xs">
+        <div className="border border-gray-100 dark:border-slate-700/50 bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-2xs">
           
           {/* Desktop Table View (Hidden on 320px - 430px, shown on sm/md/lg upwards) */}
           <div className="hidden sm:block overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-gray-50/50 border-b border-gray-100 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                <tr className="bg-gray-50 dark:bg-slate-900/50 border-b border-gray-100 dark:border-slate-700/50 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                   <th className="py-4 px-5 w-12">
                     <input
                       type="checkbox"
                       checked={filteredStudents.length > 0 && selectedStudentIds.length === filteredStudents.length}
                       onChange={handleSelectAllStudents}
-                      className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      className="rounded border-gray-300 dark:border-slate-600 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500"
                     />
                   </th>
                   <th className="py-4 px-4">
@@ -201,30 +201,30 @@ export default function TableShowcase() {
                     return (
                       <tr 
                         key={student.id} 
-                        className={`hover:bg-gray-50/25 transition-colors ${isSelected ? 'bg-indigo-50/10' : ''}`}
+                        className={`hover:bg-gray-50 dark:bg-slate-900/25 transition-colors ${isSelected ? 'bg-indigo-50 dark:bg-indigo-900/30/10' : ''}`}
                       >
                         <td className="py-3.5 px-5">
                           <input
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => handleSelectStudentRow(student.id)}
-                            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                            className="rounded border-gray-300 dark:border-slate-600 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500"
                           />
                         </td>
-                        <td className="py-3.5 px-4 font-semibold text-gray-900">
+                        <td className="py-3.5 px-4 font-semibold text-gray-900 dark:text-white">
                           <div>
                             <span>{student.name}</span>
                             <span className="block text-[10px] text-gray-400 font-normal mt-0.5">{student.email}</span>
                           </div>
                         </td>
-                        <td className="py-3.5 px-4 text-gray-500">{student.classSection}</td>
-                        <td className="py-3.5 px-4 font-mono font-medium text-gray-700">{student.scoreAverage.toFixed(1)}/100</td>
-                        <td className="py-3.5 px-4 text-gray-500">{student.attendance}</td>
+                        <td className="py-3.5 px-4 text-gray-500 dark:text-slate-400">{student.classSection}</td>
+                        <td className="py-3.5 px-4 font-mono font-medium text-gray-700 dark:text-slate-200">{student.scoreAverage.toFixed(1)}/100</td>
+                        <td className="py-3.5 px-4 text-gray-500 dark:text-slate-400">{student.attendance}</td>
                         <td className="py-3.5 px-4">
                           <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold inline-block border ${
-                            student.status === 'graduated' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' :
-                            student.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
-                            'bg-amber-50 text-amber-700 border-amber-100'
+                            student.status === 'graduated' ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 border-indigo-100 dark:border-indigo-800/50' :
+                            student.status === 'active' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 border-emerald-100 dark:border-emerald-800/50' :
+                            'bg-amber-50 dark:bg-amber-900/30 text-amber-700 border-amber-100 dark:border-amber-800/50'
                           }`}>
                             {student.status.toUpperCase()}
                           </span>
@@ -251,7 +251,7 @@ export default function TableShowcase() {
                 return (
                   <div 
                     key={student.id} 
-                    className={`p-4 space-y-3 ${isSelected ? 'bg-indigo-50/15' : 'bg-white'}`}
+                    className={`p-4 space-y-3 ${isSelected ? 'bg-indigo-50 dark:bg-indigo-900/30/15' : 'bg-white dark:bg-slate-800'}`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
@@ -259,17 +259,17 @@ export default function TableShowcase() {
                           type="checkbox"
                           checked={isSelected}
                           onChange={() => handleSelectStudentRow(student.id)}
-                          className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                          className="rounded border-gray-300 dark:border-slate-600 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500"
                         />
                         <div>
-                          <p className="text-xs font-semibold text-gray-900 leading-snug">{student.name}</p>
+                          <p className="text-xs font-semibold text-gray-900 dark:text-white leading-snug">{student.name}</p>
                           <p className="text-[10px] text-gray-400 font-mono mt-0.5">{student.email}</p>
                         </div>
                       </div>
                       <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold border ${
-                        student.status === 'graduated' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' :
-                        student.status === 'active' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
-                        'bg-amber-50 text-amber-700 border-amber-100'
+                        student.status === 'graduated' ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 border-indigo-100 dark:border-indigo-800/50' :
+                        student.status === 'active' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 border-emerald-100 dark:border-emerald-800/50' :
+                        'bg-amber-50 dark:bg-amber-900/30 text-amber-700 border-amber-100 dark:border-amber-800/50'
                       }`}>
                         {student.status.toUpperCase()}
                       </span>
@@ -278,15 +278,15 @@ export default function TableShowcase() {
                     <div className="grid grid-cols-3 gap-2 pt-2 border-t border-gray-50 text-center">
                       <div>
                         <span className="text-[9px] text-gray-400 uppercase tracking-widest block font-medium">Kelas</span>
-                        <span className="text-xs font-semibold text-gray-700">{student.classSection}</span>
+                        <span className="text-xs font-semibold text-gray-700 dark:text-slate-200">{student.classSection}</span>
                       </div>
                       <div>
                         <span className="text-[9px] text-gray-400 uppercase tracking-widest block font-medium">Nilai</span>
-                        <span className="text-xs font-semibold font-mono text-gray-800">{student.scoreAverage.toFixed(1)}</span>
+                        <span className="text-xs font-semibold font-mono text-gray-800 dark:text-slate-100">{student.scoreAverage.toFixed(1)}</span>
                       </div>
                       <div>
                         <span className="text-[9px] text-gray-400 uppercase tracking-widest block font-medium">Presensi</span>
-                        <span className="text-xs font-semibold text-gray-700">{student.attendance}</span>
+                        <span className="text-xs font-semibold text-gray-700 dark:text-slate-200">{student.attendance}</span>
                       </div>
                     </div>
                   </div>
@@ -304,35 +304,35 @@ export default function TableShowcase() {
       {/* SECTION 2: ASSIGNMENT TRACKING */}
       <div className="space-y-4">
         <div>
-          <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+          <h2 className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
             <Clock className="w-4 h-4 text-indigo-500" />
             Tugas Terjadwal (Recent Assignments List)
           </h2>
-          <p className="text-xs text-gray-500">Menampilkan deadline pengerjaan kimia dan total pengumpulan siswa.</p>
+          <p className="text-xs text-gray-500 dark:text-slate-400">Menampilkan deadline pengerjaan kimia dan total pengumpulan siswa.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {assignments.map((asg) => (
-            <div key={asg.id} className="border border-gray-100 bg-white rounded-2xl p-5 shadow-2xs space-y-4 flex flex-col justify-between">
+            <div key={asg.id} className="border border-gray-100 dark:border-slate-700/50 bg-white dark:bg-slate-800 rounded-2xl p-5 shadow-2xs space-y-4 flex flex-col justify-between">
               <div>
                 <div className="flex justify-between items-start gap-2">
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider leading-none">
                     {asg.subject}
                   </span>
                   <span className={`px-2 py-0.5 rounded-full text-[9px] font-bold inline-block border ${
-                    asg.status === 'graded' ? 'bg-emerald-50 text-emerald-700 border-emerald-100' :
-                    asg.status === 'waiting' ? 'bg-amber-50 text-amber-700 border-amber-100' :
-                    'bg-gray-50 text-gray-500 border-gray-100'
+                    asg.status === 'graded' ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 border-emerald-100 dark:border-emerald-800/50' :
+                    asg.status === 'waiting' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 border-amber-100 dark:border-amber-800/50' :
+                    'bg-gray-50 dark:bg-slate-900 text-gray-500 dark:text-slate-400 border-gray-100 dark:border-slate-700/50'
                   }`}>
                     {asg.status.toUpperCase()}
                   </span>
                 </div>
-                <h3 className="text-xs font-semibold text-gray-900 mt-2">{asg.title}</h3>
+                <h3 className="text-xs font-semibold text-gray-900 dark:text-white mt-2">{asg.title}</h3>
               </div>
 
               <div className="pt-3 border-t border-gray-50 flex items-center justify-between text-[11px]">
-                <div className="text-gray-500">
-                  Submissions: <span className="font-semibold text-gray-800">{asg.submissions}</span>
+                <div className="text-gray-500 dark:text-slate-400">
+                  Submissions: <span className="font-semibold text-gray-800 dark:text-slate-100">{asg.submissions}</span>
                 </div>
                 <div className="text-gray-400 font-mono text-[10px]">
                   DL: {asg.deadline}
@@ -360,14 +360,14 @@ export default function TableShowcase() {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ type: 'spring', duration: 0.3 }}
-              className="relative bg-white border border-rose-100 w-full max-w-sm rounded-2xl p-6 shadow-xl z-10"
+              className="relative bg-white dark:bg-slate-800 border border-rose-100 w-full max-w-sm rounded-2xl p-6 shadow-xl z-10"
             >
               <div className="flex items-start gap-3.5 mb-4">
                 <div className="w-10 h-10 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-500 shrink-0">
                   <AlertTriangle className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-semibold text-gray-900">
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
                     Konfirmasi Bulk Hapus
                   </h3>
                   <p className="text-xs text-gray-400 mt-1 leading-relaxed">
@@ -379,7 +379,7 @@ export default function TableShowcase() {
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   onClick={() => setIsConfirmDeleteOpen(false)}
-                  className="px-3.5 py-1.5 border border-gray-200 text-gray-600 hover:text-black rounded-lg text-xs font-medium cursor-pointer"
+                  className="px-3.5 py-1.5 border border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:text-black rounded-lg text-xs font-medium cursor-pointer"
                 >
                   Batal
                 </button>

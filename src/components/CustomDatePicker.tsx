@@ -129,9 +129,9 @@ export default function CustomDatePicker({
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen(true)}
-        className="w-full px-4 py-2.5 bg-white border-2 border-gray-200 border-b-4 border-gray-300 rounded-xl text-xs font-bold text-left flex items-center justify-between gap-2 cursor-pointer hover:border-sky-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600 rounded-xl text-xs font-bold text-left flex items-center justify-between gap-2 cursor-pointer hover:border-sky-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <span className={value ? 'text-gray-900' : 'text-gray-400 font-normal'}>
+        <span className={value ? 'text-gray-900 dark:text-white' : 'text-gray-400 font-normal'}>
           {getFormattedDisplayText() || placeholder}
         </span>
         <Calendar className="w-4 h-4 text-sky-500 shrink-0" />
@@ -153,17 +153,17 @@ export default function CustomDatePicker({
               className="modal-duo w-[360px] max-w-[95vw] p-6 space-y-5 relative my-auto shadow-2xl"
             >
               {/* Modal Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-slate-700/50">
                 <div className="flex items-center gap-2 text-sky-600">
                   <Calendar className="w-5 h-5" />
-                  <h3 className="text-sm font-black uppercase tracking-wider text-gray-900">
+                  <h3 className="text-sm font-black uppercase tracking-wider text-gray-900 dark:text-white">
                     Pilih Tanggal
                   </h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors cursor-pointer"
+                  className="p-1.5 text-gray-400 hover:text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:bg-slate-700 rounded-xl transition-colors cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -174,7 +174,7 @@ export default function CustomDatePicker({
                 <button
                   type="button"
                   onClick={handlePrevMonth}
-                  className="p-1.5 bg-white border border-gray-200 hover:bg-sky-100 rounded-xl text-gray-700 cursor-pointer transition-colors"
+                  className="p-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-sky-100 rounded-xl text-gray-700 dark:text-slate-200 cursor-pointer transition-colors"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
@@ -183,7 +183,7 @@ export default function CustomDatePicker({
                   <select
                     value={currentMonth}
                     onChange={(e) => setViewDate(new Date(currentYear, parseInt(e.target.value, 10), 1))}
-                    className="bg-transparent font-black text-xs text-gray-900 cursor-pointer focus:outline-none"
+                    className="bg-transparent font-black text-xs text-gray-900 dark:text-white cursor-pointer focus:outline-none"
                   >
                     {MONTH_NAMES_ID.map((name, idx) => (
                       <option key={idx} value={idx}>{name}</option>
@@ -204,7 +204,7 @@ export default function CustomDatePicker({
                 <button
                   type="button"
                   onClick={handleNextMonth}
-                  className="p-1.5 bg-white border border-gray-200 hover:bg-sky-100 rounded-xl text-gray-700 cursor-pointer transition-colors"
+                  className="p-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-sky-100 rounded-xl text-gray-700 dark:text-slate-200 cursor-pointer transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -250,7 +250,7 @@ export default function CustomDatePicker({
                           ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs scale-105'
                           : today
                             ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                            : 'hover:bg-sky-50 text-gray-800'
+                            : 'hover:bg-sky-50 text-gray-800 dark:text-slate-100'
                       }`}
                     >
                       {dayNum}
@@ -260,11 +260,11 @@ export default function CustomDatePicker({
               </div>
 
               {/* Footer Action Buttons */}
-              <div className="flex items-center justify-between pt-3 border-t border-gray-100 gap-2">
+              <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-slate-700/50 gap-2">
                 <button
                   type="button"
                   onClick={handleSetToday}
-                  className="btn-duo-slate px-3 py-2 text-xs font-black text-gray-600"
+                  className="btn-duo-slate px-3 py-2 text-xs font-black text-gray-600 dark:text-slate-300"
                 >
                   Hari Ini
                 </button>
@@ -273,7 +273,7 @@ export default function CustomDatePicker({
                   <button
                     type="button"
                     onClick={() => setIsOpen(false)}
-                    className="btn-duo-slate px-3 py-2 text-xs font-black text-gray-500"
+                    className="btn-duo-slate px-3 py-2 text-xs font-black text-gray-500 dark:text-slate-400"
                   >
                     Batal
                   </button>

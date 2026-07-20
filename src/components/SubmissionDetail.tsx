@@ -326,20 +326,20 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
   const isTeacher = currentUserProfile?.role === 'teacher';
 
   return (
-    <div className="min-h-screen bg-gray-50 p-3 sm:p-6 lg:p-8 w-full max-w-6xl mx-auto" id="submission-detail-page">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-3 sm:p-6 lg:p-8 w-full max-w-6xl mx-auto" id="submission-detail-page">
       {/* Back Header */}
-      <div className="flex items-center gap-4 border-b border-gray-100 pb-6">
+      <div className="flex items-center gap-4 border-b border-gray-100 dark:border-slate-700/50 pb-6">
         <button
           onClick={handleBack}
           className="btn-duo-slate p-2.5 flex items-center justify-center cursor-pointer"
           style={{ minWidth: '44px', minHeight: '44px' }}
           aria-label="Kembali"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-700" />
+          <ArrowLeft className="w-5 h-5 text-gray-700 dark:text-slate-200" />
         </button>
         <div>
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Detail Lembar Jawaban & Penilaian</span>
-          <h1 className="text-xl sm:text-2xl font-display font-bold text-gray-900 tracking-tight mt-0.5">
+          <h1 className="text-xl sm:text-2xl font-display font-bold text-gray-900 dark:text-white tracking-tight mt-0.5">
             {submission?.assignmentTitle || 'Memuat...'}
           </h1>
         </div>
@@ -354,8 +354,8 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
 
       {loading ? (
         <div className="space-y-6 animate-pulse mt-8">
-          <div className="h-44 bg-gray-200/60 rounded-3xl" />
-          <div className="h-64 bg-gray-200/60 rounded-3xl" />
+          <div className="h-44 bg-gray-200 dark:bg-slate-600/60 rounded-3xl" />
+          <div className="h-64 bg-gray-200 dark:bg-slate-600/60 rounded-3xl" />
         </div>
       ) : submission ? (
         <div className="space-y-8 mt-8">
@@ -363,7 +363,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
           <div className="card-duo p-4 sm:p-6 lg:p-8 space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold text-sm overflow-hidden shrink-0 border border-indigo-100 shadow-3xs">
+                <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center font-bold text-sm overflow-hidden shrink-0 border border-indigo-100 dark:border-indigo-800/50 shadow-3xs">
                   {studentPhotoURL ? (
                     <img src={studentPhotoURL} alt={submission.studentName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                   ) : (
@@ -371,7 +371,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                   )}
                 </div>
                 <div>
-                  <h3 className="text-xs font-bold text-gray-900">{submission.studentName}</h3>
+                  <h3 className="text-xs font-bold text-gray-900 dark:text-white">{submission.studentName}</h3>
                   <p className="text-[10px] text-gray-400 mt-0.5">Dikirimkan oleh siswa</p>
                 </div>
               </div>
@@ -384,7 +384,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                       : 'bg-orange-50 text-orange-700 border border-orange-100'
                     : submission.status === 'remedial'
                       ? 'bg-red-50 text-red-700 border border-red-100 animate-pulse'
-                      : 'bg-amber-50 text-amber-700 border border-amber-100'
+                      : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 border border-amber-100 dark:border-amber-800/50'
                 }`}>
                   {submission.status === 'graded' 
                     ? submission.reviewStatus === 'correct' 
@@ -403,7 +403,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
             </div>
 
             {/* Answer Content Display */}
-            <div className="space-y-4 bg-gray-50/50 p-6 rounded-2xl border border-gray-100/50">
+            <div className="space-y-4 bg-gray-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-gray-100 dark:border-slate-700/50">
               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
                 Jawaban & Lembar Kerja Siswa:
               </span>
@@ -411,7 +411,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
               {/* 1. LMS Composite Question rendering */}
               {assignment?.assignmentType === 'lms_composite' && (
                 <div className="space-y-5">
-                  <div className="p-3 bg-indigo-50 border border-indigo-100/50 rounded-xl text-xs text-indigo-800">
+                  <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/50 rounded-xl text-xs text-indigo-800">
                     <p className="font-bold">Ujian Berbasis LMS Composite</p>
                     <p className="text-[11px] text-indigo-700/95 mt-0.5">
                       Menampilkan lembar pengerjaan interaktif yang dikirimkan oleh siswa di bawah ini.
@@ -424,26 +424,26 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                         const studentAns = getStudentAnswerForQuestion(q.id);
                         
                         return (
-                          <div key={q.id} className="p-5 bg-white border border-gray-200 rounded-2xl space-y-4 shadow-3xs">
+                          <div key={q.id} className="p-5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl space-y-4 shadow-3xs">
                             {/* Question Header */}
                             <div className="flex items-start justify-between gap-4 border-b border-gray-50 pb-2.5">
                               <div className="flex items-center gap-2">
-                                <span className="w-5.5 h-5.5 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-bold flex items-center justify-center font-mono">
+                                <span className="w-5.5 h-5.5 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 text-xs font-bold flex items-center justify-center font-mono">
                                   {idx + 1}
                                 </span>
-                                <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">
+                                <span className="text-[10px] uppercase font-bold text-gray-500 dark:text-slate-400 tracking-wider">
                                   {q.type?.replace('_', ' ') || 'Pertanyaan'}
                                 </span>
                               </div>
                               {isTeacher && (
-                                <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50/50 px-2 py-0.5 rounded-md font-mono">
+                                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30/50 px-2 py-0.5 rounded-md font-mono">
                                   {q.points || 10} Poin
                                 </span>
                               )}
                             </div>
 
                             {/* Question prompt */}
-                            <p className="text-xs font-bold text-gray-800 leading-relaxed whitespace-pre-wrap">
+                            <p className="text-xs font-bold text-gray-800 dark:text-slate-100 leading-relaxed whitespace-pre-wrap">
                               {q.question}
                             </p>
 
@@ -464,8 +464,8 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                           (isTeacher && isCorrect)
                                             ? 'bg-green-50/60 border-green-200 text-green-900'
                                             : isStudentChoice
-                                              ? 'bg-indigo-50/40 border-indigo-200 text-indigo-900'
-                                              : 'bg-white border-gray-100'
+                                              ? 'bg-indigo-50 dark:bg-indigo-900/30/40 border-indigo-200 text-indigo-900 dark:text-indigo-100'
+                                              : 'bg-white dark:bg-slate-800 border-gray-100 dark:border-slate-700/50'
                                         }`}
                                       >
                                         <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold font-mono shrink-0 ${
@@ -473,7 +473,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                             ? 'bg-green-600 text-white'
                                             : isStudentChoice
                                               ? 'bg-indigo-600 text-white'
-                                              : 'bg-gray-100 text-gray-500'
+                                              : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400'
                                         }`}>
                                           {optLetter}
                                         </span>
@@ -483,7 +483,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                             <span className="text-[9px] font-bold text-green-600 uppercase tracking-wide block mt-0.5">Jawaban Benar</span>
                                           )}
                                           {isStudentChoice && (!isTeacher || !isCorrect) && (
-                                            <span className="text-[9px] font-bold text-indigo-600 uppercase tracking-wide block mt-0.5">Pilihan Siswa</span>
+                                            <span className="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide block mt-0.5">Pilihan Siswa</span>
                                           )}
                                         </div>
                                       </div>
@@ -511,8 +511,8 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                           (isTeacher && isCorrect)
                                             ? 'bg-green-50/60 border-green-200 text-green-700'
                                             : isStudentChoice
-                                              ? 'bg-indigo-50/40 border-indigo-200 text-indigo-700'
-                                              : 'bg-white border-gray-100 text-gray-400'
+                                              ? 'bg-indigo-50 dark:bg-indigo-900/30/40 border-indigo-200 text-indigo-700'
+                                              : 'bg-white dark:bg-slate-800 border-gray-100 dark:border-slate-700/50 text-gray-400'
                                         }`}
                                       >
                                         <p>{option.label}</p>
@@ -520,7 +520,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                           <span className="text-[8px] font-bold text-green-600 uppercase tracking-wide block mt-1">Benar</span>
                                         )}
                                         {isStudentChoice && (!isTeacher || !isCorrect) && (
-                                          <span className="text-[8px] font-bold text-indigo-600 uppercase tracking-wide block mt-1">Pilihan Siswa</span>
+                                          <span className="text-[8px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide block mt-1">Pilihan Siswa</span>
                                         )}
                                       </div>
                                     );
@@ -539,14 +539,14 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                     const isCorrect = studentMatch === pair.right;
 
                                     return (
-                                      <div key={pIdx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 bg-gray-50/30 rounded-xl border border-gray-100">
+                                      <div key={pIdx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 bg-gray-50 dark:bg-slate-900/30 rounded-xl border border-gray-100 dark:border-slate-700/50">
                                         <div className="flex items-center gap-2">
-                                          <span className="text-xs font-bold text-gray-700">{pair.left}</span>
+                                          <span className="text-xs font-bold text-gray-700 dark:text-slate-200">{pair.left}</span>
                                           <span className="text-gray-400 font-mono text-xs">➡</span>
                                           <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${
                                             (isTeacher && isCorrect) 
                                               ? 'bg-green-50 text-green-700 border border-green-100' 
-                                              : 'bg-indigo-50 text-indigo-700 border border-indigo-100'
+                                              : 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 border border-indigo-100 dark:border-indigo-800/50'
                                           }`}>{studentMatch}</span>
                                         </div>
                                         {isTeacher && !isCorrect && (
@@ -565,7 +565,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
                                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Jawaban Siswa:</span>
-                                  <div className="p-3 bg-gray-50/30 border border-gray-100 rounded-xl text-xs font-semibold text-gray-800">
+                                  <div className="p-3 bg-gray-50 dark:bg-slate-900/30 border border-gray-100 dark:border-slate-700/50 rounded-xl text-xs font-semibold text-gray-800 dark:text-slate-100">
                                     {studentAns || '(Kosong)'}
                                   </div>
                                 </div>
@@ -583,20 +583,20 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                             {(q.type === 'essay' || q.type === 'listening' || q.type === 'speaking') && (
                               <div className="space-y-3">
                                 {q.type === 'listening' && q.audioUrl && (
-                                  <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl flex items-center gap-2">
+                                  <div className="p-3 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl flex items-center gap-2">
                                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Audio Soal:</span>
                                     <audio src={q.audioUrl} controls className="h-6 flex-1" />
                                   </div>
                                 )}
                                 {q.type === 'speaking' && q.speakingPrompt && (
-                                  <div className="p-3 bg-indigo-50/50 border border-indigo-100 rounded-xl text-xs font-semibold text-indigo-800">
+                                  <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30/50 border border-indigo-100 dark:border-indigo-800/50 rounded-xl text-xs font-semibold text-indigo-800">
                                     Kalimat: "{q.speakingPrompt}"
                                   </div>
                                 )}
 
                                 <div className="space-y-1.5">
                                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Jawaban Siswa:</span>
-                                  <div className="p-4.5 bg-gray-50/30 border border-gray-100 rounded-xl text-xs text-gray-800 font-medium whitespace-pre-wrap leading-relaxed">
+                                  <div className="p-4.5 bg-gray-50 dark:bg-slate-900/30 border border-gray-100 dark:border-slate-700/50 rounded-xl text-xs text-gray-800 dark:text-slate-100 font-medium whitespace-pre-wrap leading-relaxed">
                                     {studentAns || '(Siswa tidak mengisi jawaban)'}
                                   </div>
                                 </div>
@@ -607,15 +607,15 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                               <div className="space-y-2">
                                 <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Lampiran Berkas Siswa:</span>
                                 {studentAns ? (
-                                  <div className="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between gap-3">
+                                  <div className="p-3 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 rounded-xl flex items-center justify-between gap-3">
                                     <div className="flex items-center gap-2 min-w-0">
-                                      <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg shrink-0">
+                                      <div className="p-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg shrink-0">
                                         <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                         </svg>
                                       </div>
                                       <div className="min-w-0">
-                                        <p className="text-xs font-bold text-gray-700 truncate">{studentAns}</p>
+                                        <p className="text-xs font-bold text-gray-700 dark:text-slate-200 truncate">{studentAns}</p>
                                         <p className="text-[10px] text-gray-400">Berkas unggahan tugas</p>
                                       </div>
                                     </div>
@@ -624,13 +624,13 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                       target="_blank"
                                       rel="noopener noreferrer"
                                       referrerPolicy="no-referrer"
-                                      className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-[10px] font-bold cursor-pointer transition-colors shrink-0"
+                                      className="px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 text-indigo-700 rounded-lg text-[10px] font-bold cursor-pointer transition-colors shrink-0"
                                     >
                                       Unduh / Buka Berkas
                                     </a>
                                   </div>
                                 ) : (
-                                  <div className="p-3.5 bg-gray-50 border border-gray-100 rounded-xl text-xs text-gray-400 text-center italic">
+                                  <div className="p-3.5 bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-700/50 rounded-xl text-xs text-gray-400 text-center italic">
                                     Tidak ada file yang diunggah.
                                   </div>
                                 )}
@@ -639,7 +639,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
 
                             {/* Answer Rubric / Guide for Teacher grading */}
                             {q.answerGuide && q.answerGuide.trim() !== '' && isTeacher && (
-                              <div className="p-3.5 bg-amber-50/40 border border-amber-100 rounded-xl text-xs text-amber-800 space-y-1">
+                              <div className="p-3.5 bg-amber-50 dark:bg-amber-900/30/40 border border-amber-100 dark:border-amber-800/50 rounded-xl text-xs text-amber-800 space-y-1">
                                 <span className="text-[9px] font-bold text-amber-800 uppercase tracking-wide block">Panduan Koreksi / Rubrik Guru:</span>
                                 <p className="italic font-medium leading-relaxed">"{q.answerGuide}"</p>
                               </div>
@@ -647,14 +647,14 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
 
                             {/* Individual Question Scoring/Feedback */}
                             {isTeacher && (
-                              <div className="pt-3.5 border-t border-gray-100 mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gray-50/30 p-3 rounded-xl">
+                              <div className="pt-3.5 border-t border-gray-100 dark:border-slate-700/50 mt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-gray-50 dark:bg-slate-900/30 p-3 rounded-xl">
                                 <div className="flex items-center gap-2">
                                   <div className={`w-2 h-2 rounded-full ${
                                     ['multiple_choice', 'true_false', 'matching', 'fill_blank'].includes(q.type)
                                       ? 'bg-green-500'
                                       : 'bg-indigo-500'
                                   }`} />
-                                  <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">
+                                  <span className="text-[10px] font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
                                     {['multiple_choice', 'true_false', 'matching', 'fill_blank'].includes(q.type)
                                       ? 'Penilaian Otomatis (Objektif)'
                                       : 'Penilaian Manual (Subjektif)'
@@ -663,9 +663,9 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                 </div>
 
                                 <div className="flex items-center gap-2.5">
-                                  <span className="text-xs font-semibold text-gray-700">Skor Soal:</span>
+                                  <span className="text-xs font-semibold text-gray-700 dark:text-slate-200">Skor Soal:</span>
                                   {['multiple_choice', 'true_false', 'matching', 'fill_blank'].includes(q.type) ? (
-                                    <div className="px-3 py-1.5 bg-gray-100 border border-gray-200 rounded-xl text-xs font-bold text-gray-600 font-mono">
+                                    <div className="px-3 py-1.5 bg-gray-100 dark:bg-slate-700 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-bold text-gray-600 dark:text-slate-300 font-mono">
                                       {(submission?.answersMap?.[q.id]?.pointsEarned || 0)} / {q.points || 0} Poin
                                     </div>
                                   ) : (
@@ -682,7 +682,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                                             [q.id]: val
                                           }));
                                         }}
-                                        className="w-16 px-2.5 py-1.5 bg-white border border-gray-200 rounded-lg text-xs font-bold text-indigo-700 font-mono text-center focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                                        className="w-16 px-2.5 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-xs font-bold text-indigo-700 font-mono text-center focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                                       />
                                       <span className="text-xs text-gray-400 font-medium font-sans">/ {q.points || 0} Poin</span>
                                     </div>
@@ -693,15 +693,15 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
 
                             {/* Per-question feedback textarea (teacher only) */}
                             {isTeacher && (
-                              <div className="border-t border-gray-100 mt-1 pt-3 space-y-1.5">
-                                <label className="text-[10px] font-bold text-gray-500 uppercase tracking-wider block">
+                              <div className="border-t border-gray-100 dark:border-slate-700/50 mt-1 pt-3 space-y-1.5">
+                                <label className="text-[10px] font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider block">
                                   Komentar / Feedback Soal:
                                 </label>
                                 <textarea
                                   rows={2}
                                   value={questionFeedbacks[q.id] || ''}
                                   onChange={(e) => setQuestionFeedbacks(prev => ({ ...prev, [q.id]: e.target.value }))}
-                                  className="block w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"
+                                  className="block w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"
                                   placeholder="Tulis komentar atau feedback untuk soal ini..."
                                 />
                               </div>
@@ -709,12 +709,12 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
 
                             {/* Student Per-Question Feedback View */}
                             {!isTeacher && (submission.status === 'graded' || submission.status === 'remedial') && submission?.answersMap?.[q.id]?.feedback && (
-                              <div className="pt-3.5 border-t border-gray-100 mt-2 bg-gray-50/50 p-3 rounded-xl space-y-1">
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider flex items-center gap-1.5">
+                              <div className="pt-3.5 border-t border-gray-100 dark:border-slate-700/50 mt-2 bg-gray-50 dark:bg-slate-900/50 p-3 rounded-xl space-y-1">
+                                <span className="text-[10px] font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                                   <MessageSquare className="w-3 h-3 text-gray-400" />
                                   Feedback Guru untuk Soal Ini
                                 </span>
-                                <p className="text-xs text-gray-700 leading-relaxed italic">
+                                <p className="text-xs text-gray-700 dark:text-slate-200 leading-relaxed italic">
                                   "{submission.answersMap[q.id].feedback}"
                                 </p>
                               </div>
@@ -735,9 +735,9 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
               {assignment?.assignmentType === 'multiple_choice' && (
                 <div className="space-y-4">
                   {assignment.question && (
-                    <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                    <div className="p-4 bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700/50">
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Pertanyaan Soal:</span>
-                      <p className="text-xs font-bold text-gray-800 leading-relaxed">{assignment.question}</p>
+                      <p className="text-xs font-bold text-gray-800 dark:text-slate-100 leading-relaxed">{assignment.question}</p>
                     </div>
                   )}
 
@@ -755,8 +755,8 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                             (isTeacher && isCorrect)
                               ? 'bg-green-50/60 border-green-200 text-green-950 font-semibold'
                               : isStudentChoice
-                                ? 'bg-indigo-50/40 border-indigo-200 text-indigo-950'
-                                : 'bg-white border-gray-100 text-gray-700'
+                                ? 'bg-indigo-50 dark:bg-indigo-900/30/40 border-indigo-200 text-indigo-950'
+                                : 'bg-white dark:bg-slate-800 border-gray-100 dark:border-slate-700/50 text-gray-700 dark:text-slate-200'
                           }`}
                         >
                           <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold font-mono shrink-0 ${
@@ -764,7 +764,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                               ? 'bg-green-600 text-white'
                               : isStudentChoice
                                 ? 'bg-indigo-600 text-white'
-                                : 'bg-gray-100 text-gray-500'
+                                : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400'
                           }`}>
                             {opt}
                           </span>
@@ -774,7 +774,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                               <span className="text-[9px] font-bold text-green-600 uppercase tracking-wide block mt-0.5">Jawaban Benar</span>
                             )}
                             {isStudentChoice && (!isTeacher || !isCorrect) && (
-                              <span className="text-[9px] font-bold text-indigo-600 uppercase tracking-wide block mt-0.5">Pilihan Siswa</span>
+                              <span className="text-[9px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wide block mt-0.5">Pilihan Siswa</span>
                             )}
                           </div>
                         </div>
@@ -791,14 +791,14 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                     const studentAns = submission.answers?.[idx] || '';
 
                     return (
-                      <div key={idx} className="p-4 bg-white border border-gray-100 rounded-xl space-y-2.5">
-                        <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50/50 px-2 py-0.5 rounded-md font-mono">
+                      <div key={idx} className="p-4 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 rounded-xl space-y-2.5">
+                        <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30/50 px-2 py-0.5 rounded-md font-mono">
                           Soal {idx + 1}
                         </span>
-                        <p className="text-xs font-bold text-gray-800 leading-normal">{qText}</p>
-                        <div className="p-3 bg-gray-50/50 border border-gray-100 rounded-lg">
+                        <p className="text-xs font-bold text-gray-800 dark:text-slate-100 leading-normal">{qText}</p>
+                        <div className="p-3 bg-gray-50 dark:bg-slate-900/50 border border-gray-100 dark:border-slate-700/50 rounded-lg">
                           <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Jawaban Siswa:</span>
-                          <p className="text-xs text-gray-700 leading-relaxed font-medium whitespace-pre-wrap">{studentAns || '(Kosong)'}</p>
+                          <p className="text-xs text-gray-700 dark:text-slate-200 leading-relaxed font-medium whitespace-pre-wrap">{studentAns || '(Kosong)'}</p>
                         </div>
                       </div>
                     );
@@ -810,14 +810,14 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
               {(!assignment?.assignmentType || (assignment?.assignmentType !== 'lms_composite' && assignment?.assignmentType !== 'multiple_choice' && assignment?.assignmentType !== 'multi_short_answer')) && (
                 <div className="space-y-4">
                   {assignment?.question && (
-                    <div className="p-4 bg-gray-50 rounded-xl border border-gray-100/70">
+                    <div className="p-4 bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700/50/70">
                       <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Soal / Pertanyaan:</span>
-                      <p className="text-xs font-bold text-gray-800 leading-relaxed whitespace-pre-wrap">{assignment.question}</p>
+                      <p className="text-xs font-bold text-gray-800 dark:text-slate-100 leading-relaxed whitespace-pre-wrap">{assignment.question}</p>
                     </div>
                   )}
-                  <div className="p-4 bg-white border border-gray-100 rounded-xl">
+                  <div className="p-4 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 rounded-xl">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Jawaban Siswa:</span>
-                    <p className="text-xs text-gray-800 leading-relaxed whitespace-pre-wrap font-sans">
+                    <p className="text-xs text-gray-800 dark:text-slate-100 leading-relaxed whitespace-pre-wrap font-sans">
                       {submission.answer || '(Kosong)'}
                     </p>
                   </div>
@@ -827,13 +827,13 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
           </div>
 
           {/* Grading Details or Input Panel */}
-          <div className="bg-white border border-gray-100 p-4 sm:p-6 lg:p-8 rounded-3xl shadow-3xs space-y-6">
+          <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-4 sm:p-6 lg:p-8 rounded-3xl shadow-3xs space-y-6">
             {(submission.status === 'graded' || submission.status === 'remedial') && !isTeacher ? (
               /* Student View: Graded / Remedial Details */
               <div className="space-y-6">
                 <div className="flex items-center gap-2 border-b border-gray-50 pb-4">
                   <ClipboardCheck className="w-4.5 h-4.5 text-indigo-500" />
-                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide">
                     Evaluasi & Hasil Penilaian
                   </h3>
                 </div>
@@ -845,10 +845,10 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                       ? 'bg-orange-50/30 border-orange-100/50 text-orange-700'
                       : submission.reviewStatus === 'correct'
                         ? 'bg-green-50/30 border-green-100/50 text-green-700'
-                        : 'bg-indigo-50/30 border-indigo-100/50 text-indigo-700'
+                        : 'bg-indigo-50 dark:bg-indigo-900/30/30 border-indigo-100 dark:border-indigo-800/50 text-indigo-700'
                   }`}>
-                    <div className="w-8 h-8 bg-white/80 rounded-lg flex items-center justify-center shadow-3xs">
-                      <Award className="w-4.5 h-4.5 text-indigo-600" />
+                    <div className="w-8 h-8 bg-white dark:bg-slate-800/80 rounded-lg flex items-center justify-center shadow-3xs">
+                      <Award className="w-4.5 h-4.5 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <div>
                       <span className="text-[10px] font-bold uppercase tracking-wider block text-gray-400">Skor Tugas</span>
@@ -859,12 +859,12 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                   </div>
 
                   {/* Feedback comment */}
-                  <div className="md:col-span-2 bg-gray-50/50 border border-gray-100 rounded-2xl p-5 space-y-3">
+                  <div className="md:col-span-2 bg-gray-50 dark:bg-slate-900/50 border border-gray-100 dark:border-slate-700/50 rounded-2xl p-5 space-y-3">
                     <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block flex items-center gap-1.5">
                       <MessageSquare className="w-3.5 h-3.5 text-gray-400" />
                       Umpan Balik Guru {submission.status === 'remedial' && '(Petunjuk Perbaikan)'}
                     </span>
-                    <p className="text-xs text-gray-700 leading-relaxed italic whitespace-pre-wrap">
+                    <p className="text-xs text-gray-700 dark:text-slate-200 leading-relaxed italic whitespace-pre-wrap">
                       "{submission.feedback || 'Belum ada umpan balik tertulis.'}"
                     </p>
                   </div>
@@ -890,7 +890,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
               <div className="space-y-6">
                 <div className="flex items-center gap-2 border-b border-gray-50 pb-4">
                   <Award className="w-4.5 h-4.5 text-indigo-500" />
-                  <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide">
                     {submission.status === 'graded' || submission.status === 'remedial' ? 'Ubah Hasil Penilaian' : 'Berikan Penilaian & Masukan'}
                   </h3>
                 </div>
@@ -903,16 +903,16 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
 
                 {/* Score Summary Panel */}
                 {assignment?.assignmentType === 'lms_composite' && (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 bg-indigo-50/20 border border-indigo-100/50 rounded-2xl">
-                    <div className="bg-white p-3.5 rounded-xl border border-gray-100/50 flex flex-col justify-between">
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Auto Score (Objektif)</span>
-                      <span className="text-xl font-bold text-indigo-600 font-mono mt-1">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 bg-indigo-50 dark:bg-indigo-900/30/20 border border-indigo-100 dark:border-indigo-800/50 rounded-2xl">
+                    <div className="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-gray-100 dark:border-slate-700/50 flex flex-col justify-between">
+                      <span className="text-[10px] font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Auto Score (Objektif)</span>
+                      <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400 font-mono mt-1">
                         {autoScore} <span className="text-xs text-gray-400 font-sans font-medium">/ {totalAutoPoints} Poin</span>
                       </span>
                     </div>
-                    <div className="bg-white p-3.5 rounded-xl border border-gray-100/50 flex flex-col justify-between">
-                      <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Manual Score (Subjektif)</span>
-                      <span className="text-xl font-bold text-indigo-600 font-mono mt-1">
+                    <div className="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-gray-100 dark:border-slate-700/50 flex flex-col justify-between">
+                      <span className="text-[10px] font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Manual Score (Subjektif)</span>
+                      <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400 font-mono mt-1">
                         {manualScore} <span className="text-xs text-gray-400 font-sans font-medium">/ {totalManualPoints} Poin</span>
                       </span>
                     </div>
@@ -929,7 +929,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                     {/* Score field */}
                     <div className="sm:col-span-1 space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700">
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
                         Skor Penilaian (0 - 100) <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -940,15 +940,15 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                         disabled={assignment?.assignmentType === 'lms_composite'}
                         value={score}
                         onChange={(e) => setScore(e.target.value === '' ? '' : Number(e.target.value))}
-                        className={`block w-full px-4 py-3 border rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none ${
+                        className={`block w-full px-4 py-3 border rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none ${
                           assignment?.assignmentType === 'lms_composite'
-                            ? 'bg-gray-100 border-gray-200 cursor-not-allowed text-gray-500 font-mono font-bold'
-                            : 'bg-white border-gray-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500'
+                            ? 'bg-gray-100 dark:bg-slate-700 border-gray-200 dark:border-slate-700 cursor-not-allowed text-gray-500 dark:text-slate-400 font-mono font-bold'
+                            : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500'
                         }`}
                         placeholder="Nilai esai"
                       />
                       {assignment?.assignmentType === 'lms_composite' && (
-                        <p className="text-[10px] text-indigo-600 font-semibold">
+                        <p className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold">
                           Dihitung otomatis berdasarkan akumulasi poin di atas.
                         </p>
                       )}
@@ -956,7 +956,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
 
                     {/* Status Review selection */}
                     <div className="sm:col-span-2 space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700">
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
                         Hasil Review Tugas <span className="text-red-500">*</span>
                       </label>
                       <CustomDropdown
@@ -972,7 +972,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
 
                     {/* Feedback comment field */}
                     <div className="sm:col-span-3 space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700">
+                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
                         Catatan & Umpan Balik Guru <span className="text-red-500">*</span>
                       </label>
                       <textarea
@@ -980,7 +980,7 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                         rows={4}
                         value={feedback}
                         onChange={(e) => setFeedback(e.target.value)}
-                        className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"
+                        className="block w-full px-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"
                         placeholder="Tuliskan apresiasi, koreksi, atau panduan perbaikan remedial di sini..."
                       />
                     </div>
@@ -1001,10 +1001,10 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
               </div>
             ) : (
               /* Student View: Unfinished Grading */
-              <div className="p-6 text-center space-y-3 bg-amber-50/30 border border-amber-100/50 rounded-2xl">
+              <div className="p-6 text-center space-y-3 bg-amber-50 dark:bg-amber-900/30/30 border border-amber-100 dark:border-amber-800/50 rounded-2xl">
                 <Clock className="w-8 h-8 text-amber-500 mx-auto animate-pulse" />
                 <p className="text-xs font-bold text-amber-800">Menunggu Penilaian Pengajar</p>
-                <p className="text-[11px] text-amber-600/90 leading-relaxed max-w-sm mx-auto">
+                <p className="text-[11px] text-amber-600 dark:text-amber-400/90 leading-relaxed max-w-sm mx-auto">
                   Jawaban Anda telah diterima dengan aman di sistem. Gurumu akan segera memeriksa esai ini dan memberikan skor beserta umpan balik secara real-time.
                 </p>
               </div>

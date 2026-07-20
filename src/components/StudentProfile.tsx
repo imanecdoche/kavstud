@@ -155,20 +155,20 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-8 lg:p-12 space-y-8 max-w-5xl mx-auto" id="student-profile-page">
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-4 sm:p-8 lg:p-12 space-y-8 max-w-5xl mx-auto" id="student-profile-page">
       {/* Back Header */}
       <div className="flex items-center gap-4">
         <button
           onClick={() => onNavigate('/teacher')}
-          className="p-2.5 bg-white border border-gray-200 hover:border-gray-300 rounded-xl cursor-pointer transition-colors active:scale-95"
+          className="p-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:border-slate-600 rounded-xl cursor-pointer transition-colors active:scale-95"
           style={{ minWidth: '44px', minHeight: '44px' }}
           aria-label="Kembali ke Dashboard"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-700" />
+          <ArrowLeft className="w-5 h-5 text-gray-700 dark:text-slate-200" />
         </button>
         <div>
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Profil Detail Siswa</span>
-          <h1 className="text-xl sm:text-2xl font-display font-bold text-gray-900 tracking-tight mt-0.5">
+          <h1 className="text-xl sm:text-2xl font-display font-bold text-gray-900 dark:text-white tracking-tight mt-0.5">
             {student?.fullName || 'Loading...'}
           </h1>
         </div>
@@ -183,22 +183,22 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
 
       {isPageLoading ? (
         <div className="space-y-8 animate-pulse">
-          <div className="h-44 bg-gray-200/60 rounded-3xl" />
-          <div className="h-64 bg-gray-200/60 rounded-3xl" />
+          <div className="h-44 bg-gray-200 dark:bg-slate-600/60 rounded-3xl" />
+          <div className="h-64 bg-gray-200 dark:bg-slate-600/60 rounded-3xl" />
         </div>
       ) : student ? (
         <div className="space-y-8">
           {/* Main Info Card & Stats Banner */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Identity Card */}
-            <div className="md:col-span-1 bg-white border border-gray-100 p-6 rounded-3xl shadow-3xs flex flex-col justify-between space-y-6">
+            <div className="md:col-span-1 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-6 rounded-3xl shadow-3xs flex flex-col justify-between space-y-6">
               <div className="space-y-4">
-                <div className="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center font-bold text-lg">
+                <div className="w-14 h-14 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-2xl flex items-center justify-center font-bold text-lg">
                   {student.fullName?.charAt(0).toUpperCase() || 'S'}
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-sm font-bold text-gray-900">{student.fullName}</h2>
+                    <h2 className="text-sm font-bold text-gray-900 dark:text-white">{student.fullName}</h2>
                     <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold uppercase shrink-0 ${
                       student.classType === 'PRIVATE'
                         ? 'bg-teal-50 text-teal-700 border border-teal-100'
@@ -220,7 +220,7 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
                     className={`flex-1 py-1.5 px-3 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
                       (student.classType || 'PRIVATE') === 'PRIVATE'
                         ? 'bg-teal-50 text-teal-700 border-teal-200'
-                        : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                        : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:bg-slate-900'
                     }`}
                   >
                     PRIVATE
@@ -230,7 +230,7 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
                     className={`flex-1 py-1.5 px-3 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
                       student.classType === 'CIRCLE'
                         ? 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200'
-                        : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                        : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:bg-slate-900'
                     }`}
                   >
                     CIRCLE
@@ -251,7 +251,7 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
                 Beri Tugas Baru
               </button>
 
-              <div className="space-y-3.5 border-t border-gray-50 pt-4 text-xs text-gray-600 font-medium">
+              <div className="space-y-3.5 border-t border-gray-50 pt-4 text-xs text-gray-600 dark:text-slate-300 font-medium">
                 <div className="flex items-center gap-2.5">
                   <Mail className="w-4 h-4 text-gray-400" />
                   <span className="truncate">{student.email}</span>
@@ -265,33 +265,33 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
 
             {/* Stats Overview */}
             <div className="md:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-white border border-gray-100 p-6 rounded-3xl shadow-3xs flex flex-col justify-between">
-                <div className="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center">
+              <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-6 rounded-3xl shadow-3xs flex flex-col justify-between">
+                <div className="w-8 h-8 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center">
                   <BookOpen className="w-4.5 h-4.5" />
                 </div>
                 <div className="mt-4">
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Total Tugas</span>
-                  <span className="text-2xl font-bold font-display text-gray-900 mt-1 block">{totalAssigned}</span>
+                  <span className="text-2xl font-bold font-display text-gray-900 dark:text-white mt-1 block">{totalAssigned}</span>
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-100 p-6 rounded-3xl shadow-3xs flex flex-col justify-between">
+              <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-6 rounded-3xl shadow-3xs flex flex-col justify-between">
                 <div className="w-8 h-8 bg-green-50 text-green-600 rounded-xl flex items-center justify-center">
                   <FileCheck className="w-4.5 h-4.5" />
                 </div>
                 <div className="mt-4">
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Diselesaikan</span>
-                  <span className="text-2xl font-bold font-display text-gray-900 mt-1 block">{totalSubmitted}</span>
+                  <span className="text-2xl font-bold font-display text-gray-900 dark:text-white mt-1 block">{totalSubmitted}</span>
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-100 p-6 rounded-3xl shadow-3xs flex flex-col justify-between">
-                <div className="w-8 h-8 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
+              <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-6 rounded-3xl shadow-3xs flex flex-col justify-between">
+                <div className="w-8 h-8 bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 rounded-xl flex items-center justify-center">
                   <Award className="w-4.5 h-4.5" />
                 </div>
                 <div className="mt-4">
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Rata-Rata Nilai</span>
-                  <span className="text-2xl font-bold font-display text-indigo-600 mt-1 block">
+                  <span className="text-2xl font-bold font-display text-indigo-600 dark:text-indigo-400 mt-1 block">
                     {averageScore !== null ? `${averageScore} / 100` : '-'}
                   </span>
                 </div>
@@ -300,13 +300,13 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
           </div>
 
           {/* Student's Assignment / Submission History List */}
-          <div className="bg-white border border-gray-100 rounded-3xl p-6 sm:p-8 shadow-3xs space-y-6">
-            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">
+          <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 rounded-3xl p-6 sm:p-8 shadow-3xs space-y-6">
+            <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide">
               Riwayat Aktivitas & Jawaban Tugas
             </h3>
 
             {assignments.length === 0 ? (
-              <div className="py-12 text-center text-gray-400 text-xs border border-dashed border-gray-100 rounded-2xl">
+              <div className="py-12 text-center text-gray-400 text-xs border border-dashed border-gray-100 dark:border-slate-700/50 rounded-2xl">
                 Belum ada tugas yang diberikan kepada siswa ini.
               </div>
             ) : (
@@ -323,16 +323,16 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
                           onNavigate(`/assignment/${assign.id}`);
                         }
                       }}
-                      className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-gray-50/50 px-2 rounded-xl transition-colors cursor-pointer"
+                      className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-gray-50 dark:bg-slate-900/50 px-2 rounded-xl transition-colors cursor-pointer"
                     >
                       <div className="min-w-0">
-                        <h4 className="text-xs font-bold text-gray-900 truncate">{assign.title}</h4>
+                        <h4 className="text-xs font-bold text-gray-900 dark:text-white truncate">{assign.title}</h4>
                         <div className="flex items-center gap-2 mt-1">
                           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
                             matchingSubmission 
                               ? matchingSubmission.status === 'graded' 
                                 ? 'bg-green-50 text-green-700' 
-                                : 'bg-amber-50 text-amber-700'
+                                : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700'
                               : 'bg-red-50 text-red-600'
                           }`}>
                             {matchingSubmission 
@@ -347,7 +347,7 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
                         {matchingSubmission?.status === 'graded' && matchingSubmission?.score !== undefined && matchingSubmission?.score !== null ? (
                           <div className="text-right">
                             <p className="text-[10px] text-gray-400">Skor</p>
-                            <p className="text-xs font-bold text-indigo-600 font-display">{matchingSubmission.score} / 100</p>
+                            <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 font-display">{matchingSubmission.score} / 100</p>
                           </div>
                         ) : (
                           <span className="text-[10px] text-gray-400">

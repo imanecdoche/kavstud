@@ -22,6 +22,8 @@ export interface UserProfile {
   };
   classType?: 'PRIVATE' | 'CIRCLE';
   circleId?: string | null;
+  unlockedModules?: string[];
+  favoriteModules?: string[];
 }
 
 export interface AssignmentSettings {

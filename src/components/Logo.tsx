@@ -3,13 +3,14 @@ import React from 'react';
 interface LogoProps {
   className?: string;
   fillColor?: string;
+  iconOnly?: boolean;
 }
 
-export default function Logo({ className = 'h-8 w-auto', fillColor = 'currentColor' }: LogoProps) {
+export default function Logo({ className = 'h-8 w-auto', fillColor = 'currentColor', iconOnly = false }: LogoProps) {
   return (
     <svg 
       className={className}
-      viewBox="0 0 500 60" 
+      viewBox={iconOnly ? "0 0 65 60" : "0 0 500 60"} 
       fill="none" 
       xmlns="http://www.w3.org/2000/svg"
       id="kavio-edu-svg-logo"

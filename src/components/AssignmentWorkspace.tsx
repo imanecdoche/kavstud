@@ -78,24 +78,24 @@ export default function AssignmentWorkspace() {
   return (
     <div className="space-y-8 max-w-4xl" id="assignment-workspace">
       {/* Page Header */}
-      <div className="border-b border-gray-100 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="border-b border-gray-100 dark:border-slate-700/50 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-display font-semibold tracking-tight text-gray-900">
+          <h1 className="text-2xl font-display font-semibold tracking-tight text-gray-900 dark:text-white">
             Kavio Assignment Workspace
           </h1>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
             Grup komponen pengerjaan tugas & evaluasi nilai dengan navigasi role terintegrasi.
           </p>
         </div>
 
         {/* Role Toggle */}
-        <div className="flex bg-gray-100 p-1 rounded-xl border border-gray-200/50 self-start md:self-center">
+        <div className="flex bg-gray-100 dark:bg-slate-700 p-1 rounded-xl border border-gray-200 dark:border-slate-700/50 self-start md:self-center">
           <button
             onClick={() => setCurrentRole('student')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
               currentRole === 'student' 
-                ? 'bg-white text-indigo-600 shadow-sm' 
-                : 'text-gray-500 hover:text-black'
+                ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm' 
+                : 'text-gray-500 dark:text-slate-400 hover:text-black'
             }`}
           >
             <User className="w-3.5 h-3.5" />
@@ -105,8 +105,8 @@ export default function AssignmentWorkspace() {
             onClick={() => setCurrentRole('teacher')}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
               currentRole === 'teacher' 
-                ? 'bg-white text-indigo-600 shadow-sm' 
-                : 'text-gray-500 hover:text-black'
+                ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-sm' 
+                : 'text-gray-500 dark:text-slate-400 hover:text-black'
             }`}
           >
             <UserCheck className="w-3.5 h-3.5" />
@@ -120,9 +120,9 @@ export default function AssignmentWorkspace() {
         
         {/* LEFT COLUMN: ACTIVE ASSIGNMENT CARD & INSTRUCTIONS */}
         <div className="md:col-span-1 space-y-4">
-          <div className="border border-gray-100 bg-white p-5 rounded-2xl shadow-2xs space-y-4">
+          <div className="border border-gray-100 dark:border-slate-700/50 bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-2xs space-y-4">
             <div className="flex justify-between items-center">
-              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-100 uppercase">
+              <span className="px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 border border-indigo-100 dark:border-indigo-800/50 uppercase">
                 Kimia Dasar
               </span>
               <span className="text-[10px] text-gray-400 font-mono flex items-center gap-1">
@@ -130,17 +130,17 @@ export default function AssignmentWorkspace() {
               </span>
             </div>
 
-            <h3 className="text-xs font-semibold text-gray-900">
+            <h3 className="text-xs font-semibold text-gray-900 dark:text-white">
               Evaluasi Polarisasi & Ikatan Kimia Kovalen
             </h3>
             
-            <p className="text-[11px] text-gray-500 leading-relaxed pt-2 border-t border-gray-50">
+            <p className="text-[11px] text-gray-500 dark:text-slate-400 leading-relaxed pt-2 border-t border-gray-50">
               <strong>Petunjuk:</strong> Tulis jawaban yang ringkas dan padat. Sertakan contoh molekul real yang ada di lingkungan sekitar Anda untuk memperkuat analisis perbedaan kovalen polar dan non-polar.
             </p>
 
-            <div className="pt-3 flex items-center justify-between text-xs font-medium text-gray-700 bg-gray-50 p-2.5 rounded-lg">
+            <div className="pt-3 flex items-center justify-between text-xs font-medium text-gray-700 dark:text-slate-200 bg-gray-50 dark:bg-slate-900 p-2.5 rounded-lg">
               <span>Poin Maksimal:</span>
-              <span className="font-mono text-indigo-600 font-bold">100 Poin</span>
+              <span className="font-mono text-indigo-600 dark:text-indigo-400 font-bold">100 Poin</span>
             </div>
           </div>
         </div>
@@ -150,23 +150,23 @@ export default function AssignmentWorkspace() {
           
           {/* STUDENT perspective VIEW */}
           {currentRole === 'student' && (
-            <div className="border border-gray-100 bg-white p-6 rounded-2xl shadow-2xs space-y-6">
+            <div className="border border-gray-100 dark:border-slate-700/50 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-2xs space-y-6">
               
               {/* Question card */}
-              <div className="bg-gray-50/50 p-4 rounded-xl border border-gray-100/50">
-                <span className="text-[9px] font-mono font-bold text-indigo-600 block uppercase tracking-wider mb-1">Pertanyaan 1 (Soal Esai)</span>
-                <p className="text-xs font-semibold text-gray-800 leading-relaxed">
+              <div className="bg-gray-50 dark:bg-slate-900/50 p-4 rounded-xl border border-gray-100 dark:border-slate-700/50">
+                <span className="text-[9px] font-mono font-bold text-indigo-600 dark:text-indigo-400 block uppercase tracking-wider mb-1">Pertanyaan 1 (Soal Esai)</span>
+                <p className="text-xs font-semibold text-gray-800 dark:text-slate-100 leading-relaxed">
                   Jelaskan perbedaan fundamental antara ikatan kovalen polar dengan kovalen non-polar, dan sebutkan masing-masing 2 contoh senyawanya!
                 </p>
               </div>
 
               {/* Status Badge indicator according to student status */}
               <div className="flex items-center justify-between py-2 border-b border-gray-50 text-xs">
-                <span className="text-gray-500 font-medium">Status Tugas Anda:</span>
+                <span className="text-gray-500 dark:text-slate-400 font-medium">Status Tugas Anda:</span>
                 <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${
-                  studentStatus === 'waiting' ? 'bg-amber-50 text-amber-700 border-amber-100' :
-                  studentStatus === 'submitted' ? 'bg-indigo-50 text-indigo-700 border-indigo-100 animate-pulse' :
-                  'bg-emerald-50 text-emerald-700 border-emerald-100'
+                  studentStatus === 'waiting' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 border-amber-100 dark:border-amber-800/50' :
+                  studentStatus === 'submitted' ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 border-indigo-100 dark:border-indigo-800/50 animate-pulse' :
+                  'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 border-emerald-100 dark:border-emerald-800/50'
                 }`}>
                   {studentStatus === 'waiting' && 'MENUNGGU JAWABAN'}
                   {studentStatus === 'submitted' && 'TELAH DIKUMPULKAN'}
@@ -178,20 +178,20 @@ export default function AssignmentWorkspace() {
               {studentStatus === 'waiting' && (
                 <div className="space-y-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-700">Tulis Jawaban Esai Anda</label>
+                    <label className="text-xs font-semibold text-gray-700 dark:text-slate-200">Tulis Jawaban Esai Anda</label>
                     <textarea
                       value={studentAnswer}
                       onChange={(e) => setStudentAnswer(e.target.value)}
                       placeholder="Ketik jawaban analitis Anda secara komparatif di sini..."
                       rows={6}
-                      className="w-full p-3.5 text-xs bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none leading-relaxed"
+                      className="w-full p-3.5 text-xs bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none leading-relaxed"
                     />
                   </div>
 
                   <button
                     onClick={handleStudentSubmit}
                     disabled={!studentAnswer.trim()}
-                    className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-100 disabled:text-gray-400 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98"
+                    className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-100 dark:bg-slate-700 disabled:text-gray-400 text-white rounded-xl text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98"
                   >
                     <Send className="w-3.5 h-3.5" />
                     Kumpulkan Tugas Sekarang
@@ -202,21 +202,21 @@ export default function AssignmentWorkspace() {
               {/* State: Submitted waiting grading */}
               {studentStatus === 'submitted' && (
                 <div className="space-y-4 text-center py-6">
-                  <div className="w-12 h-12 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 mx-auto">
+                  <div className="w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 mx-auto">
                     <Clock className="w-6 h-6" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-semibold text-gray-900">Menunggu Penilaian Pengajar</h4>
+                    <h4 className="text-xs font-semibold text-gray-900 dark:text-white">Menunggu Penilaian Pengajar</h4>
                     <p className="text-[11px] text-gray-400 mt-1 max-w-xs mx-auto leading-normal">
                       Tugas Anda telah dikirimkan ke sistem antrean kelas. Anda akan mendapatkan notifikasi setelah guru memberikan nilai.
                     </p>
                   </div>
-                  <div className="text-left bg-gray-50/50 p-3.5 rounded-xl border border-gray-100/50 text-xs text-gray-600 leading-normal font-sans italic">
+                  <div className="text-left bg-gray-50 dark:bg-slate-900/50 p-3.5 rounded-xl border border-gray-100 dark:border-slate-700/50 text-xs text-gray-600 dark:text-slate-300 leading-normal font-sans italic">
                     "{studentAnswer}"
                   </div>
                   <button
                     onClick={() => setStudentStatus('waiting')}
-                    className="text-[10px] text-indigo-600 hover:text-indigo-800 underline block mx-auto cursor-pointer"
+                    className="text-[10px] text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 underline block mx-auto cursor-pointer"
                   >
                     Tarik Tugas & Revisi Jawaban
                   </button>
@@ -229,8 +229,8 @@ export default function AssignmentWorkspace() {
                   {/* Scoreboard and feed */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {/* Score Card */}
-                    <div className="border border-emerald-100 bg-emerald-50/10 p-5 rounded-xl flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+                    <div className="border border-emerald-100 dark:border-emerald-800/50 bg-emerald-50 dark:bg-emerald-900/30/10 p-5 rounded-xl flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800/50 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shrink-0">
                         <Award className="w-6 h-6" />
                       </div>
                       <div>
@@ -240,8 +240,8 @@ export default function AssignmentWorkspace() {
                     </div>
 
                     {/* Feedback Card */}
-                    <div className="border border-indigo-100 bg-indigo-50/10 p-5 rounded-xl flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shrink-0">
+                    <div className="border border-indigo-100 dark:border-indigo-800/50 bg-indigo-50 dark:bg-indigo-900/30/10 p-5 rounded-xl flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-full bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
                         <MessageSquare className="w-5 h-5" />
                       </div>
                       <div>
@@ -252,9 +252,9 @@ export default function AssignmentWorkspace() {
                   </div>
 
                   {/* Feedback Message */}
-                  <div className="bg-gray-50/50 border border-gray-100 p-4 rounded-xl text-xs space-y-2">
-                    <p className="font-semibold text-gray-900">Catatan Evaluasi Guru:</p>
-                    <p className="text-gray-600 leading-relaxed font-sans italic">
+                  <div className="bg-gray-50 dark:bg-slate-900/50 border border-gray-100 dark:border-slate-700/50 p-4 rounded-xl text-xs space-y-2">
+                    <p className="font-semibold text-gray-900 dark:text-white">Catatan Evaluasi Guru:</p>
+                    <p className="text-gray-600 dark:text-slate-300 leading-relaxed font-sans italic">
                       "Analisis perbedaan polaritas molekul dijelaskan secara komparatif dengan contoh real yang sangat akurat. Bagus sekali!"
                     </p>
                   </div>
@@ -275,7 +275,7 @@ export default function AssignmentWorkspace() {
 
           {/* TEACHER perspective VIEW */}
           {currentRole === 'teacher' && (
-            <div className="border border-gray-100 bg-white p-6 rounded-2xl shadow-2xs space-y-6">
+            <div className="border border-gray-100 dark:border-slate-700/50 bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-2xs space-y-6">
               
               {/* Submission selector list */}
               <div>
@@ -291,8 +291,8 @@ export default function AssignmentWorkspace() {
                       }}
                       className={`px-4 py-2 border rounded-xl text-xs font-semibold flex items-center gap-2 cursor-pointer transition-all ${
                         activeReviewIndex === i 
-                          ? 'border-indigo-600 bg-indigo-50/50 text-indigo-600' 
-                          : 'border-gray-100 text-gray-500 hover:text-black hover:bg-gray-50'
+                          ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30/50 text-indigo-600 dark:text-indigo-400' 
+                          : 'border-gray-100 dark:border-slate-700/50 text-gray-500 dark:text-slate-400 hover:text-black hover:bg-gray-50 dark:bg-slate-900'
                       }`}
                     >
                       <User className="w-3.5 h-3.5" />
@@ -306,11 +306,11 @@ export default function AssignmentWorkspace() {
               {/* Submission Content Review Block */}
               <div className="space-y-4 pt-4 border-t border-gray-50">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-500">Jawaban Siswa ({submissions[activeReviewIndex].studentName}):</span>
+                  <span className="text-gray-500 dark:text-slate-400">Jawaban Siswa ({submissions[activeReviewIndex].studentName}):</span>
                   <span className="text-gray-400 font-mono text-[10px]">Kirim: {submissions[activeReviewIndex].submittedAt}</span>
                 </div>
 
-                <div className="bg-gray-50 p-4 rounded-xl text-xs text-gray-700 leading-relaxed font-sans border border-gray-100 italic">
+                <div className="bg-gray-50 dark:bg-slate-900 p-4 rounded-xl text-xs text-gray-700 dark:text-slate-200 leading-relaxed font-sans border border-gray-100 dark:border-slate-700/50 italic">
                   "{submissions[activeReviewIndex].answer}"
                 </div>
               </div>
@@ -318,21 +318,21 @@ export default function AssignmentWorkspace() {
               {/* Grading input action fields */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-gray-50">
                 <div className="sm:col-span-1 space-y-1">
-                  <label className="text-xs font-semibold text-gray-700 block">Input Skor (0-100)</label>
+                  <label className="text-xs font-semibold text-gray-700 dark:text-slate-200 block">Input Skor (0-100)</label>
                   <input
                     type="text"
                     value={gradeInput}
                     onChange={(e) => setGradeInput(e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 font-mono"
+                    className="w-full px-3 py-2 text-xs bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 font-mono"
                   />
                 </div>
                 <div className="sm:col-span-2 space-y-1">
-                  <label className="text-xs font-semibold text-gray-700 block">Ulasan / Masukan Guru</label>
+                  <label className="text-xs font-semibold text-gray-700 dark:text-slate-200 block">Ulasan / Masukan Guru</label>
                   <input
                     type="text"
                     value={feedbackInput}
                     onChange={(e) => setFeedbackInput(e.target.value)}
-                    className="w-full px-3 py-2 text-xs bg-white border border-gray-200 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                    className="w-full px-3 py-2 text-xs bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                   />
                 </div>
               </div>
