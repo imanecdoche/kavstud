@@ -11,23 +11,31 @@ import {
   limit
 } from 'firebase/firestore';
 import { 
-  BookOpen, 
   Users, 
   FileText, 
   Plus, 
-  LogOut, 
-  User as UserIcon, 
   ChevronRight, 
-  Menu, 
-  X, 
-  Sparkles, 
   CheckCircle2, 
   AlertCircle,
   HelpCircle,
-  Settings
+  Award,
+  NotebookText,
+  Search,
+  Filter,
+  UserCheck,
+  Calendar,
+  Layers,
+  Sparkles,
+  ArrowRight,
+  X
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { UserProfile, Assignment, Submission } from '../types';
 import Logo from './Logo';
+import NavigationSidebar from './NavigationSidebar';
+import UserSettings from './UserSettings';
+import EmptyState from './EmptyState';
+import { SkeletonDashboard, SkeletonList } from './Skeletons';
 
 interface TeacherDashboardProps {
   onNavigate: (path: string) => void;
@@ -35,6 +43,7 @@ interface TeacherDashboardProps {
 }
 
 export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDashboardProps) {
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'assignments' | 'settings'>('dashboard');
   const [teacherProfile, setTeacherProfile] = useState<UserProfile | null>(null);
   const [students, setStudents] = useState<UserProfile[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -51,6 +60,11 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
   // Responsive Sidebar State
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Search/Filter states inside assignments tab
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'graded' | 'pending'>('all');
+  const [studentFilter, setStudentFilter] = useState<string>('all');
 
   // Create Assignment Form State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -127,7 +141,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
     const submissionsQuery = query(
       collection(db, 'submissions'),
       orderBy('submittedAt', 'desc'),
-      limit(20)
+      limit(50)
     );
     const unsubscribeSubmissions = onSnapshot(submissionsQuery, (snapshot) => {
       const subs: Submission[] = [];
@@ -157,6 +171,16 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
       unsubscribeSubmissions();
     };
   }, [onNavigate]);
+
+  // Handle student profile shortcut to assign task
+  useEffect(() => {
+    const assignToStudentId = sessionStorage.getItem('assignToStudentId');
+    if (assignToStudentId && students.length > 0) {
+      setSelectedStudentId(assignToStudentId);
+      setIsModalOpen(true);
+      sessionStorage.removeItem('assignToStudentId');
+    }
+  }, [students, isModalOpen, activeTab]);
 
   const handleLogout = async () => {
     onSetLoading(true);
@@ -208,332 +232,458 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
   const isPageLoading = loading.profile && loading.students && loading.assignments;
 
+  // Filter assignments for search & select in assignments tab
+  const filteredAssignments = assignments.filter(assign => {
+    const matchesSearch = assign.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          assign.studentName.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Status mapping using submissions
+    const submission = submissions.find(s => s.assignmentId === assign.id);
+    const isGraded = submission?.status === 'graded';
+    const isPending = submission && submission.status !== 'graded';
+    
+    const matchesStatus = statusFilter === 'all' || 
+      (statusFilter === 'graded' && isGraded) || 
+      (statusFilter === 'pending' && !isGraded); // Includes unsubmitted or un-graded
+
+    const matchesStudent = studentFilter === 'all' || assign.studentId === studentFilter;
+
+    return matchesSearch && matchesStatus && matchesStudent;
+  });
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col lg:flex-row font-sans" id="teacher-dashboard">
-      {/* Mobile Header / Navbar */}
-      <header className="lg:hidden bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between sticky top-0 z-50">
-        <div className="inline-flex items-center gap-1.5">
-          <Logo className="h-6 w-auto text-indigo-600" />
-        </div>
-
-        <button
-          onClick={() => setIsSidebarOpen(true)}
-          className="p-2 text-gray-500 hover:text-gray-900 hover:bg-gray-50 rounded-xl cursor-pointer"
-          style={{ minWidth: '44px', minHeight: '44px' }}
-          aria-label="Buka Menu"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
-      </header>
-
-      {/* Sidebar Navigation */}
-      <aside 
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-gray-100 flex flex-col justify-between p-6 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static ${
-          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
-      >
-        <div className="space-y-8">
-          {/* Logo & Close button on Mobile */}
-          <div className="flex items-center justify-between">
-            <div className="inline-flex items-center gap-2">
-              <Logo className="h-7 w-auto text-indigo-600" />
-            </div>
-            
-            <button
-              onClick={() => setIsSidebarOpen(false)}
-              className="lg:hidden p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer"
-              style={{ minWidth: '44px', minHeight: '44px' }}
-              aria-label="Tutup Menu"
-            >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-
-          {/* Teacher Profile Info Section */}
-          <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100/50 space-y-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 font-bold text-sm overflow-hidden shrink-0">
-                {teacherProfile?.photoURL ? (
-                  <img src={teacherProfile.photoURL} alt={teacherProfile.fullName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                ) : (
-                  teacherProfile?.fullName?.charAt(0).toUpperCase() || 'G'
-                )}
-              </div>
-              <div className="min-w-0">
-                <p className="text-xs font-bold text-gray-900 truncate">
-                  {teacherProfile?.fullName || 'Loading...'}
-                </p>
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-indigo-50 text-[9px] font-bold text-indigo-700 rounded-md border border-indigo-100 uppercase mt-0.5">
-                  Pengajar
-                </span>
-              </div>
-            </div>
-            <p className="text-[10px] text-gray-400 truncate">{teacherProfile?.email}</p>
-            <button
-              onClick={() => { onNavigate('/settings'); setIsSidebarOpen(false); }}
-              className="w-full mt-2 py-1.5 px-3 bg-white hover:bg-gray-100 border border-gray-200/60 rounded-xl text-[10px] font-bold text-gray-700 flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-            >
-              <Settings className="w-3.5 h-3.5 text-gray-500" />
-              Pengaturan Profil
-            </button>
-          </div>
-
-          {/* Navigation Links */}
-          <nav className="space-y-1">
-            <div className="px-3 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-              Menu Utama
-            </div>
-            <button
-              onClick={() => { onNavigate('/teacher'); setIsSidebarOpen(false); }}
-              className="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold text-indigo-700 bg-indigo-50/50 flex items-center gap-2.5 transition-all cursor-pointer"
-            >
-              <BookOpen className="w-4 h-4" />
-              Dashboard Utama
-            </button>
-            <button
-              onClick={() => { onNavigate('/settings'); setIsSidebarOpen(false); }}
-              className="w-full text-left px-3.5 py-2.5 rounded-xl text-xs font-bold text-gray-500 hover:text-indigo-600 hover:bg-indigo-50/20 flex items-center gap-2.5 transition-all cursor-pointer"
-            >
-              <Settings className="w-4 h-4" />
-              Pengaturan Akun
-            </button>
-          </nav>
-        </div>
-
-        {/* Logout at bottom */}
-        <button
-          onClick={handleLogout}
-          className="w-full py-3 px-4 border border-gray-100 hover:border-red-200 hover:bg-red-50/30 text-gray-500 hover:text-red-600 rounded-xl text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98"
-          style={{ minHeight: '44px' }}
-        >
-          <LogOut className="w-4 h-4" />
-          Keluar Sistem
-        </button>
-      </aside>
-
-      {/* Sidebar Backdrop on Mobile */}
-      {isSidebarOpen && (
-        <div 
-          onClick={() => setIsSidebarOpen(false)}
-          className="fixed inset-0 bg-black/20 backdrop-blur-xs z-40 lg:hidden"
-        />
-      )}
+      <NavigationSidebar 
+        role="teacher"
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        userProfile={teacherProfile}
+        onLogout={handleLogout}
+        isMobileOpen={isSidebarOpen}
+        setIsMobileOpen={setIsSidebarOpen}
+      />
 
       {/* Main Container Content */}
-      <main className="flex-1 min-w-0 p-4 sm:p-8 lg:p-10 space-y-8 overflow-y-auto">
-        {/* Top Navbar Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-6">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 tracking-tight">
-              Dashboard Guru
-            </h1>
-            <p className="text-xs text-gray-500 mt-1">
-              Pantau kemajuan belajar siswa Anda secara real-time dan berikan penilaian langsung.
-            </p>
-          </div>
-
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
-            style={{ minHeight: '44px' }}
-          >
-            <Plus className="w-4.5 h-4.5" />
-            Buat Tugas Baru
-          </button>
-        </div>
-
+      <main className="flex-1 min-w-0 overflow-y-auto h-screen relative">
         {error && (
-          <div className="p-4 bg-red-50 border border-red-200/50 rounded-2xl text-xs text-red-600 flex items-center gap-2">
+          <div className="m-6 p-4 bg-red-50 border border-red-200/50 rounded-2xl text-xs text-red-600 flex items-center gap-2">
             <AlertCircle className="w-4.5 h-4.5 text-red-500 shrink-0" />
             <p className="font-semibold">{error}</p>
           </div>
         )}
 
-        {isPageLoading ? (
-          /* Skeleton Loader */
-          <div className="space-y-8 animate-pulse">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="h-32 bg-gray-200/60 rounded-2xl" />
-              <div className="h-32 bg-gray-200/60 rounded-2xl" />
-              <div className="h-32 bg-gray-200/60 rounded-2xl" />
+        <AnimatePresence mode="wait">
+          {isPageLoading ? (
+            <div className="p-4 sm:p-8 lg:p-10">
+              <SkeletonDashboard />
             </div>
-            <div className="h-64 bg-gray-200/60 rounded-2xl" />
-          </div>
-        ) : (
-          <div className="space-y-8">
-            {/* Stats Dashboard Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-3xs space-y-2">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Total Siswa Terdaftar</span>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold font-display text-gray-900">{students.length}</span>
-                  <span className="text-[11px] text-gray-400 font-semibold">Siswa</span>
-                </div>
-              </div>
+          ) : (
+            <motion.div
+              key={activeTab}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.18 }}
+              className="p-4 sm:p-8 lg:p-10 space-y-8"
+            >
+              {/* TAB 1: MAIN DASHBOARD */}
+              {activeTab === 'dashboard' && (
+                <>
+                  {/* Top Welcome Panel */}
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-6">
+                    <div>
+                      <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 tracking-tight flex items-center gap-2">
+                        <span>Halo, {teacherProfile?.fullName?.split(' ')[0] || 'Guru'}!</span>
+                        <Sparkles className="w-5 h-5 text-indigo-500 animate-pulse shrink-0" />
+                      </h1>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Kelola tugas kelas, evaluasi jawaban siswa, dan pantau perkembangan belajar secara langsung.
+                      </p>
+                    </div>
 
-              <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-3xs space-y-2">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Tugas yang Dibuat</span>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold font-display text-gray-900">{assignments.length}</span>
-                  <span className="text-[11px] text-gray-400 font-semibold">Tugas</span>
-                </div>
-              </div>
-
-              <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-3xs space-y-2 sm:col-span-2 lg:col-span-1">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Total Submisi Masuk</span>
-                <div className="flex items-baseline gap-2">
-                  <span className="text-3xl font-bold font-display text-gray-900">{submissions.length}</span>
-                  <span className="text-[11px] text-gray-400 font-semibold">Submisi</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Main Content Split Panels */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-              {/* Left Column: Student list & Assignments */}
-              <div className="xl:col-span-2 space-y-8">
-                {/* Recent Assignments created */}
-                <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
-                      <FileText className="w-4 h-4 text-indigo-500" />
-                      Daftar Tugas Baru
-                    </h3>
+                    <button
+                      onClick={() => setIsModalOpen(true)}
+                      className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
+                      style={{ minHeight: '44px' }}
+                    >
+                      <Plus className="w-4.5 h-4.5" />
+                      Tugas Baru
+                    </button>
                   </div>
 
-                  {assignments.length === 0 ? (
-                    <div className="py-12 text-center space-y-2 border border-dashed border-gray-100 rounded-2xl">
-                      <HelpCircle className="w-8 h-8 text-gray-300 mx-auto" />
-                      <p className="text-xs text-gray-500 font-medium">Belum ada tugas yang dibuat.</p>
-                      <button 
-                        onClick={() => setIsModalOpen(true)}
-                        className="text-[11px] text-indigo-600 hover:underline font-semibold"
-                      >
-                        Buat tugas pertamamu sekarang
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="divide-y divide-gray-50 max-h-96 overflow-y-auto pr-1">
-                      {assignments.map((assign) => (
-                        <div 
-                          key={assign.id}
-                          className="py-3.5 flex items-center justify-between gap-4 hover:bg-gray-50/50 px-2 rounded-xl transition-colors cursor-pointer"
-                          onClick={() => onNavigate(`/assignment/${assign.id}`)}
-                        >
-                          <div className="min-w-0">
-                            <h4 className="text-xs font-bold text-gray-900 truncate">{assign.title}</h4>
-                            <p className="text-[10px] text-gray-400 mt-0.5 truncate">Siswa: {assign.studentName}</p>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-[10px] text-gray-400 shrink-0">
-                              {assign.createdAt ? new Date(assign.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) : 'Baru saja'}
-                            </span>
-                            <ChevronRight className="w-4 h-4 text-gray-300" />
-                          </div>
+                  {/* Stats Block Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-3xs flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
+                        <Users className="w-5 h-5" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Siswa Terdaftar</span>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-2xl font-bold font-display text-gray-900">{students.length}</span>
+                          <span className="text-[10px] text-gray-400 font-semibold">Siswa</span>
                         </div>
-                      ))}
+                      </div>
                     </div>
-                  )}
-                </div>
 
-                {/* Recent Submissions received (Real-time updates) */}
-                <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
-                      <CheckCircle2 className="w-4 h-4 text-indigo-500" />
-                      Submisi Masuk Terbaru
-                    </h3>
+                    <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-3xs flex items-center gap-4">
+                      <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-600 shrink-0">
+                        <NotebookText className="w-5 h-5" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Total Tugas</span>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-2xl font-bold font-display text-gray-900">{assignments.length}</span>
+                          <span className="text-[10px] text-gray-400 font-semibold">Tugas</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white border border-gray-100 p-5 rounded-2xl shadow-3xs flex items-center gap-4 sm:col-span-2 lg:col-span-1">
+                      <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 shrink-0">
+                        <CheckCircle2 className="w-5 h-5" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Total Submisi</span>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-2xl font-bold font-display text-gray-900">{submissions.length}</span>
+                          <span className="text-[10px] text-gray-400 font-semibold">Jawaban</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                  {submissions.length === 0 ? (
-                    <div className="py-12 text-center space-y-2 border border-dashed border-gray-100 rounded-2xl">
-                      <HelpCircle className="w-8 h-8 text-gray-300 mx-auto" />
-                      <p className="text-xs text-gray-500 font-medium">Belum ada jawaban yang dikirimkan oleh siswa.</p>
-                    </div>
-                  ) : (
-                    <div className="divide-y divide-gray-50">
-                      {submissions.map((sub) => (
-                        <div 
-                          key={sub.id}
-                          onClick={() => onNavigate(`/submission/${sub.id}`)}
-                          className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-gray-50/50 px-2 rounded-xl transition-colors cursor-pointer"
-                        >
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <h4 className="text-xs font-bold text-gray-900 truncate">{sub.assignmentTitle}</h4>
-                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                                sub.status === 'graded' 
-                                  ? 'bg-green-50 text-green-700 border border-green-100' 
-                                  : 'bg-amber-50 text-amber-700 border border-amber-100 animate-pulse'
-                              }`}>
-                                {sub.status === 'graded' ? 'Sudah Dinilai' : 'Butuh Dinilai'}
-                              </span>
-                            </div>
-                            <p className="text-[10px] text-gray-400 mt-1 truncate">
-                              Oleh: <span className="font-semibold text-gray-600">{sub.studentName}</span>
-                            </p>
-                          </div>
+                  {/* Dashboard split content panels */}
+                  <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                    {/* Left & Middle columns: Recent tasks & submissions */}
+                    <div className="xl:col-span-2 space-y-8">
+                      
+                      {/* Section: Submisi Masuk Terbaru */}
+                      <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
+                            <CheckCircle2 className="w-4.5 h-4.5 text-emerald-500" />
+                            Submisi Masuk Terbaru
+                          </h3>
+                        </div>
 
-                          <div className="flex items-center justify-between sm:justify-end gap-3.5">
-                            {sub.score !== null ? (
-                              <div className="text-right">
-                                <p className="text-[10px] text-gray-400">Skor</p>
-                                <p className="text-xs font-bold text-indigo-600 font-display">{sub.score} / 100</p>
+                        {submissions.length === 0 ? (
+                          <EmptyState 
+                            icon={CheckCircle2}
+                            title="Belum Ada Submisi"
+                            description="Siswa belum mengirimkan jawaban untuk tugas yang diberikan."
+                          />
+                        ) : (
+                          <div className="divide-y divide-gray-50 max-h-96 overflow-y-auto pr-1">
+                            {submissions.slice(0, 5).map((sub) => (
+                              <div 
+                                key={sub.id}
+                                onClick={() => onNavigate(`/submission/${sub.id}`)}
+                                className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-gray-50/50 px-2 rounded-xl transition-colors cursor-pointer"
+                              >
+                                <div className="min-w-0">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h4 className="text-xs font-bold text-gray-900 truncate">{sub.assignmentTitle}</h4>
+                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                                      sub.status === 'graded' 
+                                        ? 'bg-green-50 text-green-700 border border-green-100' 
+                                        : 'bg-amber-50 text-amber-700 border border-amber-100 animate-pulse'
+                                    }`}>
+                                      {sub.status === 'graded' ? 'Sudah Dinilai' : 'Butuh Dinilai'}
+                                    </span>
+                                  </div>
+                                  <p className="text-[10px] text-gray-400 mt-1 truncate">
+                                    Oleh: <span className="font-semibold text-gray-600">{sub.studentName}</span>
+                                  </p>
+                                </div>
+
+                                <div className="flex items-center justify-between sm:justify-end gap-3.5 shrink-0">
+                                  {sub.score !== null ? (
+                                    <div className="text-right">
+                                      <p className="text-[10px] text-gray-400">Skor</p>
+                                      <p className="text-xs font-bold text-indigo-600 font-display">{sub.score} / 100</p>
+                                    </div>
+                                  ) : (
+                                    <span className="text-[10px] text-indigo-600 font-semibold bg-indigo-50 px-2.5 py-1 rounded-lg">
+                                      Nilai Sekarang
+                                    </span>
+                                  )}
+                                  <ChevronRight className="w-4 h-4 text-gray-300" />
+                                </div>
                               </div>
-                            ) : (
-                              <span className="text-[10px] text-indigo-600 font-semibold bg-indigo-50 px-2 py-1 rounded-lg">
-                                Nilai Sekarang
-                              </span>
-                            )}
-                            <ChevronRight className="w-4 h-4 text-gray-300" />
+                            ))}
                           </div>
+                        )}
+                      </div>
+
+                      {/* Section: Tugas Terbaru Dibuat */}
+                      <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
+                            <FileText className="w-4.5 h-4.5 text-indigo-500" />
+                            Daftar Tugas Baru
+                          </h3>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
 
-              {/* Right Column: Student List */}
-              <div className="space-y-8">
-                <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
-                  <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
-                    <Users className="w-4 h-4 text-indigo-500" />
-                    Daftar Siswa Kelas
-                  </h3>
+                        {assignments.length === 0 ? (
+                          <EmptyState 
+                            icon={NotebookText}
+                            title="Belum Ada Tugas"
+                            description="Anda belum membuat tugas untuk siswa."
+                            actionText="Buat Tugas Pertama"
+                            onActionClick={() => setIsModalOpen(true)}
+                          />
+                        ) : (
+                          <div className="divide-y divide-gray-50 max-h-80 overflow-y-auto pr-1">
+                            {assignments.slice(0, 5).map((assign) => (
+                              <div 
+                                key={assign.id}
+                                className="py-3.5 flex items-center justify-between gap-4 hover:bg-gray-50/50 px-2 rounded-xl transition-colors cursor-pointer"
+                                onClick={() => onNavigate(`/assignment/${assign.id}`)}
+                              >
+                                <div className="min-w-0">
+                                  <h4 className="text-xs font-bold text-gray-900 truncate">{assign.title}</h4>
+                                  <p className="text-[10px] text-gray-400 mt-0.5 truncate">Siswa: {assign.studentName}</p>
+                                </div>
+                                <div className="flex items-center gap-2 shrink-0">
+                                  <span className="text-[10px] text-gray-400">
+                                    {assign.createdAt ? new Date(assign.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) : 'Baru saja'}
+                                  </span>
+                                  <ChevronRight className="w-4 h-4 text-gray-300" />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
 
-                  {students.length === 0 ? (
-                    <div className="py-12 text-center space-y-2 border border-dashed border-gray-100 rounded-2xl">
-                      <HelpCircle className="w-8 h-8 text-gray-300 mx-auto" />
-                      <p className="text-xs text-gray-500 font-medium">Belum ada siswa terdaftar.</p>
                     </div>
-                  ) : (
-                    <div className="space-y-2.5 max-h-96 overflow-y-auto pr-1">
-                      {students.map((stud) => (
-                        <div 
-                          key={stud.uid}
-                          onClick={() => onNavigate(`/student/${stud.uid}`)}
-                          className="p-3 bg-gray-50/50 hover:bg-gray-50 border border-gray-100/50 rounded-2xl flex items-center justify-between gap-3 cursor-pointer transition-colors"
+
+                    {/* Right column: Quick Actions & Student list */}
+                    <div className="space-y-8">
+                      {/* Quick Actions Panel */}
+                      <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
+                        <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">Aksi Cepat</h3>
+                        <div className="grid grid-cols-1 gap-2.5">
+                          <button
+                            onClick={() => setIsModalOpen(true)}
+                            className="w-full p-3 bg-indigo-50/50 hover:bg-indigo-50 border border-indigo-100/30 rounded-xl flex items-center gap-3 transition-colors text-left text-xs font-bold text-indigo-700 cursor-pointer"
+                          >
+                            <Plus className="w-4 h-4 text-indigo-500 shrink-0" />
+                            Kirim Tugas Baru
+                          </button>
+                          <button
+                            onClick={() => setActiveTab('assignments')}
+                            className="w-full p-3 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl flex items-center gap-3 transition-colors text-left text-xs font-semibold text-gray-700 cursor-pointer"
+                          >
+                            <Layers className="w-4 h-4 text-gray-400 shrink-0" />
+                            Kelola Semua Tugas
+                          </button>
+                          <button
+                            onClick={() => setActiveTab('settings')}
+                            className="w-full p-3 bg-gray-50 hover:bg-gray-100 border border-gray-100 rounded-xl flex items-center gap-3 transition-colors text-left text-xs font-semibold text-gray-700 cursor-pointer"
+                          >
+                            <Award className="w-4 h-4 text-gray-400 shrink-0" />
+                            Pengaturan Profil
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Student list */}
+                      <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
+                        <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
+                          <Users className="w-4 h-4 text-indigo-500" />
+                          Daftar Siswa Kelas
+                        </h3>
+
+                        {students.length === 0 ? (
+                          <EmptyState 
+                            icon={Users}
+                            title="Tidak Ada Siswa"
+                            description="Belum ada siswa yang mendaftar di kelas Anda."
+                          />
+                        ) : (
+                          <div className="space-y-2.5 max-h-96 overflow-y-auto pr-1">
+                            {students.map((stud) => (
+                              <div 
+                                key={stud.uid}
+                                onClick={() => onNavigate(`/student/${stud.uid}`)}
+                                className="p-3 bg-gray-50/50 hover:bg-gray-50 border border-gray-100/50 rounded-2xl flex items-center justify-between gap-3 cursor-pointer transition-colors"
+                              >
+                                <div className="flex items-center gap-3 min-w-0">
+                                  <div className="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-bold text-xs shrink-0">
+                                    {stud.fullName?.charAt(0).toUpperCase() || 'S'}
+                                  </div>
+                                  <div className="min-w-0">
+                                    <p className="text-xs font-bold text-gray-900 truncate leading-tight">{stud.fullName}</p>
+                                    <p className="text-[10px] text-gray-400 truncate mt-0.5">{stud.email}</p>
+                                  </div>
+                                </div>
+                                <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* TAB 2: FULL ASSIGNMENTS MANAGER */}
+              {activeTab === 'assignments' && (
+                <>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-6">
+                    <div>
+                      <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 tracking-tight">
+                        Daftar Penugasan Kelas
+                      </h1>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Cari, saring, dan tinjau seluruh tugas belajar yang telah didistribusikan ke siswa.
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() => setIsModalOpen(true)}
+                      className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
+                      style={{ minHeight: '44px' }}
+                    >
+                      <Plus className="w-4.5 h-4.5" />
+                      Buat Tugas
+                    </button>
+                  </div>
+
+                  {/* Search and Filters panel */}
+                  <div className="bg-white p-4 sm:p-5 border border-gray-100 rounded-2xl flex flex-col md:flex-row gap-4 items-center justify-between">
+                    <div className="relative w-full md:w-80">
+                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <input
+                        type="text"
+                        placeholder="Cari tugas atau nama siswa..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-xs placeholder-gray-400 focus:outline-none focus:bg-white focus:border-indigo-500 transition-all"
+                      />
+                    </div>
+
+                    <div className="flex flex-wrap gap-3 w-full md:w-auto">
+                      {/* Filter by Status */}
+                      <div className="flex items-center gap-1.5 bg-gray-50/50 border border-gray-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600">
+                        <Filter className="w-3.5 h-3.5 text-gray-400" />
+                        <select
+                          value={statusFilter}
+                          onChange={(e) => setStatusFilter(e.target.value as any)}
+                          className="bg-transparent focus:outline-none cursor-pointer text-xs font-bold"
                         >
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-8 h-8 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center font-bold text-xs shrink-0">
-                              {stud.fullName?.charAt(0).toUpperCase() || 'S'}
+                          <option value="all">Semua Status</option>
+                          <option value="graded">Sudah Dinilai</option>
+                          <option value="pending">Menunggu/Belum Dikirim</option>
+                        </select>
+                      </div>
+
+                      {/* Filter by Student */}
+                      <div className="flex items-center gap-1.5 bg-gray-50/50 border border-gray-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600">
+                        <UserCheck className="w-3.5 h-3.5 text-gray-400" />
+                        <select
+                          value={studentFilter}
+                          onChange={(e) => setStudentFilter(e.target.value)}
+                          className="bg-transparent focus:outline-none cursor-pointer text-xs font-bold max-w-[150px] truncate"
+                        >
+                          <option value="all">Semua Siswa</option>
+                          {students.map(s => (
+                            <option key={s.uid} value={s.uid}>{s.fullName}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Assignments List Grid */}
+                  {filteredAssignments.length === 0 ? (
+                    <EmptyState 
+                      icon={HelpCircle}
+                      title="Tugas Tidak Ditemukan"
+                      description="Tidak ada data tugas yang cocok dengan pencarian atau filter Anda."
+                      actionText="Reset Pencarian"
+                      onActionClick={() => {
+                        setSearchQuery('');
+                        setStatusFilter('all');
+                        setStudentFilter('all');
+                      }}
+                    />
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {filteredAssignments.map((assign) => {
+                        const sub = submissions.find(s => s.assignmentId === assign.id);
+                        return (
+                          <div 
+                            key={assign.id}
+                            onClick={() => onNavigate(`/assignment/${assign.id}`)}
+                            className="bg-white border border-gray-100 hover:border-gray-200 hover:shadow-xs p-5 rounded-2xl flex flex-col justify-between gap-4 transition-all cursor-pointer"
+                          >
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between gap-2">
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                                  sub?.status === 'graded' 
+                                    ? 'bg-green-50 text-green-700' 
+                                    : sub 
+                                      ? 'bg-amber-50 text-amber-700 animate-pulse' 
+                                      : 'bg-gray-100 text-gray-500'
+                                }`}>
+                                  {sub?.status === 'graded' 
+                                    ? 'Sudah Dinilai' 
+                                    : sub 
+                                      ? 'Menunggu Penilaian' 
+                                      : 'Belum Dikerjakan'}
+                                </span>
+                                <span className="text-[10px] text-gray-400 flex items-center gap-1 font-mono">
+                                  <Calendar className="w-3 h-3" />
+                                  {assign.createdAt ? new Date(assign.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) : 'Baru saja'}
+                                </span>
+                              </div>
+                              <h3 className="text-sm font-bold text-gray-900 leading-tight">{assign.title}</h3>
+                              <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">{assign.question}</p>
                             </div>
-                            <div className="min-w-0">
-                              <p className="text-xs font-bold text-gray-900 truncate">{stud.fullName}</p>
-                              <p className="text-[10px] text-gray-400 truncate">{stud.email}</p>
+
+                            <div className="flex items-center justify-between border-t border-gray-50 pt-3 mt-1">
+                              <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 bg-indigo-50 text-indigo-600 rounded-md flex items-center justify-center text-[10px] font-bold uppercase shrink-0">
+                                  {assign.studentName?.charAt(0).toUpperCase()}
+                                </div>
+                                <span className="text-[11px] font-semibold text-gray-600 truncate max-w-[120px]">{assign.studentName}</span>
+                              </div>
+                              
+                              <span className="text-[10px] font-bold text-indigo-600 hover:underline inline-flex items-center gap-0.5">
+                                Detail Tugas
+                                <ArrowRight className="w-3.5 h-3.5" />
+                              </span>
                             </div>
                           </div>
-                          <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
+                </>
+              )}
+
+              {/* TAB 3: SETTINGS INLINE */}
+              {activeTab === 'settings' && (
+                <div className="max-w-4xl mx-auto space-y-6">
+                  <UserSettings 
+                    onNavigate={(p) => {
+                      if (p === '/teacher') {
+                        setActiveTab('dashboard');
+                      } else {
+                        onNavigate(p);
+                      }
+                    }}
+                    onSetLoading={onSetLoading}
+                  />
                 </div>
-              </div>
-            </div>
-          </div>
-        )}
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </main>
 
       {/* Create Assignment Modal */}
@@ -626,7 +776,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold rounded-xl text-xs shadow-xs flex items-center justify-center gap-2 cursor-pointer active:scale-98 transition-all"
+                  className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold rounded-xl text-xs shadow-xs flex items-center justify-center gap-2.5 cursor-pointer active:scale-98 transition-all"
                   style={{ minHeight: '44px' }}
                 >
                   {isSubmitting ? 'Mengirim...' : 'Kirim Tugas'}

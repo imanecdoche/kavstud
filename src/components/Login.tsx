@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { auth, db } from '../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
-import { Sparkles, ArrowRight, Lock, Mail, Eye, EyeOff } from 'lucide-react';
+import { Sparkles, ArrowRight, Lock, Mail, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { motion } from 'motion/react';
 import Logo from './Logo';
 
 interface LoginProps {
@@ -19,6 +20,7 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) return; // Prevent multiple clicks
     if (!email || !password) {
       setError('Email dan password wajib diisi.');
       return;
@@ -59,11 +61,18 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8" id="login-page">
+    <motion.div 
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -15 }}
+      transition={{ duration: 0.25 }}
+      className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8" 
+      id="login-page"
+    >
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-6">
         {/* Typemark Logo */}
         <div className="flex justify-center">
-          <Logo className="h-10 w-auto text-indigo-600" />
+          <Logo className="h-10 w-auto text-indigo-600 animate-pulse" />
         </div>
 
         <div className="space-y-2">
@@ -104,6 +113,7 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
                   onChange={(e) => setEmail(e.target.value)}
                   className="block w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
                   placeholder="name@school.com"
+                  disabled={isSubmitting}
                 />
               </div>
             </div>
@@ -126,6 +136,7 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
                   onChange={(e) => setPassword(e.target.value)}
                   className="block w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-colors"
                   placeholder="Masukkan kata sandi"
+                  disabled={isSubmitting}
                 />
                 <button
                   type="button"
@@ -133,6 +144,7 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
                   className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
                   style={{ minWidth: '44px', minHeight: '44px' }}
                   aria-label={showPassword ? 'Sembunyikan sandi' : 'Tampilkan sandi'}
+                  disabled={isSubmitting}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -142,12 +154,21 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 cursor-pointer transition-all active:scale-98"
+              className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center gap-2.5 cursor-pointer transition-all active:scale-98"
               style={{ minHeight: '44px' }}
               id="login-submit-button"
             >
-              {isSubmitting ? 'Memproses Masuk...' : 'Masuk ke Akun'}
-              <ArrowRight className="w-4 h-4" />
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Menghubungkan ke sistem...</span>
+                </>
+              ) : (
+                <>
+                  <span>Masuk ke Akun</span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           </form>
 
@@ -165,11 +186,12 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
             className="w-full py-3 px-4 border border-gray-200 hover:border-gray-300 text-gray-700 bg-white rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer transition-colors active:scale-98"
             style={{ minHeight: '44px' }}
             id="go-to-register-button"
+            disabled={isSubmitting}
           >
             Daftar Akun Baru
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

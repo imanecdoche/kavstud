@@ -18,7 +18,8 @@ import {
   FileCheck, 
   Award, 
   ChevronRight, 
-  AlertCircle 
+  AlertCircle,
+  Plus
 } from 'lucide-react';
 import { UserProfile, Assignment, Submission } from '../types';
 
@@ -184,6 +185,19 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
                   <p className="text-[11px] text-gray-400 font-semibold uppercase mt-0.5">Siswa Kavio Edu</p>
                 </div>
               </div>
+
+              <button
+                onClick={() => {
+                  sessionStorage.setItem('assignToStudentId', student.uid);
+                  onNavigate('/teacher');
+                }}
+                className="w-full py-2.5 px-4 bg-indigo-600 hover:bg-indigo-700 active:scale-98 text-white text-xs font-bold rounded-xl flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
+                style={{ minHeight: '40px' }}
+                id="btn-assign-new-task"
+              >
+                <Plus className="w-4 h-4" />
+                Beri Tugas Baru
+              </button>
 
               <div className="space-y-3.5 border-t border-gray-50 pt-4 text-xs text-gray-600 font-medium">
                 <div className="flex items-center gap-2.5">
