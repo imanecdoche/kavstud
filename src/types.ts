@@ -86,6 +86,7 @@ export interface Assignment {
   estimatedDuration?: number; // in minutes
   difficulty?: 'Mudah' | 'Sedang' | 'Sulit';
   updatedAt?: any; // Firestore Timestamp
+  masterId?: string;
 }
 
 export interface Circle {

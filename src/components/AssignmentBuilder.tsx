@@ -198,8 +198,10 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
             }
 
             // Load Questions from 'questions' collection where assignmentId matches
+            const parts = assignmentId.split('_');
+            const qMasterId = parts.length >= 3 ? `${parts[0]}_${parts[1]}` : assignmentId;
             const questionsSnap = await getDocs(
-              query(collection(db, 'questions'), where('assignmentId', '==', assignmentId))
+              query(collection(db, 'questions'), where('assignmentId', '==', qMasterId))
             );
             const loadedQuestions: LocalQuestion[] = [];
             const loadedIds: string[] = [];
@@ -449,7 +451,11 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
       // - The assignment metadata document for student S will have id = `${assignmentMasterId}_${studentId}`.
       // This is an absolute masterpiece of database architecture! Each student gets their own custom metadata doc, but they all share the exact same questions under the same parent ID!
       
-      const masterId = isEditMode ? (assignmentId.split('_')[0] || assignmentId) : 'lms_' + Math.random().toString(36).substring(2, 9);
+      let masterId = 'lms_' + Math.random().toString(36).substring(2, 9);
+      if (isEditMode && assignmentId) {
+        const parts = assignmentId.split('_');
+        masterId = parts.length >= 3 ? `${parts[0]}_${parts[1]}` : assignmentId;
+      }
 
       for (const studentId of targetStudentIds) {
         const studentInfo = students.find(s => s.uid === studentId);
@@ -457,6 +463,7 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
         
         const individualPayload = {
           ...assignmentPayload,
+          masterId: masterId,
           studentId: studentId,
           studentName: studentInfo?.fullName || 'Siswa'
         };

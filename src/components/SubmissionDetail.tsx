@@ -5,7 +5,10 @@ import {
   getDoc, 
   updateDoc, 
   onSnapshot,
-  serverTimestamp 
+  serverTimestamp,
+  collection,
+  query,
+  where
 } from 'firebase/firestore';
 import { 
   ArrowLeft, 
@@ -15,9 +18,12 @@ import {
   Award, 
   AlertCircle,
   Clock,
-  Sparkles
+  Sparkles,
+  Volume2,
+  Mic,
+  UploadCloud
 } from 'lucide-react';
-import { Submission, UserProfile } from '../types';
+import { Submission, UserProfile, Assignment, Question } from '../types';
 import CustomDropdown from './CustomDropdown';
 
 interface SubmissionDetailProps {
@@ -29,9 +35,32 @@ interface SubmissionDetailProps {
 export default function SubmissionDetail({ submissionId, onNavigate, onSetLoading }: SubmissionDetailProps) {
   const [currentUserProfile, setCurrentUserProfile] = useState<UserProfile | null>(null);
   const [submission, setSubmission] = useState<Submission | null>(null);
+  const [assignment, setAssignment] = useState<Assignment | null>(null);
+  const [questions, setQuestions] = useState<Question[]>([]);
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Helper functions to safely extract answers for each question type
+  const getStudentAnswerForQuestion = (qId: string) => {
+    if (!submission || !submission.answersMap) return '';
+    const val = submission.answersMap[qId];
+    if (!val) return '';
+    if (typeof val === 'object') {
+      return (val as any).answer || '';
+    }
+    return String(val);
+  };
+
+  const getMatchingAnswers = (studentAnswer: string) => {
+    const currentAnswersList = studentAnswer ? studentAnswer.split(',') : [];
+    const matchingMap: {[left: string]: string} = {};
+    currentAnswersList.forEach(item => {
+      const [l, r] = item.split('::');
+      if (l) matchingMap[l] = r || '';
+    });
+    return matchingMap;
+  };
 
   // Teacher Grading Form State
   const [score, setScore] = useState<number | ''>('');
@@ -59,6 +88,52 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
       }
     };
     loadProfile();
+
+    // Listen to assignment details in real-time
+    let unsubscribeQuestions: (() => void) | null = null;
+    const unsubscribeAssign = onSnapshot(doc(db, 'assignments', submissionId), (docSnap) => {
+      if (docSnap.exists()) {
+        const assignData = { id: docSnap.id, ...docSnap.data() } as Assignment;
+        setAssignment(assignData);
+
+        if (assignData.assignmentType === 'lms_composite') {
+          let masterId = submissionId;
+          const parts = submissionId.split('_');
+          
+          if (assignData.masterId) {
+            masterId = assignData.masterId;
+          } else if (parts.length >= 3) {
+            masterId = `${parts[0]}_${parts[1]}`;
+          } else if (parts.length === 2) {
+            if (parts[0] === 'lms') {
+              masterId = submissionId;
+            } else {
+              masterId = parts[0];
+            }
+          }
+
+          if (unsubscribeQuestions) {
+            unsubscribeQuestions();
+          }
+
+          unsubscribeQuestions = onSnapshot(
+            query(collection(db, 'questions'), where('assignmentId', '==', masterId)),
+            (qSnap) => {
+              const loadedQuestions: Question[] = [];
+              qSnap.forEach((doc) => {
+                loadedQuestions.push({ id: doc.id, ...doc.data() } as Question);
+              });
+              loadedQuestions.sort((a, b) => (a.order || 0) - (b.order || 0));
+              setQuestions(loadedQuestions);
+            }, (err) => {
+              console.error("Error listening to questions:", err);
+            }
+          );
+        }
+      }
+    }, (err) => {
+      console.error("Error listening to assignment:", err);
+    });
 
     // Setup Real-time listener for this specific submission
     const unsubscribeSub = onSnapshot(doc(db, 'submissions', submissionId), (docSnap) => {
@@ -88,7 +163,13 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
       setLoading(false);
     });
 
-    return () => unsubscribeSub();
+    return () => {
+      unsubscribeAssign();
+      if (unsubscribeQuestions) {
+        unsubscribeQuestions();
+      }
+      unsubscribeSub();
+    };
   }, [submissionId, onNavigate]);
 
   const handleGradeSubmission = async (e: React.FormEvent) => {
@@ -214,11 +295,349 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
             </div>
 
             {/* Answer Content Display */}
-            <div className="space-y-3 bg-gray-50/50 p-6 rounded-2xl border border-gray-100/50">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Jawaban Siswa:</span>
-              <p className="text-xs text-gray-800 leading-relaxed whitespace-pre-wrap font-sans">
-                {submission.answer}
-              </p>
+            <div className="space-y-4 bg-gray-50/50 p-6 rounded-2xl border border-gray-100/50">
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">
+                Jawaban & Lembar Kerja Siswa:
+              </span>
+
+              {/* 1. LMS Composite Question rendering */}
+              {assignment?.assignmentType === 'lms_composite' && (
+                <div className="space-y-5">
+                  <div className="p-3 bg-indigo-50 border border-indigo-100/50 rounded-xl text-xs text-indigo-800">
+                    <p className="font-bold">Ujian Berbasis LMS Composite</p>
+                    <p className="text-[11px] text-indigo-700/95 mt-0.5">
+                      Menampilkan lembar pengerjaan interaktif yang dikirimkan oleh siswa di bawah ini.
+                    </p>
+                  </div>
+
+                  {questions.length > 0 ? (
+                    <div className="space-y-6">
+                      {questions.map((q, idx) => {
+                        const studentAns = getStudentAnswerForQuestion(q.id);
+                        
+                        return (
+                          <div key={q.id} className="p-5 bg-white border border-gray-200 rounded-2xl space-y-4 shadow-3xs">
+                            {/* Question Header */}
+                            <div className="flex items-start justify-between gap-4 border-b border-gray-50 pb-2.5">
+                              <div className="flex items-center gap-2">
+                                <span className="w-5.5 h-5.5 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-bold flex items-center justify-center font-mono">
+                                  {idx + 1}
+                                </span>
+                                <span className="text-[10px] uppercase font-bold text-gray-500 tracking-wider">
+                                  {q.type?.replace('_', ' ') || 'Pertanyaan'}
+                                </span>
+                              </div>
+                              <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50/50 px-2 py-0.5 rounded-md font-mono">
+                                {q.points || 10} Poin
+                              </span>
+                            </div>
+
+                            {/* Question prompt */}
+                            <p className="text-xs font-bold text-gray-800 leading-relaxed whitespace-pre-wrap">
+                              {q.question}
+                            </p>
+
+                            {/* Detailed Answers depending on question type */}
+                            {q.type === 'multiple_choice' && q.choices && (
+                              <div className="space-y-2">
+                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Opsi Pilihan:</span>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                  {q.choices.map((choice: string, cIdx: number) => {
+                                    const optLetter = String.fromCharCode(65 + cIdx);
+                                    const isStudentChoice = studentAns === optLetter;
+                                    const isCorrect = q.correctAnswer === optLetter;
+
+                                    return (
+                                      <div
+                                        key={cIdx}
+                                        className={`p-3 rounded-xl border flex items-center gap-3 transition-all ${
+                                          isCorrect
+                                            ? 'bg-green-50/60 border-green-200 text-green-900'
+                                            : isStudentChoice
+                                              ? 'bg-indigo-50/40 border-indigo-200 text-indigo-900'
+                                              : 'bg-white border-gray-100'
+                                        }`}
+                                      >
+                                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold font-mono shrink-0 ${
+                                          isCorrect
+                                            ? 'bg-green-600 text-white'
+                                            : isStudentChoice
+                                              ? 'bg-indigo-600 text-white'
+                                              : 'bg-gray-100 text-gray-500'
+                                        }`}>
+                                          {optLetter}
+                                        </span>
+                                        <div className="flex-1 min-w-0">
+                                          <p className="text-xs font-semibold truncate">{choice}</p>
+                                          {isCorrect && (
+                                            <span className="text-[9px] font-bold text-green-600 uppercase tracking-wide block mt-0.5">Jawaban Benar</span>
+                                          )}
+                                          {isStudentChoice && !isCorrect && (
+                                            <span className="text-[9px] font-bold text-indigo-600 uppercase tracking-wide block mt-0.5">Pilihan Siswa</span>
+                                          )}
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+
+                            {q.type === 'true_false' && (
+                              <div className="space-y-2">
+                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Jawaban:</span>
+                                <div className="flex gap-3">
+                                  {[
+                                    { val: 'true', label: 'BENAR / TRUE' },
+                                    { val: 'false', label: 'SALAH / FALSE' }
+                                  ].map((option) => {
+                                    const isStudentChoice = studentAns === option.val;
+                                    const isCorrect = q.trueFalseCorrect === option.val;
+
+                                    return (
+                                      <div
+                                        key={option.val}
+                                        className={`flex-1 py-3 px-4 rounded-xl border text-center text-xs font-bold ${
+                                          isCorrect
+                                            ? 'bg-green-50/60 border-green-200 text-green-700'
+                                            : isStudentChoice
+                                              ? 'bg-indigo-50/40 border-indigo-200 text-indigo-700'
+                                              : 'bg-white border-gray-100 text-gray-400'
+                                        }`}
+                                      >
+                                        <p>{option.label}</p>
+                                        {isCorrect && (
+                                          <span className="text-[8px] font-bold text-green-600 uppercase tracking-wide block mt-1">Benar</span>
+                                        )}
+                                        {isStudentChoice && !isCorrect && (
+                                          <span className="text-[8px] font-bold text-indigo-600 uppercase tracking-wide block mt-1">Pilihan Siswa</span>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+
+                            {q.type === 'matching' && q.matchingPairs && (
+                              <div className="space-y-2">
+                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Pasangan Jawaban Siswa:</span>
+                                <div className="space-y-2">
+                                  {q.matchingPairs.map((pair: any, pIdx: number) => {
+                                    const matchingMap = getMatchingAnswers(studentAns);
+                                    const studentMatch = matchingMap[pair.left] || '(Kosong)';
+                                    const isCorrect = studentMatch === pair.right;
+
+                                    return (
+                                      <div key={pIdx} className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 p-3 bg-gray-50/30 rounded-xl border border-gray-100">
+                                        <div className="flex items-center gap-2">
+                                          <span className="text-xs font-bold text-gray-700">{pair.left}</span>
+                                          <span className="text-gray-400 font-mono text-xs">➡</span>
+                                          <span className={`text-xs font-semibold px-2 py-0.5 rounded-md ${
+                                            isCorrect 
+                                              ? 'bg-green-50 text-green-700 border border-green-100' 
+                                              : 'bg-indigo-50 text-indigo-700 border border-indigo-100'
+                                          }`}>{studentMatch}</span>
+                                        </div>
+                                        {!isCorrect && (
+                                          <div className="text-[10px] text-green-600 font-semibold bg-green-50/30 px-2 py-1 rounded-lg border border-green-100">
+                                            Kunci: {pair.right}
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+
+                            {q.type === 'fill_blank' && (
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-1.5">
+                                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Jawaban Siswa:</span>
+                                  <div className="p-3 bg-gray-50/30 border border-gray-100 rounded-xl text-xs font-semibold text-gray-800">
+                                    {studentAns || '(Kosong)'}
+                                  </div>
+                                </div>
+                                {q.fillBlankAnswers && q.fillBlankAnswers.length > 0 && (
+                                  <div className="space-y-1.5">
+                                    <span className="text-[10px] font-bold text-green-600 uppercase tracking-wider block">Kunci Jawaban Benar (Isian):</span>
+                                    <div className="p-3 bg-green-50/40 border border-green-100 text-green-800 rounded-xl text-xs font-semibold">
+                                      {q.fillBlankAnswers.join(' / ')}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {(q.type === 'essay' || q.type === 'listening' || q.type === 'speaking') && (
+                              <div className="space-y-3">
+                                {q.type === 'listening' && q.audioUrl && (
+                                  <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl flex items-center gap-2">
+                                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Audio Soal:</span>
+                                    <audio src={q.audioUrl} controls className="h-6 flex-1" />
+                                  </div>
+                                )}
+                                {q.type === 'speaking' && q.speakingPrompt && (
+                                  <div className="p-3 bg-indigo-50/50 border border-indigo-100 rounded-xl text-xs font-semibold text-indigo-800">
+                                    Kalimat: "{q.speakingPrompt}"
+                                  </div>
+                                )}
+
+                                <div className="space-y-1.5">
+                                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Jawaban Siswa:</span>
+                                  <div className="p-4.5 bg-gray-50/30 border border-gray-100 rounded-xl text-xs text-gray-800 font-medium whitespace-pre-wrap leading-relaxed">
+                                    {studentAns || '(Siswa tidak mengisi jawaban)'}
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {q.type === 'file_upload' && (
+                              <div className="space-y-2">
+                                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Lampiran Berkas Siswa:</span>
+                                {studentAns ? (
+                                  <div className="p-3 bg-white border border-gray-100 rounded-xl flex items-center justify-between gap-3">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                      <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg shrink-0">
+                                        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                        </svg>
+                                      </div>
+                                      <div className="min-w-0">
+                                        <p className="text-xs font-bold text-gray-700 truncate">{studentAns}</p>
+                                        <p className="text-[10px] text-gray-400">Berkas unggahan tugas</p>
+                                      </div>
+                                    </div>
+                                    <a
+                                      href={studentAns}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      referrerPolicy="no-referrer"
+                                      className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-[10px] font-bold cursor-pointer transition-colors shrink-0"
+                                    >
+                                      Unduh / Buka Berkas
+                                    </a>
+                                  </div>
+                                ) : (
+                                  <div className="p-3.5 bg-gray-50 border border-gray-100 rounded-xl text-xs text-gray-400 text-center italic">
+                                    Tidak ada file yang diunggah.
+                                  </div>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Answer Rubric / Guide for Teacher grading */}
+                            {q.answerGuide && q.answerGuide.trim() !== '' && isTeacher && (
+                              <div className="p-3.5 bg-amber-50/40 border border-amber-100 rounded-xl text-xs text-amber-800 space-y-1">
+                                <span className="text-[9px] font-bold text-amber-800 uppercase tracking-wide block">Panduan Koreksi / Rubrik Guru:</span>
+                                <p className="italic font-medium leading-relaxed">"{q.answerGuide}"</p>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="p-6 text-center text-xs text-gray-400 italic">
+                      Memuat daftar pertanyaan kuis...
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 2. Standard Multiple Choice Question rendering */}
+              {assignment?.assignmentType === 'multiple_choice' && (
+                <div className="space-y-4">
+                  {assignment.question && (
+                    <div className="p-4 bg-gray-50 rounded-xl border border-gray-100">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Pertanyaan Soal:</span>
+                      <p className="text-xs font-bold text-gray-800 leading-relaxed">{assignment.question}</p>
+                    </div>
+                  )}
+
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Opsi Pilihan Ganda & Jawaban Siswa:</span>
+                  <div className="grid grid-cols-1 gap-2.5">
+                    {(['A', 'B', 'C', 'D'] as const).map((opt) => {
+                      const choiceText = assignment.choices?.[opt] || '';
+                      const isStudentChoice = submission.selectedChoice === opt || submission.answer?.startsWith(`Pilihan Terpilih: ${opt}`);
+                      const isCorrect = assignment.correctChoice === opt;
+
+                      return (
+                        <div
+                          key={opt}
+                          className={`p-3.5 rounded-xl border flex items-center gap-3 ${
+                            isCorrect
+                              ? 'bg-green-50/60 border-green-200 text-green-950 font-semibold'
+                              : isStudentChoice
+                                ? 'bg-indigo-50/40 border-indigo-200 text-indigo-950'
+                                : 'bg-white border-gray-100 text-gray-700'
+                          }`}
+                        >
+                          <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold font-mono shrink-0 ${
+                            isCorrect
+                              ? 'bg-green-600 text-white'
+                              : isStudentChoice
+                                ? 'bg-indigo-600 text-white'
+                                : 'bg-gray-100 text-gray-500'
+                          }`}>
+                            {opt}
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs truncate">{choiceText}</p>
+                            {isCorrect && (
+                              <span className="text-[9px] font-bold text-green-600 uppercase tracking-wide block mt-0.5">Jawaban Benar</span>
+                            )}
+                            {isStudentChoice && !isCorrect && (
+                              <span className="text-[9px] font-bold text-indigo-600 uppercase tracking-wide block mt-0.5">Pilihan Siswa</span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* 3. Standard Multi Short Answer Question rendering */}
+              {assignment?.assignmentType === 'multi_short_answer' && (
+                <div className="space-y-4">
+                  {assignment.subQuestions?.map((qText: string, idx: number) => {
+                    const studentAns = submission.answers?.[idx] || '';
+
+                    return (
+                      <div key={idx} className="p-4 bg-white border border-gray-100 rounded-xl space-y-2.5">
+                        <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50/50 px-2 py-0.5 rounded-md font-mono">
+                          Soal {idx + 1}
+                        </span>
+                        <p className="text-xs font-bold text-gray-800 leading-normal">{qText}</p>
+                        <div className="p-3 bg-gray-50/50 border border-gray-100 rounded-lg">
+                          <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Jawaban Siswa:</span>
+                          <p className="text-xs text-gray-700 leading-relaxed font-medium whitespace-pre-wrap">{studentAns || '(Kosong)'}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* 4. Default: Standard Single Short Answer / Essay or other general type */}
+              {(!assignment?.assignmentType || (assignment?.assignmentType !== 'lms_composite' && assignment?.assignmentType !== 'multiple_choice' && assignment?.assignmentType !== 'multi_short_answer')) && (
+                <div className="space-y-4">
+                  {assignment?.question && (
+                    <div className="p-4 bg-gray-50 rounded-xl border border-gray-100/70">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Soal / Pertanyaan:</span>
+                      <p className="text-xs font-bold text-gray-800 leading-relaxed whitespace-pre-wrap">{assignment.question}</p>
+                    </div>
+                  )}
+                  <div className="p-4 bg-white border border-gray-100 rounded-xl">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1">Jawaban Siswa:</span>
+                    <p className="text-xs text-gray-800 leading-relaxed whitespace-pre-wrap font-sans">
+                      {submission.answer || '(Kosong)'}
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

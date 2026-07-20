@@ -56,6 +56,7 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answersMap, setAnswersMap] = useState<{[questionId: string]: string}>({});
   const [recordingStates, setRecordingStates] = useState<{[questionId: string]: boolean}>({});
+  const [isEditingResubmit, setIsEditingResubmit] = useState(false);
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -64,61 +65,100 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
       return;
     }
 
-    const loadData = async () => {
-      try {
-        // Load User Profile
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          setCurrentUserProfile(userDoc.data() as UserProfile);
+    // Load User Profile (one-time)
+    getDoc(doc(db, 'users', user.uid)).then((userDoc) => {
+      if (userDoc.exists()) {
+        setCurrentUserProfile(userDoc.data() as UserProfile);
+      }
+    }).catch(err => console.error("Error loading user profile:", err));
+
+    let unsubscribeQuestions: (() => void) | null = null;
+
+    // Listen to assignment details in real-time
+    const unsubscribeAssign = onSnapshot(doc(db, 'assignments', assignmentId), (docSnap) => {
+      if (docSnap.exists()) {
+        const assignData = { id: docSnap.id, ...docSnap.data() } as Assignment;
+        setAssignment(assignData);
+        if (assignData.subQuestions) {
+          setMultiAnswers(prev => prev.length === assignData.subQuestions!.length ? prev : new Array(assignData.subQuestions!.length).fill(''));
         }
 
-        // Load Assignment details
-        const assignDoc = await getDoc(doc(db, 'assignments', assignmentId));
-        if (assignDoc.exists()) {
-          const assignData = { id: assignDoc.id, ...assignDoc.data() } as Assignment;
-          setAssignment(assignData);
-          if (assignData.subQuestions) {
-            setMultiAnswers(new Array(assignData.subQuestions.length).fill(''));
+        if (assignData.assignmentType === 'lms_composite') {
+          let masterId = assignmentId;
+          const parts = assignmentId.split('_');
+          
+          if (assignData.masterId) {
+            masterId = assignData.masterId;
+          } else if (parts.length >= 3) {
+            masterId = `${parts[0]}_${parts[1]}`;
+          } else if (parts.length === 2) {
+            if (parts[0] === 'lms') {
+              masterId = assignmentId;
+            } else {
+              masterId = parts[0];
+            }
           }
 
-          if (assignData.assignmentType === 'lms_composite') {
-            const masterId = assignmentId.split('_')[0] || assignmentId;
-            const qSnap = await getDocs(query(collection(db, 'questions'), where('assignmentId', '==', masterId)));
-            const loadedQuestions: Question[] = [];
-            qSnap.forEach((doc) => {
-              loadedQuestions.push({ id: doc.id, ...doc.data() } as Question);
-            });
-            loadedQuestions.sort((a, b) => (a.order || 0) - (b.order || 0));
-            setQuestions(loadedQuestions);
-            
-            // Initialize answersMap
-            const initialMap: {[key: string]: string} = {};
-            loadedQuestions.forEach(q => {
-              initialMap[q.id] = '';
-            });
-            setAnswersMap(initialMap);
+          if (unsubscribeQuestions) {
+            unsubscribeQuestions();
           }
+
+          unsubscribeQuestions = onSnapshot(
+            query(collection(db, 'questions'), where('assignmentId', '==', masterId)),
+            (qSnap) => {
+              const loadedQuestions: Question[] = [];
+              qSnap.forEach((doc) => {
+                loadedQuestions.push({ id: doc.id, ...doc.data() } as Question);
+              });
+              loadedQuestions.sort((a, b) => (a.order || 0) - (b.order || 0));
+              setQuestions(loadedQuestions);
+              
+              // Initialize/merge answersMap
+              setAnswersMap(prev => {
+                const updated = { ...prev };
+                loadedQuestions.forEach(q => {
+                  if (updated[q.id] === undefined) {
+                    updated[q.id] = '';
+                  }
+                });
+                return updated;
+              });
+              setLoading(false);
+            }, (err) => {
+              console.error("Error listening to questions:", err);
+              setError('Gagal memuat pertanyaan.');
+              setLoading(false);
+            }
+          );
         } else {
-          setError('Tugas tidak ditemukan.');
+          setLoading(false);
         }
-      } catch (err) {
-        console.error(err);
-        setError('Gagal memuat detail tugas.');
-      } finally {
+      } else {
+        setError('Tugas tidak ditemukan.');
         setLoading(false);
       }
-    };
-
-    loadData();
+    }, (err) => {
+      console.error("Error listening to assignment:", err);
+      setError('Gagal memuat detail tugas.');
+      setLoading(false);
+    });
 
     // Listen to submission status in real-time
     const unsubscribeSub = onSnapshot(doc(db, 'submissions', assignmentId), (docSnap) => {
       if (docSnap.exists()) {
         setExistingSubmission({ id: docSnap.id, ...docSnap.data() } as Submission);
+      } else {
+        setExistingSubmission(null);
       }
     });
 
-    return () => unsubscribeSub();
+    return () => {
+      unsubscribeAssign();
+      if (unsubscribeQuestions) {
+        unsubscribeQuestions();
+      }
+      unsubscribeSub();
+    };
   }, [assignmentId, onNavigate]);
 
   const handleSubmitAnswer = async (e: React.FormEvent) => {
@@ -263,12 +303,67 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
               </span>
             </div>
 
-            <div className="space-y-3 bg-gray-50/50 p-5 rounded-2xl border border-gray-100/50">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Pertanyaan / Instruksi Guru:</span>
-              <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">
-                {assignment.question}
-              </p>
+            {/* Assignment Metadata Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4.5 bg-gray-50/50 border border-gray-100/50 rounded-2xl text-xs">
+              {assignment.deadline && (
+                <div className="space-y-0.5">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Tenggat Waktu</span>
+                  <span className="font-semibold text-gray-800">{assignment.deadline}</span>
+                </div>
+              )}
+              {assignment.estimatedDuration && (
+                <div className="space-y-0.5">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Durasi</span>
+                  <span className="font-semibold text-gray-800">{assignment.estimatedDuration} Menit</span>
+                </div>
+              )}
+              {(assignment.totalQuestions !== undefined || questions.length > 0) && (
+                <div className="space-y-0.5">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Total Soal</span>
+                  <span className="font-semibold text-gray-800">{assignment.totalQuestions || questions.length} Soal</span>
+                </div>
+              )}
+              {(assignment.totalPoints !== undefined || questions.length > 0) && (
+                <div className="space-y-0.5">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Total Bobot</span>
+                  <span className="font-semibold text-gray-800">
+                    {assignment.totalPoints || questions.reduce((sum, q) => sum + (q.points || 0), 0)} Poin
+                  </span>
+                </div>
+              )}
+              {assignment.difficulty && (
+                <div className="space-y-0.5 col-span-2 md:col-span-1">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Tingkat Kesulitan</span>
+                  <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold ${
+                    assignment.difficulty === 'Mudah'
+                      ? 'bg-green-50 text-green-700 border border-green-100'
+                      : assignment.difficulty === 'Sedang'
+                        ? 'bg-amber-50 text-amber-700 border border-amber-100'
+                        : 'bg-red-50 text-red-700 border border-red-100'
+                  }`}>
+                    {assignment.difficulty}
+                  </span>
+                </div>
+              )}
             </div>
+
+            {assignment.description && (
+              <div className="space-y-3 bg-gray-50/50 p-5 rounded-2xl border border-gray-100/50">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Petunjuk Pengerjaan:</span>
+                <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {assignment.description}
+                </p>
+              </div>
+            )}
+
+            {assignment.question && (!assignment.description || assignment.question !== assignment.description) && (
+              <div className="space-y-3 bg-gray-50/50 p-5 rounded-2xl border border-gray-100/50">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Pertanyaan / Instruksi Guru:</span>
+                <p className="text-xs text-gray-700 leading-relaxed whitespace-pre-wrap">
+                  {assignment.question}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Student Answer Panel / Submission Status */}
@@ -296,7 +391,7 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                 )}
               </div>
 
-              {existingSubmission && existingSubmission.status !== 'remedial' ? (
+              {existingSubmission && existingSubmission.status !== 'remedial' && !isEditingResubmit ? (
                 /* Already Submitted View */
                 <div className="space-y-4">
                   <div className="p-4 bg-green-50/50 border border-green-100 rounded-2xl text-xs text-green-700 flex items-start gap-2.5">
@@ -309,14 +404,48 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => onNavigate(`/submission/${assignmentId}`)}
-                    className="w-full sm:w-auto px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
-                    style={{ minHeight: '44px' }}
-                  >
-                    Buka Detail Submisi & Nilai
-                    <ArrowLeft className="w-4 h-4 rotate-180" />
-                  </button>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <button
+                      onClick={() => onNavigate(`/submission/${assignmentId}`)}
+                      className="w-full sm:w-auto px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                      style={{ minHeight: '44px' }}
+                    >
+                      Buka Detail Submisi & Nilai
+                      <ArrowLeft className="w-4 h-4 rotate-180" />
+                    </button>
+
+                    {assignment?.settings?.allowResubmission && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (existingSubmission) {
+                            if (existingSubmission.answersMap) {
+                              const newMap: {[key: string]: string} = {};
+                              Object.entries(existingSubmission.answersMap).forEach(([qId, val]: [string, any]) => {
+                                newMap[qId] = typeof val === 'object' ? (val.answer || '') : val;
+                              });
+                              setAnswersMap(prev => ({ ...prev, ...newMap }));
+                            }
+                            if (existingSubmission.answer) {
+                              setAnswer(existingSubmission.answer);
+                            }
+                            if (existingSubmission.selectedChoice) {
+                              setSelectedChoice(existingSubmission.selectedChoice as any);
+                            }
+                            if (existingSubmission.answers) {
+                              setMultiAnswers(existingSubmission.answers);
+                            }
+                          }
+                          setIsEditingResubmit(true);
+                        }}
+                        className="w-full sm:w-auto px-5 py-3 bg-white border border-gray-200 hover:bg-gray-50 text-gray-700 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all"
+                        style={{ minHeight: '44px' }}
+                      >
+                        <Plus className="w-4 h-4 text-indigo-600" />
+                        Kirim Ulang / Perbarui Jawaban
+                      </button>
+                    )}
+                  </div>
                 </div>
               ) : (
                 /* Form to write answer (or remedial retry form) */
