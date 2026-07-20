@@ -5,7 +5,8 @@ import {
   query, 
   where, 
   onSnapshot, 
-  orderBy 
+  orderBy,
+  doc 
 } from 'firebase/firestore';
 import { 
   BookOpen, 
@@ -23,7 +24,8 @@ import {
   Calendar,
   Layers,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Users
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { UserProfile, Assignment, Submission } from '../types';
@@ -43,6 +45,10 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
   const [studentProfile, setStudentProfile] = useState<UserProfile | null>(null);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+  
+  // My Circle Group Info
+  const [myCircle, setMyCircle] = useState<any>(null);
+  const [myCircleMembers, setMyCircleMembers] = useState<UserProfile[]>([]);
   
   // Loading & Error States
   const [loading, setLoading] = useState({
@@ -139,6 +145,42 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
       unsubscribeSubmissions();
     };
   }, [onNavigate]);
+
+  // Load My Circle Group Info
+  useEffect(() => {
+    if (studentProfile?.classType === 'CIRCLE' && studentProfile?.circleId) {
+      const unsubscribeCircle = onSnapshot(doc(db, 'circles', studentProfile.circleId), (docSnap) => {
+        if (docSnap.exists()) {
+          setMyCircle({ id: docSnap.id, ...docSnap.data() });
+        }
+      }, (err) => {
+        console.error('Error listening to circle:', err);
+      });
+
+      const membersQuery = query(
+        collection(db, 'users'),
+        where('circleId', '==', studentProfile.circleId),
+        where('classType', '==', 'CIRCLE')
+      );
+      const unsubscribeMembers = onSnapshot(membersQuery, (snapshot) => {
+        const mems: UserProfile[] = [];
+        snapshot.forEach((doc) => {
+          mems.push({ uid: doc.id, ...doc.data() } as UserProfile);
+        });
+        setMyCircleMembers(mems);
+      }, (err) => {
+        console.error('Error listening to circle members:', err);
+      });
+
+      return () => {
+        unsubscribeCircle();
+        unsubscribeMembers();
+      };
+    } else {
+      setMyCircle(null);
+      setMyCircleMembers([]);
+    }
+  }, [studentProfile?.circleId, studentProfile?.classType]);
 
   const handleLogout = async () => {
     onSetLoading(true);
@@ -247,8 +289,15 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                   {/* Top Welcome Panel */}
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-6">
                     <div>
-                      <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 tracking-tight flex items-center gap-2">
+                      <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 tracking-tight flex items-center gap-2 flex-wrap">
                         <span>Halo, {studentProfile?.fullName?.split(' ')[0] || 'Siswa'}!</span>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border shrink-0 ${
+                          studentProfile?.classType === 'CIRCLE'
+                            ? 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100'
+                            : 'bg-teal-50 text-teal-700 border-teal-100'
+                        }`}>
+                          {studentProfile?.classType || 'PRIVATE'}
+                        </span>
                         <Sparkles className="w-5 h-5 text-indigo-500 animate-pulse shrink-0" />
                       </h1>
                       <p className="text-xs text-gray-500 mt-1">
@@ -436,6 +485,45 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                           </button>
                         </div>
                       </div>
+
+                      {/* Kavio Circle Saya */}
+                      {studentProfile?.classType === 'CIRCLE' && myCircle && (
+                        <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">
+                          <div className="flex items-center justify-between">
+                            <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 uppercase tracking-wide">
+                              <Users className="w-4.5 h-4.5 text-fuchsia-500" />
+                              Kavio Circle Saya
+                            </h3>
+                            <span className="text-[10px] bg-fuchsia-50 text-fuchsia-700 px-2.5 py-0.5 rounded-full font-bold">
+                              {myCircleMembers.length} / {myCircle.capacity || 6} Anggota
+                            </span>
+                          </div>
+
+                          <div className="space-y-1 bg-gray-50/50 p-3 rounded-2xl border border-gray-100/50">
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Nama Kelompok</span>
+                            <span className="text-sm font-bold text-gray-950 block">{myCircle.name}</span>
+                          </div>
+
+                          <div className="space-y-2">
+                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Teman Belajar (Anggota)</span>
+                            <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                              {myCircleMembers.map((member) => {
+                                const isMe = member.uid === studentProfile.uid;
+                                return (
+                                  <div key={member.uid} className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-gray-50 transition-colors">
+                                    <div className={`w-6 h-6 rounded-lg font-bold text-[10px] flex items-center justify-center ${isMe ? 'bg-indigo-50 text-indigo-600' : 'bg-gray-100 text-gray-600'}`}>
+                                      {member.fullName?.charAt(0).toUpperCase()}
+                                    </div>
+                                    <span className={`text-xs font-semibold truncate flex-1 ${isMe ? 'text-indigo-600 font-bold' : 'text-gray-700'}`}>
+                                      {member.fullName} {isMe && '(Saya)'}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      )}
 
                       {/* Evaluasi Catatan Guru */}
                       <div className="bg-white border border-gray-100 rounded-3xl p-6 shadow-3xs space-y-4">

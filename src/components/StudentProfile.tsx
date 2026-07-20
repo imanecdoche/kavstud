@@ -7,7 +7,8 @@ import {
   query, 
   where, 
   onSnapshot, 
-  orderBy 
+  orderBy,
+  updateDoc 
 } from 'firebase/firestore';
 import { 
   ArrowLeft, 
@@ -48,25 +49,19 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
       return;
     }
 
-    // Fetch Student Profile
-    const fetchStudentProfile = async () => {
-      try {
-        const docRef = doc(db, 'users', studentId);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          setStudent({ uid: docSnap.id, ...docSnap.data() } as UserProfile);
-        } else {
-          setError('Siswa tidak ditemukan.');
-        }
-      } catch (err) {
-        console.error(err);
-        setError('Gagal memuat profil siswa.');
-      } finally {
-        setLoading(prev => ({ ...prev, profile: false }));
+    // Fetch Student Profile (Real-time listener)
+    const unsubscribeProfile = onSnapshot(doc(db, 'users', studentId), (docSnap) => {
+      if (docSnap.exists()) {
+        setStudent({ uid: docSnap.id, ...docSnap.data() } as UserProfile);
+      } else {
+        setError('Siswa tidak ditemukan.');
       }
-    };
-
-    fetchStudentProfile();
+      setLoading(prev => ({ ...prev, profile: false }));
+    }, (err) => {
+      console.error(err);
+      setError('Gagal memuat profil siswa.');
+      setLoading(prev => ({ ...prev, profile: false }));
+    });
 
     // Listen to Student's Assignments (Real-time)
     const assignmentsQuery = query(
@@ -123,6 +118,7 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
     });
 
     return () => {
+      unsubscribeProfile();
       unsubscribeAssignments();
       unsubscribeSubmissions();
     };
@@ -137,6 +133,26 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
     : null;
 
   const isPageLoading = loading.profile && loading.assignments && loading.submissions;
+
+  const handleUpdateClassType = async (type: 'PRIVATE' | 'CIRCLE') => {
+    if (!student) return;
+    try {
+      onSetLoading(true);
+      const updatePayload: any = {
+        classType: type,
+        updatedAt: new Date()
+      };
+      if (type === 'PRIVATE') {
+        updatePayload.circleId = null;
+      }
+      await updateDoc(doc(db, 'users', studentId), updatePayload);
+    } catch (err) {
+      console.error(err);
+      setError('Gagal memperbarui Tipe Kelas.');
+    } finally {
+      onSetLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4 sm:p-8 lg:p-12 space-y-8 max-w-5xl mx-auto" id="student-profile-page">
@@ -181,8 +197,44 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
                   {student.fullName?.charAt(0).toUpperCase() || 'S'}
                 </div>
                 <div>
-                  <h2 className="text-sm font-bold text-gray-900">{student.fullName}</h2>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-sm font-bold text-gray-900">{student.fullName}</h2>
+                    <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold uppercase shrink-0 ${
+                      student.classType === 'PRIVATE'
+                        ? 'bg-teal-50 text-teal-700 border border-teal-100'
+                        : 'bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-100'
+                    }`}>
+                      {student.classType || 'PRIVATE'}
+                    </span>
+                  </div>
                   <p className="text-[11px] text-gray-400 font-semibold uppercase mt-0.5">Siswa Kavio Edu</p>
+                </div>
+              </div>
+
+              {/* Class Type Editor Toggles */}
+              <div className="space-y-2 border-t border-b border-gray-50 py-4">
+                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Ubah Tipe Kelas (Class Type)</span>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleUpdateClassType('PRIVATE')}
+                    className={`flex-1 py-1.5 px-3 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
+                      (student.classType || 'PRIVATE') === 'PRIVATE'
+                        ? 'bg-teal-50 text-teal-700 border-teal-200'
+                        : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    PRIVATE
+                  </button>
+                  <button
+                    onClick={() => handleUpdateClassType('CIRCLE')}
+                    className={`flex-1 py-1.5 px-3 rounded-lg text-[10px] font-bold border transition-all cursor-pointer ${
+                      student.classType === 'CIRCLE'
+                        ? 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200'
+                        : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                    }`}
+                  >
+                    CIRCLE
+                  </button>
                 </div>
               </div>
 

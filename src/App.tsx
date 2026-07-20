@@ -12,6 +12,7 @@ import StudentProfile from './components/StudentProfile';
 import AssignmentDetail from './components/AssignmentDetail';
 import SubmissionDetail from './components/SubmissionDetail';
 import UserSettings from './components/UserSettings';
+import CircleProfile from './components/CircleProfile';
 import NotFound from './components/NotFound';
 import Logo from './components/Logo';
 import { UserProfile } from './types';
@@ -105,6 +106,10 @@ export default function App() {
   const isStudentProfilePath = path.startsWith('/student/') && path !== '/student';
   const studentIdParam = isStudentProfilePath ? path.split('/')[2] : '';
 
+  // Matches: /circle/:id
+  const isCircleProfilePath = path.startsWith('/circle/') && path !== '/circle';
+  const circleIdParam = isCircleProfilePath ? path.split('/')[2] : '';
+
   // Matches: /assignment/:id
   const isAssignmentDetailPath = path.startsWith('/assignment/');
   const assignmentIdParam = isAssignmentDetailPath ? path.split('/')[2] : '';
@@ -139,6 +144,8 @@ export default function App() {
           <UserSettings onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : isStudentProfilePath ? (
           <StudentProfile studentId={studentIdParam} onNavigate={navigate} onSetLoading={setGlobalLoading} />
+        ) : isCircleProfilePath ? (
+          <CircleProfile circleId={circleIdParam} onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : isAssignmentDetailPath ? (
           <AssignmentDetail assignmentId={assignmentIdParam} onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : isSubmissionDetailPath ? (

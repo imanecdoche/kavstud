@@ -20,14 +20,16 @@ export interface UserProfile {
     assignment: boolean;
     score: boolean;
   };
+  classType?: 'PRIVATE' | 'CIRCLE';
+  circleId?: string | null;
 }
 
 export interface Assignment {
   id: string;
   title: string;
   question: string;
-  studentId: string;
-  studentName: string;
+  studentId?: string; // Optional if assigned to Circle
+  studentName?: string; // Optional if assigned to Circle
   teacherId: string;
   teacherName: string;
   createdAt: any; // Firestore Timestamp
@@ -42,6 +44,19 @@ export interface Assignment {
   };
   correctChoice?: 'A' | 'B' | 'C' | 'D';
   subQuestions?: string[];
+  assignmentTarget?: 'INDIVIDUAL' | 'CIRCLE';
+  targetId?: string; // studentId or circleId
+}
+
+export interface Circle {
+  id: string; // circleId
+  teacherId: string;
+  name: string;
+  description?: string;
+  capacity: number; // default: 5
+  createdAt: any; // Firestore Timestamp
+  updatedAt?: any; // Firestore Timestamp
+  isArchived?: boolean; // default: false
 }
 
 export interface Submission {

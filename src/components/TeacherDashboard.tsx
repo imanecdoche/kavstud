@@ -39,6 +39,7 @@ import { UserProfile, Assignment, Submission } from '../types';
 import Logo from './Logo';
 import NavigationSidebar from './NavigationSidebar';
 import UserSettings from './UserSettings';
+import CircleManagement from './CircleManagement';
 import EmptyState from './EmptyState';
 import { SkeletonDashboard, SkeletonList } from './Skeletons';
 
@@ -48,7 +49,7 @@ interface TeacherDashboardProps {
 }
 
 export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'assignments' | 'settings'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'assignments' | 'settings' | 'circles'>('dashboard');
   const [teacherProfile, setTeacherProfile] = useState<UserProfile | null>(null);
   const [students, setStudents] = useState<UserProfile[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -79,6 +80,9 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
   const [newTitle, setNewTitle] = useState('');
   const [newQuestion, setNewQuestion] = useState('');
   const [selectedStudentId, setSelectedStudentId] = useState('');
+  const [assignmentTarget, setAssignmentTarget] = useState<'INDIVIDUAL' | 'CIRCLE'>('INDIVIDUAL');
+  const [selectedCircleId, setSelectedCircleId] = useState('');
+  const [circles, setCircles] = useState<any[]>([]);
   const [assignmentType, setAssignmentType] = useState<'short_answer' | 'multiple_choice' | 'multi_short_answer'>('short_answer');
   const [deadline, setDeadline] = useState('');
   const [choices, setChoices] = useState({ A: '', B: '', C: '', D: '' });
@@ -182,11 +186,27 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
       });
     });
 
+    // Real-time Circles List for this teacher
+    const circlesQuery = query(
+      collection(db, 'circles'),
+      where('teacherId', '==', user.uid)
+    );
+    const unsubscribeCircles = onSnapshot(circlesQuery, (snapshot) => {
+      const circs: any[] = [];
+      snapshot.forEach((doc) => {
+        circs.push({ id: doc.id, ...doc.data() });
+      });
+      setCircles(circs);
+    }, (err) => {
+      console.error('Error fetching circles:', err);
+    });
+
     return () => {
       unsubscribeProfile();
       unsubscribeStudents();
       unsubscribeAssignments();
       unsubscribeSubmissions();
+      unsubscribeCircles();
     };
   }, [onNavigate]);
 
@@ -237,6 +257,8 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
     setNewTitle('');
     setNewQuestion('');
     setSelectedStudentId('');
+    setSelectedCircleId('');
+    setAssignmentTarget('INDIVIDUAL');
     setAssignmentType('short_answer');
     setDeadline('');
     setChoices({ A: '', B: '', C: '', D: '' });
@@ -253,6 +275,8 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
     setNewTitle(assign.title);
     setNewQuestion(assign.question);
     setSelectedStudentId(assign.studentId);
+    setAssignmentTarget(assign.assignmentTarget || 'INDIVIDUAL');
+    setSelectedCircleId(assign.assignmentTarget === 'CIRCLE' ? assign.targetId || '' : '');
     setAssignmentType(assign.assignmentType || 'short_answer');
     setDeadline(assign.deadline || '');
     setChoices(assign.choices || { A: '', B: '', C: '', D: '' });
@@ -285,8 +309,18 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
   const handleSaveAssignment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newTitle.trim() || !newQuestion.trim() || !selectedStudentId) {
+    if (!newTitle.trim() || !newQuestion.trim()) {
       setFormError('Semua kolom formulir wajib diisi.');
+      return;
+    }
+
+    if (assignmentTarget === 'INDIVIDUAL' && !selectedStudentId) {
+      setFormError('Silakan pilih siswa penerima tugas.');
+      return;
+    }
+
+    if (assignmentTarget === 'CIRCLE' && !selectedCircleId) {
+      setFormError('Silakan pilih kelompok belajar Circle penerima tugas.');
       return;
     }
 
@@ -305,22 +339,15 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
     setIsSubmitting(true);
     setFormError(null);
 
-    const targetStudent = students.find(s => s.uid === selectedStudentId);
-    if (!targetStudent) {
-      setFormError('Siswa terpilih tidak valid.');
-      setIsSubmitting(false);
-      return;
-    }
-
     try {
       const assignmentPayload: any = {
         title: newTitle.trim(),
         question: newQuestion.trim(),
-        studentId: selectedStudentId,
-        studentName: targetStudent.fullName,
         teacherId: auth.currentUser?.uid || '',
         teacherName: teacherProfile?.fullName || 'Guru Kavio',
         assignmentType,
+        assignmentTarget,
+        targetId: assignmentTarget === 'INDIVIDUAL' ? selectedStudentId : selectedCircleId,
         deadline: deadline || '',
         status: isEditMode ? (assignments.find(a => a.id === editingAssignmentId)?.status || 'sent') : 'sent',
       };
@@ -333,16 +360,53 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
       }
 
       if (isEditMode && editingAssignmentId) {
+        const original = assignments.find(a => a.id === editingAssignmentId);
+        assignmentPayload.studentId = original?.studentId;
+        assignmentPayload.studentName = original?.studentName;
         await updateDoc(doc(db, 'assignments', editingAssignmentId), assignmentPayload);
       } else {
         assignmentPayload.createdAt = serverTimestamp();
-        await addDoc(collection(db, 'assignments'), assignmentPayload);
+
+        if (assignmentTarget === 'INDIVIDUAL') {
+          const targetStudent = students.find(s => s.uid === selectedStudentId);
+          if (!targetStudent) {
+            setFormError('Siswa terpilih tidak ditemukan.');
+            setIsSubmitting(false);
+            return;
+          }
+          assignmentPayload.studentId = selectedStudentId;
+          assignmentPayload.studentName = targetStudent.fullName;
+          await addDoc(collection(db, 'assignments'), assignmentPayload);
+        } else {
+          // Circle Target: find active members in the circle
+          const targetCircleMembers = students.filter(
+            s => s.circleId === selectedCircleId && s.classType === 'CIRCLE'
+          );
+
+          if (targetCircleMembers.length === 0) {
+            setFormError('Kelompok belajar Circle yang Anda pilih saat ini tidak memiliki anggota siswa.');
+            setIsSubmitting(false);
+            return;
+          }
+
+          // Create an assignment document for each member
+          for (const member of targetCircleMembers) {
+            const memberPayload = {
+              ...assignmentPayload,
+              studentId: member.uid,
+              studentName: member.fullName
+            };
+            await addDoc(collection(db, 'assignments'), memberPayload);
+          }
+        }
       }
 
       // Reset form & close modal
       setNewTitle('');
       setNewQuestion('');
       setSelectedStudentId('');
+      setSelectedCircleId('');
+      setAssignmentTarget('INDIVIDUAL');
       setAssignmentType('short_answer');
       setDeadline('');
       setChoices({ A: '', B: '', C: '', D: '' });
@@ -353,7 +417,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
       setEditingAssignmentId(null);
     } catch (err) {
       console.error(err);
-      setFormError(isEditMode ? 'Gagal memperbarui tugas.' : 'Gagal mengirim tugas ke siswa.');
+      setFormError(isEditMode ? 'Gagal memperbarui tugas.' : 'Gagal mengirim tugas.');
     } finally {
       setIsSubmitting(false);
     }
@@ -641,7 +705,16 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                                     {stud.fullName?.charAt(0).toUpperCase() || 'S'}
                                   </div>
                                   <div className="min-w-0">
-                                    <p className="text-xs font-bold text-gray-900 truncate leading-tight">{stud.fullName}</p>
+                                    <div className="flex items-center gap-1.5 flex-wrap">
+                                      <p className="text-xs font-bold text-gray-900 truncate leading-tight">{stud.fullName}</p>
+                                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold uppercase ${
+                                        stud.classType === 'PRIVATE'
+                                          ? 'bg-teal-50 text-teal-700 border border-teal-100'
+                                          : 'bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-100'
+                                      }`}>
+                                        {stud.classType || 'PRIVATE'}
+                                      </span>
+                                    </div>
                                     <p className="text-[10px] text-gray-400 truncate mt-0.5">{stud.email}</p>
                                   </div>
                                 </div>
@@ -860,6 +933,18 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 </>
               )}
 
+              {/* TAB: CIRCLE MANAGEMENT */}
+              {activeTab === 'circles' && (
+                <div className="max-w-6xl mx-auto">
+                  <CircleManagement
+                    students={students}
+                    teacherProfile={teacherProfile}
+                    onNavigate={onNavigate}
+                    onSetLoading={onSetLoading}
+                  />
+                </div>
+              )}
+
               {/* TAB 3: SETTINGS INLINE */}
               {activeTab === 'settings' && (
                 <div className="max-w-4xl mx-auto space-y-6">
@@ -949,26 +1034,90 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 />
               </div>
 
-              {/* Target Student */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-gray-700">
-                  Pilih Siswa <span className="text-red-500">*</span>
-                </label>
-                <select
-                  required
-                  disabled={isEditMode}
-                  value={selectedStudentId}
-                  onChange={(e) => setSelectedStudentId(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
-                >
-                  <option value="">-- Pilih Siswa Penerima --</option>
-                  {students.map(s => (
-                    <option key={s.uid} value={s.uid}>
-                      {s.fullName} ({s.email})
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {/* Target Selection (Individual vs. Circle) */}
+              {!isEditMode && (
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-gray-700">
+                    Target Penerima Tugas <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAssignmentTarget('INDIVIDUAL');
+                        setSelectedCircleId('');
+                      }}
+                      className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                        assignmentTarget === 'INDIVIDUAL'
+                          ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                          : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      Individu Siswa
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAssignmentTarget('CIRCLE');
+                        setSelectedStudentId('');
+                      }}
+                      className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                        assignmentTarget === 'CIRCLE'
+                          ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                          : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                      }`}
+                    >
+                      Kavio Circle
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Conditional Recipient Field */}
+              {assignmentTarget === 'INDIVIDUAL' ? (
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-gray-700">
+                    Pilih Siswa <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    required
+                    disabled={isEditMode}
+                    value={selectedStudentId}
+                    onChange={(e) => setSelectedStudentId(e.target.value)}
+                    className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
+                  >
+                    <option value="">-- Pilih Siswa Penerima --</option>
+                    {students.map(s => (
+                      <option key={s.uid} value={s.uid}>
+                        {s.fullName} ({s.classType || 'PRIVATE'})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-semibold text-gray-700">
+                    Pilih Kelompok Belajar (Circle) <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    required
+                    disabled={isEditMode}
+                    value={selectedCircleId}
+                    onChange={(e) => setSelectedCircleId(e.target.value)}
+                    className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
+                  >
+                    <option value="">-- Pilih Circle Penerima --</option>
+                    {circles.map(c => {
+                      const memberCount = students.filter(s => s.circleId === c.id && s.classType === 'CIRCLE').length;
+                      return (
+                        <option key={c.id} value={c.id}>
+                          {c.name} ({memberCount} Siswa)
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+              )}
 
               {/* Assignment Type Selector */}
               <div className="space-y-1.5">

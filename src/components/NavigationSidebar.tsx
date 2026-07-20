@@ -8,7 +8,8 @@ import {
   ChevronRight, 
   Menu, 
   X,
-  User
+  User,
+  CircleDot
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Logo from './Logo';
@@ -16,8 +17,8 @@ import { UserProfile } from '../types';
 
 interface NavigationSidebarProps {
   role: 'teacher' | 'student';
-  activeTab: 'dashboard' | 'assignments' | 'settings';
-  setActiveTab: (tab: 'dashboard' | 'assignments' | 'settings') => void;
+  activeTab: 'dashboard' | 'assignments' | 'settings' | 'circles';
+  setActiveTab: (tab: 'dashboard' | 'assignments' | 'settings' | 'circles') => void;
   userProfile: UserProfile | null;
   onLogout: () => void;
   isMobileOpen: boolean;
@@ -53,6 +54,13 @@ export default function NavigationSidebar({
       label: 'Dashboard',
       icon: LayoutDashboard
     },
+    ...(role === 'teacher' ? [
+      {
+        id: 'circles' as const,
+        label: 'Kavio Circle',
+        icon: CircleDot
+      }
+    ] : []),
     {
       id: 'assignments' as const,
       label: role === 'teacher' ? 'Kelola Tugas' : 'Tugas Saya',
