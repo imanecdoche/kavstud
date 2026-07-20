@@ -215,11 +215,10 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
   useEffect(() => {
     const assignToStudentId = sessionStorage.getItem('assignToStudentId');
     if (assignToStudentId && students.length > 0) {
-      setSelectedStudentId(assignToStudentId);
-      setIsModalOpen(true);
       sessionStorage.removeItem('assignToStudentId');
+      onNavigate(`/teacher/assignments/create?studentId=${assignToStudentId}`);
     }
-  }, [students, isModalOpen, activeTab]);
+  }, [students, activeTab, onNavigate]);
 
   const handleLogout = async () => {
     onSetLoading(true);
@@ -493,7 +492,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                     </div>
 
                     <button
-                      onClick={() => setIsModalOpen(true)}
+                      onClick={() => onNavigate('/teacher/assignments/create')}
                       className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
                       style={{ minHeight: '44px' }}
                     >
@@ -622,7 +621,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                             title="Belum Ada Tugas"
                             description="Anda belum membuat tugas untuk siswa."
                             actionText="Buat Tugas Pertama"
-                            onActionClick={() => setIsModalOpen(true)}
+                            onActionClick={() => onNavigate('/teacher/assignments/create')}
                           />
                         ) : (
                           <div className="divide-y divide-gray-50 max-h-80 overflow-y-auto pr-1">
@@ -657,7 +656,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                         <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wide">Aksi Cepat</h3>
                         <div className="grid grid-cols-1 gap-2.5">
                           <button
-                            onClick={() => setIsModalOpen(true)}
+                            onClick={() => onNavigate('/teacher/assignments/create')}
                             className="w-full p-3 bg-indigo-50/50 hover:bg-indigo-50 border border-indigo-100/30 rounded-xl flex items-center gap-3 transition-colors text-left text-xs font-bold text-indigo-700 cursor-pointer"
                           >
                             <Plus className="w-4 h-4 text-indigo-500 shrink-0" />
@@ -744,7 +743,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                     </div>
 
                     <button
-                      onClick={openCreateModal}
+                      onClick={() => onNavigate('/teacher/assignments/create')}
                       className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
                       style={{ minHeight: '44px' }}
                     >
@@ -886,7 +885,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
                                 <div className="flex items-center gap-2">
                                   <button
-                                    onClick={(e) => openEditModal(assign, e)}
+                                    onClick={(e) => { e.stopPropagation(); onNavigate(`/teacher/assignments/${assign.id}/edit`); }}
                                     className="p-1 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors cursor-pointer"
                                     title="Edit Tugas"
                                   >

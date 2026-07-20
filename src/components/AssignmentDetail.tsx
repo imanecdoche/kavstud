@@ -5,7 +5,11 @@ import {
   getDoc, 
   setDoc, 
   onSnapshot,
-  serverTimestamp 
+  serverTimestamp,
+  collection,
+  query,
+  where,
+  getDocs
 } from 'firebase/firestore';
 import { 
   ArrowLeft, 
@@ -15,9 +19,16 @@ import {
   Eye, 
   CheckCircle, 
   AlertCircle,
-  Clock
+  Clock,
+  Play,
+  Volume2,
+  Mic,
+  UploadCloud,
+  Check,
+  X,
+  Plus
 } from 'lucide-react';
-import { Assignment, Submission, UserProfile } from '../types';
+import { Assignment, Submission, UserProfile, Question } from '../types';
 
 interface AssignmentDetailProps {
   assignmentId: string;
@@ -41,6 +52,11 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  // LMS Composite specific states
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [answersMap, setAnswersMap] = useState<{[questionId: string]: string}>({});
+  const [recordingStates, setRecordingStates] = useState<{[questionId: string]: boolean}>({});
+
   useEffect(() => {
     const user = auth.currentUser;
     if (!user) {
@@ -63,6 +79,24 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
           setAssignment(assignData);
           if (assignData.subQuestions) {
             setMultiAnswers(new Array(assignData.subQuestions.length).fill(''));
+          }
+
+          if (assignData.assignmentType === 'lms_composite') {
+            const masterId = assignmentId.split('_')[0] || assignmentId;
+            const qSnap = await getDocs(query(collection(db, 'questions'), where('assignmentId', '==', masterId)));
+            const loadedQuestions: Question[] = [];
+            qSnap.forEach((doc) => {
+              loadedQuestions.push({ id: doc.id, ...doc.data() } as Question);
+            });
+            loadedQuestions.sort((a, b) => (a.order || 0) - (b.order || 0));
+            setQuestions(loadedQuestions);
+            
+            // Initialize answersMap
+            const initialMap: {[key: string]: string} = {};
+            loadedQuestions.forEach(q => {
+              initialMap[q.id] = '';
+            });
+            setAnswersMap(initialMap);
           }
         } else {
           setError('Tugas tidak ditemukan.');
@@ -103,7 +137,32 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
       gradedAt: null
     };
 
-    if (assignment?.assignmentType === 'multiple_choice') {
+    if (assignment?.assignmentType === 'lms_composite') {
+      const finalAnswersMap: any = {};
+      let unansweredCount = 0;
+      questions.forEach(q => {
+        const studentAns = answersMap[q.id] || '';
+        if (!studentAns.trim()) {
+          unansweredCount++;
+        }
+        finalAnswersMap[q.id] = {
+          answer: studentAns,
+          pointsEarned: 0,
+          status: 'pending',
+          feedback: ''
+        };
+      });
+
+      if (assignment?.settings?.requireAll && unansweredCount > 0) {
+        setSubmitError(`Harap jawab seluruh ${unansweredCount} pertanyaan yang masih kosong.`);
+        return;
+      }
+
+      payload.answersMap = finalAnswersMap;
+      payload.totalPossiblePoints = assignment.totalPoints || questions.reduce((sum, q) => sum + (q.points || 0), 0);
+      payload.totalPointsEarned = 0;
+      answerText = `Kuis LMS Composite: ${questions.length} Soal dikirimkan.`;
+    } else if (assignment?.assignmentType === 'multiple_choice') {
       if (!selectedChoice) {
         setSubmitError('Pilih salah satu jawaban.');
         return;
@@ -287,6 +346,271 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                     </div>
                   )}
 
+                  {/* LMS Composite Form Rendering */}
+                  {assignment.assignmentType === 'lms_composite' && questions.length > 0 && (
+                    <div className="space-y-6">
+                      <div className="bg-gray-50 border border-gray-200 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                        <div className="text-xs">
+                          <p className="font-bold text-gray-800">Ujian Berbasis LMS</p>
+                          <p className="text-gray-400 mt-0.5">Total Pertanyaan: {questions.length} | Total Bobot: {assignment.totalPoints || questions.reduce((sum, q) => sum + q.points, 0)} Poin</p>
+                        </div>
+                        {assignment.estimatedDuration && (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 border border-indigo-100/50 rounded-xl text-xs font-bold text-indigo-700">
+                            <Clock className="w-3.5 h-3.5" />
+                            Durasi: {assignment.estimatedDuration} Menit
+                          </span>
+                        )}
+                      </div>
+
+                      {questions.map((q, idx) => {
+                        const studentAnswer = answersMap[q.id] || '';
+                        
+                        return (
+                          <div key={q.id} className="p-6 bg-white border border-gray-200 rounded-3xl space-y-4 shadow-3xs relative">
+                            {/* Question Header */}
+                            <div className="flex items-start justify-between gap-4 border-b border-gray-50 pb-3">
+                              <div className="flex items-center gap-2">
+                                <span className="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-700 text-xs font-bold flex items-center justify-center font-mono">
+                                  {idx + 1}
+                                </span>
+                                <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                                  {q.type.replace('_', ' ')}
+                                </span>
+                              </div>
+                              <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50/50 px-2 py-0.5 rounded-md font-mono">
+                                {q.points || 10} Poin
+                              </span>
+                            </div>
+
+                            {/* Question Body */}
+                            <p className="text-xs font-bold text-gray-800 leading-relaxed whitespace-pre-wrap">
+                              {q.question}
+                            </p>
+
+                            {/* 1. Essay Type Input */}
+                            {q.type === 'essay' && (
+                              <textarea
+                                required={assignment.settings?.requireAll}
+                                rows={4}
+                                value={studentAnswer}
+                                onChange={(e) => setAnswersMap({ ...answersMap, [q.id]: e.target.value })}
+                                placeholder="Ketik jawaban esai Anda di sini..."
+                                className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 font-sans resize-none"
+                              />
+                            )}
+
+                            {/* 2. Multiple Choice Type Input */}
+                            {q.type === 'multiple_choice' && q.choices && (
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                                {q.choices.map((choice, cIdx) => {
+                                  const optLetter = String.fromCharCode(65 + cIdx); // A, B, C, D...
+                                  const isSelected = studentAnswer === optLetter;
+
+                                  return (
+                                    <button
+                                      key={cIdx}
+                                      type="button"
+                                      onClick={() => setAnswersMap({ ...answersMap, [q.id]: optLetter })}
+                                      className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
+                                        isSelected 
+                                          ? 'bg-indigo-50/50 border-indigo-600 ring-1 ring-indigo-600 shadow-3xs' 
+                                          : 'bg-white border-gray-200 hover:border-gray-300'
+                                      }`}
+                                    >
+                                      <span className={`w-5.5 h-5.5 rounded-full flex items-center justify-center text-[10px] font-bold font-mono transition-colors ${
+                                        isSelected ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-500'
+                                      }`}>
+                                        {optLetter}
+                                      </span>
+                                      <span className="text-xs font-semibold text-gray-700">{choice}</span>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            )}
+
+                            {/* 3. True or False Type Input */}
+                            {q.type === 'true_false' && (
+                              <div className="flex gap-3 pt-1">
+                                {[
+                                  { val: 'true', label: 'BENAR / TRUE' },
+                                  { val: 'false', label: 'SALAH / FALSE' }
+                                ].map((option) => {
+                                  const isSelected = studentAnswer === option.val;
+                                  return (
+                                    <button
+                                      key={option.val}
+                                      type="button"
+                                      onClick={() => setAnswersMap({ ...answersMap, [q.id]: option.val })}
+                                      className={`flex-1 py-3 px-4 rounded-xl border text-center text-xs font-bold transition-all cursor-pointer ${
+                                        isSelected
+                                          ? 'bg-indigo-50/50 border-indigo-600 ring-1 ring-indigo-600 text-indigo-700'
+                                          : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50'
+                                      }`}
+                                    >
+                                      {option.label}
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            )}
+
+                            {/* 4. Matching Type Input */}
+                            {q.type === 'matching' && q.matchingPairs && (
+                              <div className="space-y-3 pt-1">
+                                <p className="text-[10px] text-gray-400 font-bold uppercase">Pasangkan Unsur Kiri dengan Kanan:</p>
+                                <div className="space-y-2.5">
+                                  {q.matchingPairs.map((pair, pIdx) => {
+                                    const currentAnswersList = studentAnswer ? studentAnswer.split(',') : [];
+                                    const matchingMap: {[left: string]: string} = {};
+                                    currentAnswersList.forEach(item => {
+                                      const [l, r] = item.split('::');
+                                      if (l) matchingMap[l] = r || '';
+                                    });
+
+                                    const selectedRightVal = matchingMap[pair.left] || '';
+
+                                    return (
+                                      <div key={pIdx} className="flex flex-col sm:flex-row sm:items-center gap-2.5 p-3 bg-gray-50/50 rounded-xl border border-gray-100">
+                                        <span className="text-xs font-bold text-gray-700 min-w-[120px]">{pair.left}</span>
+                                        <div className="hidden sm:block text-gray-400 font-mono">➡</div>
+                                        <select
+                                          value={selectedRightVal}
+                                          onChange={(e) => {
+                                            const val = e.target.value;
+                                            matchingMap[pair.left] = val;
+                                            const serialized = Object.entries(matchingMap)
+                                              .map(([l, r]) => `${l}::${r}`)
+                                              .join(',');
+                                            setAnswersMap({ ...answersMap, [q.id]: serialized });
+                                          }}
+                                          className="flex-1 p-2 bg-white border border-gray-200 rounded-lg text-xs"
+                                        >
+                                          <option value="">-- Pilih Jawaban --</option>
+                                          {q.matchingPairs?.map((itemRight, rIdx) => (
+                                            <option key={rIdx} value={itemRight.right}>{itemRight.right}</option>
+                                          ))}
+                                        </select>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* 5. Fill Blank Input */}
+                            {q.type === 'fill_blank' && (
+                              <input
+                                type="text"
+                                value={studentAnswer}
+                                onChange={(e) => setAnswersMap({ ...answersMap, [q.id]: e.target.value })}
+                                placeholder="Tulis isian jawaban singkat Anda di sini..."
+                                className="block w-full px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500"
+                              />
+                            )}
+
+                            {/* 6. Listening Input */}
+                            {q.type === 'listening' && (
+                              <div className="space-y-3 pt-1">
+                                {q.audioUrl ? (
+                                  <div className="p-3 bg-gray-50 border border-gray-200 rounded-xl flex items-center gap-3">
+                                    <Volume2 className="w-5 h-5 text-indigo-600 shrink-0" />
+                                    <audio src={q.audioUrl} controls className="w-full h-8" />
+                                  </div>
+                                ) : (
+                                  <div className="p-3 bg-yellow-50 text-yellow-800 rounded-xl text-[11px] font-semibold border border-yellow-100">
+                                    Audio soal tidak disiapkan oleh guru.
+                                  </div>
+                                )}
+                                <textarea
+                                  required={assignment.settings?.requireAll}
+                                  rows={3}
+                                  value={studentAnswer}
+                                  onChange={(e) => setAnswersMap({ ...answersMap, [q.id]: e.target.value })}
+                                  placeholder="Dengarkan audio di atas lalu tulis jawaban / rangkuman Anda di sini..."
+                                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 font-sans resize-none"
+                                />
+                              </div>
+                            )}
+
+                            {/* 7. Speaking Input */}
+                            {q.type === 'speaking' && (
+                              <div className="space-y-3 pt-1">
+                                {q.speakingPrompt && (
+                                  <div className="p-3 bg-indigo-50 border border-indigo-100 rounded-xl text-xs font-semibold text-indigo-800">
+                                    "{q.speakingPrompt}"
+                                  </div>
+                                )}
+                                <div className="flex gap-2">
+                                  <input
+                                    type="text"
+                                    value={studentAnswer}
+                                    onChange={(e) => setAnswersMap({ ...answersMap, [q.id]: e.target.value })}
+                                    placeholder="Ketikan rekaman lafal kalimat Anda di sini..."
+                                    className="flex-1 px-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      const isRecording = !!recordingStates[q.id];
+                                      setRecordingStates({ ...recordingStates, [q.id]: !isRecording });
+                                      if (!isRecording) {
+                                        setTimeout(() => {
+                                          setAnswersMap(prev => ({
+                                            ...prev,
+                                            [q.id]: q.speakingPrompt || "I am reading the speaking prompt clearly."
+                                          }));
+                                          setRecordingStates(prev => ({ ...prev, [q.id]: false }));
+                                        }, 1500);
+                                      }
+                                    }}
+                                    className={`px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer border ${
+                                      recordingStates[q.id]
+                                        ? 'bg-red-500 text-white border-red-500 animate-pulse'
+                                        : 'bg-indigo-50 text-indigo-700 border-indigo-100 hover:bg-indigo-100'
+                                    }`}
+                                  >
+                                    <Mic className="w-4 h-4" />
+                                    {recordingStates[q.id] ? 'Merekam...' : 'Bicara'}
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+
+                            {/* 8. File Upload Input */}
+                            {q.type === 'file_upload' && (
+                              <div className="space-y-3 pt-1">
+                                <div className="p-4 border border-dashed border-gray-200 hover:border-indigo-400 bg-gray-50/50 rounded-2xl text-center space-y-2 cursor-pointer transition-all relative">
+                                  <UploadCloud className="w-6 h-6 text-indigo-500 mx-auto" />
+                                  <div className="text-xs">
+                                    <p className="font-semibold text-gray-700">Pilih Berkas Tugas / Tarik Di Sini</p>
+                                    <p className="text-[10px] text-gray-400 mt-0.5">Mendukung berkas: {q.allowedFileTypes?.join(', ') || 'Semua format'}</p>
+                                  </div>
+                                  <input 
+                                    type="file" 
+                                    className="absolute inset-0 opacity-0 cursor-pointer" 
+                                    onChange={(e) => {
+                                      const file = e.target.files?.[0];
+                                      if (file) {
+                                        setAnswersMap({ ...answersMap, [q.id]: `Uploaded_File: ${file.name} (${(file.size / 1024).toFixed(1)} KB)` });
+                                      }
+                                    }}
+                                  />
+                                </div>
+                                {studentAnswer && (
+                                  <div className="p-3 bg-emerald-50 border border-emerald-100 text-[11px] font-bold text-emerald-700 rounded-xl flex items-center gap-2">
+                                    <Check className="w-4 h-4 shrink-0" />
+                                    {studentAnswer}
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
                   {/* Multiple Choice Options */}
                   {assignment.assignmentType === 'multiple_choice' && assignment.choices && (
                     <div className="space-y-3.5">
@@ -394,11 +718,13 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                       type="submit"
                       disabled={
                         isSubmitting ||
-                        (assignment.assignmentType === 'multiple_choice' 
-                          ? !selectedChoice 
-                          : assignment.assignmentType === 'multi_short_answer'
-                            ? multiAnswers.some(ans => !ans.trim())
-                            : !answer.trim())
+                        (assignment.assignmentType === 'lms_composite'
+                          ? (assignment.settings?.requireAll && questions.some(q => !(answersMap[q.id] || '').trim()))
+                          : assignment.assignmentType === 'multiple_choice' 
+                            ? !selectedChoice 
+                            : assignment.assignmentType === 'multi_short_answer'
+                              ? multiAnswers.some(ans => !ans.trim())
+                              : !answer.trim())
                       }
                       className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold rounded-xl text-xs shadow-xs flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all"
                       style={{ minHeight: '44px' }}

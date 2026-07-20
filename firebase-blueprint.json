@@ -1,0 +1,269 @@
+{
+  "entities": {
+    "user": {
+      "title": "User",
+      "description": "User profile with role (teacher or student) and learning setup.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "description": "Unique user ID matching auth.uid"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "User email address"
+        },
+        "fullName": {
+          "type": "string",
+          "description": "User's complete display name"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["teacher", "student"],
+          "description": "App role mapping user capabilities"
+        },
+        "classType": {
+          "type": "string",
+          "description": "Type of educational class"
+        },
+        "circleId": {
+          "type": "string",
+          "description": "Associated circle ID if applicable"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the profile was created"
+        }
+      },
+      "required": ["uid", "email", "fullName", "role"]
+    },
+    "circle": {
+      "title": "Circle",
+      "description": "Educational study group or circle created by a teacher.",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique circle identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the learning circle"
+        },
+        "description": {
+          "type": "string",
+          "description": "Brief description of circle goals"
+        },
+        "teacherId": {
+          "type": "string",
+          "description": "Teacher user ID who created the circle"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when the circle was created"
+        }
+      },
+      "required": ["id", "name", "teacherId"]
+    },
+    "assignment": {
+      "title": "Assignment",
+      "description": "Educational assignment or examination worksheet set up by a teacher.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Title of the assignment"
+        },
+        "description": {
+          "type": "string",
+          "description": "Working instructions and details"
+        },
+        "question": {
+          "type": "string",
+          "description": "Question text or description snippet"
+        },
+        "teacherId": {
+          "type": "string",
+          "description": "Teacher user ID of the creator"
+        },
+        "teacherName": {
+          "type": "string",
+          "description": "Teacher's display name"
+        },
+        "assignmentType": {
+          "type": "string",
+          "description": "Task type category, e.g. lms_composite"
+        },
+        "assignmentTarget": {
+          "type": "string",
+          "description": "Target audience format"
+        },
+        "targetType": {
+          "type": "string",
+          "description": "INDIVIDUAL or CIRCLE target selection"
+        },
+        "targetId": {
+          "type": "string",
+          "description": "Id of student or circle targeted"
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Assigned student user ID"
+        },
+        "studentName": {
+          "type": "string",
+          "description": "Assigned student's display name"
+        },
+        "deadline": {
+          "type": "string",
+          "description": "Submission deadline"
+        },
+        "status": {
+          "type": "string",
+          "description": "Workflow status of task: draft, published, review, completed"
+        },
+        "totalQuestions": {
+          "type": "integer",
+          "description": "Total count of questions"
+        },
+        "totalPoints": {
+          "type": "integer",
+          "description": "Aggregate maximum points"
+        },
+        "estimatedDuration": {
+          "type": "integer",
+          "description": "Expected minutes to complete"
+        },
+        "difficulty": {
+          "type": "string",
+          "description": "Difficulty level of task"
+        },
+        "settings": {
+          "type": "object",
+          "description": "Granular rule switches for task processing"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Task creation date"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Task modification date"
+        }
+      },
+      "required": ["title", "teacherId", "assignmentType", "status"]
+    },
+    "question": {
+      "title": "Question",
+      "description": "Individual question block forming an LMS assignment.",
+      "type": "object",
+      "properties": {
+        "assignmentId": {
+          "type": "string",
+          "description": "Reference ID of the parent assignment template"
+        },
+        "order": {
+          "type": "integer",
+          "description": "Index representing sequence position"
+        },
+        "type": {
+          "type": "string",
+          "description": "Question type category, e.g. multiple_choice, essay"
+        },
+        "question": {
+          "type": "string",
+          "description": "Detailed question text prompt"
+        },
+        "choices": {
+          "type": "array",
+          "description": "Optional list of choices for multiple choice types"
+        },
+        "correctAnswer": {
+          "type": "string",
+          "description": "Key or text representing correct answer"
+        },
+        "answerGuide": {
+          "type": "string",
+          "description": "Optional rubric/instruction guide for checking answer"
+        },
+        "points": {
+          "type": "integer",
+          "description": "Score weight assigned to this question"
+        }
+      },
+      "required": ["assignmentId", "order", "type", "question", "points"]
+    },
+    "submission": {
+      "title": "Submission",
+      "description": "A student's answer worksheet submission.",
+      "type": "object",
+      "properties": {
+        "assignmentId": {
+          "type": "string",
+          "description": "Corresponding parent assignment ID"
+        },
+        "studentId": {
+          "type": "string",
+          "description": "ID of student submitting"
+        },
+        "studentName": {
+          "type": "string",
+          "description": "Display name of student submitting"
+        },
+        "answersMap": {
+          "type": "object",
+          "description": "Granular question answers mapping"
+        },
+        "answer": {
+          "type": "string",
+          "description": "Flat answer text if single task"
+        },
+        "status": {
+          "type": "string",
+          "description": "Submission workflow state, e.g. submitted, reviewed"
+        },
+        "score": {
+          "type": "integer",
+          "description": "Total actual points scored"
+        },
+        "feedback": {
+          "type": "string",
+          "description": "Teacher feedback notes"
+        },
+        "submittedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When the task was submitted"
+        }
+      },
+      "required": ["studentId", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "user",
+      "description": "User profile records stored with auth.uid as doc IDs."
+    },
+    "/circles/{circleId}": {
+      "schema": "circle",
+      "description": "Circle directories containing study groups created by teachers."
+    },
+    "/assignments/{assignmentId}": {
+      "schema": "assignment",
+      "description": "Individual assignment metadata records."
+    },
+    "/questions/{questionId}": {
+      "schema": "question",
+      "description": "Granular question item blocks tied to assignments."
+    },
+    "/submissions/{submissionId}": {
+      "schema": "submission",
+      "description": "Student work sheets correlating directly with assignments."
+    }
+  }
+}

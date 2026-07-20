@@ -13,6 +13,7 @@ import AssignmentDetail from './components/AssignmentDetail';
 import SubmissionDetail from './components/SubmissionDetail';
 import UserSettings from './components/UserSettings';
 import CircleProfile from './components/CircleProfile';
+import AssignmentBuilder from './components/AssignmentBuilder';
 import NotFound from './components/NotFound';
 import Logo from './components/Logo';
 import { UserProfile } from './types';
@@ -118,6 +119,13 @@ export default function App() {
   const isSubmissionDetailPath = path.startsWith('/submission/');
   const submissionIdParam = isSubmissionDetailPath ? path.split('/')[2] : '';
 
+  // Matches: /teacher/assignments/create
+  const isCreateAssignmentPath = path === '/teacher/assignments/create';
+
+  // Matches: /teacher/assignments/:id/edit
+  const isEditAssignmentPath = path.startsWith('/teacher/assignments/') && path.endsWith('/edit');
+  const editAssignmentIdParam = isEditAssignmentPath ? path.split('/')[3] : '';
+
   return (
     <div className="min-h-screen bg-white text-gray-900 flex flex-col relative" id="app-root">
       {/* Global Loading Overlay */}
@@ -150,6 +158,10 @@ export default function App() {
           <AssignmentDetail assignmentId={assignmentIdParam} onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : isSubmissionDetailPath ? (
           <SubmissionDetail submissionId={submissionIdParam} onNavigate={navigate} onSetLoading={setGlobalLoading} />
+        ) : isCreateAssignmentPath ? (
+          <AssignmentBuilder onNavigate={navigate} onSetLoading={setGlobalLoading} />
+        ) : isEditAssignmentPath ? (
+          <AssignmentBuilder assignmentId={editAssignmentIdParam} onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : (
           <NotFound onNavigate={navigate} />
         )}
