@@ -31,6 +31,17 @@ export interface Assignment {
   teacherId: string;
   teacherName: string;
   createdAt: any; // Firestore Timestamp
+  assignmentType?: 'short_answer' | 'multiple_choice' | 'multi_short_answer';
+  deadline?: string; // YYYY-MM-DD
+  status?: 'sent' | 'review' | 'completed' | 'remedial' | 'expired';
+  choices?: {
+    A: string;
+    B: string;
+    C: string;
+    D: string;
+  };
+  correctChoice?: 'A' | 'B' | 'C' | 'D';
+  subQuestions?: string[];
 }
 
 export interface Submission {
@@ -40,7 +51,10 @@ export interface Submission {
   studentId: string;
   studentName: string;
   answer: string;
-  status: 'submitted' | 'graded';
+  answers?: string[];
+  selectedChoice?: 'A' | 'B' | 'C' | 'D';
+  status: 'submitted' | 'graded' | 'remedial';
+  reviewStatus?: 'correct' | 'incorrect' | 'remedial';
   score: number | null;
   feedback: string | null;
   submittedAt: any; // Firestore Timestamp

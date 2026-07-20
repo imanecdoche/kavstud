@@ -158,21 +158,40 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
   const gradedTasks = submissions.filter(s => s.status === 'graded');
   const latestFeedbacks = gradedTasks.filter(s => s.feedback && s.feedback.trim() !== '');
 
+  const getAssignmentStatus = (assign: Assignment) => {
+    const submission = submissions.find(s => s.assignmentId === assign.id);
+    if (submission) {
+      if (submission.status === 'graded') return 'completed';
+      if (submission.status === 'remedial') return 'remedial';
+      return 'submitted';
+    }
+    
+    if (assign.deadline) {
+      const deadlineDate = new Date(assign.deadline + 'T23:59:59');
+      if (deadlineDate < new Date()) {
+        return 'expired';
+      }
+    }
+    
+    return 'pending';
+  };
+
   // Filtered assignments for search & select in assignments tab
   const filteredAssignments = assignments.filter(assign => {
+    const status = getAssignmentStatus(assign);
+    const type = assign.assignmentType || 'short_answer';
+
     const matchesSearch = assign.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          assign.teacherName.toLowerCase().includes(searchQuery.toLowerCase());
+                          assign.teacherName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          type.replace('_', ' ').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          status.toLowerCase().includes(searchQuery.toLowerCase());
     
-    const submission = submissions.find(s => s.assignmentId === assign.id);
-    
-    let matchesStatus = true;
-    if (statusFilter === 'submitted') {
-      matchesStatus = !!submission;
-    } else if (statusFilter === 'graded') {
-      matchesStatus = submission?.status === 'graded';
-    } else if (statusFilter === 'pending') {
-      matchesStatus = !submission;
-    }
+    const matchesStatus = statusFilter === 'all' || 
+                          (statusFilter === 'pending' && status === 'pending') ||
+                          (statusFilter === 'completed' && status === 'completed') ||
+                          (statusFilter === 'remedial' && status === 'remedial') ||
+                          (statusFilter === 'expired' && status === 'expired') ||
+                          (statusFilter === 'submitted' && status === 'submitted');
 
     return matchesSearch && matchesStatus;
   });
@@ -476,7 +495,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                       <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                       <input
                         type="text"
-                        placeholder="Cari judul tugas atau guru..."
+                        placeholder="Cari judul tugas, tipe, status, atau guru..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-xs placeholder-gray-400 focus:outline-none focus:bg-white focus:border-indigo-500 transition-all"
@@ -491,9 +510,11 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                         className="bg-transparent focus:outline-none cursor-pointer text-xs font-bold w-full sm:w-auto"
                       >
                         <option value="all">Semua Status</option>
-                        <option value="submitted">Sudah Dikirim</option>
-                        <option value="graded">Sudah Dinilai</option>
                         <option value="pending">Belum Dikerjakan</option>
+                        <option value="submitted">Menunggu Penilaian</option>
+                        <option value="completed">Selesai / Dinilai</option>
+                        <option value="remedial">Harus Remedial</option>
+                        <option value="expired">Kedaluwarsa</option>
                       </select>
                     </div>
                   </div>
@@ -511,55 +532,91 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                       }}
                     />
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fadeIn">
                       {filteredAssignments.map((assign) => {
+                        const status = getAssignmentStatus(assign);
+                        const type = assign.assignmentType || 'short_answer';
                         const sub = submissions.find(s => s.assignmentId === assign.id);
+
                         return (
                           <div 
                             key={assign.id}
                             onClick={() => {
-                              if (sub) {
-                                onNavigate(`/submission/${sub.id}`);
-                              } else {
-                                onNavigate(`/assignment/${assign.id}`);
-                              }
+                              onNavigate(`/assignment/${assign.id}`);
                             }}
-                            className="bg-white border border-gray-100 hover:border-gray-200 hover:shadow-xs p-5 rounded-2xl flex flex-col justify-between gap-4 transition-all cursor-pointer"
+                            className="bg-white border border-gray-100 hover:border-gray-200 hover:shadow-xs p-5 rounded-2xl flex flex-col justify-between gap-4 transition-all cursor-pointer relative"
                           >
                             <div className="space-y-2">
                               <div className="flex items-center justify-between gap-2">
-                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                                  sub?.status === 'graded' 
-                                    ? 'bg-green-50 text-green-700' 
-                                    : sub 
-                                      ? 'bg-amber-50 text-amber-700' 
-                                      : 'bg-indigo-50 text-indigo-700 animate-pulse'
-                                }`}>
-                                  {sub?.status === 'graded' 
-                                    ? 'Sudah Dinilai' 
-                                    : sub 
-                                      ? 'Menunggu Penilaian' 
-                                      : 'Siap Dikerjakan'}
-                                </span>
-                                <span className="text-[10px] text-gray-400 flex items-center gap-1 font-mono">
-                                  <Calendar className="w-3 h-3" />
-                                  {assign.createdAt ? new Date(assign.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) : 'Baru saja'}
-                                </span>
+                                <div className="flex gap-1.5 flex-wrap">
+                                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
+                                    status === 'completed' 
+                                      ? 'bg-green-50 text-green-700' 
+                                      : status === 'submitted' 
+                                        ? 'bg-amber-50 text-amber-700' 
+                                        : status === 'remedial'
+                                          ? 'bg-red-50 text-red-700 animate-pulse'
+                                          : status === 'expired'
+                                            ? 'bg-gray-100 text-gray-500'
+                                            : 'bg-indigo-50 text-indigo-700'
+                                  }`}>
+                                    {status === 'completed' 
+                                      ? 'Selesai' 
+                                      : status === 'submitted' 
+                                        ? 'Menunggu Nilai' 
+                                        : status === 'remedial'
+                                          ? 'Remedial'
+                                          : status === 'expired'
+                                            ? 'Kedaluwarsa'
+                                            : 'Siap Dikerjakan'}
+                                  </span>
+
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-50 text-indigo-700">
+                                    {type === 'short_answer' 
+                                      ? 'Jawaban Singkat' 
+                                      : type === 'multiple_choice' 
+                                        ? 'Pilihan Ganda' 
+                                        : 'Multi Jawaban Singkat'}
+                                  </span>
+                                </div>
+
+                                {sub?.score !== null && sub?.score !== undefined && (
+                                  <span className="text-xs font-bold font-display text-indigo-600 font-mono">
+                                    Nilai: {sub.score}
+                                  </span>
+                                )}
                               </div>
+
                               <h3 className="text-sm font-bold text-gray-900 leading-tight">{assign.title}</h3>
                               <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">{assign.question}</p>
                             </div>
 
-                            <div className="flex items-center justify-between border-t border-gray-50 pt-3 mt-1">
-                              <div className="flex items-center gap-2">
-                                <span className="text-[10px] text-gray-400">Guru:</span>
-                                <span className="text-[11px] font-semibold text-gray-600 truncate max-w-[120px]">{assign.teacherName}</span>
+                            <div className="space-y-2 border-t border-gray-50 pt-3 mt-1 text-[11px]">
+                              <div className="flex items-center justify-between text-gray-400 font-mono">
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="w-3 h-3" />
+                                  Diberikan: {assign.createdAt ? new Date(assign.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) : 'Baru saja'}
+                                </span>
+                                {assign.deadline && (
+                                  <span className={`flex items-center gap-1 font-bold ${status === 'expired' ? 'text-red-500' : 'text-gray-500'}`}>
+                                    Batas: {new Date(assign.deadline).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'})}
+                                  </span>
+                                )}
                               </div>
-                              
-                              <span className="text-[10px] font-bold text-indigo-600 hover:underline inline-flex items-center gap-0.5">
-                                {sub ? 'Lihat Jawaban' : 'Kerjakan Tugas'}
-                                <ArrowRight className="w-3.5 h-3.5" />
-                              </span>
+
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-5 h-5 bg-indigo-50 text-indigo-600 rounded-md flex items-center justify-center text-[9px] font-bold uppercase shrink-0">
+                                    {assign.teacherName?.charAt(0).toUpperCase()}
+                                  </div>
+                                  <span className="font-semibold text-gray-600 truncate max-w-[120px]">{assign.teacherName}</span>
+                                </div>
+                                
+                                <span className="text-[10px] font-bold text-indigo-600 hover:underline inline-flex items-center gap-0.5">
+                                  {status === 'completed' || status === 'submitted' ? 'Lihat Jawaban & Evaluasi' : status === 'remedial' ? 'Kerjakan Remedial' : 'Kerjakan Tugas'}
+                                  <ArrowRight className="w-3.5 h-3.5" />
+                                </span>
+                              </div>
                             </div>
                           </div>
                         );

@@ -8,7 +8,10 @@ import {
   addDoc, 
   serverTimestamp, 
   orderBy,
-  limit
+  limit,
+  doc,
+  updateDoc,
+  deleteDoc
 } from 'firebase/firestore';
 import { 
   Users, 
@@ -27,7 +30,9 @@ import {
   Layers,
   Sparkles,
   ArrowRight,
-  X
+  X,
+  Pencil,
+  Trash2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { UserProfile, Assignment, Submission } from '../types';
@@ -63,16 +68,29 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
   // Search/Filter states inside assignments tab
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'all' | 'graded' | 'pending'>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'sent' | 'review' | 'completed' | 'remedial' | 'expired'>('all');
+  const [typeFilter, setTypeFilter] = useState<'all' | 'short_answer' | 'multiple_choice' | 'multi_short_answer'>('all');
   const [studentFilter, setStudentFilter] = useState<string>('all');
 
-  // Create Assignment Form State
+  // Create & Edit Assignment Form State
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editingAssignmentId, setEditingAssignmentId] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState('');
   const [newQuestion, setNewQuestion] = useState('');
   const [selectedStudentId, setSelectedStudentId] = useState('');
+  const [assignmentType, setAssignmentType] = useState<'short_answer' | 'multiple_choice' | 'multi_short_answer'>('short_answer');
+  const [deadline, setDeadline] = useState('');
+  const [choices, setChoices] = useState({ A: '', B: '', C: '', D: '' });
+  const [correctChoice, setCorrectChoice] = useState<'A' | 'B' | 'C' | 'D'>('A');
+  const [subQuestions, setSubQuestions] = useState<string[]>(['']);
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Delete Confirmation State
+  const [isDeleteConfirmOpen, setIsDeleteConfirmOpen] = useState(false);
+  const [deletingAssignmentId, setDeletingAssignmentId] = useState<string | null>(null);
+  const [deletingAssignmentTitle, setDeletingAssignmentTitle] = useState('');
 
   // Load teacher profile and setup real-time listeners
   useEffect(() => {
@@ -189,11 +207,99 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
     onSetLoading(false);
   };
 
-  const handleCreateAssignment = async (e: React.FormEvent) => {
+  // Helper to determine active status of an assignment
+  const getAssignmentStatus = (assign: Assignment) => {
+    if (assign.status === 'completed') return 'completed';
+    if (assign.status === 'remedial') return 'remedial';
+    
+    // Check if submission exists
+    const sub = submissions.find(s => s.assignmentId === assign.id);
+    if (sub) {
+      if (sub.status === 'graded') return 'completed';
+      if (sub.status === 'remedial') return 'remedial';
+      return 'review';
+    }
+    
+    // Check deadline
+    if (assign.deadline) {
+      const deadlineDate = new Date(assign.deadline + 'T23:59:59');
+      if (deadlineDate < new Date()) {
+        return 'expired';
+      }
+    }
+    
+    return assign.status || 'sent';
+  };
+
+  const openCreateModal = () => {
+    setIsEditMode(false);
+    setEditingAssignmentId(null);
+    setNewTitle('');
+    setNewQuestion('');
+    setSelectedStudentId('');
+    setAssignmentType('short_answer');
+    setDeadline('');
+    setChoices({ A: '', B: '', C: '', D: '' });
+    setCorrectChoice('A');
+    setSubQuestions(['']);
+    setFormError(null);
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (assign: Assignment, e: React.MouseEvent) => {
+    e.stopPropagation(); // prevent card click navigation
+    setIsEditMode(true);
+    setEditingAssignmentId(assign.id);
+    setNewTitle(assign.title);
+    setNewQuestion(assign.question);
+    setSelectedStudentId(assign.studentId);
+    setAssignmentType(assign.assignmentType || 'short_answer');
+    setDeadline(assign.deadline || '');
+    setChoices(assign.choices || { A: '', B: '', C: '', D: '' });
+    setCorrectChoice(assign.correctChoice || 'A');
+    setSubQuestions(assign.subQuestions || ['']);
+    setFormError(null);
+    setIsModalOpen(true);
+  };
+
+  const openDeleteConfirm = (assign: Assignment, e: React.MouseEvent) => {
+    e.stopPropagation(); // prevent card click
+    setDeletingAssignmentId(assign.id);
+    setDeletingAssignmentTitle(assign.title);
+    setIsDeleteConfirmOpen(true);
+  };
+
+  const handleDeleteAssignment = async () => {
+    if (!deletingAssignmentId) return;
+    try {
+      await deleteDoc(doc(db, 'assignments', deletingAssignmentId));
+      await deleteDoc(doc(db, 'submissions', deletingAssignmentId));
+      setIsDeleteConfirmOpen(false);
+      setDeletingAssignmentId(null);
+      setDeletingAssignmentTitle('');
+    } catch (err) {
+      console.error(err);
+      setError('Gagal menghapus tugas.');
+    }
+  };
+
+  const handleSaveAssignment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newTitle.trim() || !newQuestion.trim() || !selectedStudentId) {
       setFormError('Semua kolom formulir wajib diisi.');
       return;
+    }
+
+    if (assignmentType === 'multiple_choice') {
+      if (!choices.A.trim() || !choices.B.trim() || !choices.C.trim() || !choices.D.trim()) {
+        setFormError('Semua opsi pilihan ganda (A, B, C, D) wajib diisi.');
+        return;
+      }
+    } else if (assignmentType === 'multi_short_answer') {
+      if (subQuestions.some(q => !q.trim())) {
+        setFormError('Semua sub-pertanyaan wajib diisi.');
+        return;
+      }
     }
 
     setIsSubmitting(true);
@@ -207,24 +313,47 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
     }
 
     try {
-      await addDoc(collection(db, 'assignments'), {
+      const assignmentPayload: any = {
         title: newTitle.trim(),
         question: newQuestion.trim(),
         studentId: selectedStudentId,
         studentName: targetStudent.fullName,
         teacherId: auth.currentUser?.uid || '',
         teacherName: teacherProfile?.fullName || 'Guru Kavio',
-        createdAt: serverTimestamp()
-      });
+        assignmentType,
+        deadline: deadline || '',
+        status: isEditMode ? (assignments.find(a => a.id === editingAssignmentId)?.status || 'sent') : 'sent',
+      };
+
+      if (assignmentType === 'multiple_choice') {
+        assignmentPayload.choices = choices;
+        assignmentPayload.correctChoice = correctChoice;
+      } else if (assignmentType === 'multi_short_answer') {
+        assignmentPayload.subQuestions = subQuestions;
+      }
+
+      if (isEditMode && editingAssignmentId) {
+        await updateDoc(doc(db, 'assignments', editingAssignmentId), assignmentPayload);
+      } else {
+        assignmentPayload.createdAt = serverTimestamp();
+        await addDoc(collection(db, 'assignments'), assignmentPayload);
+      }
 
       // Reset form & close modal
       setNewTitle('');
       setNewQuestion('');
       setSelectedStudentId('');
+      setAssignmentType('short_answer');
+      setDeadline('');
+      setChoices({ A: '', B: '', C: '', D: '' });
+      setCorrectChoice('A');
+      setSubQuestions(['']);
       setIsModalOpen(false);
+      setIsEditMode(false);
+      setEditingAssignmentId(null);
     } catch (err) {
       console.error(err);
-      setFormError('Gagal mengirim tugas ke siswa. Silakan coba lagi.');
+      setFormError(isEditMode ? 'Gagal memperbarui tugas.' : 'Gagal mengirim tugas ke siswa.');
     } finally {
       setIsSubmitting(false);
     }
@@ -234,21 +363,19 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
   // Filter assignments for search & select in assignments tab
   const filteredAssignments = assignments.filter(assign => {
-    const matchesSearch = assign.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          assign.studentName.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    // Status mapping using submissions
-    const submission = submissions.find(s => s.assignmentId === assign.id);
-    const isGraded = submission?.status === 'graded';
-    const isPending = submission && submission.status !== 'graded';
-    
-    const matchesStatus = statusFilter === 'all' || 
-      (statusFilter === 'graded' && isGraded) || 
-      (statusFilter === 'pending' && !isGraded); // Includes unsubmitted or un-graded
+    const status = getAssignmentStatus(assign);
+    const type = assign.assignmentType || 'short_answer';
 
+    const matchesSearch = assign.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          assign.studentName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          type.replace('_', ' ').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          status.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    const matchesStatus = statusFilter === 'all' || status === statusFilter;
+    const matchesType = typeFilter === 'all' || type === typeFilter;
     const matchesStudent = studentFilter === 'all' || assign.studentId === studentFilter;
 
-    return matchesSearch && matchesStatus && matchesStudent;
+    return matchesSearch && matchesStatus && matchesType && matchesStudent;
   });
 
   return (
@@ -294,7 +421,6 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                     <div>
                       <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 tracking-tight flex items-center gap-2">
                         <span>Halo, {teacherProfile?.fullName?.split(' ')[0] || 'Guru'}!</span>
-                        <Sparkles className="w-5 h-5 text-indigo-500 animate-pulse shrink-0" />
                       </h1>
                       <p className="text-xs text-gray-500 mt-1">
                         Kelola tugas kelas, evaluasi jawaban siswa, dan pantau perkembangan belajar secara langsung.
@@ -544,7 +670,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                     </div>
 
                     <button
-                      onClick={() => setIsModalOpen(true)}
+                      onClick={openCreateModal}
                       className="inline-flex items-center justify-center gap-2 px-5 py-3 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white rounded-xl text-xs font-bold transition-all shadow-xs shrink-0 cursor-pointer"
                       style={{ minHeight: '44px' }}
                     >
@@ -559,7 +685,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
                       <input
                         type="text"
-                        placeholder="Cari tugas atau nama siswa..."
+                        placeholder="Cari tugas, tipe, status, atau siswa..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full pl-10 pr-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-xs placeholder-gray-400 focus:outline-none focus:bg-white focus:border-indigo-500 transition-all"
@@ -576,8 +702,26 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                           className="bg-transparent focus:outline-none cursor-pointer text-xs font-bold"
                         >
                           <option value="all">Semua Status</option>
-                          <option value="graded">Sudah Dinilai</option>
-                          <option value="pending">Menunggu/Belum Dikirim</option>
+                          <option value="sent">Dikirim</option>
+                          <option value="review">Perlu Ditinjau</option>
+                          <option value="completed">Selesai</option>
+                          <option value="remedial">Remedial</option>
+                          <option value="expired">Kedaluwarsa</option>
+                        </select>
+                      </div>
+
+                      {/* Filter by Type */}
+                      <div className="flex items-center gap-1.5 bg-gray-50/50 border border-gray-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600">
+                        <Layers className="w-3.5 h-3.5 text-gray-400" />
+                        <select
+                          value={typeFilter}
+                          onChange={(e) => setTypeFilter(e.target.value as any)}
+                          className="bg-transparent focus:outline-none cursor-pointer text-xs font-bold"
+                        >
+                          <option value="all">Semua Tipe</option>
+                          <option value="short_answer">Jawaban Singkat</option>
+                          <option value="multiple_choice">Pilihan Ganda</option>
+                          <option value="multi_short_answer">Multi Jawaban Singkat</option>
                         </select>
                       </div>
 
@@ -608,55 +752,105 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       onActionClick={() => {
                         setSearchQuery('');
                         setStatusFilter('all');
+                        setTypeFilter('all');
                         setStudentFilter('all');
                       }}
                     />
                   ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fadeIn">
                       {filteredAssignments.map((assign) => {
+                        const status = getAssignmentStatus(assign);
+                        const type = assign.assignmentType || 'short_answer';
                         const sub = submissions.find(s => s.assignmentId === assign.id);
+
                         return (
                           <div 
                             key={assign.id}
                             onClick={() => onNavigate(`/assignment/${assign.id}`)}
-                            className="bg-white border border-gray-100 hover:border-gray-200 hover:shadow-xs p-5 rounded-2xl flex flex-col justify-between gap-4 transition-all cursor-pointer"
+                            className="bg-white border border-gray-100 hover:border-gray-200 hover:shadow-xs p-5 rounded-2xl flex flex-col justify-between gap-4 transition-all cursor-pointer relative"
                           >
                             <div className="space-y-2">
                               <div className="flex items-center justify-between gap-2">
-                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
-                                  sub?.status === 'graded' 
-                                    ? 'bg-green-50 text-green-700' 
-                                    : sub 
-                                      ? 'bg-amber-50 text-amber-700 animate-pulse' 
-                                      : 'bg-gray-100 text-gray-500'
-                                }`}>
-                                  {sub?.status === 'graded' 
-                                    ? 'Sudah Dinilai' 
-                                    : sub 
-                                      ? 'Menunggu Penilaian' 
-                                      : 'Belum Dikerjakan'}
-                                </span>
-                                <span className="text-[10px] text-gray-400 flex items-center gap-1 font-mono">
-                                  <Calendar className="w-3 h-3" />
-                                  {assign.createdAt ? new Date(assign.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) : 'Baru saja'}
-                                </span>
+                                <div className="flex gap-1.5 flex-wrap">
+                                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                                    status === 'completed' 
+                                      ? 'bg-green-50 text-green-700' 
+                                      : status === 'review' 
+                                        ? 'bg-amber-50 text-amber-700 animate-pulse' 
+                                        : status === 'remedial'
+                                          ? 'bg-orange-50 text-orange-700'
+                                          : status === 'expired'
+                                            ? 'bg-red-50 text-red-700'
+                                            : 'bg-gray-100 text-gray-500'
+                                  }`}>
+                                    {status === 'completed' 
+                                      ? 'Selesai' 
+                                      : status === 'review' 
+                                        ? 'Perlu Ditinjau' 
+                                        : status === 'remedial'
+                                          ? 'Remedial'
+                                          : status === 'expired'
+                                            ? 'Kedaluwarsa'
+                                            : 'Dikirim'}
+                                  </span>
+
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-50 text-indigo-700">
+                                    {type === 'short_answer' 
+                                      ? 'Jawaban Singkat' 
+                                      : type === 'multiple_choice' 
+                                        ? 'Pilihan Ganda' 
+                                        : 'Multi Jawaban Singkat'}
+                                  </span>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={(e) => openEditModal(assign, e)}
+                                    className="p-1 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-md transition-colors cursor-pointer"
+                                    title="Edit Tugas"
+                                  >
+                                    <Pencil className="w-3.5 h-3.5" />
+                                  </button>
+                                  <button
+                                    onClick={(e) => openDeleteConfirm(assign, e)}
+                                    className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors cursor-pointer"
+                                    title="Hapus Tugas"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5" />
+                                  </button>
+                                </div>
                               </div>
+
                               <h3 className="text-sm font-bold text-gray-900 leading-tight">{assign.title}</h3>
                               <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">{assign.question}</p>
                             </div>
 
-                            <div className="flex items-center justify-between border-t border-gray-50 pt-3 mt-1">
-                              <div className="flex items-center gap-2">
-                                <div className="w-6 h-6 bg-indigo-50 text-indigo-600 rounded-md flex items-center justify-center text-[10px] font-bold uppercase shrink-0">
-                                  {assign.studentName?.charAt(0).toUpperCase()}
-                                </div>
-                                <span className="text-[11px] font-semibold text-gray-600 truncate max-w-[120px]">{assign.studentName}</span>
+                            <div className="space-y-2 border-t border-gray-50 pt-3 mt-1 text-[11px]">
+                              <div className="flex items-center justify-between text-gray-400 font-mono">
+                                <span className="flex items-center gap-1">
+                                  <Calendar className="w-3 h-3" />
+                                  Diberikan: {assign.createdAt ? new Date(assign.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) : 'Baru saja'}
+                                </span>
+                                {assign.deadline && (
+                                  <span className={`flex items-center gap-1 font-bold ${status === 'expired' ? 'text-red-500' : 'text-gray-500'}`}>
+                                    Batas: {new Date(assign.deadline).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'})}
+                                  </span>
+                                )}
                               </div>
-                              
-                              <span className="text-[10px] font-bold text-indigo-600 hover:underline inline-flex items-center gap-0.5">
-                                Detail Tugas
-                                <ArrowRight className="w-3.5 h-3.5" />
-                              </span>
+
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-6 h-6 bg-indigo-50 text-indigo-600 rounded-md flex items-center justify-center text-[10px] font-bold uppercase shrink-0">
+                                    {assign.studentName?.charAt(0).toUpperCase()}
+                                  </div>
+                                  <span className="font-semibold text-gray-600 truncate max-w-[120px]">{assign.studentName}</span>
+                                </div>
+                                
+                                <span className="text-[10px] font-bold text-indigo-600 hover:underline inline-flex items-center gap-0.5">
+                                  Detail Tugas
+                                  <ArrowRight className="w-3.5 h-3.5" />
+                                </span>
+                              </div>
                             </div>
                           </div>
                         );
@@ -686,16 +880,42 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
         </AnimatePresence>
       </main>
 
-      {/* Create Assignment Modal */}
-      {isModalOpen && (
+      {/* Delete Confirmation Modal */}
+      {isDeleteConfirmOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-3xl border border-gray-100 w-full max-w-md p-6 space-y-5 shadow-lg relative animate-scaleUp">
+            <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Hapus Tugas Penugasan</h3>
+            <p className="text-xs text-gray-500 leading-relaxed">
+              Apakah Anda yakin ingin menghapus tugas <strong className="text-gray-900">"{deletingAssignmentTitle}"</strong>? Tindakan ini permanen dan akan menghapus semua riwayat pengerjaan serta nilai siswa terkait tugas ini.
+            </p>
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => setIsDeleteConfirmOpen(false)}
+                className="flex-1 py-2.5 border border-gray-200 text-gray-500 font-semibold rounded-xl text-xs hover:bg-gray-50 cursor-pointer transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleDeleteAssignment}
+                className="flex-1 py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl text-xs cursor-pointer transition-colors"
+              >
+                Ya, Hapus Permanen
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create / Edit Assignment Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto">
           <div 
-            className="bg-white rounded-3xl border border-gray-100 w-full max-w-lg p-6 sm:p-8 space-y-6 shadow-lg relative animate-scaleUp"
+            className="bg-white rounded-3xl border border-gray-100 w-full max-w-lg p-6 sm:p-8 space-y-5 shadow-lg relative animate-scaleUp my-8"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between pb-2 border-b border-gray-50">
               <h2 className="text-lg font-display font-bold text-gray-900">
-                Buat Tugas Baru
+                {isEditMode ? 'Sunting Tugas Kelas' : 'Buat Tugas Baru'}
               </h2>
               <button 
                 onClick={() => setIsModalOpen(false)}
@@ -713,7 +933,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
               </div>
             )}
 
-            <form onSubmit={handleCreateAssignment} className="space-y-4">
+            <form onSubmit={handleSaveAssignment} className="space-y-4">
               {/* Title */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold text-gray-700">
@@ -736,9 +956,10 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 </label>
                 <select
                   required
+                  disabled={isEditMode}
                   value={selectedStudentId}
                   onChange={(e) => setSelectedStudentId(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-400"
                 >
                   <option value="">-- Pilih Siswa Penerima --</option>
                   {students.map(s => (
@@ -749,18 +970,128 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 </select>
               </div>
 
-              {/* Question Text Area */}
+              {/* Assignment Type Selector */}
               <div className="space-y-1.5">
                 <label className="block text-xs font-semibold text-gray-700">
-                  Pertanyaan Tugas (Plain Text) <span className="text-red-500">*</span>
+                  Jenis Tugas <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={assignmentType}
+                  onChange={(e) => setAssignmentType(e.target.value as any)}
+                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                >
+                  <option value="short_answer">Jawaban Singkat (Esai)</option>
+                  <option value="multiple_choice">Pilihan Ganda (A-D)</option>
+                  <option value="multi_short_answer">Multi Jawaban Singkat</option>
+                </select>
+              </div>
+
+              {/* Conditional Fields: Multiple Choice */}
+              {assignmentType === 'multiple_choice' && (
+                <div className="space-y-3 border-l-2 border-indigo-100 pl-4 py-1.5 bg-gray-50/30 p-3 rounded-xl">
+                  <span className="block text-xs font-bold text-gray-700">Opsi Jawaban & Kunci Jawaban</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {['A', 'B', 'C', 'D'].map((opt) => (
+                      <div key={opt} className="space-y-1">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase">Pilihan {opt} <span className="text-red-500">*</span></span>
+                        <input
+                          type="text"
+                          required
+                          value={choices[opt as 'A' | 'B' | 'C' | 'D']}
+                          onChange={(e) => setChoices({ ...choices, [opt]: e.target.value })}
+                          className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-indigo-500"
+                          placeholder={`Jawaban opsi ${opt}...`}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="space-y-1.5 pt-2 border-t border-gray-100">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase">Pilihan Kunci Jawaban Benar</span>
+                    <select
+                      value={correctChoice}
+                      onChange={(e) => setCorrectChoice(e.target.value as any)}
+                      className="w-full px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs font-bold"
+                    >
+                      <option value="A">Opsi A</option>
+                      <option value="B">Opsi B</option>
+                      <option value="C">Opsi C</option>
+                      <option value="D">Opsi D</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+
+              {/* Conditional Fields: Multi Short Answer */}
+              {assignmentType === 'multi_short_answer' && (
+                <div className="space-y-3.5 border-l-2 border-indigo-100 pl-4 py-1.5 bg-gray-50/30 p-3 rounded-xl">
+                  <div className="flex items-center justify-between">
+                    <span className="block text-xs font-bold text-gray-700">Sub-Pertanyaan ({subQuestions.length})</span>
+                    <button
+                      type="button"
+                      onClick={() => setSubQuestions([...subQuestions, ''])}
+                      className="text-[10px] bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold px-2.5 py-1 rounded-lg transition-colors"
+                    >
+                      + Tambah Soal
+                    </button>
+                  </div>
+                  <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
+                    {subQuestions.map((q, idx) => (
+                      <div key={idx} className="flex gap-2 items-center">
+                        <span className="text-[10px] font-mono font-bold text-gray-400 w-5">#{idx + 1}</span>
+                        <input
+                          type="text"
+                          required
+                          value={q}
+                          onChange={(e) => {
+                            const next = [...subQuestions];
+                            next[idx] = e.target.value;
+                            setSubQuestions(next);
+                          }}
+                          className="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-xl text-xs focus:outline-none focus:border-indigo-500"
+                          placeholder={`Pertanyaan sub-soal #${idx + 1}...`}
+                        />
+                        {subQuestions.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() => setSubQuestions(subQuestions.filter((_, i) => i !== idx))}
+                            className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Question Text Area / Main Instructions */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-gray-700">
+                  {assignmentType === 'multiple_choice' 
+                    ? 'Pertanyaan Soal / Instruksi Penyelenggaraan' 
+                    : 'Pertanyaan Utama / Detail Instruksi Tugas'} <span className="text-red-500">*</span>
                 </label>
                 <textarea
                   required
-                  rows={5}
+                  rows={4}
                   value={newQuestion}
                   onChange={(e) => setNewQuestion(e.target.value)}
                   className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"
                   placeholder="Tuliskan detail pertanyaan atau instruksi tugas secara rinci di sini..."
+                />
+              </div>
+
+              {/* Deadline Date Input */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-semibold text-gray-700">
+                  Batas Waktu Pengumpulan (Deadline) <span className="text-gray-400">(Opsional)</span>
+                </label>
+                <input
+                  type="date"
+                  value={deadline}
+                  onChange={(e) => setDeadline(e.target.value)}
+                  className="block w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-xs text-gray-900 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
                 />
               </div>
 
@@ -779,7 +1110,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                   className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold rounded-xl text-xs shadow-xs flex items-center justify-center gap-2.5 cursor-pointer active:scale-98 transition-all"
                   style={{ minHeight: '44px' }}
                 >
-                  {isSubmitting ? 'Mengirim...' : 'Kirim Tugas'}
+                  {isSubmitting ? 'Memproses...' : isEditMode ? 'Simpan Perubahan' : 'Kirim Tugas'}
                 </button>
               </div>
             </form>
