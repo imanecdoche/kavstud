@@ -16,6 +16,10 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
+    function isTeacher() {
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher';
+    }
+
     // Users collection rules
     match /users/{userId} {
       // Allow any signed-in user to read user profiles (needed for teachers to view student profiles and vice versa)
@@ -23,7 +27,25 @@ service cloud.firestore {
       
       // Users can only create or update their own profile document
       allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isOwner(userId);
+      
+      // Users can update their own profile (but cannot modify their role to escalate privileges),
+      // or a teacher can update a student profile (needed for assigning to circles or class types)
+      allow update: if isSignedIn() && (
+        (isOwner(userId) && (request.resource.data.role == resource.data.role)) ||
+        isTeacher()
+      );
+    }
+
+    // Circles collection rules
+    match /circles/{circleId} {
+      // Allow signed-in users (teachers and students) to read circles
+      allow read: if isSignedIn();
+      
+      // Only teachers can create circles, and they must assign themselves as the teacher of that circle
+      allow create: if isSignedIn() && isTeacher() && request.resource.data.teacherId == request.auth.uid;
+      
+      // Only the teacher who owns the circle can update or delete it
+      allow update, delete: if isSignedIn() && isTeacher() && resource.data.teacherId == request.auth.uid;
     }
 
     // Assignments collection rules
@@ -31,9 +53,11 @@ service cloud.firestore {
       // Allow signed-in users (teachers and students) to read assignments
       allow read: if isSignedIn();
       
-      // Teachers can create/update assignments
-      allow create, update: if isSignedIn();
-      allow delete: if isSignedIn();
+      // Only teachers can create assignments and they must be the owner
+      allow create: if isSignedIn() && isTeacher() && request.resource.data.teacherId == request.auth.uid;
+      
+      // Only the teacher who owns the assignment can update or delete it
+      allow update, delete: if isSignedIn() && isTeacher() && resource.data.teacherId == request.auth.uid;
     }
 
     // Submissions collection rules
@@ -41,7 +65,7 @@ service cloud.firestore {
       // Allow signed-in users (teachers and students) to read submissions
       allow read: if isSignedIn();
       
-      // Students can create/update their own submissions, teachers can grade them
+      // Students and teachers can create/update submissions
       allow create, update: if isSignedIn();
       allow delete: if isSignedIn();
     }
