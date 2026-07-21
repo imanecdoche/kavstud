@@ -14,6 +14,7 @@ import SubmissionDetail from './components/SubmissionDetail';
 import UserSettings from './components/UserSettings';
 import CircleProfile from './components/CircleProfile';
 import AssignmentBuilder from './components/AssignmentBuilder';
+import KavioBlog from './components/KavioBlog';
 import NotFound from './components/NotFound';
 import Logo from './components/Logo';
 import { UserProfile } from './types';
@@ -136,6 +137,7 @@ export default function App() {
     else if (path === '/teacher') title = 'Dashboard Guru - KAVIO Edu';
     else if (path === '/student') title = 'Dashboard Siswa - KAVIO Edu';
     else if (path === '/settings') title = 'Pengaturan - KAVIO Edu';
+    else if (path === '/blog') title = 'KAVIO Blog - Solusi Belajar Seru';
     else if (isStudentProfilePath) title = 'Profil Siswa - KAVIO Edu';
     else if (isCircleProfilePath) title = 'KAVIO Circle - KAVIO Edu';
     else if (isAssignmentDetailPath) title = 'Detail Tugas - KAVIO Edu';
@@ -212,6 +214,8 @@ export default function App() {
           <StudentDashboard onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : path === '/settings' ? (
           <UserSettings onNavigate={navigate} onSetLoading={setGlobalLoading} />
+        ) : path === '/blog' ? (
+          <KavioBlog onNavigate={navigate} userProfile={userProfile} onLogout={() => auth.signOut()} />
         ) : isStudentProfilePath ? (
           <StudentProfile studentId={studentIdParam} onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : isCircleProfilePath ? (

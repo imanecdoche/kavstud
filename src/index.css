@@ -1,21 +1,44 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
+@import url(https://db.onlinewebfonts.com/c/14936bb7a4b6575fd2eee80a3ab52cc2?family=Feather+Bold);
+@import url(https://db.onlinewebfonts.com/c/092c449c2b2bc64e9c6bbe8a7b9b291f?family=DIN+Next+Rounded+LT+W04+Medium);
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   /* Typography Tokens */
-  --font-sans: "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: "Outfit", "Space Grotesk", sans-serif;
+  --font-sans: "DIN Next Rounded LT W04 Medium", "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: "Feather Bold", "Outfit", "Space Grotesk", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
-  /* Brand Color Tokens */
-  --color-brand-50: #EEF2FF;
-  --color-brand-100: #E0E7FF;
-  --color-brand-500: #4F46E5;
-  --color-brand-600: #4338CA;
-  --color-brand-700: #3730A3;
+  /* Duolingo Core Brand Colors */
+  --color-feather-green: #58CC02;
+  --color-mask-green: #89E219;
+  --color-eel: #4B4B4B;
+  --color-snow: #FFFFFF;
 
-  /* Duolingo Gamified Colors */
+  /* Duolingo Secondary Colors */
+  --color-macaw: #1CB0F6;
+  --color-cardinal: #FF4B4B;
+  --color-bee: #FFC800;
+  --color-fox: #FF9600;
+  --color-beetle: #CE82FF;
+  --color-humpback: #2B70C9;
+
+  /* Duolingo Neutrals */
+  --color-wolf: #777777;
+  --color-hare: #AFAFAF;
+  --color-swan: #E5E5E5;
+  --color-polar: #F7F7F7;
+
+  /* Duolingo Mascot Palette Extensions */
+  --color-wing-overlay: #43C000;
+  --color-beak-inner: #B66E28;
+  --color-beak-lower: #F49000;
+  --color-beak-upper: #FFC200;
+  --color-beak-highlight: #FFDE00;
+  --color-tongue-pink: #FFCAFF;
+
+  /* Legacy & Gamified Mappings */
   --color-duo-green: #58CC02;
   --color-duo-green-dark: #46A302;
   --color-duo-blue: #1CB0F6;
@@ -27,7 +50,7 @@
   --color-duo-red: #FF4B4B;
 
   /* Semantic State Colors */
-  --color-surface-bg: #F7F9FA;
+  --color-surface-bg: #F7F7F7;
   --color-surface-card: #FFFFFF;
 }
 
@@ -93,10 +116,14 @@
 
 body {
   font-family: var(--font-sans);
-  background-color: #F7F9FA;
-  color: #111827;
+  background-color: #F7F7F7;
+  color: #4B4B4B;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
 }
 
 .dark body {

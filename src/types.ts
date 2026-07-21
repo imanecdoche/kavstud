@@ -178,5 +178,50 @@ export type ActiveTab =
   | 'tables' 
   | 'forms' 
   | 'assignments' 
+  | 'schedules'
   | 'layouts' 
   | 'settings';
+
+export interface PackageRegistration {
+  id?: string;
+  guardianName: string;
+  studentName: string;
+  studentDob: string; // YYYY-MM-DD
+  studentAge: number;
+  studentAddress: string;
+  guardianPhone: string;
+  selectedPackageId: string;
+  selectedPackageName: string;
+  gradeLevel?: string;
+  preferredSchedule?: string;
+  assignedSchedule?: string;
+  tutorInstructions?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: any; // Timestamp or number
+  updatedAt?: any;
+  userId?: string;
+  userEmail?: string;
+}
+
+export interface ScheduleItem {
+  id?: string;
+  type: 'PRIVATE' | 'CIRCLE';
+  title: string;
+  subject?: string;
+  studentId?: string;
+  studentName?: string;
+  circleId?: string;
+  circleName?: string;
+  teacherId?: string;
+  teacherName?: string;
+  date: string; // YYYY-MM-DD
+  startTime: string; // HH:mm e.g. "15:30"
+  endTime: string; // HH:mm e.g. "17:00"
+  timeLabel: string; // e.g. "15:30 - 17:00 WIB"
+  status: 'scheduled' | 'completed' | 'rescheduled' | 'cancelled';
+  isAvailableSlot?: boolean; // If true, indicates an open time slot available for booking
+  notes?: string;
+  meetingLink?: string;
+  createdAt?: any;
+  updatedAt?: any;
+}

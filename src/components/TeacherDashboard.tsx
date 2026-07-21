@@ -46,6 +46,13 @@ import { SkeletonDashboard, SkeletonList } from './Skeletons';
 import CustomDropdown from './CustomDropdown';
 import CustomDatePicker from './CustomDatePicker';
 import ModuleManager from './ModuleManager';
+import Packages from './Packages';
+import Inbox from './Inbox';
+import PackageRegistrationsDev from './PackageRegistrationsDev';
+import DevToolsMaintenance from './DevToolsMaintenance';
+import MaintenanceView from './MaintenanceView';
+import TeacherSchedule from './TeacherSchedule';
+import { getLocalFeatureFlags } from '../utils/featureFlags';
 
 interface TeacherDashboardProps {
   onNavigate: (path: string) => void;
@@ -53,7 +60,14 @@ interface TeacherDashboardProps {
 }
 
 export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'assignments' | 'settings' | 'circles' | 'students' | 'modules'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'assignments' | 'settings' | 'circles' | 'students' | 'modules' | 'packages' | 'inbox' | 'registrations' | 'devtools' | 'schedules'>('dashboard');
+  const [featureFlags, setFeatureFlags] = useState(() => getLocalFeatureFlags());
+
+  useEffect(() => {
+    const handleFlagsUpdate = () => setFeatureFlags(getLocalFeatureFlags());
+    window.addEventListener('kavio_feature_flags_updated', handleFlagsUpdate);
+    return () => window.removeEventListener('kavio_feature_flags_updated', handleFlagsUpdate);
+  }, []);
   const [teacherProfile, setTeacherProfile] = useState<UserProfile | null>(null);
   const [students, setStudents] = useState<UserProfile[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -455,6 +469,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
         onLogout={handleLogout}
         isMobileOpen={isSidebarOpen}
         setIsMobileOpen={setIsSidebarOpen}
+        onNavigate={onNavigate}
       />
 
       {/* Main Container Content */}
@@ -983,6 +998,37 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 <ModuleManager 
                   onSetLoading={onSetLoading}
                 />
+              )}
+
+              {/* TAB: PACKAGES */}
+              {activeTab === 'packages' && (
+                <div className="max-w-4xl mx-auto space-y-6">
+                  <Packages />
+                </div>
+              )}
+
+              {/* TAB: INBOX */}
+              {activeTab === 'inbox' && (
+                <Inbox 
+                  onNavigate={onNavigate} 
+                  onSelectTab={setActiveTab} 
+                  userProfile={teacherProfile} 
+                />
+              )}
+
+              {/* TAB: REGISTRATIONS (DEV / ADMIN) */}
+              {activeTab === 'registrations' && (
+                <PackageRegistrationsDev />
+              )}
+
+              {/* TAB: DEV TOOLS (MAINTENANCE CONTROL) */}
+              {activeTab === 'devtools' && (
+                <DevToolsMaintenance />
+              )}
+
+              {/* TAB: SCHEDULES */}
+              {activeTab === 'schedules' && (
+                <TeacherSchedule />
               )}
 
               {/* TAB 3: SETTINGS INLINE */}

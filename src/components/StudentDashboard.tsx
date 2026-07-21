@@ -40,6 +40,11 @@ import EmptyState from './EmptyState';
 import { SkeletonDashboard, SkeletonList } from './Skeletons';
 import CustomDropdown from './CustomDropdown';
 import ModuleLibrary from './ModuleLibrary';
+import Packages from './Packages';
+import Inbox from './Inbox';
+import MaintenanceView from './MaintenanceView';
+import StudentSchedule from './StudentSchedule';
+import { getLocalFeatureFlags } from '../utils/featureFlags';
 
 interface StudentDashboardProps {
   onNavigate: (path: string) => void;
@@ -47,10 +52,18 @@ interface StudentDashboardProps {
 }
 
 export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'assignments' | 'settings' | 'modules'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'assignments' | 'settings' | 'modules' | 'packages' | 'inbox' | 'schedules'>('dashboard');
   const [studentProfile, setStudentProfile] = useState<UserProfile | null>(null);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
+
+  const [featureFlags, setFeatureFlags] = useState(() => getLocalFeatureFlags());
+
+  useEffect(() => {
+    const handleFlagsUpdate = () => setFeatureFlags(getLocalFeatureFlags());
+    window.addEventListener('kavio_feature_flags_updated', handleFlagsUpdate);
+    return () => window.removeEventListener('kavio_feature_flags_updated', handleFlagsUpdate);
+  }, []);
   
   // My Circle Group Info
   const [myCircle, setMyCircle] = useState<any>(null);
@@ -264,6 +277,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
         onLogout={handleLogout}
         isMobileOpen={isSidebarOpen}
         setIsMobileOpen={setIsSidebarOpen}
+        onNavigate={onNavigate}
       />
 
       {/* Main Container Content */}
@@ -289,8 +303,23 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
               transition={{ duration: 0.18 }}
               className="p-4 sm:p-8 lg:p-10 space-y-8"
             >
+              {/* MAINTENANCE MODE CHECK */}
+              {(() => {
+                const currentFlag = featureFlags.find(f => f.id === activeTab);
+                if (currentFlag && !currentFlag.enabled) {
+                  return (
+                    <MaintenanceView 
+                      featureName={currentFlag.name} 
+                      message={currentFlag.maintenanceMessage}
+                      onBackToDashboard={() => setActiveTab('dashboard')} 
+                    />
+                  );
+                }
+                return null;
+              })()}
+
               {/* TAB 1: MAIN DASHBOARD */}
-              {activeTab === 'dashboard' && (
+              {activeTab === 'dashboard' && (featureFlags.find(f => f.id === 'dashboard')?.enabled !== false) && (
                 <>
                   {/* Duolingo Style Top Welcome & Action Header */}
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-gray-100 dark:border-slate-700/50 pb-6">
@@ -789,7 +818,28 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                 />
               )}
 
-              {/* TAB 4: SETTINGS INLINE */}
+              {/* TAB 4: PACKAGES */}
+              {activeTab === 'packages' && (
+                <div className="max-w-4xl mx-auto space-y-6">
+                  <Packages />
+                </div>
+              )}
+
+              {/* TAB 5: INBOX */}
+              {activeTab === 'inbox' && (
+                <Inbox 
+                  onNavigate={onNavigate} 
+                  onSelectTab={setActiveTab} 
+                  userProfile={studentProfile} 
+                />
+              )}
+
+              {/* TAB: SCHEDULES */}
+              {activeTab === 'schedules' && (
+                <StudentSchedule userProfile={studentProfile} />
+              )}
+
+              {/* TAB 5: SETTINGS INLINE */}
               {activeTab === 'settings' && (
                 <div className="max-w-4xl mx-auto space-y-6">
                   <UserSettings 

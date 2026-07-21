@@ -128,5 +128,18 @@ service cloud.firestore {
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.email == 'fatih@kavio.tec.edu'
       );
     }
+
+    // Package Registrations collection rules
+    match /package_registrations/{registrationId} {
+      allow create: if true;
+      allow read: if isSignedIn();
+      allow update, delete: if isSignedIn();
+    }
+
+    // Schedules collection rules
+    match /schedules/{scheduleId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isSignedIn();
+    }
   }
 }

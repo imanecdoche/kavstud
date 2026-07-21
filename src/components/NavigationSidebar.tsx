@@ -13,21 +13,29 @@ import {
   CircleDot,
   BookOpen,
   Moon,
-  Sun
+  Sun,
+  Package,
+  Newspaper,
+  Inbox,
+  FileSpreadsheet,
+  Wrench,
+  Calendar
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Logo from './Logo';
 import { UserProfile } from '../types';
 import { useTheme } from '../contexts/ThemeContext';
+import { getLocalFeatureFlags } from '../utils/featureFlags';
 
 interface NavigationSidebarProps {
   role: 'teacher' | 'student';
-  activeTab: 'dashboard' | 'assignments' | 'settings' | 'circles' | 'students' | 'modules';
-  setActiveTab: (tab: 'dashboard' | 'assignments' | 'settings' | 'circles' | 'students' | 'modules') => void;
+  activeTab: 'dashboard' | 'assignments' | 'settings' | 'circles' | 'students' | 'modules' | 'packages' | 'inbox' | 'registrations' | 'devtools' | 'schedules';
+  setActiveTab: (tab: 'dashboard' | 'assignments' | 'settings' | 'circles' | 'students' | 'modules' | 'packages' | 'inbox' | 'registrations' | 'devtools' | 'schedules') => void;
   userProfile: UserProfile | null;
   onLogout: () => void;
   isMobileOpen: boolean;
   setIsMobileOpen: (open: boolean) => void;
+  onNavigate?: (path: string) => void;
 }
 
 export default function NavigationSidebar({
@@ -37,7 +45,8 @@ export default function NavigationSidebar({
   userProfile,
   onLogout,
   isMobileOpen,
-  setIsMobileOpen
+  setIsMobileOpen,
+  onNavigate
 }: NavigationSidebarProps) {
   // Remember collapsed state on desktop
   const [isCollapsed, setIsCollapsed] = useState(() => {
@@ -47,6 +56,42 @@ export default function NavigationSidebar({
   
   const { theme, setTheme, isDarkMode } = useTheme();
 
+  const [hasUnreadInbox, setHasUnreadInbox] = useState(() => {
+    try {
+      const count = localStorage.getItem('kavio_unread_inbox_count');
+      return count !== null && parseInt(count, 10) > 0;
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    const checkUnread = () => {
+      try {
+        const count = localStorage.getItem('kavio_unread_inbox_count');
+        setHasUnreadInbox(count !== null && parseInt(count, 10) > 0);
+      } catch {
+        setHasUnreadInbox(false);
+      }
+    };
+    
+    checkUnread();
+    const interval = setInterval(checkUnread, 800);
+    window.addEventListener('storage', checkUnread);
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('storage', checkUnread);
+    };
+  }, []);
+
+  const [featureFlags, setFeatureFlags] = useState(() => getLocalFeatureFlags());
+
+  useEffect(() => {
+    const handleFlagsChange = () => setFeatureFlags(getLocalFeatureFlags());
+    window.addEventListener('kavio_feature_flags_updated', handleFlagsChange);
+    return () => window.removeEventListener('kavio_feature_flags_updated', handleFlagsChange);
+  }, []);
+
   const toggleCollapse = () => {
     setIsCollapsed(prev => {
       const next = !prev;
@@ -55,38 +100,44 @@ export default function NavigationSidebar({
     });
   };
 
-  const menuItems = [
+  const isDevAccount = userProfile?.email === 'fatih@kavio.tec.edu';
+
+  const menuSections = isDevAccount ? [
     {
-      id: 'dashboard' as const,
-      label: 'Dashboard',
-      icon: LayoutDashboard
-    },
-    ...(role === 'teacher' ? [
-      {
-        id: 'students' as const,
-        label: 'Manajemen Siswa',
-        icon: Users
-      },
-      {
-        id: 'circles' as const,
-        label: 'Kavio Circle',
-        icon: CircleDot
-      }
-    ] : []),
-    {
-      id: 'modules' as const,
-      label: role === 'teacher' ? 'Kelola Modul' : 'Pustaka Modul',
-      icon: BookOpen // lucide icon (needs import if not there, let's verify if BookOpen is imported)
+      title: 'TEACHER TOOLS',
+      items: [
+        { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard },
+        { id: 'schedules' as const, label: 'Jadwal & Bimbingan', icon: Calendar },
+        { id: 'students' as const, label: 'Manajemen Siswa', icon: Users },
+        { id: 'circles' as const, label: 'Kavio Circle', icon: CircleDot },
+        { id: 'modules' as const, label: 'Kelola Modul', icon: BookOpen },
+        { id: 'assignments' as const, label: 'Kelola Tugas', icon: NotebookText },
+        { id: 'packages' as const, label: 'Paket', icon: Package },
+        { id: 'settings' as const, label: 'Pengaturan', icon: Settings }
+      ]
     },
     {
-      id: 'assignments' as const,
-      label: role === 'teacher' ? 'Kelola Tugas' : 'Tugas Saya',
-      icon: NotebookText
-    },
+      title: 'DEV TOOLS',
+      items: [
+        { id: 'registrations' as const, label: 'Pendaftaran Paket', icon: FileSpreadsheet },
+        { id: 'devtools' as const, label: 'Kontrol Maintenance', icon: Wrench }
+      ]
+    }
+  ] : [
     {
-      id: 'settings' as const,
-      label: 'Pengaturan',
-      icon: Settings
+      title: role === 'teacher' ? 'TEACHER TOOLS' : undefined,
+      items: [
+        { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard },
+        { id: 'schedules' as const, label: 'Jadwal & Bimbingan', icon: Calendar },
+        ...(role === 'teacher' ? [
+          { id: 'students' as const, label: 'Manajemen Siswa', icon: Users },
+          { id: 'circles' as const, label: 'Kavio Circle', icon: CircleDot }
+        ] : []),
+        { id: 'modules' as const, label: role === 'teacher' ? 'Kelola Modul' : 'Pustaka Modul', icon: BookOpen },
+        { id: 'assignments' as const, label: role === 'teacher' ? 'Kelola Tugas' : 'Tugas Saya', icon: NotebookText },
+        { id: 'packages' as const, label: 'Paket', icon: Package },
+        { id: 'settings' as const, label: 'Pengaturan', icon: Settings }
+      ]
     }
   ];
 
@@ -95,23 +146,33 @@ export default function NavigationSidebar({
       {/* Mobile Top Navbar (Floating Header) */}
       <header className="lg:hidden h-16 bg-white dark:bg-slate-800/80 backdrop-blur-md border-b border-gray-100 dark:border-slate-700/50 px-4 flex items-center justify-between sticky top-0 z-40 w-full">
         <div className="flex items-center gap-2 min-w-0">
-          <Logo className="h-5 max-w-[130px] w-auto text-indigo-600 dark:text-indigo-400 shrink-0" />
-          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-[9px] font-bold text-indigo-700 rounded-md border border-indigo-100 dark:border-indigo-800/50 uppercase font-sans shrink-0">
-            {role === 'teacher' ? 'Guru' : 'Siswa'}
-          </span>
+          <button
+            onClick={() => setIsMobileOpen(!isMobileOpen)}
+            className="p-2.5 text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-2xl transition-colors cursor-pointer"
+            style={{ minWidth: '44px', minHeight: '44px' }}
+            aria-label="Toggle navigation menu"
+            id="btn-toggle-mobile-sidebar"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+          
+          <Logo iconOnly={false} />
         </div>
-        <button
-          onClick={() => setIsMobileOpen(true)}
-          className="p-2 -mr-2 text-gray-500 dark:text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-900/30/50 rounded-xl transition-all active:scale-95 cursor-pointer"
-          style={{ minWidth: '44px', minHeight: '44px' }}
-          aria-label="Open sidebar"
-          id="btn-mobile-menu"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
+
+        {/* Mobile Header Quick Actions */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setTheme(isDarkMode ? 'light' : 'dark')}
+            className="p-2 text-gray-500 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors cursor-pointer"
+            style={{ minWidth: '40px', minHeight: '40px' }}
+            aria-label="Toggle theme"
+          >
+            {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
+        </div>
       </header>
 
-      {/* Backdrop for Mobile Drawer */}
+      {/* Mobile Drawer Overlay */}
       <AnimatePresence>
         {isMobileOpen && (
           <motion.div
@@ -119,43 +180,23 @@ export default function NavigationSidebar({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsMobileOpen(false)}
-            className="fixed inset-0 bg-black/30 backdrop-blur-xs z-40 lg:hidden"
-            id="sidebar-backdrop"
+            className="lg:hidden fixed inset-0 bg-black/40 backdrop-blur-xs z-50"
           />
         )}
       </AnimatePresence>
 
       {/* Sidebar Container */}
-      <motion.aside
-        animate={{ 
-          width: isCollapsed ? 80 : 260,
-          transition: { duration: 0.2, ease: 'easeInOut' }
-        }}
-        className={`fixed inset-y-0 left-0 bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700/50 flex flex-col z-50 lg:sticky h-screen shrink-0 ${
-          isMobileOpen ? 'translate-x-0' : '-translate-x-full'
-        } lg:translate-x-0 transition-transform lg:transition-none`}
-        id="app-sidebar"
-        style={{
-          width: isCollapsed ? '80px' : '260px'
-        }}
+      <aside
+        className={`fixed lg:static inset-y-0 left-0 z-50 bg-white dark:bg-slate-800 border-r-2 border-gray-100 dark:border-slate-700/60 flex flex-col transition-all duration-300 shadow-sm ${
+          isCollapsed ? 'w-20' : 'w-64'
+        } ${
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        }`}
       >
-        {/* Header inside Sidebar */}
-        <div className="h-16 px-4 border-b border-gray-50 flex items-center justify-between">
-          <div className="flex items-center gap-2 overflow-hidden min-w-0">
-            <Logo 
-              iconOnly={isCollapsed}
-              className={`${isCollapsed ? 'h-6' : 'h-5 max-w-[135px]'} w-auto text-indigo-600 dark:text-indigo-400 shrink-0 transition-all`} 
-            />
-            {!isCollapsed && (
-              <motion.span 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-indigo-50 dark:bg-indigo-900/30 text-[9px] font-bold text-indigo-700 rounded-md border border-indigo-100 dark:border-indigo-800/50 uppercase font-sans shrink-0"
-              >
-                {role === 'teacher' ? 'Guru' : 'Siswa'}
-              </motion.span>
-            )}
-          </div>
+        {/* Sidebar Header & Brand Logo */}
+        <div className="p-4 flex items-center justify-between border-b border-gray-50 dark:border-slate-800 shrink-0">
+          <Logo iconOnly={isCollapsed} />
+          
           <button
             onClick={() => setIsMobileOpen(false)}
             className="lg:hidden p-2 text-gray-400 hover:text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:bg-slate-900 rounded-xl cursor-pointer"
@@ -204,47 +245,130 @@ export default function NavigationSidebar({
           </div>
         </div>
 
-        {/* Navigation Menu Links */}
-        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
-          {menuItems.map((item) => {
-            const IconComponent = item.icon;
-            const isActive = activeTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveTab(item.id);
-                  setIsMobileOpen(false);
-                }}
-                className={`w-full flex items-center text-xs font-black transition-all group cursor-pointer ${
-                  isCollapsed ? 'justify-center p-2.5 rounded-xl' : 'px-3.5 py-2.5 gap-3 rounded-2xl'
-                } ${
-                  isActive 
-                    ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs translate-y-[-1px]' 
-                    : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-slate-700/70 border-b-2 border-transparent'
-                }`}
-                title={isCollapsed ? item.label : undefined}
-                id={`menu-item-${item.id}`}
-              >
-                <IconComponent className={`w-4.5 h-4.5 shrink-0 ${
-                  isActive ? 'text-white' : 'text-gray-400 group-hover:text-gray-700 dark:text-slate-200'
-                }`} />
-                {!isCollapsed && (
-                  <motion.span
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="truncate uppercase tracking-wider text-[11px]"
+        {/* Navigation Menu Links Categorized into TEACHER TOOLS & DEV TOOLS */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-4">
+          {menuSections.map((section, sIdx) => (
+            <div key={sIdx} className="space-y-1">
+              {section.title && !isCollapsed && (
+                <div className="px-3.5 pt-2 pb-1 flex items-center justify-between">
+                  <span className="text-[9px] font-black uppercase text-[#1CB0F6] dark:text-[#1CB0F6] tracking-widest font-display">
+                    {section.title}
+                  </span>
+                  <div className="h-[1px] flex-1 bg-gray-200 dark:bg-slate-700/60 ml-2" />
+                </div>
+              )}
+              {isCollapsed && sIdx > 0 && (
+                <div className="my-2 border-t border-gray-200 dark:border-slate-700/60" />
+              )}
+
+              {section.items.map((item) => {
+                const IconComponent = item.icon;
+                const isActive = activeTab === item.id;
+                const flag = featureFlags.find(f => f.id === item.id);
+                const isMaintenance = flag && !flag.enabled;
+
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActiveTab(item.id);
+                      setIsMobileOpen(false);
+                    }}
+                    className={`w-full flex items-center text-xs font-black transition-all group cursor-pointer ${
+                      isCollapsed ? 'justify-center p-2.5 rounded-xl' : 'px-3.5 py-2.5 gap-3 rounded-2xl'
+                    } ${
+                      isActive 
+                        ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs translate-y-[-1px]' 
+                        : isMaintenance
+                        ? 'text-amber-800 dark:text-amber-300 bg-amber-50/70 dark:bg-amber-950/40 border-b-2 border-amber-200'
+                        : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-slate-700/70 border-b-2 border-transparent'
+                    }`}
+                    title={isCollapsed ? (isMaintenance ? `${item.label} (Maintenance Mode)` : item.label) : undefined}
+                    id={`menu-item-${item.id}`}
                   >
-                    {item.label}
-                  </motion.span>
-                )}
-              </button>
-            );
-          })}
+                    <div className="relative shrink-0">
+                      <IconComponent className={`w-4.5 h-4.5 ${
+                        isActive ? 'text-white' : isMaintenance ? 'text-amber-500' : 'text-gray-400 group-hover:text-gray-700 dark:text-slate-200'
+                      }`} />
+                      {isMaintenance && isCollapsed && (
+                        <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#FF9600] animate-ping" />
+                      )}
+                    </div>
+                    {!isCollapsed && (
+                      <div className="flex items-center justify-between flex-1 min-w-0">
+                        <motion.span
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          className="truncate uppercase tracking-wider text-[11px]"
+                        >
+                          {item.label}
+                        </motion.span>
+                        {isMaintenance && (
+                          <span className="bg-[#FF9600] text-gray-900 text-[9px] font-black px-1.5 py-0.2 rounded-md uppercase shrink-0">
+                            🛠️ Maint
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          ))}
         </nav>
 
         {/* Desktop Collapse Toggle, Theme Toggle & Logout Button */}
         <div className="p-3 border-t border-gray-50 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/30 space-y-1 shrink-0">
+          <button
+            onClick={() => {
+              if (onNavigate) {
+                onNavigate('/blog');
+              } else {
+                window.location.href = '/blog';
+              }
+              setIsMobileOpen(false);
+            }}
+            className={`w-full flex items-center rounded-xl text-xs font-bold text-gray-700 dark:text-slate-200 hover:text-indigo-600 hover:bg-indigo-50/70 dark:hover:bg-slate-800 transition-all cursor-pointer ${
+              isCollapsed ? 'justify-center p-2.5' : 'px-3.5 py-2.5 gap-3'
+            }`}
+            title={isCollapsed ? 'Kavio Blog' : undefined}
+            id="btn-kavio-blog"
+          >
+            <Newspaper className="w-4.5 h-4.5 shrink-0 text-indigo-500" />
+            {!isCollapsed && <span className="uppercase tracking-wider font-extrabold text-[11px]">Kavio Blog</span>}
+          </button>
+
+          <button
+            onClick={() => {
+              setActiveTab('inbox');
+              setIsMobileOpen(false);
+            }}
+            className={`w-full flex items-center rounded-xl text-xs font-bold transition-all cursor-pointer relative ${
+              isCollapsed ? 'justify-center p-2.5' : 'px-3.5 py-2.5 gap-3'
+            } ${
+              activeTab === 'inbox'
+                ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs translate-y-[-1px]'
+                : 'text-gray-700 dark:text-slate-200 hover:text-indigo-600 hover:bg-indigo-50/70 dark:hover:bg-slate-800'
+            }`}
+            title={isCollapsed ? 'Inbox / Notifikasi' : undefined}
+            id="btn-sidebar-inbox"
+          >
+            <div className="relative shrink-0">
+              <Inbox className={`w-4.5 h-4.5 ${activeTab === 'inbox' ? 'text-white' : 'text-indigo-500'}`} />
+              {hasUnreadInbox && isCollapsed && (
+                <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#FF4B4B] animate-pulse" />
+              )}
+            </div>
+            {!isCollapsed && (
+              <div className="flex items-center justify-between flex-1">
+                <span className="uppercase tracking-wider font-extrabold text-[11px]">Inbox</span>
+                {hasUnreadInbox && (
+                  <span className="w-2 h-2 rounded-full bg-[#FF4B4B] animate-pulse" />
+                )}
+              </div>
+            )}
+          </button>
+
           <button
             onClick={() => setTheme(isDarkMode ? 'light' : 'dark')}
             className={`w-full flex items-center rounded-xl text-xs font-bold text-gray-500 dark:text-slate-400 hover:text-gray-900 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-slate-800 transition-all cursor-pointer ${
@@ -278,7 +402,7 @@ export default function NavigationSidebar({
             {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
         </div>
-      </motion.aside>
+      </aside>
     </>
   );
 }
