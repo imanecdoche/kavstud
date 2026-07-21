@@ -1,8 +1,197 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useMotionValue, useSpring, useTransform } from 'motion/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import PackageDetail, { PackageData } from './PackageDetail';
 import PackageRegistrationForm from './PackageRegistrationForm';
+
+function PackageCardItem({
+  pkg,
+  offset,
+  isActive,
+  priceLabel,
+  onSelectPackage,
+  goNext,
+  goPrev
+}: {
+  pkg: PackageData;
+  offset: number;
+  isActive: boolean;
+  priceLabel: string;
+  onSelectPackage: (pkg: PackageData) => void;
+  goNext: () => void;
+  goPrev: () => void;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const xMouse = useMotionValue(0);
+  const yMouse = useMotionValue(0);
+
+  // Smooth springs for mouse movement (Emil Kowalski spring principles)
+  const springConfig = { stiffness: 200, damping: 22 };
+  const mouseRotateX = useSpring(useTransform(yMouse, [-0.5, 0.5], [14, -14]), springConfig);
+  const mouseRotateY = useSpring(useTransform(xMouse, [-0.5, 0.5], [-14, 14]), springConfig);
+
+  // Parallax layers for 3D depth
+  const priceTranslateX = useSpring(useTransform(xMouse, [-0.5, 0.5], [-12, 12]), springConfig);
+  const priceTranslateY = useSpring(useTransform(yMouse, [-0.5, 0.5], [-12, 12]), springConfig);
+  const imgTranslateX = useSpring(useTransform(xMouse, [-0.5, 0.5], [-18, 18]), springConfig);
+  const imgTranslateY = useSpring(useTransform(yMouse, [-0.5, 0.5], [-18, 18]), springConfig);
+  const badgeTranslateX = useSpring(useTransform(xMouse, [-0.5, 0.5], [25, -25]), springConfig);
+  const badgeTranslateY = useSpring(useTransform(yMouse, [-0.5, 0.5], [25, -25]), springConfig);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!isActive) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width - 0.5;
+    const y = (e.clientY - rect.top) / rect.height - 0.5;
+    xMouse.set(x);
+    yMouse.set(y);
+  };
+
+  const handleMouseEnter = () => {
+    if (isActive) setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+    xMouse.set(0);
+    yMouse.set(0);
+  };
+
+  const absOffset = Math.abs(offset);
+  const xPos = offset * 295; // Slightly wider spread for better card visibility
+  const scale = isActive ? (isHovered ? 1.05 : 1.02) : 0.86; // Side cards are slightly larger and clearer
+  const opacity = isActive ? 1 : absOffset === 1 ? 0.75 : 0.2;
+  const zIndex = isActive ? 20 : 10 - absOffset;
+  const carouselRotateY = isActive ? 0 : offset < 0 ? 22 : -22; // Softer, more elegant 3D angle
+  const blur = isActive ? 0 : 1.2; // Subtle depth of field for non-active cards
+
+  return (
+    <motion.div
+      key={pkg.id}
+      animate={{
+        x: xPos,
+        scale,
+        opacity,
+        rotateY: carouselRotateY,
+        filter: `blur(${blur}px)`,
+      }}
+      transition={{
+        type: 'spring',
+        stiffness: 260,
+        damping: 26,
+      }}
+      onClick={() => {
+        if (offset === 1) goNext();
+        if (offset === -1) goPrev();
+        if (isActive) onSelectPackage(pkg);
+      }}
+      onMouseEnter={handleMouseEnter}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        zIndex,
+        left: '50%',
+        marginLeft: '-170px',
+        rotateX: isActive ? mouseRotateX : 0,
+        rotateY: isActive ? mouseRotateY : carouselRotateY,
+        transformStyle: 'preserve-3d',
+      }}
+      className={`absolute w-[340px] ${pkg.bgColor} ${pkg.borderClass} rounded-[2.2rem] p-7 flex flex-col items-center overflow-hidden shadow-xl cursor-pointer transition-shadow duration-300 hover:shadow-2xl`}
+    >
+      {/* Horizontal Light Sheen / Kilau Cahaya Effect */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none z-30"
+        style={{
+          background: 'linear-gradient(115deg, transparent 20%, rgba(255, 255, 255, 0.45) 45%, rgba(255, 255, 255, 0.75) 50%, rgba(255, 255, 255, 0.45) 55%, transparent 80%)',
+          transform: 'translateZ(75px)',
+          mixBlendMode: 'overlay',
+        }}
+        animate={{
+          x: isHovered && isActive ? ['-160%', '160%'] : '-160%',
+        }}
+        transition={{
+          duration: 1.3,
+          ease: [0.23, 1, 0.32, 1],
+          repeat: isHovered && isActive ? Infinity : 0,
+          repeatDelay: 0.9,
+        }}
+      />
+
+      {/* Header Info */}
+      <div className="text-center w-full mb-1 z-10 pointer-events-none" style={{ transform: 'translateZ(20px)' }}>
+        <h2 className="text-4xl font-black text-gray-900 tracking-tight uppercase mb-1 font-display">{pkg.name}</h2>
+        
+        {/* Price Block with 3D Parallax Elevation & Hover Scale */}
+        <motion.div
+          style={{
+            x: isActive ? priceTranslateX : 0,
+            y: isActive ? priceTranslateY : 0,
+            transform: 'translateZ(45px)',
+          }}
+          animate={{
+            scale: isHovered && isActive ? 1.12 : 1,
+          }}
+          transition={{
+            type: 'spring',
+            stiffness: 280,
+            damping: 22,
+          }}
+          className="inline-block"
+        >
+          {priceLabel === '/bulan' ? (
+            <>
+              <div className="flex items-end justify-center gap-1 mb-1 text-gray-900 drop-shadow-xs">
+                <span className="text-base font-bold">Rp</span>
+                <span className="text-3xl font-black leading-none">{pkg.price}</span>
+                <span className="text-xs font-semibold mb-0.5">/bulan</span>
+              </div>
+              <p className="text-xs font-medium text-gray-700">{pkg.details}</p>
+            </>
+          ) : (
+            <>
+              <p className="text-xs font-bold text-gray-700 mb-1">{pkg.details}</p>
+              <div className="flex items-end justify-center gap-1 text-gray-900 drop-shadow-xs">
+                <span className="text-base font-bold">Rp</span>
+                <span className="text-3xl font-black leading-none">{pkg.price}</span>
+              </div>
+              <p className="text-xs font-bold text-gray-900">/sesi/siswa</p>
+            </>
+          )}
+        </motion.div>
+      </div>
+
+      {/* Enlarged 3D Parallax Illustration */}
+      <motion.div
+        className={`relative w-full ${pkg.id === 'squad' ? 'max-w-[310px]' : 'max-w-[265px]'} aspect-square flex items-center justify-center my-1`}
+        style={{
+          x: isActive ? imgTranslateX : 0,
+          y: isActive ? imgTranslateY : 0,
+          transform: 'translateZ(35px)',
+        }}
+      >
+        <img
+          src={pkg.image}
+          alt={`${pkg.name} illustration`}
+          className="w-full h-full object-contain drop-shadow-lg transition-transform duration-300 hover:scale-105"
+        />
+      </motion.div>
+
+      {/* Parallax Badge */}
+      {pkg.badge && (
+        <motion.img
+          src={pkg.badge}
+          alt="Badge"
+          style={{
+            x: isActive ? badgeTranslateX : 0,
+            y: isActive ? badgeTranslateY : 0,
+            transform: 'translateZ(65px)',
+          }}
+          className={`absolute ${pkg.id === 'squad' ? 'w-32 h-32' : 'w-24 h-24'} object-contain z-20 ${pkg.badgePos} drop-shadow-xl`}
+        />
+      )}
+    </motion.div>
+  );
+}
 
 function PackageCarousel({ 
   items, 
@@ -31,84 +220,31 @@ function PackageCarousel({
           <ChevronLeft className="w-5 h-5" />
         </button>
 
-        {/* Cards track */}
-        <div className="overflow-hidden w-full mx-14" style={{ height: '500px' }}>
-          <div className="relative w-full h-full flex items-center justify-center">
+        {/* Cards track with wider viewport & smooth edge mask */}
+        <div 
+          className="overflow-hidden w-full mx-2 sm:mx-6" 
+          style={{ 
+            height: '540px',
+            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
+            maskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)'
+          }}
+        >
+          <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: 1200 }}>
             {items.map((pkg, index) => {
               const offset = index - activeIndex;
-              const isActive = offset === 0;
-              const absOffset = Math.abs(offset);
-
-              if (absOffset > 2) return null;
-
-              const xPos = offset * 280;
-              const scale = isActive ? 1 : 0.8;
-              const opacity = isActive ? 1 : absOffset === 1 ? 0.45 : 0.15;
-              const zIndex = isActive ? 20 : 10 - absOffset;
+              if (Math.abs(offset) > 2) return null;
 
               return (
-                <motion.div
+                <PackageCardItem
                   key={pkg.id}
-                  animate={{
-                    x: xPos,
-                    scale,
-                    opacity,
-                  }}
-                  transition={{
-                    type: 'spring',
-                    stiffness: 300,
-                    damping: 30,
-                  }}
-                  onClick={() => {
-                    if (offset === 1) goNext();
-                    if (offset === -1) goPrev();
-                    if (isActive) onSelectPackage(pkg);
-                  }}
-                  className={`absolute w-[320px] ${pkg.bgColor} ${pkg.borderClass} rounded-[2rem] p-7 flex flex-col items-center overflow-hidden shadow-md cursor-pointer`}
-                  style={{ zIndex, left: '50%', marginLeft: '-160px' }}
-                >
-                  {/* Text */}
-                  <div className="text-center w-full mb-3">
-                    <h2 className="text-4xl font-black text-gray-900 tracking-tight uppercase mb-1 font-display">{pkg.name}</h2>
-                    {priceLabel === '/bulan' ? (
-                      <>
-                        <div className="flex items-end justify-center gap-1 mb-1 text-gray-900">
-                          <span className="text-base font-bold">Rp</span>
-                          <span className="text-2xl font-black leading-none">{pkg.price}</span>
-                          <span className="text-xs font-semibold mb-0.5">/bulan</span>
-                        </div>
-                        <p className="text-xs font-medium text-gray-700">{pkg.details}</p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="text-xs font-bold text-gray-700 mb-1">{pkg.details}</p>
-                        <div className="flex items-end justify-center gap-1 text-gray-900">
-                          <span className="text-base font-bold">Rp</span>
-                          <span className="text-3xl font-black leading-none">{pkg.price}</span>
-                        </div>
-                        <p className="text-sm font-bold text-gray-900">/sesi/siswa</p>
-                      </>
-                    )}
-                  </div>
-
-                  {/* Illustration */}
-                  <div className={`relative w-full ${pkg.id === 'squad' ? 'max-w-[280px]' : 'max-w-[220px]'} aspect-square`}>
-                    <img
-                      src={pkg.image}
-                      alt={`${pkg.name} illustration`}
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-
-                  {/* Badge */}
-                  {pkg.badge && (
-                    <img
-                      src={pkg.badge}
-                      alt="Badge"
-                      className={`absolute ${pkg.id === 'squad' ? 'w-28 h-28' : 'w-20 h-20'} object-contain z-20 ${pkg.badgePos}`}
-                    />
-                  )}
-                </motion.div>
+                  pkg={pkg}
+                  offset={offset}
+                  isActive={offset === 0}
+                  priceLabel={priceLabel}
+                  onSelectPackage={onSelectPackage}
+                  goNext={goNext}
+                  goPrev={goPrev}
+                />
               );
             })}
           </div>

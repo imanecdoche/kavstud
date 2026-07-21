@@ -473,7 +473,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
       />
 
       {/* Main Container Content */}
-      <main className="flex-1 min-w-0 overflow-y-auto h-screen relative">
+      <main className="flex-1 min-w-0 relative">
         {error && (
           <div className="m-6 p-4 bg-red-50 border border-red-200/50 rounded-2xl text-xs text-red-600 flex items-center gap-2">
             <AlertCircle className="w-4.5 h-4.5 text-red-500 shrink-0" />
@@ -498,65 +498,152 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
               {/* TAB 1: MAIN DASHBOARD */}
               {activeTab === 'dashboard' && (
                 <>
-                  {/* Top Welcome Panel */}
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 dark:border-slate-700/50 pb-6">
-                    <div>
-                      <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 dark:text-white tracking-tight flex items-center gap-2">
-                        <span>Halo, {teacherProfile?.fullName?.split(' ')[0] || 'Guru'}!</span>
+                  {/* 3D Animated Hero Section */}
+                  <div className="relative w-full rounded-[2.5rem] bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-slate-800/80 dark:via-emerald-900/40 dark:to-slate-800/80 p-8 sm:p-10 md:p-12 mb-8 overflow-hidden shadow-sm border border-white dark:border-slate-700/50 flex flex-col md:flex-row items-center justify-between gap-8 stagger-item">
+                    
+                    {/* Abstract Background Shapes */}
+                    <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-teal-400/20 rounded-full blur-3xl pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl pointer-events-none" />
+
+                    {/* Left Content */}
+                    <div className="relative z-10 flex-1 space-y-4">
+                      <div className="flex items-center gap-3 mb-4">
+                        <motion.div 
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="relative group cursor-default inline-flex items-center gap-2 px-4 py-1.5 rounded-2xl text-[11px] font-black uppercase tracking-widest border overflow-hidden backdrop-blur-md shadow-sm transition-all bg-emerald-100/80 text-emerald-900 border-emerald-300 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] dark:bg-emerald-900/40 dark:text-emerald-100 dark:border-emerald-700"
+                        >
+                          {/* Shine effect on hover */}
+                          <div className="absolute inset-0 -translate-x-[150%] group-hover:translate-x-[150%] bg-gradient-to-r from-transparent via-white/60 dark:via-white/20 to-transparent transition-transform duration-1000 ease-in-out" />
+                          <span className="relative z-10">PORTAL GURU</span>
+                          <motion.span
+                            className="relative z-10 text-lg drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] filter"
+                            animate={{ scale: [1, 1.2, 1], rotateZ: [0, 10, -10, 0] }}
+                            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                            style={{ display: 'inline-block', transformOrigin: 'center' }}
+                          >
+                            👨‍🏫
+                          </motion.span>
+                        </motion.div>
+                      </div>
+
+                      <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 dark:text-white tracking-[-0.03em] text-balance leading-[1.1]">
+                        Halo,{' '}
+                        {/* Animated Name Effect */}
+                        <motion.span
+                          className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500"
+                          style={{ backgroundSize: '200% auto' }}
+                          animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
+                          transition={{ duration: 5, ease: 'linear', repeat: Infinity }}
+                        >
+                          {teacherProfile?.fullName?.split(' ')[0] || 'Guru'}!
+                        </motion.span>
                       </h1>
-                      <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
+                      
+                      <p className="text-sm md:text-base font-semibold text-gray-600 dark:text-slate-300 max-w-md">
                         Kelola tugas kelas, evaluasi jawaban siswa, dan pantau perkembangan belajar secara langsung.
                       </p>
+
+                      <div className="pt-4">
+                        <button
+                          onClick={() => onNavigate('/teacher/assignments/create')}
+                          className="btn-duo-green px-8 py-4 text-sm font-black flex items-center justify-center gap-2.5 shrink-0 text-white w-full sm:w-auto"
+                        >
+                          <Plus className="w-5 h-5 text-white animate-pulse" />
+                          <span>BUAT TUGAS BARU</span>
+                        </button>
+                      </div>
                     </div>
 
-                    <button
-                      onClick={() => onNavigate('/teacher/assignments/create')}
-                      className="btn-duo-green px-5 py-3 text-xs font-black flex items-center justify-center gap-2 shadow-sm shrink-0 cursor-pointer"
-                      style={{ minHeight: '44px' }}
-                    >
-                      <Plus className="w-4.5 h-4.5" />
-                      Tugas Baru
-                    </button>
+                    {/* Right Content: 3D Waving Mascot (Apple) */}
+                    <div className="relative z-10 w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 shrink-0 flex items-center justify-center pointer-events-none text-[8rem] sm:text-[10rem] md:text-[12rem] filter drop-shadow-[0_20px_30px_rgba(0,0,0,0.3)]">
+                      <motion.div
+                        animate={{
+                          y: [0, -15, 0], // Floating effect
+                          rotateZ: [0, -5, 10, -5, 0], // Waving effect
+                        }}
+                        transition={{
+                          duration: 4,
+                          ease: 'easeInOut',
+                          repeat: Infinity,
+                        }}
+                      >
+                        🍎
+                      </motion.div>
+                    </div>
                   </div>
 
                   {/* Stats Block Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div className="card-duo p-5 flex items-center gap-4 border-2 border-purple-200 border-b-4 border-purple-300 bg-purple-50/40">
-                      <div className="w-12 h-12 rounded-2xl bg-purple-500 text-white flex items-center justify-center font-black shrink-0 shadow-xs border-b-2 border-purple-700">
-                        <Users className="w-6 h-6" />
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="text-[10px] font-black text-purple-700 uppercase tracking-wider block">Siswa Terdaftar</span>
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-3xl font-black font-display text-gray-900 dark:text-white">{students.length}</span>
-                          <span className="text-xs text-purple-800 font-extrabold">Siswa</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {/* Widget 1: Siswa Terdaftar */}
+                    <div className="bg-purple-50 dark:bg-purple-900/20 border-2 border-purple-200 dark:border-purple-800 border-b-[6px] border-purple-400 dark:border-b-purple-600 p-5 rounded-3xl flex items-center justify-between shadow-sm relative overflow-hidden stagger-item">
+                      <div className="space-y-1 z-10">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-4xl font-display font-black text-gray-900 dark:text-white leading-none">
+                            {students.length}
+                          </span>
+                          <span className="text-xs font-black text-purple-900 dark:text-purple-300 uppercase tracking-wider">SISWA</span>
                         </div>
+                        <p className="text-xs font-bold text-purple-800/80 dark:text-purple-400/80">Siswa Terdaftar Aktif</p>
+                      </div>
+                      <div className="relative w-14 h-14 bg-purple-400/30 rounded-2xl flex items-center justify-center shrink-0 z-10 overflow-hidden shadow-inner border border-purple-300/50">
+                        <div className="absolute w-12 h-12 bg-purple-500/40 rounded-full blur-md animate-pulse" />
+                        <motion.span 
+                          className="relative z-10 text-3xl drop-shadow-md filter"
+                          animate={{ y: [0, -5, 0], scale: [1, 1.1, 1] }}
+                          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                          style={{ display: 'inline-block' }}
+                        >
+                          👥
+                        </motion.span>
                       </div>
                     </div>
 
-                    <div className="card-duo p-5 flex items-center gap-4 border-2 border-sky-200 border-b-4 border-sky-300 bg-sky-50/40">
-                      <div className="w-12 h-12 rounded-2xl bg-sky-500 text-white flex items-center justify-center font-black shrink-0 shadow-xs border-b-2 border-sky-700">
-                        <NotebookText className="w-6 h-6" />
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="text-[10px] font-black text-sky-700 uppercase tracking-wider block">Total Tugas</span>
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-3xl font-black font-display text-gray-900 dark:text-white">{assignments.length}</span>
-                          <span className="text-xs text-sky-800 font-extrabold">Tugas</span>
+                    {/* Widget 2: Total Tugas */}
+                    <div className="bg-sky-50 dark:bg-sky-900/20 border-2 border-sky-200 dark:border-sky-800 border-b-[6px] border-sky-400 dark:border-b-sky-600 p-5 rounded-3xl flex items-center justify-between shadow-sm relative overflow-hidden stagger-item">
+                      <div className="space-y-1 z-10">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-4xl font-display font-black text-gray-900 dark:text-white leading-none">
+                            {assignments.length}
+                          </span>
+                          <span className="text-xs font-black text-sky-900 dark:text-sky-300 uppercase tracking-wider">TUGAS</span>
                         </div>
+                        <p className="text-xs font-bold text-sky-800/80 dark:text-sky-400/80">Total Tugas Diberikan</p>
+                      </div>
+                      <div className="relative w-14 h-14 bg-sky-400/30 rounded-2xl flex items-center justify-center shrink-0 z-10 overflow-hidden shadow-inner border border-sky-300/50">
+                        <div className="absolute w-12 h-12 bg-sky-500/40 rounded-full blur-md animate-pulse" />
+                        <motion.span 
+                          className="relative z-10 text-3xl drop-shadow-md filter"
+                          animate={{ y: [0, -5, 0], scale: [1, 1.1, 1] }}
+                          transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+                          style={{ display: 'inline-block' }}
+                        >
+                          📋
+                        </motion.span>
                       </div>
                     </div>
 
-                    <div className="card-duo p-5 flex items-center gap-4 border-2 border-emerald-200 border-b-4 border-emerald-300 bg-emerald-50 dark:bg-emerald-900/30/40 sm:col-span-2 lg:col-span-1">
-                      <div className="w-12 h-12 rounded-2xl bg-emerald-500 text-white flex items-center justify-center font-black shrink-0 shadow-xs border-b-2 border-emerald-700">
-                        <CheckCircle2 className="w-6 h-6" />
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider block">Total Submisi</span>
-                        <div className="flex items-baseline gap-1">
-                          <span className="text-3xl font-black font-display text-gray-900 dark:text-white">{submissions.length}</span>
-                          <span className="text-xs text-emerald-800 font-extrabold">Jawaban</span>
+                    {/* Widget 3: Total Submisi */}
+                    <div className="bg-emerald-50 dark:bg-emerald-900/20 border-2 border-emerald-200 dark:border-emerald-800 border-b-[6px] border-emerald-400 dark:border-b-emerald-600 p-5 rounded-3xl flex items-center justify-between shadow-sm relative overflow-hidden stagger-item sm:col-span-2 lg:col-span-1">
+                      <div className="space-y-1 z-10">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-4xl font-display font-black text-gray-900 dark:text-white leading-none">
+                            {submissions.length}
+                          </span>
+                          <span className="text-xs font-black text-emerald-900 dark:text-emerald-300 uppercase tracking-wider">JAWABAN</span>
                         </div>
+                        <p className="text-xs font-bold text-emerald-800/80 dark:text-emerald-400/80">Total Submisi Masuk</p>
+                      </div>
+                      <div className="relative w-14 h-14 bg-emerald-400/30 rounded-2xl flex items-center justify-center shrink-0 z-10 overflow-hidden shadow-inner border border-emerald-300/50">
+                        <div className="absolute w-12 h-12 bg-emerald-500/40 rounded-full blur-md animate-pulse" />
+                        <motion.span 
+                          className="relative z-10 text-3xl drop-shadow-md filter"
+                          animate={{ y: [0, -5, 0], scale: [1, 1.1, 1], rotateZ: [0, 5, -5, 0] }}
+                          transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
+                          style={{ display: 'inline-block' }}
+                        >
+                          ✅
+                        </motion.span>
                       </div>
                     </div>
                   </div>
@@ -582,41 +669,50 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                             description="Siswa belum mengirimkan jawaban untuk tugas yang diberikan."
                           />
                         ) : (
-                          <div className="divide-y divide-gray-50 max-h-96 overflow-y-auto pr-1">
+                          <div className="divide-y divide-gray-50 max-h-96 overflow-y-auto pr-1 space-y-1">
                             {submissions.slice(0, 5).map((sub) => (
                               <div 
                                 key={sub.id}
                                 onClick={() => onNavigate(`/submission/${sub.id}`)}
-                                className="py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-gray-50 dark:bg-slate-900/50 px-2 rounded-xl transition-colors cursor-pointer"
+                                className="group relative py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-4 -mx-2 rounded-2xl transition-all duration-300 cursor-pointer overflow-hidden border border-transparent hover:border-indigo-200 dark:hover:border-indigo-500/30 hover:shadow-md bg-white dark:bg-transparent"
                               >
-                                <div className="min-w-0">
-                                  <div className="flex items-center gap-2 flex-wrap">
+                                {/* Animated Mesh Background on Hover */}
+                                <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+                                  <motion.div 
+                                    className="absolute -inset-[100%] w-[300%] h-[300%] bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.06)_0%,transparent_50%),radial-gradient(circle_at_80%_20%,rgba(14,165,233,0.06)_0%,transparent_50%),radial-gradient(circle_at_20%_80%,rgba(236,72,153,0.06)_0%,transparent_50%)]"
+                                    animate={{ rotate: [0, 90, 180, 270, 360], scale: [1, 1.1, 1] }}
+                                    transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+                                  />
+                                </div>
+
+                                <div className="min-w-0 relative z-10">
+                                  <div className="flex items-center gap-2 flex-wrap mb-1">
                                     <h4 className="text-xs font-bold text-gray-900 dark:text-white truncate">{sub.assignmentTitle}</h4>
-                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-xl text-[9px] font-black uppercase tracking-widest border backdrop-blur-md shadow-sm transition-all ${
                                       sub.status === 'graded' 
-                                        ? 'bg-green-50 text-green-700 border border-green-100' 
-                                        : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 border border-amber-100 dark:border-amber-800/50 animate-pulse'
+                                        ? 'bg-green-100/80 text-green-800 border-green-300 dark:bg-green-900/40 dark:text-green-300' 
+                                        : 'bg-amber-100/80 text-amber-800 border-amber-300 animate-pulse dark:bg-amber-900/40 dark:text-amber-300'
                                     }`}>
                                       {sub.status === 'graded' ? 'Sudah Dinilai' : 'Butuh Dinilai'}
                                     </span>
                                   </div>
-                                  <p className="text-[10px] text-gray-400 mt-1 truncate">
-                                    Oleh: <span className="font-semibold text-gray-600 dark:text-slate-300">{sub.studentName}</span>
+                                  <p className="text-[10px] text-gray-500 dark:text-slate-400 truncate">
+                                    Oleh: <span className="font-bold text-gray-700 dark:text-slate-200">{sub.studentName}</span>
                                   </p>
                                 </div>
 
-                                <div className="flex items-center justify-between sm:justify-end gap-3.5 shrink-0">
+                                <div className="flex items-center justify-between sm:justify-end gap-3.5 shrink-0 relative z-10">
                                   {sub.score !== null ? (
                                     <div className="text-right">
                                       <p className="text-[10px] text-gray-400">Skor</p>
                                       <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 font-display">{sub.score} / 100</p>
                                     </div>
                                   ) : (
-                                    <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-1 rounded-lg">
+                                    <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-black bg-indigo-50/80 backdrop-blur-sm border border-indigo-200 shadow-sm dark:bg-indigo-900/40 dark:border-indigo-800 px-3 py-1.5 rounded-xl uppercase tracking-wider">
                                       Nilai Sekarang
                                     </span>
                                   )}
-                                  <ChevronRight className="w-4 h-4 text-gray-300" />
+                                  <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-indigo-500 transition-colors" />
                                 </div>
                               </div>
                             ))}
@@ -642,22 +738,31 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                             onActionClick={() => onNavigate('/teacher/assignments/create')}
                           />
                         ) : (
-                          <div className="divide-y divide-gray-50 max-h-80 overflow-y-auto pr-1">
+                          <div className="divide-y divide-gray-50 max-h-80 overflow-y-auto pr-1 space-y-1">
                             {assignments.slice(0, 5).map((assign) => (
                               <div 
                                 key={assign.id}
-                                className="py-3.5 flex items-center justify-between gap-4 hover:bg-gray-50 dark:bg-slate-900/50 px-2 rounded-xl transition-colors cursor-pointer"
+                                className="group relative py-3.5 flex items-center justify-between gap-4 px-4 -mx-2 rounded-2xl transition-all duration-300 cursor-pointer overflow-hidden border border-transparent hover:border-sky-200 dark:hover:border-sky-500/30 hover:shadow-md bg-white dark:bg-transparent"
                                 onClick={() => onNavigate(`/assignment/${assign.id}`)}
                               >
-                                <div className="min-w-0">
-                                  <h4 className="text-xs font-bold text-gray-900 dark:text-white truncate">{assign.title}</h4>
-                                  <p className="text-[10px] text-gray-400 mt-0.5 truncate">Siswa: {assign.studentName}</p>
+                                {/* Animated Mesh Background on Hover */}
+                                <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+                                  <motion.div 
+                                    className="absolute -inset-[100%] w-[300%] h-[300%] bg-[radial-gradient(circle_at_50%_50%,rgba(14,165,233,0.06)_0%,transparent_50%),radial-gradient(circle_at_80%_20%,rgba(139,92,246,0.06)_0%,transparent_50%),radial-gradient(circle_at_20%_80%,rgba(236,72,153,0.06)_0%,transparent_50%)]"
+                                    animate={{ rotate: [360, 270, 180, 90, 0], scale: [1, 1.1, 1] }}
+                                    transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+                                  />
                                 </div>
-                                <div className="flex items-center gap-2 shrink-0">
-                                  <span className="text-[10px] text-gray-400">
+
+                                <div className="min-w-0 relative z-10">
+                                  <h4 className="text-xs font-bold text-gray-900 dark:text-white truncate">{assign.title}</h4>
+                                  <p className="text-[10px] text-gray-500 dark:text-slate-400 mt-1 truncate">Siswa: <span className="font-bold text-gray-700 dark:text-slate-200">{assign.studentName}</span></p>
+                                </div>
+                                <div className="flex items-center gap-3 shrink-0 relative z-10">
+                                  <span className="text-[10px] font-bold text-sky-600 dark:text-sky-400 bg-sky-50/80 backdrop-blur-sm border border-sky-200 shadow-sm dark:bg-sky-900/40 dark:border-sky-800 px-3 py-1.5 rounded-xl uppercase tracking-wider">
                                     {assign.createdAt ? new Date(assign.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) : 'Baru saja'}
                                   </span>
-                                  <ChevronRight className="w-4 h-4 text-gray-300" />
+                                  <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-sky-500 transition-colors" />
                                 </div>
                               </div>
                             ))}

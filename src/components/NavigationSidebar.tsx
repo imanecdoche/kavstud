@@ -187,7 +187,7 @@ export default function NavigationSidebar({
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-50 bg-white dark:bg-slate-800 border-r-2 border-gray-100 dark:border-slate-700/60 flex flex-col transition-all duration-300 shadow-sm ${
+        className={`fixed lg:sticky lg:top-0 lg:h-screen inset-y-0 left-0 z-50 bg-white dark:bg-slate-800 border-r-2 border-gray-100 dark:border-slate-700/60 flex flex-col transition-all duration-300 shadow-sm ${
           isCollapsed ? 'w-20' : 'w-64'
         } ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'

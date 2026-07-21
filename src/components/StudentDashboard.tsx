@@ -281,7 +281,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
       />
 
       {/* Main Container Content */}
-      <main className="flex-1 min-w-0 overflow-y-auto h-screen relative">
+      <main className="flex-1 min-w-0 relative">
         {error && (
           <div className="m-6 p-4 bg-red-50 border border-red-200/50 rounded-2xl text-xs text-red-600 flex items-center gap-2">
             <AlertCircle className="w-4.5 h-4.5 text-red-500 shrink-0" />
@@ -321,41 +321,96 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
               {/* TAB 1: MAIN DASHBOARD */}
               {activeTab === 'dashboard' && (featureFlags.find(f => f.id === 'dashboard')?.enabled !== false) && (
                 <>
-                  {/* Duolingo Style Top Welcome & Action Header */}
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-gray-100 dark:border-slate-700/50 pb-6">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h1 className="text-2xl sm:text-3xl font-display font-extrabold text-gray-900 dark:text-white tracking-tight">
-                          Halo, {studentProfile?.fullName?.split(' ')[0] || 'Siswa'}! 🦉
-                        </h1>
-                        <span className={`inline-flex items-center px-3 py-1 rounded-xl text-[10px] font-extrabold uppercase border shadow-3xs ${
-                          studentProfile?.classType === 'CIRCLE'
-                            ? 'bg-purple-100 text-purple-800 border-purple-200'
-                            : 'bg-sky-100 text-sky-800 border-sky-200'
-                        }`}>
-                          {studentProfile?.classType === 'CIRCLE' ? 'Kelas Circle ⚡' : 'Kelas Privat 🎯'}
-                        </span>
+                  {/* 3D Animated Hero Section */}
+                  <div className="relative w-full rounded-[2.5rem] bg-gradient-to-br from-indigo-50 via-purple-50 to-sky-50 dark:from-slate-800/80 dark:via-indigo-900/40 dark:to-slate-800/80 p-8 sm:p-10 md:p-12 mb-8 overflow-hidden shadow-sm border border-white dark:border-slate-700/50 flex flex-col md:flex-row items-center justify-between gap-8 stagger-item">
+                    
+                    {/* Abstract Background Shapes */}
+                    <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-purple-400/20 rounded-full blur-3xl pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-sky-400/20 rounded-full blur-3xl pointer-events-none" />
+
+                    {/* Left Content */}
+                    <div className="relative z-10 flex-1 space-y-4">
+                      <div className="flex items-center gap-3 mb-4">
+                        <motion.div 
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className={`relative group cursor-pointer inline-flex items-center gap-2 px-4 py-1.5 rounded-2xl text-[11px] font-black uppercase tracking-widest border overflow-hidden backdrop-blur-md shadow-sm transition-all ${
+                            studentProfile?.classType === 'CIRCLE'
+                              ? 'bg-purple-100/80 text-purple-900 border-purple-300 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] dark:bg-purple-900/40 dark:text-purple-100 dark:border-purple-700'
+                              : 'bg-sky-100/80 text-sky-900 border-sky-300 hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] dark:bg-sky-900/40 dark:text-sky-100 dark:border-sky-700'
+                          }`}
+                        >
+                          {/* Shine effect on hover */}
+                          <div className="absolute inset-0 -translate-x-[150%] group-hover:translate-x-[150%] bg-gradient-to-r from-transparent via-white/60 dark:via-white/20 to-transparent transition-transform duration-1000 ease-in-out" />
+                          
+                          <span className="relative z-10">{studentProfile?.classType === 'CIRCLE' ? 'KELAS CIRCLE' : 'KELAS PRIVAT'}</span>
+                          
+                          <motion.span
+                            className="relative z-10 text-lg drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] filter"
+                            animate={
+                              studentProfile?.classType === 'CIRCLE'
+                                ? { scale: [1, 1.2, 1], rotateZ: [0, 15, -15, 0] }
+                                : { y: [0, -4, 0], scale: [1, 1.1, 1] }
+                            }
+                            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                            style={{ display: 'inline-block', transformOrigin: 'center' }}
+                          >
+                            {studentProfile?.classType === 'CIRCLE' ? '⚡' : '🎯'}
+                          </motion.span>
+                        </motion.div>
                       </div>
-                      <p className="text-xs font-semibold text-gray-500 dark:text-slate-400">
-                        Selesaikan tugas harianmu dan tingkatkan streak belajar hari ini!
+
+                      <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 dark:text-white tracking-[-0.03em] text-balance leading-[1.1]">
+                        Halo,{' '}
+                        {/* Animated Name Effect */}
+                        <motion.span
+                          className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-sky-500"
+                          style={{ backgroundSize: '200% auto' }}
+                          animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
+                          transition={{ duration: 5, ease: 'linear', repeat: Infinity }}
+                        >
+                          {studentProfile?.fullName?.split(' ')[0] || 'Siswa'}!
+                        </motion.span>
+                      </h1>
+                      
+                      <p className="text-sm md:text-base font-semibold text-gray-600 dark:text-slate-300 max-w-md">
+                        Selesaikan tugas harianmu dan tingkatkan streak belajar hari ini! Bersiaplah untuk menaklukkan materi baru.
                       </p>
+
+                      <div className="pt-4">
+                        <button
+                          onClick={handleDoFirstTask}
+                          className="btn-duo-green px-8 py-4 text-sm font-black flex items-center justify-center gap-2.5 shrink-0 text-white w-full sm:w-auto"
+                        >
+                          <Zap className="w-5 h-5 text-yellow-300 fill-yellow-300 animate-pulse" />
+                          <span>MULAI BELAJAR SEKARANG</span>
+                        </button>
+                      </div>
                     </div>
 
-                    {/* Premium 3D Duolingo Button */}
-                    <button
-                      onClick={handleDoFirstTask}
-                      className="btn-duo-green px-6 py-3.5 text-xs font-black flex items-center justify-center gap-2.5 shadow-md shrink-0 cursor-pointer hover:scale-105 active:scale-95 transition-all text-white uppercase tracking-wider"
-                      style={{ minHeight: '48px' }}
-                    >
-                      <Zap className="w-5 h-5 text-yellow-300 fill-yellow-300 animate-pulse" />
-                      <span>Kerjakan Tugas SEKARANG</span>
-                    </button>
+                    {/* Right Content: 3D Waving Owl Mascot */}
+                    <div className="relative z-10 w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 shrink-0 flex items-center justify-center pointer-events-none">
+                      <motion.img
+                        src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Animals/Owl.png"
+                        alt="3D Owl Mascot"
+                        className="w-full h-full object-contain drop-shadow-2xl"
+                        animate={{
+                          y: [0, -12, 0], // Floating effect
+                          rotateZ: [0, -10, 15, -10, 0], // Waving effect
+                        }}
+                        transition={{
+                          duration: 4,
+                          ease: 'easeInOut',
+                          repeat: Infinity,
+                        }}
+                      />
+                    </div>
                   </div>
 
                   {/* Duolingo Gamified Widgets Grid (Streak + Daily Goal Cards) */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                     {/* Widget 1: 3D Yellow Streak Card (Duolingo Style) */}
-                    <div className="card-duo-yellow p-5 flex items-center justify-between shadow-sm relative overflow-hidden">
+                    <div className="card-duo-yellow p-5 flex items-center justify-between shadow-sm relative overflow-hidden stagger-item">
                       <div className="space-y-1 z-10">
                         <div className="flex items-baseline gap-2">
                           <span className="text-4xl font-display font-black text-gray-900 dark:text-white leading-none">
@@ -363,15 +418,62 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                           </span>
                           <span className="text-xs font-black text-amber-900 dark:text-amber-100 uppercase tracking-wider">HARI</span>
                         </div>
-                        <p className="text-xs font-bold text-amber-900 dark:text-amber-100/80">Streak Belajar Aktif 🔥</p>
+                        <p className="text-xs font-bold text-amber-900 dark:text-amber-100/80">Streak Belajar Aktif</p>
                       </div>
-                      <div className="w-14 h-14 bg-amber-400/40 rounded-2xl flex items-center justify-center text-orange-600 shrink-0 z-10">
-                        <Flame className="w-9 h-9 fill-orange-500 text-orange-600 animate-bounce" />
+                      <div className="relative w-14 h-14 bg-amber-400/30 rounded-2xl flex items-center justify-center shrink-0 z-10 overflow-hidden shadow-inner border border-amber-300/50">
+                        {/* Base glow */}
+                        <div className="absolute w-12 h-12 bg-orange-500/40 rounded-full blur-md animate-pulse" />
+                        
+                        {/* Fire Container */}
+                        <div className="relative w-8 h-8 flex items-end justify-center translate-y-1">
+                          {/* Main flame (Red/Orange) */}
+                          <motion.div 
+                            className="absolute bottom-0 w-7 h-7 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 shadow-[0_0_15px_rgba(239,68,68,0.6)]"
+                            style={{ borderRadius: '50% 0 50% 50%', rotate: '-45deg', transformOrigin: 'center' }}
+                            animate={{ 
+                              scale: [1, 1.1, 0.95, 1],
+                              rotate: ['-45deg', '-40deg', '-50deg', '-45deg']
+                            }}
+                            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                          />
+                          
+                          {/* Inner flame (Yellow/White) */}
+                          <motion.div 
+                            className="absolute bottom-1 w-4 h-4 bg-gradient-to-br from-white via-yellow-200 to-yellow-500 shadow-[0_0_10px_rgba(253,224,71,0.8)]"
+                            style={{ borderRadius: '50% 0 50% 50%', rotate: '-45deg', transformOrigin: 'center' }}
+                            animate={{ 
+                              scale: [1, 1.2, 0.85, 1],
+                              rotate: ['-45deg', '-35deg', '-55deg', '-45deg']
+                            }}
+                            transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut', delay: 0.1 }}
+                          />
+                          
+                          {/* Floating sparks */}
+                          {[...Array(4)].map((_, i) => (
+                            <motion.div
+                              key={`spark-${i}`}
+                              className="absolute bottom-2 w-1.5 h-1.5 bg-yellow-300 rounded-full blur-[0.5px]"
+                              initial={{ y: 0, x: 0, opacity: 1, scale: 1 }}
+                              animate={{ 
+                                y: -20 - (i * 6), 
+                                x: (i % 2 === 0 ? 1 : -1) * (4 + i * 1.5),
+                                opacity: [1, 1, 0],
+                                scale: [1, 0.5, 0]
+                              }}
+                              transition={{ 
+                                duration: 0.8 + (i * 0.2), 
+                                repeat: Infinity, 
+                                ease: 'easeOut',
+                                delay: i * 0.25
+                              }}
+                            />
+                          ))}
+                        </div>
                       </div>
                     </div>
 
                     {/* Widget 2: Daily Goal Progress Card (Duolingo Style) */}
-                    <div className="card-duo p-5 md:col-span-2 flex flex-col justify-between space-y-4">
+                    <div className="card-duo p-5 md:col-span-2 flex flex-col justify-between space-y-4 stagger-item">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <Target className="w-5 h-5 text-sky-500" />
@@ -406,7 +508,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
 
                   {/* Stats Block Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-5 rounded-2xl shadow-3xs flex items-center gap-4">
+                    <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-5 rounded-2xl shadow-3xs flex items-center gap-4 stagger-item">
                       <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
                         <BookOpen className="w-5 h-5" />
                       </div>
@@ -419,7 +521,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                       </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-5 rounded-2xl shadow-3xs flex items-center gap-4">
+                    <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-5 rounded-2xl shadow-3xs flex items-center gap-4 stagger-item">
                       <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-600 shrink-0">
                         <FileCheck className="w-5 h-5" />
                       </div>
@@ -432,7 +534,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                       </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-5 rounded-2xl shadow-3xs flex items-center gap-4 sm:col-span-2 lg:col-span-1">
+                    <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-5 rounded-2xl shadow-3xs flex items-center gap-4 sm:col-span-2 lg:col-span-1 stagger-item">
                       <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
                         <Clock className="w-5 h-5 animate-pulse" />
                       </div>
@@ -452,7 +554,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                     <div className="xl:col-span-2 space-y-8">
                       
                       {/* Section: Tugas yang Harus Dikerjakan */}
-                      <div className="card-duo p-6 space-y-4">
+                      <div className="card-duo p-6 space-y-4 stagger-item">
                         <h3 className="text-xs font-black text-gray-900 dark:text-white flex items-center gap-2 uppercase tracking-wider">
                           <Clock className="w-4.5 h-4.5 text-sky-500" />
                           <span>Tugas yang Harus Dikerjakan</span>
@@ -728,21 +830,33 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                             onClick={() => {
                               onNavigate(`/assignment/${assign.id}`);
                             }}
-                            className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 hover:border-gray-200 dark:border-slate-700 hover:shadow-xs p-5 rounded-2xl flex flex-col justify-between gap-4 transition-all cursor-pointer relative"
+                            className="group bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/10 p-6 rounded-3xl flex flex-col justify-between gap-5 transition-all duration-300 cursor-pointer relative overflow-hidden"
                           >
-                            <div className="space-y-2">
+                            {/* Animated Mesh Gradient Background (Hover only) */}
+                            <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+                              <motion.div 
+                                className="absolute -inset-[100%] w-[300%] h-[300%] bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.08)_0%,transparent_50%),radial-gradient(circle_at_80%_20%,rgba(14,165,233,0.08)_0%,transparent_50%),radial-gradient(circle_at_20%_80%,rgba(236,72,153,0.08)_0%,transparent_50%)]"
+                                animate={{ 
+                                  rotate: [0, 90, 180, 270, 360],
+                                  scale: [1, 1.1, 1]
+                                }}
+                                transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
+                              />
+                            </div>
+
+                            <div className="relative z-10 space-y-3">
                               <div className="flex items-center justify-between gap-2">
-                                <div className="flex gap-1.5 flex-wrap">
-                                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
+                                <div className="flex gap-2 flex-wrap">
+                                  <span className={`inline-flex items-center px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest border backdrop-blur-md shadow-sm transition-all ${
                                     status === 'completed' 
-                                      ? 'bg-green-50 text-green-700' 
+                                      ? 'bg-green-100/80 text-green-800 border-green-300 dark:bg-green-900/40 dark:text-green-300' 
                                       : status === 'submitted' 
-                                        ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700' 
+                                        ? 'bg-amber-100/80 text-amber-800 border-amber-300 dark:bg-amber-900/40 dark:text-amber-300' 
                                         : status === 'remedial'
-                                          ? 'bg-red-50 text-red-700 animate-pulse'
+                                          ? 'bg-red-100/80 text-red-800 border-red-300 animate-pulse dark:bg-red-900/40 dark:text-red-300'
                                           : status === 'expired'
-                                            ? 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400'
-                                            : 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700'
+                                            ? 'bg-gray-100/80 text-gray-500 border-gray-300 dark:bg-slate-800/80 dark:text-slate-400'
+                                            : 'bg-indigo-100/80 text-indigo-800 border-indigo-300 dark:bg-indigo-900/40 dark:text-indigo-300'
                                   }`}>
                                     {status === 'completed' 
                                       ? 'Selesai' 
@@ -755,7 +869,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                                             : 'Siap Dikerjakan'}
                                   </span>
 
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700">
+                                  <span className="inline-flex items-center px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest bg-slate-100/80 text-slate-700 border border-slate-200 backdrop-blur-md shadow-sm dark:bg-slate-800/80 dark:text-slate-300 dark:border-slate-700">
                                     {type === 'short_answer' 
                                       ? 'Jawaban Singkat' 
                                       : type === 'multiple_choice' 

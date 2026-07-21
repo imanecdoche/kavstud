@@ -800,13 +800,14 @@ export default function ModuleLibrary({ userProfile, onSetLoading }: ModuleLibra
         </div>
       ) : filteredModules.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredModules.map((m) => {
+          {filteredModules.map((m, index) => {
             const isFav = favoriteModuleIds.includes(m.id);
             return (
               <div
                 key={m.id}
                 onClick={() => setSelectedModule(m)}
-                className="card-duo-interactive p-5 flex flex-col justify-between space-y-4 shadow-xs"
+                className="card-duo-interactive p-5 flex flex-col justify-between space-y-4 shadow-xs stagger-item"
+                style={{ animationDelay: `${Math.min(index * 40, 800)}ms` }}
               >
                 <div className="space-y-3">
                   <div className="flex items-start justify-between gap-3">
