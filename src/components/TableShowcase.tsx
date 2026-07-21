@@ -218,7 +218,7 @@ export default function TableShowcase() {
                           </div>
                         </td>
                         <td className="py-3.5 px-4 text-gray-500 dark:text-slate-400">{student.classSection}</td>
-                        <td className="py-3.5 px-4 font-mono font-medium text-gray-700 dark:text-slate-200">{student.scoreAverage.toFixed(1)}/100</td>
+                        <td className="py-3.5 px-4 font-mono font-medium text-gray-700 dark:text-slate-200">{student.scoreAverage.toFixed(1)} EXP</td>
                         <td className="py-3.5 px-4 text-gray-500 dark:text-slate-400">{student.attendance}</td>
                         <td className="py-3.5 px-4">
                           <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold inline-block border ${

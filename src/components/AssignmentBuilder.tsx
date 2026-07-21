@@ -38,7 +38,10 @@ import {
   Award,
   BookOpen,
   UserCheck,
-  HelpCircle as QuestionIcon
+  HelpCircle as QuestionIcon,
+  Sparkles,
+  Wand2,
+  Bot
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { UserProfile, Circle, Assignment, Question } from '../types';
@@ -110,6 +113,211 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
 
   // Student-like Preview Answers state (read-only mockup)
   const [previewAnswers, setPreviewAnswers] = useState<{ [qId: string]: string }>({});
+
+  // AI Generator Modal States
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [aiQuestionCount, setAiQuestionCount] = useState<number>(5);
+  const [aiDifficulty, setAiDifficulty] = useState<'Mudah' | 'Sedang' | 'Sulit'>('Sedang');
+  const [aiQuestionType, setAiQuestionType] = useState<'all' | 'multiple_choice' | 'essay' | 'true_false'>('all');
+  const [aiPointsPerQuestion, setAiPointsPerQuestion] = useState<number>(10);
+  const [aiCustomInstructions, setAiCustomInstructions] = useState('');
+  const [aiMode, setAiMode] = useState<'append' | 'replace'>('replace');
+  const [aiGenerating, setAiGenerating] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+
+  // Gemini AI Assignment Generator Handler
+  const handleGenerateAiAssignment = async () => {
+    if (!aiPrompt.trim()) {
+      setAiError('Silakan isi topik atau materi tugas yang ingin dibuat.');
+      return;
+    }
+
+    setAiGenerating(true);
+    setAiError(null);
+
+    const apiKey = 'AIzaSyC-qsUNbKkRnUekI3V23PhrCMvEsV1dWhE';
+
+    const systemPrompt = `Anda adalah asisten pembuat kuis & lembar kerja tugas sekolah profesional untuk guru.
+Buatlah tugas belajar lengkap dalam format JSON terstruktur yang persis mengikuti petunjuk berikut.
+
+PERSYARATAN:
+- Topik/Materi: "${aiPrompt.trim()}"
+- Tingkat Kesulitan: ${aiDifficulty}
+- Jumlah Soal: ${aiQuestionCount}
+- Jenis Soal yang Diinginkan: ${
+      aiQuestionType === 'multiple_choice'
+        ? 'Hanya Pilihan Ganda (multiple_choice)'
+        : aiQuestionType === 'essay'
+          ? 'Hanya Esai / Jawaban Singkat (essay)'
+          : aiQuestionType === 'true_false'
+            ? 'Hanya Benar / Salah (true_false)'
+            : 'Campuran antara Pilihan Ganda, Esai, dan Benar/Salah'
+    }
+- Bobot Poin Standar Per Soal: ${aiPointsPerQuestion}
+${aiCustomInstructions ? `- Instruksi Tambahan: "${aiCustomInstructions.trim()}"` : ''}
+
+FORMAT OUTPUT HANYA DALAM JSON DENGAN STRUKTUR BERIKUT:
+{
+  "title": "Judul Tugas yang Jelas dan Menarik",
+  "description": "Petunjuk pengerjaan tugas singkat untuk siswa.",
+  "questions": [
+    {
+      "type": "multiple_choice",
+      "question": "Teks pertanyaan jelas...",
+      "choices": ["Opsi A", "Opsi B", "Opsi C", "Opsi D"],
+      "correctAnswer": "0",
+      "answerGuide": "Penjelasan mengapa jawaban tersebut benar",
+      "points": ${aiPointsPerQuestion}
+    },
+    {
+      "type": "essay",
+      "question": "Teks pertanyaan esai...",
+      "choices": [],
+      "correctAnswer": "",
+      "answerGuide": "Kunci jawaban / panduan poin penting penilaian",
+      "points": ${aiPointsPerQuestion}
+    },
+    {
+      "type": "true_false",
+      "question": "Pernyataan yang dievaluasi...",
+      "choices": [],
+      "correctAnswer": "true",
+      "trueFalseCorrect": "true",
+      "answerGuide": "Penjelasan fakta yang benar",
+      "points": ${aiPointsPerQuestion}
+    }
+  ]
+}
+
+CATATAN KHUSUS:
+1. Untuk type "multiple_choice", pilihan harus berjumlah 4 (A, B, C, D) dan correctAnswer adalah indeks string "0", "1", "2", atau "3" sesuai urutan pilihan yang benar.
+2. Untuk type "true_false", correctAnswer harus "true" atau "false" dan trueFalseCorrect harus "true" atau "false".
+3. Untuk type "essay", berikan answerGuide yang berguna bagi guru untuk menilai.
+4. Jangan tambahkan teks lain di luar JSON valid!`;
+
+    const modelCandidates = [
+      'gemini-3.6-flash',
+      'gemini-3.5-flash',
+      'gemini-3-flash-preview',
+      'gemini-2.5-flash',
+      'gemini-2.0-flash',
+      'gemini-flash-latest'
+    ];
+
+    let successData: any = null;
+    let lastErrMessage = '';
+
+    for (const model of modelCandidates) {
+      try {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: systemPrompt }] }],
+            generationConfig: {
+              responseMimeType: 'application/json',
+              temperature: 0.7
+            }
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
+          const rawText = data.candidates[0].content.parts[0].text;
+          const cleanedText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+          successData = JSON.parse(cleanedText);
+          break;
+        } else if (data.error?.message) {
+          lastErrMessage = data.error.message;
+        }
+      } catch (err: any) {
+        lastErrMessage = err.message || 'Gagal menghubungi server Gemini AI.';
+      }
+    }
+
+    if (!successData) {
+      setAiError(lastErrMessage || 'Gagal membuat tugas dengan AI. Coba ubah prompt atau coba lagi.');
+      setAiGenerating(false);
+      return;
+    }
+
+    try {
+      if (successData.title) {
+        setTitle(prev => (!prev || aiMode === 'replace' ? successData.title : prev));
+      }
+      if (successData.description) {
+        setDescription(prev => (!prev || aiMode === 'replace' ? successData.description : prev));
+      }
+
+      if (Array.isArray(successData.questions) && successData.questions.length > 0) {
+        const newQuestions: LocalQuestion[] = successData.questions.map((q: any) => {
+          const qType = q.type || 'multiple_choice';
+          let correctAns = String(q.correctAnswer ?? '0');
+          let tfCorrect: 'true' | 'false' = 'true';
+
+          if (qType === 'true_false') {
+            if (correctAns === 'false' || q.trueFalseCorrect === 'false') {
+              tfCorrect = 'false';
+              correctAns = 'false';
+            } else {
+              tfCorrect = 'true';
+              correctAns = 'true';
+            }
+          }
+
+          return {
+            id: 'new_' + Math.random().toString(36).substring(2, 9),
+            type: qType,
+            question: q.question || '',
+            choices: Array.isArray(q.choices) && q.choices.length > 0 ? q.choices : ['Opsi A', 'Opsi B', 'Opsi C', 'Opsi D'],
+            correctAnswer: correctAns,
+            answerGuide: q.answerGuide || '',
+            points: Number(q.points || aiPointsPerQuestion || 10),
+            isCollapsed: false,
+            trueFalseCorrect: tfCorrect,
+            matchingPairs: q.matchingPairs || [],
+            fillBlankAnswers: q.fillBlankAnswers || [],
+            audioUrl: '',
+            speakingPrompt: '',
+            allowedFileTypes: ['pdf', 'doc', 'docx']
+          };
+        });
+
+        if (aiMode === 'replace') {
+          setQuestions(newQuestions);
+        } else {
+          setQuestions(prev => [...prev, ...newQuestions]);
+        }
+      }
+
+      setIsAiModalOpen(false);
+      setAiPrompt('');
+      setAiCustomInstructions('');
+    } catch (parseErr: any) {
+      console.error('AI Generation parse error:', parseErr);
+      setAiError('Gagal memproses hasil dari AI. Format data tidak sesuai.');
+    } finally {
+      setAiGenerating(false);
+    }
+  };
+
+  // Scroll lock background body when modal popups are active
+  useEffect(() => {
+    if (isSettingsOpen || isAiModalOpen) {
+      document.body.classList.add('modal-open');
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.classList.remove('modal-open');
+      document.body.style.overflow = '';
+    };
+  }, [isSettingsOpen, isAiModalOpen]);
 
   // Parse direct studentId from URL query
   useEffect(() => {
@@ -577,8 +785,20 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
           </div>
         </div>
 
-        {/* Action Button Row - Icon Only, Publish Button Most Prominent */}
+        {/* Action Button Row - Icon Only & AI Generator Button */}
         <div className="flex items-center gap-2">
+          {/* AI Generator Button */}
+          <button
+            type="button"
+            onClick={() => setIsAiModalOpen(true)}
+            className="px-3.5 py-2 text-xs font-black flex items-center gap-2 cursor-pointer shadow-sm hover:opacity-95 active:scale-95 transition-all rounded-xl text-white bg-gradient-to-r from-purple-600 via-indigo-600 to-sky-600 border border-purple-400/30"
+            style={{ minHeight: '40px' }}
+            title="Buat Tugas Otomatis Menggunakan Gemini AI"
+          >
+            <Sparkles className="w-4 h-4 text-yellow-300 fill-yellow-300 animate-pulse" />
+            <span className="hidden sm:inline font-black uppercase tracking-wider">Buat dengan AI</span>
+          </button>
+
           <button
             type="button"
             onClick={() => setIsPreviewMode(!isPreviewMode)}
@@ -836,37 +1056,6 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
           /* WORKSPACE: QUESTION BUILDER LEFT SECTION */
           <div className="w-full lg:w-3/4 space-y-6">
             
-            {/* Quick Title Card */}
-            <div className="card-duo p-5 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
-                  <FileText className="w-5 h-5" />
-                </div>
-                <div>
-                  <h2 className="text-sm font-bold text-gray-900 dark:text-white">Workspace Soal Aktif</h2>
-                  <p className="text-[10px] text-gray-400 mt-0.5">Tarik dan susun urutan soal secara fleksibel. Klik setiap kartu untuk detail input.</p>
-                </div>
-              </div>
-
-              {/* Add Question Shortcut Dropdown */}
-              <div className="flex items-center gap-1 bg-gray-50 dark:bg-slate-900 p-1 rounded-xl border border-gray-200 dark:border-slate-700/50">
-                <button
-                  type="button"
-                  onClick={() => addQuestion('multiple_choice')}
-                  className="px-3 py-1.5 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 rounded-lg border border-indigo-100 dark:border-indigo-800/50/40 text-[10px] font-bold shadow-3xs hover:bg-indigo-50 dark:bg-indigo-900/30/30 cursor-pointer"
-                >
-                  + Pilihan Ganda
-                </button>
-                <button
-                  type="button"
-                  onClick={() => addQuestion('essay')}
-                  className="px-3 py-1.5 bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 rounded-lg border border-indigo-100 dark:border-indigo-800/50/40 text-[10px] font-bold shadow-3xs hover:bg-indigo-50 dark:bg-indigo-900/30/30 cursor-pointer"
-                >
-                  + Esai / Jawaban Singkat
-                </button>
-              </div>
-            </div>
-
             {/* Questions Builder Cards Container */}
             <div className="space-y-4">
               {questions.map((q, index) => (
@@ -890,15 +1079,11 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                         {index + 1}
                       </span>
                       <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-bold text-gray-800 dark:text-slate-100 uppercase tracking-wider">
-                          {q.type === 'multiple_choice' ? 'Pilihan Ganda' : q.type === 'essay' ? 'Jawaban Singkat (Esai)' : q.type.replace('_', ' ')}
-                        </span>
-                        
-                        {/* Change type dynamically for future expansion support */}
+                        {/* Single clean dropdown for question type */}
                         <CustomDropdown
                           variant="minimal"
                           size="sm"
-                          dropdownWidth="w-44"
+                          dropdownWidth="w-48"
                           value={q.type}
                           onChange={(val) => updateQuestionField(index, 'type', val)}
                           options={[
@@ -1206,14 +1391,13 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                       {/* General Question Parameters */}
                       <div className="pt-3 border-t border-gray-50 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-semibold text-gray-600 dark:text-slate-300">Bobot Nilai (Poin):</span>
+                          <span className="text-xs font-semibold text-gray-600 dark:text-slate-300">Bobot EXP Soal:</span>
                           <input
                             type="number"
                             min={1}
-                            max={100}
                             value={q.points}
                             onChange={(e) => updateQuestionField(index, 'points', Number(e.target.value))}
-                            className="w-16 px-2.5 py-1.5 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-xs font-bold text-center text-indigo-700 focus:outline-none"
+                            className="w-20 px-2.5 py-1.5 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-xs font-bold text-center text-indigo-700 focus:outline-none"
                           />
                         </div>
                       </div>
@@ -1228,60 +1412,6 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                   )}
                 </div>
               ))}
-            </div>
-
-            {/* Bottom Add Question Callout */}
-            <div className="bg-white dark:bg-slate-800 border border-dashed border-gray-200 dark:border-slate-700 rounded-3xl p-6 text-center space-y-4">
-              <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center mx-auto">
-                <Plus className="w-6 h-6" />
-              </div>
-              <div className="space-y-1">
-                <h3 className="text-sm font-bold text-gray-800 dark:text-slate-100">Tambah Pertanyaan Soal</h3>
-                <p className="text-xs text-gray-400">Pilih jenis pertanyaan yang ingin Anda rancang ke dalam lembar kerja.</p>
-              </div>
-
-              <div className="flex items-center justify-center gap-2 flex-wrap">
-                <button
-                  type="button"
-                  onClick={() => addQuestion('multiple_choice')}
-                  className="px-4 py-2.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 hover:bg-indigo-100/75 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
-                >
-                  <BookOpen className="w-4 h-4 shrink-0" />
-                  + Pilihan Ganda
-                </button>
-                <button
-                  type="button"
-                  onClick={() => addQuestion('essay')}
-                  className="px-4 py-2.5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 hover:bg-indigo-100/75 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
-                >
-                  <FileText className="w-4 h-4 shrink-0" />
-                  + Esai (Jawaban Singkat)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => addQuestion('true_false')}
-                  className="px-4 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:bg-slate-600 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
-                >
-                  <Check className="w-4 h-4 shrink-0" />
-                  + Benar / Salah
-                </button>
-                <button
-                  type="button"
-                  onClick={() => addQuestion('matching')}
-                  className="px-4 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:bg-slate-600 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
-                >
-                  <Layers className="w-4 h-4 shrink-0" />
-                  + Menjodohkan
-                </button>
-                <button
-                  type="button"
-                  onClick={() => addQuestion('fill_blank')}
-                  className="px-4 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:bg-slate-600 text-xs font-bold rounded-xl flex items-center gap-2 transition-all cursor-pointer"
-                >
-                  <QuestionIcon className="w-4 h-4 shrink-0" />
-                  + Isian Singkat
-                </button>
-              </div>
             </div>
           </div>
         )}
@@ -1311,8 +1441,8 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                 </div>
               )}
               <div className="flex items-center justify-between text-xs pt-3">
-                <span className="text-gray-500 dark:text-slate-400 font-medium">Akumulasi Nilai:</span>
-                <span className="font-extrabold text-indigo-600 dark:text-indigo-400 font-mono text-sm">{totalPoints} Poin</span>
+                <span className="text-gray-500 dark:text-slate-400 font-medium">Akumulasi EXP:</span>
+                <span className="font-extrabold text-amber-500 font-mono text-sm">{totalPoints} EXP</span>
               </div>
               <div className="flex items-center justify-between text-xs pt-3">
                 <span className="text-gray-500 dark:text-slate-400 font-medium">Estimasi Durasi:</span>
@@ -1346,20 +1476,79 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
               </button>
             </div>
           </div>
+
+          {/* COMPACT TAMBAH SOAL CARD IN SIDEBAR */}
+          <div className="card-duo p-5 space-y-3">
+            <div className="flex items-center gap-2">
+              <Plus className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              <h3 className="text-xs font-bold text-gray-800 dark:text-slate-100 uppercase tracking-wider">Tambah Pertanyaan</h3>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => addQuestion('multiple_choice')}
+                className="p-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100/80 rounded-xl text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-indigo-100 dark:border-indigo-800/40"
+              >
+                <BookOpen className="w-3.5 h-3.5 shrink-0" />
+                <span>Pilihan Ganda</span>
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => addQuestion('essay')}
+                className="p-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100/80 rounded-xl text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-indigo-100 dark:border-indigo-800/40"
+              >
+                <FileText className="w-3.5 h-3.5 shrink-0" />
+                <span>Esai / Jawaban</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => addQuestion('true_false')}
+                className="p-2 bg-gray-50 dark:bg-slate-700/60 text-gray-700 dark:text-slate-200 hover:bg-gray-100 rounded-xl text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-gray-200 dark:border-slate-700"
+              >
+                <Check className="w-3.5 h-3.5 shrink-0" />
+                <span>Benar / Salah</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => addQuestion('matching')}
+                className="p-2 bg-gray-50 dark:bg-slate-700/60 text-gray-700 dark:text-slate-200 hover:bg-gray-100 rounded-xl text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-gray-200 dark:border-slate-700"
+              >
+                <Layers className="w-3.5 h-3.5 shrink-0" />
+                <span>Menjodohkan</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => addQuestion('fill_blank')}
+                className="col-span-2 p-2 bg-gray-50 dark:bg-slate-700/60 text-gray-700 dark:text-slate-200 hover:bg-gray-100 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer border border-gray-200 dark:border-slate-700"
+              >
+                <QuestionIcon className="w-3.5 h-3.5 shrink-0" />
+                <span>Isian Singkat</span>
+              </button>
+            </div>
+          </div>
         </aside>
       </main>
 
       {/* 4. SETTINGS MODAL DIALOG */}
       <AnimatePresence>
         {isSettingsOpen && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto animate-fadeIn">
+          <div 
+            className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center p-4 z-50 overscroll-contain overflow-y-auto animate-fadeIn"
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+          >
             <motion.div
               initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ duration: 0.15 }}
               onClick={(e) => e.stopPropagation()}
-              className="modal-duo w-[880px] h-[660px] max-w-[95vw] max-h-[90vh] p-6 sm:p-8 space-y-6 relative overflow-y-auto my-auto"
+              className="modal-duo w-[880px] h-[660px] max-w-[95vw] max-h-[90vh] p-6 sm:p-8 space-y-6 relative overflow-y-auto my-auto overscroll-contain"
             >
               <div className="flex items-center justify-between pb-4 border-b border-gray-50">
                 <div className="flex items-center gap-2">
@@ -1375,9 +1564,85 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[70vh] overflow-y-auto pr-1">
-                {/* COLUMN 1: BASIC INFORMATION */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[70vh] overflow-y-auto pr-1 custom-scrollbar">
+                {/* COLUMN 1: BASIC INFORMATION & PROMINENT TARGET SELECTION */}
                 <div className="space-y-4">
+                  {/* PROMINENT TARGET SELECTION FIRST */}
+                  <div className="bg-indigo-50/80 dark:bg-indigo-900/40 border-2 border-indigo-300 dark:border-indigo-600 p-4 rounded-2xl space-y-3 shadow-xs">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <UserCheck className="w-4.5 h-4.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                        <span className="text-xs font-black text-indigo-950 dark:text-indigo-100 uppercase tracking-wider">Target Penerima Tugas (Utama)</span>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase bg-indigo-200/80 text-indigo-900 dark:bg-indigo-800 dark:text-indigo-200">
+                        Wajib
+                      </span>
+                    </div>
+
+                    <div className="flex bg-white dark:bg-slate-800 p-1 rounded-xl border border-indigo-200 dark:border-indigo-800/60">
+                      <button
+                        type="button"
+                        onClick={() => setTargetType('INDIVIDUAL')}
+                        className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          targetType === 'INDIVIDUAL' 
+                            ? 'bg-indigo-600 text-white shadow-xs' 
+                            : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white'
+                        }`}
+                      >
+                        Siswa Individu
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setTargetType('CIRCLE')}
+                        className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                          targetType === 'CIRCLE' 
+                            ? 'bg-indigo-600 text-white shadow-xs' 
+                            : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white'
+                        }`}
+                      >
+                        Kelompok Belajar (Circle)
+                      </button>
+                    </div>
+
+                    {targetType === 'INDIVIDUAL' ? (
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-bold text-indigo-950 dark:text-indigo-200">Pilih Siswa Penerima <span className="text-red-500">*</span></label>
+                        <CustomDropdown
+                          value={selectedStudentId}
+                          placeholder="-- Pilih Siswa Penerima --"
+                          onChange={(val) => setSelectedStudentId(val)}
+                          options={students.map(s => ({
+                            value: s.uid,
+                            label: s.fullName,
+                            badge: {
+                              text: s.classType || 'PRIVATE',
+                              className: s.classType === 'CIRCLE'
+                                ? 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100'
+                                : 'bg-teal-50 text-teal-700 border border-teal-100'
+                            }
+                          }))}
+                        />
+                      </div>
+                    ) : (
+                      <div className="space-y-1.5">
+                        <label className="block text-xs font-bold text-indigo-950 dark:text-indigo-200">Pilih Kelompok Belajar Circle <span className="text-red-500">*</span></label>
+                        <CustomDropdown
+                          value={selectedCircleId}
+                          placeholder="-- Pilih Circle Penerima --"
+                          onChange={(val) => setSelectedCircleId(val)}
+                          options={circles.map(c => {
+                            const memberCount = students.filter(s => s.circleId === c.id && s.classType === 'CIRCLE').length;
+                            return {
+                              value: c.id,
+                              label: c.name,
+                              sublabel: `${memberCount} Siswa Terdaftar`
+                            };
+                          })}
+                        />
+                      </div>
+                    )}
+                  </div>
+
                   <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block border-b border-gray-50 pb-1">Informasi Dasar</span>
 
                   {/* Title */}
@@ -1404,70 +1669,6 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                       className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none resize-none"
                     />
                   </div>
-
-                  {/* Target selection */}
-                  <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Target Penerima Tugas</label>
-                    <div className="flex bg-gray-50 dark:bg-slate-900 p-1 rounded-xl border border-gray-200 dark:border-slate-700/50">
-                      <button
-                        type="button"
-                        onClick={() => setTargetType('INDIVIDUAL')}
-                        className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                          targetType === 'INDIVIDUAL' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-3xs' : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:text-slate-100'
-                        }`}
-                      >
-                        Siswa Individu
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setTargetType('CIRCLE')}
-                        className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                          targetType === 'CIRCLE' ? 'bg-white dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 shadow-3xs' : 'text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:text-slate-100'
-                        }`}
-                      >
-                        Kelompok Belajar (Circle)
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Dynamic selector student / circle */}
-                  {targetType === 'INDIVIDUAL' ? (
-                    <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Pilih Siswa Penerima <span className="text-red-500">*</span></label>
-                      <CustomDropdown
-                        value={selectedStudentId}
-                        placeholder="-- Pilih Siswa Penerima --"
-                        onChange={(val) => setSelectedStudentId(val)}
-                        options={students.map(s => ({
-                          value: s.uid,
-                          label: s.fullName,
-                          badge: {
-                            text: s.classType || 'PRIVATE',
-                            className: s.classType === 'CIRCLE'
-                              ? 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100'
-                              : 'bg-teal-50 text-teal-700 border border-teal-100'
-                          }
-                        }))}
-                      />
-                    </div>
-                  ) : (
-                    <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Pilih Kelompok Belajar Circle <span className="text-red-500">*</span></label>
-                      <CustomDropdown
-                        value={selectedCircleId}
-                        placeholder="-- Pilih Circle Penerima --"
-                        onChange={(val) => setSelectedCircleId(val)}
-                        options={circles.map(c => {
-                          const memberCount = students.filter(s => s.circleId === c.id && s.classType === 'CIRCLE').length;
-                          return {
-                            value: c.id,
-                            label: c.name,
-                            sublabel: `${memberCount} Siswa Terdaftar`
-                          };
-                        })}
-                      />
-                    </div>
-                  )}
 
                   {/* Deadline & Duration */}
                   <div className="grid grid-cols-2 gap-4">
@@ -1625,6 +1826,240 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
                   className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl cursor-pointer"
                 >
                   Terapkan Pengaturan
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+
+        {/* AI GENERATOR MODAL POPUP */}
+        {isAiModalOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center p-4 z-50 overscroll-contain overflow-y-auto animate-fadeIn"
+            onWheel={(e) => e.stopPropagation()}
+            onTouchMove={(e) => e.stopPropagation()}
+          >
+            <motion.div 
+              initial={{ scale: 0.95, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 15 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white dark:bg-slate-800 border border-purple-200 dark:border-purple-900/50 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 relative overflow-y-auto my-8 overscroll-contain"
+            >
+              {/* Header Gradient Decoration */}
+              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-500 via-indigo-500 to-sky-500" />
+              
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 flex items-center justify-center shrink-0 border border-purple-200 dark:border-purple-700">
+                    <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-300 fill-purple-200 animate-pulse" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-lg font-display font-bold text-gray-900 dark:text-white">Generator Tugas AI</h2>
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-xs">
+                        Gemini AI
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
+                      Buat pertanyaan, kunci jawaban, dan bobot nilai secara otomatis berdasarkan materi Anda.
+                    </p>
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => setIsAiModalOpen(false)}
+                  disabled={aiGenerating}
+                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {aiError && (
+                <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 rounded-2xl text-xs text-red-600 dark:text-red-300 flex items-center gap-2.5">
+                  <AlertCircle className="w-4.5 h-4.5 text-red-500 shrink-0" />
+                  <p className="font-semibold">{aiError}</p>
+                </div>
+              )}
+
+              <div className="space-y-5">
+                {/* 1. Prompt / Topic Input */}
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-gray-800 dark:text-slate-200 uppercase tracking-wider">
+                    Topik / Deskripsi Materi Tugas <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    rows={3}
+                    placeholder="Contoh: Tata Bahasa Inggris Present Perfect vs Past Simple untuk kelas 9 SMP, sertakan contoh kalimat nyata..."
+                    value={aiPrompt}
+                    onChange={(e) => setAiPrompt(e.target.value)}
+                    disabled={aiGenerating}
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-2xl text-xs placeholder-gray-400 focus:outline-none focus:bg-white dark:bg-slate-800 focus:border-purple-500 transition-all font-sans leading-relaxed"
+                  />
+                </div>
+
+                {/* 2. Grid Parameters */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Jumlah Soal */}
+                  <div className="space-y-1.5">
+                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                      Jumlah Soal
+                    </label>
+                    <select
+                      value={aiQuestionCount}
+                      onChange={(e) => setAiQuestionCount(Number(e.target.value))}
+                      disabled={aiGenerating}
+                      className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-purple-500"
+                    >
+                      {[3, 5, 8, 10, 12, 15].map((num) => (
+                        <option key={num} value={num}>{num} Soal</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Jenis Soal */}
+                  <div className="space-y-1.5">
+                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                      Tipe / Jenis Soal
+                    </label>
+                    <select
+                      value={aiQuestionType}
+                      onChange={(e) => setAiQuestionType(e.target.value as any)}
+                      disabled={aiGenerating}
+                      className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-purple-500"
+                    >
+                      <option value="all">Campuran (Pilihan Ganda + Esai)</option>
+                      <option value="multiple_choice">Hanya Pilihan Ganda (A-D)</option>
+                      <option value="essay">Hanya Esai / Jawaban Singkat</option>
+                      <option value="true_false">Hanya Benar / Salah</option>
+                    </select>
+                  </div>
+
+                  {/* Tingkat Kesulitan */}
+                  <div className="space-y-1.5">
+                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                      Tingkat Kesulitan
+                    </label>
+                    <select
+                      value={aiDifficulty}
+                      onChange={(e) => setAiDifficulty(e.target.value as any)}
+                      disabled={aiGenerating}
+                      className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-purple-500"
+                    >
+                      <option value="Mudah">Mudah</option>
+                      <option value="Sedang">Sedang</option>
+                      <option value="Sulit">Sulit / HOTS</option>
+                    </select>
+                  </div>
+
+                  {/* Bobot Nilai Per Soal */}
+                  <div className="space-y-1.5">
+                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                      Bobot Nilai Per Soal (Poin)
+                    </label>
+                    <input
+                      type="number"
+                      min={1}
+                      max={100}
+                      value={aiPointsPerQuestion}
+                      onChange={(e) => setAiPointsPerQuestion(Number(e.target.value))}
+                      disabled={aiGenerating}
+                      className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-purple-500"
+                    />
+                  </div>
+                </div>
+
+                {/* 3. Mode Pengaplikasian */}
+                <div className="space-y-1.5">
+                  <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                    Mode Pengaplikasian Lembar Kerja
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setAiMode('replace')}
+                      disabled={aiGenerating}
+                      className={`p-3 rounded-2xl border text-xs font-bold transition-all text-left flex items-start gap-2.5 cursor-pointer ${
+                        aiMode === 'replace'
+                          ? 'bg-purple-50 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700 text-purple-900 dark:text-purple-100 ring-2 ring-purple-500/20'
+                          : 'bg-gray-50 dark:bg-slate-900/50 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400'
+                      }`}
+                    >
+                      <div className={`w-4 h-4 rounded-full border mt-0.5 flex items-center justify-center shrink-0 ${aiMode === 'replace' ? 'border-purple-600 bg-purple-600 text-white' : 'border-gray-300'}`}>
+                        {aiMode === 'replace' && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                      </div>
+                      <div>
+                        <p className="font-bold">Gantikan Lembar Soal Saat Ini</p>
+                        <p className="text-[10px] font-normal text-gray-400 mt-0.5">Membuat draft soal baru sepenuhnya dari awal.</p>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setAiMode('append')}
+                      disabled={aiGenerating}
+                      className={`p-3 rounded-2xl border text-xs font-bold transition-all text-left flex items-start gap-2.5 cursor-pointer ${
+                        aiMode === 'append'
+                          ? 'bg-purple-50 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700 text-purple-900 dark:text-purple-100 ring-2 ring-purple-500/20'
+                          : 'bg-gray-50 dark:bg-slate-900/50 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400'
+                      }`}
+                    >
+                      <div className={`w-4 h-4 rounded-full border mt-0.5 flex items-center justify-center shrink-0 ${aiMode === 'append' ? 'border-purple-600 bg-purple-600 text-white' : 'border-gray-300'}`}>
+                        {aiMode === 'append' && <Check className="w-2.5 h-2.5 stroke-[3]" />}
+                      </div>
+                      <div>
+                        <p className="font-bold">Tambahkan ke Soal Saat Ini</p>
+                        <p className="text-[10px] font-normal text-gray-400 mt-0.5">Menyelipkan hasil AI di bawah daftar soal yang sudah ada.</p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* 4. Instruksi Khusus (Optional) */}
+                <div className="space-y-1.5">
+                  <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                    Instruksi Tambahan (Opsional)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: Berikan pembahasannya di kolom panduan kunci jawaban..."
+                    value={aiCustomInstructions}
+                    onChange={(e) => setAiCustomInstructions(e.target.value)}
+                    disabled={aiGenerating}
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs placeholder-gray-400 focus:outline-none focus:bg-white dark:bg-slate-800 focus:border-purple-500 transition-all font-sans"
+                  />
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-4 border-t border-gray-100 dark:border-slate-700/50 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsAiModalOpen(false)}
+                  disabled={aiGenerating}
+                  className="px-5 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 font-bold text-xs rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  Batal
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleGenerateAiAssignment}
+                  disabled={aiGenerating || !aiPrompt.trim()}
+                  className="px-6 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-sky-600 text-white font-bold text-xs rounded-xl shadow-lg hover:opacity-95 active:scale-95 transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
+                >
+                  {aiGenerating ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
+                      <span>Merancang Soal AI...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 text-yellow-300 fill-yellow-300" />
+                      <span>Generasi Soal Otomatis</span>
+                    </>
+                  )}
                 </button>
               </div>
             </motion.div>

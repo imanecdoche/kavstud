@@ -290,9 +290,9 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
                   <Award className="w-4.5 h-4.5" />
                 </div>
                 <div className="mt-4">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Rata-Rata Nilai</span>
-                  <span className="text-2xl font-bold font-display text-indigo-600 dark:text-indigo-400 mt-1 block">
-                    {averageScore !== null ? `${averageScore} / 100` : '-'}
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Rata-Rata EXP</span>
+                  <span className="text-2xl font-bold font-mono text-indigo-600 dark:text-indigo-400 mt-1 block">
+                    {averageScore !== null ? `${averageScore.toFixed(1)} EXP` : '-'}
                   </span>
                 </div>
               </div>
@@ -346,8 +346,8 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
                       <div className="flex items-center justify-between sm:justify-end gap-3.5">
                         {matchingSubmission?.status === 'graded' && matchingSubmission?.score !== undefined && matchingSubmission?.score !== null ? (
                           <div className="text-right">
-                            <p className="text-[10px] text-gray-400">Skor</p>
-                            <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 font-display">{matchingSubmission.score} / 100</p>
+                            <p className="text-[10px] text-gray-400">Total EXP</p>
+                            <p className="text-xs font-bold text-amber-500 font-mono">{matchingSubmission.score} EXP</p>
                           </div>
                         ) : (
                           <span className="text-[10px] text-gray-400">

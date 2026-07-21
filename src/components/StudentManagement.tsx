@@ -344,16 +344,15 @@ export default function StudentManagement({
                   {/* Card Top Header: Avatar & Badge */}
                   <div className="flex items-start justify-between gap-3">
                     <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center font-bold text-base overflow-hidden border border-indigo-100 dark:border-indigo-800/50 shrink-0 group-hover:scale-105 transition-transform shadow-3xs">
-                      {student.photoURL ? (
-                        <img 
-                          src={student.photoURL} 
-                          alt={student.fullName} 
-                          className="w-full h-full object-cover" 
-                          referrerPolicy="no-referrer" 
-                        />
-                      ) : (
-                        student.fullName.charAt(0).toUpperCase()
-                      )}
+                      <img 
+                        src={student.photoURL || '/aset/default-avatar.svg'} 
+                        alt={student.fullName} 
+                        className="w-full h-full object-cover" 
+                        referrerPolicy="no-referrer" 
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = '/aset/default-avatar.svg';
+                        }}
+                      />
                     </div>
 
                     <div className="flex flex-col items-end gap-1">

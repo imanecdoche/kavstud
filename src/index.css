@@ -61,6 +61,11 @@
   --color-surface-card: #FFFFFF;
 }
 
+body.modal-open {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
 /* Custom minimal & transparent scrollbar styling */
 ::-webkit-scrollbar {
   width: 6px;
@@ -101,6 +106,40 @@
   border-radius: 9999px;
   border: 1px solid transparent;
   background-clip: padding-box;
+}
+
+/* Top 3 Badge Soft Glow & Mist Effect */
+@keyframes mistGlow {
+  0% {
+    transform: scale(0.92) rotate(0deg);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.12) rotate(180deg);
+    opacity: 0.85;
+  }
+  100% {
+    transform: scale(0.95) rotate(360deg);
+    opacity: 0.6;
+  }
+}
+
+.animate-mist-glow {
+  animation: mistGlow 7s ease-in-out infinite alternate;
+}
+
+/* Rotating Light Rays Effect for Full Badge Preview */
+@keyframes rotateRays {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-rotate-rays {
+  animation: rotateRays 25s linear infinite;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {

@@ -29,7 +29,8 @@ import {
   Flame,
   Zap,
   Target,
-  CheckCircle2
+  CheckCircle2,
+  EyeOff
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { UserProfile, Assignment, Submission } from '../types';
@@ -39,12 +40,15 @@ import UserSettings from './UserSettings';
 import EmptyState from './EmptyState';
 import { SkeletonDashboard, SkeletonList } from './Skeletons';
 import CustomDropdown from './CustomDropdown';
+import InteractiveOwl from './InteractiveOwl';
 import ModuleLibrary from './ModuleLibrary';
 import Packages from './Packages';
 import Inbox from './Inbox';
 import MaintenanceView from './MaintenanceView';
 import StudentSchedule from './StudentSchedule';
 import { getLocalFeatureFlags } from '../utils/featureFlags';
+import { calculateLevelData } from '../utils/leveling';
+import LevelRoadmapModal from './LevelRoadmapModal';
 
 interface StudentDashboardProps {
   onNavigate: (path: string) => void;
@@ -83,6 +87,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
   // Assignments search & filters
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'submitted' | 'graded' | 'pending'>('all');
+  const [hideDone, setHideDone] = useState(false);
 
   // Load profile & real-time assignments/submissions
   useEffect(() => {
@@ -210,12 +215,19 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
 
   const isPageLoading = loading.profile && loading.assignments && loading.submissions;
 
+  const [isRoadmapModalOpen, setIsRoadmapModalOpen] = useState(false);
+
   // Derive stats
   const totalAssigned = assignments.length;
   const completedTasksCount = submissions.length;
   const pendingTasksCount = assignments.filter(a => !submissions.some(s => s.assignmentId === a.id)).length;
   
-  // Graded and feedbacks
+  // Graded EXP & Leveling stats
+  const gradedSubmissions = submissions.filter(s => s.score !== null && s.score !== undefined);
+  const totalExp = gradedSubmissions.reduce((sum, s) => sum + (s.score || 0), 0);
+  const averageExp = gradedSubmissions.length > 0 ? (totalExp / gradedSubmissions.length) : 0;
+  const levelData = calculateLevelData(totalExp);
+
   const gradedTasks = submissions.filter(s => s.status === 'graded');
   const latestFeedbacks = gradedTasks.filter(s => s.feedback && s.feedback.trim() !== '');
 
@@ -254,7 +266,9 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                           (statusFilter === 'expired' && status === 'expired') ||
                           (statusFilter === 'submitted' && status === 'submitted');
 
-    return matchesSearch && matchesStatus;
+    const matchesHideDone = !hideDone || (status !== 'completed' && status !== 'submitted');
+
+    return matchesSearch && matchesStatus && matchesHideDone;
   });
 
   // Action: Find first incomplete assignment to do
@@ -377,6 +391,62 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                         Selesaikan tugas harianmu dan tingkatkan streak belajar hari ini! Bersiaplah untuk menaklukkan materi baru.
                       </p>
 
+                      {/* Interactive Leveling & Rank Container */}
+                      <motion.div
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => setIsRoadmapModalOpen(true)}
+                        className="relative cursor-pointer group bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-indigo-100 dark:border-indigo-800/40 p-4 rounded-2xl shadow-3xs hover:shadow-md transition-all flex items-center justify-between gap-4 max-w-lg my-3"
+                      >
+                        <div className="flex items-center gap-3.5 min-w-0">
+                          <div className="relative w-12 h-12 shrink-0 flex items-center justify-center">
+                            {levelData.rankTier.isTop3 && (
+                              <div 
+                                className="absolute inset-0 rounded-full blur-sm opacity-75 animate-pulse pointer-events-none"
+                                style={{ backgroundColor: levelData.rankTier.glowColor }}
+                              />
+                            )}
+                            <img 
+                              src={levelData.rankTier.badgePath} 
+                              alt={levelData.rankTier.name} 
+                              className="w-full h-full object-contain filter drop-shadow-sm group-hover:scale-110 transition-transform" 
+                            />
+                          </div>
+
+                          <div className="min-w-0 space-y-1">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300">
+                                Lvl. {levelData.level}
+                              </span>
+                              <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-gradient-to-r ${levelData.rankTier.color} text-white shadow-2xs`}>
+                                {levelData.rankTier.name}
+                              </span>
+                            </div>
+
+                            {/* EXP Progress Bar & Info */}
+                            <div className="w-40 sm:w-52 space-y-1">
+                              <div className="flex items-center justify-between text-[10px] font-bold">
+                                <span className="text-gray-600 dark:text-slate-300">EXP:</span>
+                                <span className="text-indigo-600 dark:text-indigo-400 font-mono">{totalExp.toLocaleString('id-ID')} / {levelData.nextLevelMinExp.toLocaleString('id-ID')}</span>
+                              </div>
+                              <div className="w-full h-2 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                <motion.div 
+                                  className="h-full bg-gradient-to-r from-amber-400 via-orange-400 to-indigo-500 rounded-full"
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${levelData.progressPercent}%` }}
+                                  transition={{ duration: 0.8, ease: 'easeOut' }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-1 transition-transform shrink-0">
+                          <span className="hidden sm:inline text-[10px] uppercase font-black tracking-wider">Leveling Roadmap</span>
+                          <ChevronRight className="w-4 h-4" />
+                        </div>
+                      </motion.div>
+
                       <div className="pt-4">
                         <button
                           onClick={handleDoFirstTask}
@@ -388,22 +458,9 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                       </div>
                     </div>
 
-                    {/* Right Content: 3D Waving Owl Mascot */}
-                    <div className="relative z-10 w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 shrink-0 flex items-center justify-center pointer-events-none">
-                      <motion.img
-                        src="https://raw.githubusercontent.com/Tarikul-Islam-Anik/Animated-Fluent-Emojis/master/Emojis/Animals/Owl.png"
-                        alt="3D Owl Mascot"
-                        className="w-full h-full object-contain drop-shadow-2xl"
-                        animate={{
-                          y: [0, -12, 0], // Floating effect
-                          rotateZ: [0, -10, 15, -10, 0], // Waving effect
-                        }}
-                        transition={{
-                          duration: 4,
-                          ease: 'easeInOut',
-                          repeat: Infinity,
-                        }}
-                      />
+                    {/* Right Content: Interactive Eye-Tracking 3D Owl Mascot (Matches Reference Image) */}
+                    <div className="relative z-10 w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 shrink-0 flex items-center justify-center -mr-2 sm:-mr-4 -mb-2">
+                      <InteractiveOwl className="w-full h-full" />
                     </div>
                   </div>
 
@@ -507,7 +564,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                   </div>
 
                   {/* Stats Block Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-5 rounded-2xl shadow-3xs flex items-center gap-4 stagger-item">
                       <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
                         <BookOpen className="w-5 h-5" />
@@ -534,15 +591,30 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                       </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-5 rounded-2xl shadow-3xs flex items-center gap-4 sm:col-span-2 lg:col-span-1 stagger-item">
+                    {/* Total EXP Stat Card */}
+                    <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-5 rounded-2xl shadow-3xs flex items-center gap-4 stagger-item">
                       <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
-                        <Clock className="w-5 h-5 animate-pulse" />
+                        <Zap className="w-5 h-5 fill-amber-400" />
                       </div>
                       <div className="space-y-0.5">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Belum Selesai</span>
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Total EXP</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-bold font-display text-gray-900 dark:text-white">{pendingTasksCount}</span>
-                          <span className="text-[10px] text-gray-400 font-semibold">Tugas</span>
+                          <span className="text-2xl font-bold font-display text-gray-900 dark:text-white font-mono">{totalExp.toLocaleString('id-ID')}</span>
+                          <span className="text-[10px] text-amber-600 font-extrabold uppercase">EXP</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Average EXP Stat Card (Decimal Precision e.g. 53.2) */}
+                    <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-5 rounded-2xl shadow-3xs flex items-center gap-4 stagger-item">
+                      <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 shrink-0">
+                        <Award className="w-5 h-5" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Rata-Rata EXP</span>
+                        <div className="flex items-baseline gap-1">
+                          <span className="text-2xl font-bold font-display text-gray-900 dark:text-white font-mono">{averageExp.toFixed(1)}</span>
+                          <span className="text-[10px] text-purple-600 font-extrabold uppercase">EXP</span>
                         </div>
                       </div>
                     </div>
@@ -636,8 +708,8 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                                 <div className="flex items-center gap-3 shrink-0">
                                   {sub.status === 'graded' && sub.score !== null && (
                                     <div className="text-right">
-                                      <p className="text-[10px] text-gray-400">Nilai</p>
-                                      <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 font-display">{sub.score} / 100</p>
+                                      <p className="text-[10px] text-gray-400">EXP</p>
+                                      <p className="text-xs font-bold text-amber-500 font-mono">{sub.score} EXP</p>
                                     </div>
                                   )}
                                   <ChevronRight className="w-4 h-4 text-gray-300" />
@@ -705,8 +777,15 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                                 const isMe = member.uid === studentProfile.uid;
                                 return (
                                   <div key={member.uid} className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-gray-50 dark:bg-slate-900 transition-colors">
-                                    <div className={`w-6 h-6 rounded-lg font-bold text-[10px] flex items-center justify-center ${isMe ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300'}`}>
-                                      {member.fullName?.charAt(0).toUpperCase()}
+                                    <div className="w-6 h-6 rounded-lg font-bold text-[10px] flex items-center justify-center overflow-hidden shrink-0">
+                                      <img 
+                                        src={member.photoURL || '/aset/default-avatar.svg'} 
+                                        alt={member.fullName} 
+                                        className="w-full h-full object-cover" 
+                                        onError={(e) => {
+                                          (e.target as HTMLImageElement).src = '/aset/default-avatar.svg';
+                                        }}
+                                      />
                                     </div>
                                     <span className={`text-xs font-semibold truncate flex-1 ${isMe ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-gray-700 dark:text-slate-200'}`}>
                                       {member.fullName} {isMe && '(Saya)'}
@@ -742,7 +821,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                               >
                                 <div className="flex items-center justify-between gap-2">
                                   <h4 className="text-xs font-bold text-gray-900 dark:text-white truncate">{sub.assignmentTitle}</h4>
-                                  <span className="text-xs font-bold font-display text-indigo-600 dark:text-indigo-400 shrink-0">{sub.score} / 100</span>
+                                  <span className="text-xs font-bold font-mono text-amber-500 shrink-0">{sub.score} EXP</span>
                                 </div>
                                 <p className="text-[11px] text-gray-500 dark:text-slate-400 line-clamp-3 bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-gray-50 italic">
                                   "{sub.feedback}"
@@ -784,24 +863,42 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                       />
                     </div>
 
-                    <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600 dark:text-slate-300 w-full sm:w-auto">
-                      <Filter className="w-3.5 h-3.5 text-gray-400" />
-                      <CustomDropdown
-                        variant="minimal"
-                        size="sm"
-                        dropdownWidth="w-48"
-                        className="w-full sm:w-auto"
-                        value={statusFilter}
-                        onChange={(val) => setStatusFilter(val as any)}
-                        options={[
-                          { value: 'all', label: 'Semua Status' },
-                          { value: 'pending', label: 'Belum Dikerjakan' },
-                          { value: 'submitted', label: 'Menunggu Penilaian' },
-                          { value: 'completed', label: 'Selesai / Dinilai' },
-                          { value: 'remedial', label: 'Harus Remedial' },
-                          { value: 'expired', label: 'Kedaluwarsa' }
-                        ]}
-                      />
+                    <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-end">
+                      <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600 dark:text-slate-300 w-full sm:w-auto">
+                        <Filter className="w-3.5 h-3.5 text-gray-400" />
+                        <CustomDropdown
+                          variant="minimal"
+                          size="sm"
+                          dropdownWidth="w-48"
+                          className="w-full sm:w-auto"
+                          value={statusFilter}
+                          onChange={(val) => setStatusFilter(val as any)}
+                          options={[
+                            { value: 'all', label: 'Semua Status' },
+                            { value: 'pending', label: 'Belum Dikerjakan' },
+                            { value: 'submitted', label: 'Menunggu Penilaian' },
+                            { value: 'completed', label: 'Selesai / Dinilai' },
+                            { value: 'remedial', label: 'Harus Remedial' },
+                            { value: 'expired', label: 'Kedaluwarsa' }
+                          ]}
+                        />
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => setHideDone(!hideDone)}
+                        className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 border flex items-center gap-2 cursor-pointer shadow-xs ${
+                          hideDone
+                            ? 'bg-indigo-600 text-white border-indigo-600 dark:bg-indigo-500 dark:border-indigo-500 shadow-indigo-500/20 ring-2 ring-indigo-500/30'
+                            : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100 dark:bg-slate-900/50 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800'
+                        }`}
+                      >
+                        <EyeOff className={`w-3.5 h-3.5 ${hideDone ? 'text-white' : 'text-gray-500 dark:text-slate-400'}`} />
+                        <span>HIDE DONE</span>
+                        {hideDone && (
+                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
+                        )}
+                      </button>
                     </div>
                   </div>
 
@@ -972,6 +1069,13 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
           )}
         </AnimatePresence>
       </main>
+
+      {/* Level & Rank Roadmap Modal */}
+      <LevelRoadmapModal 
+        isOpen={isRoadmapModalOpen} 
+        onClose={() => setIsRoadmapModalOpen(false)} 
+        totalExp={totalExp} 
+      />
     </div>
   );
 }

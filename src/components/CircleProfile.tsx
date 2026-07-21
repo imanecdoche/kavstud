@@ -285,9 +285,9 @@ export default function CircleProfile({ circleId, onNavigate, onSetLoading }: Ci
                   <Award className="w-4.5 h-4.5" />
                 </div>
                 <div className="mt-4">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Rata-Rata Nilai</span>
-                  <span className="text-2xl font-bold font-display text-indigo-600 dark:text-indigo-400 mt-1 block">
-                    {averageScore !== null ? `${averageScore} / 100` : '-'}
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Rata-Rata EXP</span>
+                  <span className="text-2xl font-bold font-mono text-indigo-600 dark:text-indigo-400 mt-1 block">
+                    {averageScore !== null ? `${averageScore.toFixed(1)} EXP` : '-'}
                   </span>
                 </div>
               </div>

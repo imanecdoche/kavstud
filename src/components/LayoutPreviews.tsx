@@ -284,7 +284,7 @@ export default function LayoutPreviews() {
                     </div>
                     <div>
                       <span className="text-[10px] text-gray-400 uppercase block font-medium">IPK Rata-Rata</span>
-                      <span className="font-mono text-xl font-bold text-gray-800 dark:text-slate-100">92.5 <span className="text-xs text-gray-400">/ 100</span></span>
+                      <span className="font-mono text-xl font-bold text-gray-800 dark:text-slate-100">92.5 <span className="text-xs text-amber-500 font-extrabold uppercase">EXP</span></span>
                     </div>
                   </div>
                 </div>

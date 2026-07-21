@@ -318,7 +318,7 @@ export default function ComponentShowcase() {
             Buka Dialog Warning
           </button>
           <button
-            onClick={() => addToast('success', 'Tugas "Kimia Organik" berhasil dinilai dengan poin 95/100!')}
+            onClick={() => addToast('success', 'Tugas "Kimia Organik" berhasil dinilai dengan 95 EXP!')}
             className="px-4 py-2 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/50 hover:bg-indigo-100/50 text-indigo-700 font-medium rounded-xl text-xs flex items-center gap-1.5 cursor-pointer active:scale-95 transition-all"
             id="btn-toast-success"
           >

@@ -13,6 +13,7 @@ function PackageCardItem({
   goNext,
   goPrev
 }: {
+  key?: string;
   pkg: PackageData;
   offset: number;
   isActive: boolean;

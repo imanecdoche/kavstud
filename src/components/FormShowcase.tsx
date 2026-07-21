@@ -274,7 +274,7 @@ export default function FormShowcase() {
               </div>
               <div>
                 <span className="text-[10px] font-bold text-gray-400 uppercase block">Poin Maksimal:</span>
-                <span className="font-mono text-gray-800 dark:text-slate-100">{maxScore || '0'} / 100</span>
+                <span className="font-mono text-gray-800 dark:text-slate-100">{maxScore || '0'} EXP</span>
               </div>
               <div>
                 <span className="text-[10px] font-bold text-gray-400 uppercase block">Petunjuk:</span>

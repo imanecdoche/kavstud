@@ -298,7 +298,8 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
       
       // Auto-grade standard multiple choice
       const isCorrect = selectedChoice === assignment.correctChoice;
-      payload.score = isCorrect ? 100 : 0;
+      const maxExp = assignment.totalPoints || 100;
+      payload.score = isCorrect ? maxExp : 0;
       payload.reviewStatus = isCorrect ? 'correct' : 'incorrect';
       payload.feedback = isCorrect ? 'Sistem: Jawaban Benar (Otomatis)' : 'Sistem: Jawaban Salah (Otomatis)';
     } else if (assignment?.assignmentType === 'multi_short_answer') {

@@ -32,7 +32,8 @@ import {
   ArrowRight,
   X,
   Pencil,
-  Trash2
+  Trash2,
+  EyeOff
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { UserProfile, Assignment, Circle, Submission } from '../types';
@@ -90,6 +91,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
   const [statusFilter, setStatusFilter] = useState<'all' | 'sent' | 'review' | 'completed' | 'remedial' | 'expired'>('all');
   const [typeFilter, setTypeFilter] = useState<'all' | 'short_answer' | 'multiple_choice' | 'multi_short_answer'>('all');
   const [studentFilter, setStudentFilter] = useState<string>('all');
+  const [hideDone, setHideDone] = useState(false);
 
   // Create & Edit Assignment Form State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -455,8 +457,9 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
     const matchesStatus = statusFilter === 'all' || status === statusFilter;
     const matchesType = typeFilter === 'all' || type === typeFilter;
     const matchesStudent = studentFilter === 'all' || assign.studentId === studentFilter;
+    const matchesHideDone = !hideDone || status !== 'completed';
 
-    return matchesSearch && matchesStatus && matchesType && matchesStudent;
+    return matchesSearch && matchesStatus && matchesType && matchesStudent && matchesHideDone;
   });
 
   return (
@@ -704,12 +707,12 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                                 <div className="flex items-center justify-between sm:justify-end gap-3.5 shrink-0 relative z-10">
                                   {sub.score !== null ? (
                                     <div className="text-right">
-                                      <p className="text-[10px] text-gray-400">Skor</p>
-                                      <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 font-display">{sub.score} / 100</p>
+                                      <p className="text-[10px] text-gray-400">Total EXP</p>
+                                      <p className="text-xs font-bold text-amber-500 font-mono">{sub.score} EXP</p>
                                     </div>
                                   ) : (
                                     <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-black bg-indigo-50/80 backdrop-blur-sm border border-indigo-200 shadow-sm dark:bg-indigo-900/40 dark:border-indigo-800 px-3 py-1.5 rounded-xl uppercase tracking-wider">
-                                      Nilai Sekarang
+                                      Beri EXP Sekarang
                                     </span>
                                   )}
                                   <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-indigo-500 transition-colors" />
@@ -824,8 +827,15 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                                 className="p-3 bg-gray-50 dark:bg-slate-900/50 hover:bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-700/50 rounded-2xl flex items-center justify-between gap-3 cursor-pointer transition-colors"
                               >
                                 <div className="flex items-center gap-3 min-w-0">
-                                  <div className="w-8 h-8 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center font-bold text-xs shrink-0">
-                                    {stud.fullName?.charAt(0).toUpperCase() || 'S'}
+                                  <div className="w-8 h-8 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden border border-indigo-100 dark:border-indigo-800/50">
+                                    <img 
+                                      src={stud.photoURL || '/aset/default-avatar.svg'} 
+                                      alt={stud.fullName} 
+                                      className="w-full h-full object-cover" 
+                                      onError={(e) => {
+                                        (e.target as HTMLImageElement).src = '/aset/default-avatar.svg';
+                                      }}
+                                    />
                                   </div>
                                   <div className="min-w-0">
                                     <div className="flex items-center gap-1.5 flex-wrap">
@@ -942,6 +952,23 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                           ]}
                         />
                       </div>
+
+                      {/* HIDE DONE Button */}
+                      <button
+                        type="button"
+                        onClick={() => setHideDone(!hideDone)}
+                        className={`px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 border flex items-center gap-2 cursor-pointer shadow-xs ${
+                          hideDone
+                            ? 'bg-sky-600 text-white border-sky-600 dark:bg-sky-500 dark:border-sky-500 shadow-sky-500/20 ring-2 ring-sky-500/30'
+                            : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100 dark:bg-slate-900/50 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800'
+                        }`}
+                      >
+                        <EyeOff className={`w-3.5 h-3.5 ${hideDone ? 'text-white' : 'text-gray-500 dark:text-slate-400'}`} />
+                        <span>HIDE DONE</span>
+                        {hideDone && (
+                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
+                        )}
+                      </button>
                     </div>
                   </div>
 

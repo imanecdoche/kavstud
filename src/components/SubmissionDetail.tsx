@@ -107,17 +107,15 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
     return !isAutoGradable ? sum + (q.points || 0) : sum;
   }, 0);
 
-  // Compute final score as a percentage out of 100
-  const calculatedPercentage = totalPossiblePoints > 0 
-    ? Math.round(((autoScore + manualScore) / totalPossiblePoints) * 100)
-    : 0;
+  // Compute final score as direct total EXP
+  const calculatedTotalExp = autoScore + manualScore;
 
-  // Synchronize score with calculatedPercentage for lms_composite assignments
+  // Synchronize score with calculatedTotalExp for lms_composite assignments
   useEffect(() => {
     if (assignment?.assignmentType === 'lms_composite') {
-      setScore(calculatedPercentage);
+      setScore(calculatedTotalExp);
     }
-  }, [calculatedPercentage, assignment?.assignmentType]);
+  }, [calculatedTotalExp, assignment?.assignmentType]);
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -253,8 +251,8 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
 
   const handleGradeSubmission = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (score === '' || score < 0 || score > 100) {
-      setGradeError('Skor penilaian harus berupa angka antara 0 hingga 100.');
+    if (score === '' || score < 0) {
+      setGradeError('Skor EXP penilaian harus berupa angka 0 atau lebih.');
       return;
     }
     if (!feedback.trim()) {
@@ -364,11 +362,15 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-full flex items-center justify-center font-bold text-sm overflow-hidden shrink-0 border border-indigo-100 dark:border-indigo-800/50 shadow-3xs">
-                  {studentPhotoURL ? (
-                    <img src={studentPhotoURL} alt={submission.studentName} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                  ) : (
-                    submission.studentName?.charAt(0).toUpperCase() || 'S'
-                  )}
+                  <img 
+                    src={studentPhotoURL || '/aset/default-avatar.svg'} 
+                    alt={submission.studentName} 
+                    className="w-full h-full object-cover" 
+                    referrerPolicy="no-referrer" 
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '/aset/default-avatar.svg';
+                    }}
+                  />
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-gray-900 dark:text-white">{submission.studentName}</h3>
@@ -851,9 +853,9 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                       <Award className="w-4.5 h-4.5 text-indigo-600 dark:text-indigo-400" />
                     </div>
                     <div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider block text-gray-400">Skor Tugas</span>
-                      <span className="text-3xl font-bold font-display mt-1 block">
-                        {submission.score !== null ? submission.score : '-'} <span className="text-xs font-sans font-medium text-gray-400">/ 100</span>
+                      <span className="text-[10px] font-bold uppercase tracking-wider block text-gray-400">Total EXP Diperoleh</span>
+                      <span className="text-3xl font-bold font-display mt-1 block text-amber-500 font-mono">
+                        {submission.score !== null ? submission.score : '-'} <span className="text-xs font-sans font-extrabold uppercase">EXP</span>
                       </span>
                     </div>
                   </div>
@@ -905,21 +907,21 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                 {assignment?.assignmentType === 'lms_composite' && (
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-5 bg-indigo-50 dark:bg-indigo-900/30/20 border border-indigo-100 dark:border-indigo-800/50 rounded-2xl">
                     <div className="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-gray-100 dark:border-slate-700/50 flex flex-col justify-between">
-                      <span className="text-[10px] font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Auto Score (Objektif)</span>
+                      <span className="text-[10px] font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Auto EXP (Objektif)</span>
                       <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400 font-mono mt-1">
-                        {autoScore} <span className="text-xs text-gray-400 font-sans font-medium">/ {totalAutoPoints} Poin</span>
+                        {autoScore} <span className="text-xs text-gray-400 font-sans font-medium">/ {totalAutoPoints} EXP</span>
                       </span>
                     </div>
                     <div className="bg-white dark:bg-slate-800 p-3.5 rounded-xl border border-gray-100 dark:border-slate-700/50 flex flex-col justify-between">
-                      <span className="text-[10px] font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Manual Score (Subjektif)</span>
+                      <span className="text-[10px] font-bold text-gray-500 dark:text-slate-400 uppercase tracking-wider">Manual EXP (Subjektif)</span>
                       <span className="text-xl font-bold text-indigo-600 dark:text-indigo-400 font-mono mt-1">
-                        {manualScore} <span className="text-xs text-gray-400 font-sans font-medium">/ {totalManualPoints} Poin</span>
+                        {manualScore} <span className="text-xs text-gray-400 font-sans font-medium">/ {totalManualPoints} EXP</span>
                       </span>
                     </div>
                     <div className="bg-gradient-to-br from-indigo-500 to-indigo-600 p-3.5 rounded-xl text-white flex flex-col justify-between shadow-3xs">
-                      <span className="text-[10px] font-bold opacity-85 uppercase tracking-wider">Final Total Score</span>
+                      <span className="text-[10px] font-bold opacity-85 uppercase tracking-wider">Total Akumulasi EXP</span>
                       <span className="text-2xl font-bold font-mono mt-1">
-                        {calculatedPercentage} <span className="text-xs opacity-85 font-sans font-medium">/ 100</span>
+                        {calculatedTotalExp} <span className="text-xs opacity-85 font-sans font-medium">/ {totalPossiblePoints} EXP</span>
                       </span>
                     </div>
                   </div>
@@ -930,12 +932,11 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                     {/* Score field */}
                     <div className="sm:col-span-1 space-y-1.5">
                       <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
-                        Skor Penilaian (0 - 100) <span className="text-red-500">*</span>
+                        Skor EXP Siswa <span className="text-red-500">*</span>
                       </label>
                       <input
                         type="number"
                         min={0}
-                        max={100}
                         required
                         disabled={assignment?.assignmentType === 'lms_composite'}
                         value={score}
@@ -945,11 +946,11 @@ export default function SubmissionDetail({ submissionId, onNavigate, onSetLoadin
                             ? 'bg-gray-100 dark:bg-slate-700 border-gray-200 dark:border-slate-700 cursor-not-allowed text-gray-500 dark:text-slate-400 font-mono font-bold'
                             : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500'
                         }`}
-                        placeholder="Nilai esai"
+                        placeholder="Masukkan total EXP"
                       />
                       {assignment?.assignmentType === 'lms_composite' && (
                         <p className="text-[10px] text-indigo-600 dark:text-indigo-400 font-semibold">
-                          Dihitung otomatis berdasarkan akumulasi poin di atas.
+                          Dihitung otomatis berdasarkan akumulasi EXP di atas.
                         </p>
                       )}
                     </div>

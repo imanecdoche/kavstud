@@ -216,16 +216,15 @@ export default function NavigationSidebar({
               : 'bg-gray-50 dark:bg-slate-900/70 border border-gray-100 dark:border-slate-700/50 rounded-2xl p-3'
           }`}>
             <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-xs overflow-hidden shrink-0 border border-indigo-200/60 shadow-3xs">
-              {userProfile?.photoURL ? (
-                <img 
-                  src={userProfile.photoURL} 
-                  alt={userProfile.fullName} 
-                  className="w-full h-full object-cover" 
-                  referrerPolicy="no-referrer" 
-                />
-              ) : (
-                userProfile?.fullName?.charAt(0).toUpperCase() || <User className="w-4 h-4" />
-              )}
+              <img 
+                src={userProfile?.photoURL || '/aset/default-avatar.svg'} 
+                alt={userProfile?.fullName || 'User'} 
+                className="w-full h-full object-cover" 
+                referrerPolicy="no-referrer" 
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/aset/default-avatar.svg';
+                }}
+              />
             </div>
             
             {!isCollapsed && (

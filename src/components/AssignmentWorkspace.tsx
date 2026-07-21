@@ -235,7 +235,7 @@ export default function AssignmentWorkspace() {
                       </div>
                       <div>
                         <span className="text-[10px] text-gray-400 uppercase font-mono block">Nilai Diperoleh</span>
-                        <span className="font-mono text-xl font-bold text-emerald-700">95 <span className="text-xs text-gray-400">/ 100</span></span>
+                        <span className="font-mono text-xl font-bold text-emerald-700">95 <span className="text-xs text-amber-500 font-extrabold uppercase">EXP</span></span>
                       </div>
                     </div>
 
