@@ -158,7 +158,7 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#4B4B4B] flex flex-col font-sans selection:bg-[#58CC02] selection:text-white">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#4B4B4B] flex flex-col font-sans selection:bg-[#58CC02] selection:text-white max-w-full overflow-x-hidden">
       {/* Navigation Header - Sticky Floating Glassmorphism Header */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out ${
@@ -286,8 +286,8 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
               </div>
             </div>
 
-            {/* Right Column - Full 55% Hero Illustration (col-span-7) - Layered behind text */}
-            <div className="lg:col-span-7 flex justify-end items-end relative min-h-[460px] sm:min-h-[580px] lg:min-h-[660px] -mr-4 sm:-mr-8 lg:-mr-12 z-10 pointer-events-none">
+            {/* Right Column - Full 55% Hero Illustration: Absolute background on Mobile, 55% Column on Desktop */}
+            <div className="absolute inset-0 lg:relative lg:inset-auto lg:col-span-7 flex justify-end items-end min-h-[360px] lg:min-h-[660px] -mr-4 sm:-mr-8 lg:-mr-12 z-0 lg:z-10 pointer-events-none overflow-hidden lg:overflow-visible">
               <SplineMascot3D className="w-full h-full" />
             </div>
 
