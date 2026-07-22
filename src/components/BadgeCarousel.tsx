@@ -159,7 +159,7 @@ export default function BadgeCarousel() {
         </button>
 
         {/* Carousel Window Track */}
-        <div className="relative w-full h-[470px] py-6 flex items-center justify-center overflow-visible sm:overflow-hidden">
+        <div className="relative w-full h-[470px] py-6 flex items-center justify-center overflow-hidden sm:overflow-visible">
           <div className="relative w-full h-full flex items-center justify-center">
             {RANK_TIERS.map((tier, index) => {
               const offset = index - activeIndex;

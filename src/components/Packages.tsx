@@ -228,7 +228,7 @@ function PackageCarousel({
         </button>
 
         {/* Carousel Window */}
-        <div className="relative w-full h-[520px] py-6 flex items-center justify-center overflow-visible sm:overflow-hidden">
+        <div className="relative w-full h-[520px] py-6 flex items-center justify-center overflow-hidden sm:overflow-visible">
           <div className="relative w-full h-full flex items-center justify-center">
             {items.map((pkg, index) => {
               const offset = index - activeIndex;
