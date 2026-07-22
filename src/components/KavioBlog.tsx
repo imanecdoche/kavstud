@@ -166,8 +166,10 @@ export default function KavioBlog({ onNavigate, userProfile, onLogout }: KavioBl
   const handleBackToApp = () => {
     if (userProfile?.role === 'teacher') {
       onNavigate('/teacher');
-    } else {
+    } else if (userProfile?.role === 'student') {
       onNavigate('/student');
+    } else {
+      onNavigate('/');
     }
   };
 

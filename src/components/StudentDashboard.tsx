@@ -49,6 +49,7 @@ import StudentSchedule from './StudentSchedule';
 import { getLocalFeatureFlags } from '../utils/featureFlags';
 import { calculateLevelData } from '../utils/leveling';
 import LevelRoadmapModal from './LevelRoadmapModal';
+import LogoutConfirmModal from './LogoutConfirmModal';
 
 interface StudentDashboardProps {
   onNavigate: (path: string) => void;
@@ -206,11 +207,26 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
     }
   }, [studentProfile?.circleId, studentProfile?.classType]);
 
-  const handleLogout = async () => {
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const executeLogout = async () => {
+    setIsLoggingOut(true);
     onSetLoading(true);
-    await auth.signOut();
-    onNavigate('/login');
-    onSetLoading(false);
+    try {
+      await auth.signOut();
+      onNavigate('/login');
+    } catch (err) {
+      console.error('Error logging out:', err);
+    } finally {
+      setIsLoggingOut(false);
+      setIsLogoutModalOpen(false);
+      onSetLoading(false);
+    }
   };
 
   const isPageLoading = loading.profile && loading.assignments && loading.submissions;
@@ -1075,6 +1091,14 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
         isOpen={isRoadmapModalOpen} 
         onClose={() => setIsRoadmapModalOpen(false)} 
         totalExp={totalExp} 
+      />
+
+      {/* Logout Confirmation Modal */}
+      <LogoutConfirmModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={executeLogout}
+        isLoading={isLoggingOut}
       />
     </div>
   );

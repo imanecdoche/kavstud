@@ -73,6 +73,85 @@ interface LocalQuestion {
   allowedFileTypes?: string[];
 }
 
+interface CustomNumberStepperProps {
+  value: number;
+  onChange: (val: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  disabled?: boolean;
+  className?: string;
+  unit?: string;
+}
+
+function CustomNumberStepper({
+  value,
+  onChange,
+  min = 1,
+  max = 999,
+  step = 1,
+  disabled = false,
+  className = '',
+  unit = ''
+}: CustomNumberStepperProps) {
+  const handleDecrement = () => {
+    if (disabled) return;
+    const newVal = Math.max(min, value - step);
+    onChange(newVal);
+  };
+
+  const handleIncrement = () => {
+    if (disabled) return;
+    const newVal = Math.min(max, value + step);
+    onChange(newVal);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) return;
+    const parsed = parseInt(e.target.value, 10);
+    if (isNaN(parsed)) {
+      onChange(min);
+    } else {
+      onChange(Math.min(max, Math.max(min, parsed)));
+    }
+  };
+
+  return (
+    <div className={`inline-flex items-center bg-gray-50 dark:bg-slate-900/60 border border-gray-200 dark:border-slate-700/80 rounded-xl p-1 gap-1 transition-all ${disabled ? 'opacity-50' : ''} ${className}`}>
+      <button
+        type="button"
+        onClick={handleDecrement}
+        disabled={disabled || value <= min}
+        className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center border border-gray-200 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-30 disabled:hover:bg-white active:scale-95 transition-all shadow-xs cursor-pointer select-none"
+        title="Kurangi"
+      >
+        -
+      </button>
+      <div className="flex-1 flex items-center justify-center px-2">
+        <input
+          type="number"
+          min={min}
+          max={max}
+          value={value}
+          onChange={handleInputChange}
+          disabled={disabled}
+          className="w-12 text-center bg-transparent text-xs font-bold text-gray-800 dark:text-slate-100 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+        />
+        {unit && <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-400 ml-0.5">{unit}</span>}
+      </div>
+      <button
+        type="button"
+        onClick={handleIncrement}
+        disabled={disabled || value >= max}
+        className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center border border-gray-200 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-30 disabled:hover:bg-white active:scale-95 transition-all shadow-xs cursor-pointer select-none"
+        title="Tambah"
+      >
+        +
+      </button>
+    </div>
+  );
+}
+
 export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoading }: AssignmentBuilderProps) {
   const isEditMode = !!assignmentId;
 
@@ -136,7 +215,15 @@ export default function AssignmentBuilder({ assignmentId, onNavigate, onSetLoadi
     setAiGenerating(true);
     setAiError(null);
 
-    const apiKey = 'AIzaSyC-qsUNbKkRnUekI3V23PhrCMvEsV1dWhE';
+    const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || (import.meta as any).env?.GEMINI_API_KEY || '';
+
+    if (!apiKey) {
+      setAiError('API Key Gemini belum dikonfigurasi. Silakan tambahkan VITE_GEMINI_API_KEY di file .env Anda.');
+      setAiGenerating(false);
+      return;
+    }
+
+    const clampedCount = Math.min(20, Math.max(1, aiQuestionCount || 5));
 
     const systemPrompt = `Anda adalah asisten pembuat kuis & lembar kerja tugas sekolah profesional untuk guru.
 Buatlah tugas belajar lengkap dalam format JSON terstruktur yang persis mengikuti petunjuk berikut.
@@ -144,15 +231,17 @@ Buatlah tugas belajar lengkap dalam format JSON terstruktur yang persis mengikut
 PERSYARATAN:
 - Topik/Materi: "${aiPrompt.trim()}"
 - Tingkat Kesulitan: ${aiDifficulty}
-- Jumlah Soal: ${aiQuestionCount}
+- Jumlah Soal: ${clampedCount}
 - Jenis Soal yang Diinginkan: ${
       aiQuestionType === 'multiple_choice'
         ? 'Hanya Pilihan Ganda (multiple_choice)'
         : aiQuestionType === 'essay'
-          ? 'Hanya Esai / Jawaban Singkat (essay)'
+          ? 'Hanya Jawaban Teks / Esai (essay)'
           : aiQuestionType === 'true_false'
             ? 'Hanya Benar / Salah (true_false)'
-            : 'Campuran antara Pilihan Ganda, Esai, dan Benar/Salah'
+            : aiQuestionType === 'matching'
+              ? 'Hanya Matching / Menjodohkan (matching)'
+              : 'Campuran antara Jawaban Teks, Pilihan Ganda, Benar/Salah, dan Matching'
     }
 - Bobot Poin Standar Per Soal: ${aiPointsPerQuestion}
 ${aiCustomInstructions ? `- Instruksi Tambahan: "${aiCustomInstructions.trim()}"` : ''}
@@ -172,29 +261,40 @@ FORMAT OUTPUT HANYA DALAM JSON DENGAN STRUKTUR BERIKUT:
     },
     {
       "type": "essay",
-      "question": "Teks pertanyaan esai...",
+      "question": "Teks pertanyaan esai / jawaban teks...",
       "choices": [],
       "correctAnswer": "",
-      "answerGuide": "Kunci jawaban / panduan poin penting penilaian",
+      "answerGuide": "Kunci jawaban / panduan poin penting penilaian manual guru",
       "points": ${aiPointsPerQuestion}
     },
     {
       "type": "true_false",
       "question": "Pernyataan yang dievaluasi...",
-      "choices": [],
+      "choices": ["Benar", "Salah"],
       "correctAnswer": "true",
       "trueFalseCorrect": "true",
       "answerGuide": "Penjelasan fakta yang benar",
+      "points": ${aiPointsPerQuestion}
+    },
+    {
+      "type": "matching",
+      "question": "Jodohkan item di sebelah kiri dengan pasangan jawaban yang sesuai di sebelah kanan.",
+      "matchingPairs": [
+        { "left": "Pernyataan / Item 1", "right": "Pasangan Jawaban A" },
+        { "left": "Pernyataan / Item 2", "right": "Pasangan Jawaban A" },
+        { "left": "Pernyataan / Item 3", "right": "Pasangan Jawaban B" }
+      ],
       "points": ${aiPointsPerQuestion}
     }
   ]
 }
 
 CATATAN KHUSUS:
-1. Untuk type "multiple_choice", pilihan harus berjumlah 4 (A, B, C, D) dan correctAnswer adalah indeks string "0", "1", "2", atau "3" sesuai urutan pilihan yang benar.
+1. Untuk type "multiple_choice", pilihan dapat berjumlah 3 (A-C) atau 4 (A-D) dan correctAnswer adalah indeks string "0", "1", "2", atau "3".
 2. Untuk type "true_false", correctAnswer harus "true" atau "false" dan trueFalseCorrect harus "true" atau "false".
-3. Untuk type "essay", berikan answerGuide yang berguna bagi guru untuk menilai.
-4. Jangan tambahkan teks lain di luar JSON valid!`;
+3. Untuk type "essay", berikan answerGuide yang berguna bagi guru untuk menilai secara manual.
+4. Untuk type "matching", berikan daftar matchingPairs (item left dan right). Jika ada jawaban kanan yang sama (contoh I pasangannya DO, You pasangannya DO), tuliskan apa adanya di matchingPairs karena sistem akan otomatis mendeduplikasi opsi kanan menjadi unik.
+5. Jangan tambahkan teks lain di luar JSON valid!`;
 
     const modelCandidates = [
       'gemini-3.6-flash',
@@ -978,16 +1078,30 @@ CATATAN KHUSUS:
                     </div>
                   )}
 
-                  {/* Matching mock layout */}
+                  {/* Matching layout with unique right options */}
                   {q.type === 'matching' && (
-                    <div className="space-y-2 mt-2 bg-gray-50 dark:bg-slate-900/50 p-4 rounded-xl border border-gray-100 dark:border-slate-700/50">
-                      {q.matchingPairs?.map((pair, pIdx) => (
-                        <div key={pIdx} className="flex items-center justify-between gap-4 text-xs">
-                          <span className="font-semibold text-gray-700 dark:text-slate-200">{pair.left || 'Kiri'}</span>
-                          <span className="text-gray-400">➔</span>
-                          <span className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-gray-600 dark:text-slate-300 font-bold">{pair.right || 'Kanan'}</span>
+                    <div className="space-y-3 mt-2 bg-gray-50 dark:bg-slate-900/50 p-4 rounded-xl border border-gray-100 dark:border-slate-700/50">
+                      <div className="space-y-2">
+                        {q.matchingPairs?.map((pair, pIdx) => (
+                          <div key={pIdx} className="flex items-center justify-between gap-4 text-xs">
+                            <span className="font-semibold text-gray-700 dark:text-slate-200">{pair.left || 'Kiri'}</span>
+                            <span className="text-gray-400">➔</span>
+                            <span className="px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg text-gray-600 dark:text-slate-300 font-bold">{pair.right || 'Kanan'}</span>
+                          </div>
+                        ))}
+                      </div>
+                      {q.matchingPairs && q.matchingPairs.length > 0 && (
+                        <div className="pt-2.5 border-t border-gray-200 dark:border-slate-700/60 text-[11px]">
+                          <span className="font-bold text-indigo-600 dark:text-indigo-400 block mb-1">Daftar Pilihan Jawaban Kanan Unik (Dideduplikasi Sistem):</span>
+                          <div className="flex flex-wrap gap-1.5">
+                            {Array.from(new Set(q.matchingPairs.map(p => p.right?.trim()).filter(Boolean))).map((opt, optIdx) => (
+                              <span key={optIdx} className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 font-bold rounded-lg border border-indigo-200 dark:border-indigo-800/50">
+                                {opt}
+                              </span>
+                            ))}
+                          </div>
                         </div>
-                      ))}
+                      )}
                     </div>
                   )}
 
@@ -1087,14 +1201,10 @@ CATATAN KHUSUS:
                           value={q.type}
                           onChange={(val) => updateQuestionField(index, 'type', val)}
                           options={[
-                            { value: 'multiple_choice', label: 'Pilihan Ganda (A-D)' },
-                            { value: 'essay', label: 'Esai / Jawaban Singkat' },
-                            { value: 'true_false', label: 'Benar / Salah' },
-                            { value: 'matching', label: 'Menjodohkan (Matching)' },
-                            { value: 'fill_blank', label: 'Isian Singkat (Fill Blank)' },
-                            { value: 'listening', label: 'Mendengarkan (Listening)' },
-                            { value: 'speaking', label: 'Berbicara (Speaking)' },
-                            { value: 'file_upload', label: 'Unggah Berkas (Upload)' }
+                            { value: 'essay', label: 'Jawaban Teks (Manual Guru)' },
+                            { value: 'multiple_choice', label: 'Pilihan Ganda (A-C / A-D)' },
+                            { value: 'true_false', label: 'Benar / Salah (A-C / A-D)' },
+                            { value: 'matching', label: 'Matching / Menjodohkan (Opsi Unik)' }
                           ]}
                         />
                       </div>
@@ -1163,7 +1273,47 @@ CATATAN KHUSUS:
                       {/* 1. Multiple Choice Specific Inputs */}
                       {q.type === 'multiple_choice' && (
                         <div className="space-y-3 pt-2 border-t border-gray-50">
-                          <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">Opsi Pilihan Jawaban</span>
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">Opsi Pilihan Jawaban</span>
+                            <div className="flex items-center gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const nextChoices = q.choices.slice(0, 3);
+                                  while (nextChoices.length < 3) {
+                                    nextChoices.push(`Opsi ${String.fromCharCode(65 + nextChoices.length)}`);
+                                  }
+                                  updateQuestionField(index, 'choices', nextChoices);
+                                  if (Number(q.correctAnswer) >= 3) updateQuestionField(index, 'correctAnswer', '0');
+                                }}
+                                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                                  q.choices.length === 3
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300'
+                                }`}
+                              >
+                                3 Opsi (A-C)
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const nextChoices = [...q.choices];
+                                  while (nextChoices.length < 4) {
+                                    nextChoices.push(`Opsi ${String.fromCharCode(65 + nextChoices.length)}`);
+                                  }
+                                  updateQuestionField(index, 'choices', nextChoices.slice(0, 4));
+                                }}
+                                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                                  q.choices.length >= 4
+                                    ? 'bg-indigo-600 text-white'
+                                    : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300'
+                                }`}
+                              >
+                                4 Opsi (A-D)
+                              </button>
+                            </div>
+                          </div>
+
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {q.choices.map((choice, choiceIdx) => {
                               const optLabel = String.fromCharCode(65 + choiceIdx); // A, B, C, D
@@ -1192,12 +1342,10 @@ CATATAN KHUSUS:
                               <CustomDropdown
                                 value={q.correctAnswer}
                                 onChange={(val) => updateQuestionField(index, 'correctAnswer', val)}
-                                options={[
-                                  { value: '0', label: 'Opsi A (Pilihan Pertama)' },
-                                  { value: '1', label: 'Opsi B (Pilihan Kedua)' },
-                                  { value: '2', label: 'Opsi C (Pilihan Ketiga)' },
-                                  { value: '3', label: 'Opsi D (Pilihan Keempat)' }
-                                ]}
+                                options={q.choices.map((_, cIdx) => ({
+                                  value: String(cIdx),
+                                  label: `Opsi ${String.fromCharCode(65 + cIdx)} (${cIdx === 0 ? 'Pertama' : cIdx === 1 ? 'Kedua' : cIdx === 2 ? 'Ketiga' : 'Keempat'})`
+                                }))}
                               />
                             </div>
                           </div>
@@ -1392,12 +1540,12 @@ CATATAN KHUSUS:
                       <div className="pt-3 border-t border-gray-50 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-semibold text-gray-600 dark:text-slate-300">Bobot EXP Soal:</span>
-                          <input
-                            type="number"
-                            min={1}
+                          <CustomNumberStepper
                             value={q.points}
-                            onChange={(e) => updateQuestionField(index, 'points', Number(e.target.value))}
-                            className="w-20 px-2.5 py-1.5 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-lg text-xs font-bold text-center text-indigo-700 focus:outline-none"
+                            onChange={(val) => updateQuestionField(index, 'points', val)}
+                            min={1}
+                            max={100}
+                            unit="Poin"
                           />
                         </div>
                       </div>
@@ -1835,7 +1983,7 @@ CATATAN KHUSUS:
         {/* AI GENERATOR MODAL POPUP */}
         {isAiModalOpen && (
           <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center p-4 z-50 overscroll-contain overflow-y-auto animate-fadeIn"
+            className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 z-50 overscroll-contain overflow-y-auto animate-fadeIn"
             onWheel={(e) => e.stopPropagation()}
             onTouchMove={(e) => e.stopPropagation()}
           >
@@ -1844,42 +1992,37 @@ CATATAN KHUSUS:
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.95, opacity: 0, y: 15 }}
               transition={{ duration: 0.2 }}
-              className="bg-white dark:bg-slate-800 border border-purple-200 dark:border-purple-900/50 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 relative overflow-y-auto my-8 overscroll-contain"
+              className="bg-white dark:bg-slate-800 border border-indigo-100 dark:border-slate-700/60 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 relative overflow-y-auto my-8 overscroll-contain"
             >
-              {/* Header Gradient Decoration */}
-              <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-500 via-indigo-500 to-sky-500" />
+              {/* Header Accent Bar */}
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-600 via-violet-600 to-sky-500 rounded-t-3xl" />
               
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-2xl bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 flex items-center justify-center shrink-0 border border-purple-200 dark:border-purple-700">
-                    <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-300 fill-purple-200 animate-pulse" />
+              <div className="flex items-start justify-between gap-4 pt-1">
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h2 className="text-lg font-display font-bold text-gray-900 dark:text-white">Generator Tugas AI</h2>
+                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-indigo-600 text-white shadow-xs">
+                      GEMINI AI
+                    </span>
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-lg font-display font-bold text-gray-900 dark:text-white">Generator Tugas AI</h2>
-                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-xs">
-                        Gemini AI
-                      </span>
-                    </div>
-                    <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
-                      Buat pertanyaan, kunci jawaban, dan bobot nilai secara otomatis berdasarkan materi Anda.
-                    </p>
-                  </div>
+                  <p className="text-xs text-gray-500 dark:text-slate-400 mt-1 leading-relaxed">
+                    Rancang pertanyaan, kunci jawaban, dan bobot nilai secara otomatis berdasarkan materi tugas Anda.
+                  </p>
                 </div>
 
                 <button 
                   onClick={() => setIsAiModalOpen(false)}
                   disabled={aiGenerating}
-                  className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+                  className="px-3 py-1.5 text-xs font-bold text-gray-500 hover:text-gray-800 dark:text-slate-400 dark:hover:text-slate-200 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-xl transition-colors disabled:opacity-50 cursor-pointer"
                 >
-                  <X className="w-5 h-5" />
+                  Tutup
                 </button>
               </div>
 
               {aiError && (
-                <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 rounded-2xl text-xs text-red-600 dark:text-red-300 flex items-center gap-2.5">
-                  <AlertCircle className="w-4.5 h-4.5 text-red-500 shrink-0" />
-                  <p className="font-semibold">{aiError}</p>
+                <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 rounded-2xl text-xs text-red-600 dark:text-red-300">
+                  <span className="font-black uppercase tracking-wider block mb-0.5">PERHATIAN</span>
+                  <p className="font-medium leading-relaxed">{aiError}</p>
                 </div>
               )}
 
@@ -1895,27 +2038,29 @@ CATATAN KHUSUS:
                     value={aiPrompt}
                     onChange={(e) => setAiPrompt(e.target.value)}
                     disabled={aiGenerating}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-2xl text-xs placeholder-gray-400 focus:outline-none focus:bg-white dark:bg-slate-800 focus:border-purple-500 transition-all font-sans leading-relaxed"
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-2xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:bg-white dark:bg-slate-800 focus:border-indigo-500 transition-all font-sans leading-relaxed"
                   />
                 </div>
 
                 {/* 2. Grid Parameters */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {/* Jumlah Soal */}
+                  {/* Jumlah Soal Input Stepper (- dan +) */}
                   <div className="space-y-1.5">
-                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
-                      Jumlah Soal
-                    </label>
-                    <select
+                    <div className="flex items-center justify-between">
+                      <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                        Jumlah Soal
+                      </label>
+                      <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold">Maks. 20 Soal</span>
+                    </div>
+                    <CustomNumberStepper
                       value={aiQuestionCount}
-                      onChange={(e) => setAiQuestionCount(Number(e.target.value))}
+                      onChange={(val) => setAiQuestionCount(val)}
+                      min={1}
+                      max={20}
                       disabled={aiGenerating}
-                      className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-purple-500"
-                    >
-                      {[3, 5, 8, 10, 12, 15].map((num) => (
-                        <option key={num} value={num}>{num} Soal</option>
-                      ))}
-                    </select>
+                      className="w-full"
+                      unit="Soal"
+                    />
                   </div>
 
                   {/* Jenis Soal */}
@@ -1927,12 +2072,13 @@ CATATAN KHUSUS:
                       value={aiQuestionType}
                       onChange={(e) => setAiQuestionType(e.target.value as any)}
                       disabled={aiGenerating}
-                      className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-purple-500"
+                      className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 cursor-pointer"
                     >
-                      <option value="all">Campuran (Pilihan Ganda + Esai)</option>
-                      <option value="multiple_choice">Hanya Pilihan Ganda (A-D)</option>
-                      <option value="essay">Hanya Esai / Jawaban Singkat</option>
-                      <option value="true_false">Hanya Benar / Salah</option>
+                      <option value="all">Campuran Semua Jenis Soal</option>
+                      <option value="essay">Jawaban Teks (Manual Guru)</option>
+                      <option value="multiple_choice">Pilihan Ganda (A-C / A-D)</option>
+                      <option value="true_false">Benar / Salah (A-C / A-D)</option>
+                      <option value="matching">Matching / Menjodohkan (Opsi Unik)</option>
                     </select>
                   </div>
 
@@ -1945,7 +2091,7 @@ CATATAN KHUSUS:
                       value={aiDifficulty}
                       onChange={(e) => setAiDifficulty(e.target.value as any)}
                       disabled={aiGenerating}
-                      className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-purple-500"
+                      className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 cursor-pointer"
                     >
                       <option value="Mudah">Mudah</option>
                       <option value="Sedang">Sedang</option>
@@ -1958,14 +2104,14 @@ CATATAN KHUSUS:
                     <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
                       Bobot Nilai Per Soal (Poin)
                     </label>
-                    <input
-                      type="number"
+                    <CustomNumberStepper
+                      value={aiPointsPerQuestion}
+                      onChange={(val) => setAiPointsPerQuestion(val)}
                       min={1}
                       max={100}
-                      value={aiPointsPerQuestion}
-                      onChange={(e) => setAiPointsPerQuestion(Number(e.target.value))}
                       disabled={aiGenerating}
-                      className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-purple-500"
+                      className="w-full"
+                      unit="Poin"
                     />
                   </div>
                 </div>
@@ -1975,23 +2121,21 @@ CATATAN KHUSUS:
                   <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
                     Mode Pengaplikasian Lembar Kerja
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => setAiMode('replace')}
                       disabled={aiGenerating}
-                      className={`p-3 rounded-2xl border text-xs font-bold transition-all text-left flex items-start gap-2.5 cursor-pointer ${
+                      className={`p-3.5 rounded-2xl border text-xs font-bold transition-all text-left flex items-start gap-3 cursor-pointer ${
                         aiMode === 'replace'
-                          ? 'bg-purple-50 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700 text-purple-900 dark:text-purple-100 ring-2 ring-purple-500/20'
+                          ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-300 dark:border-indigo-700 text-indigo-900 dark:text-indigo-100 ring-2 ring-indigo-500/20'
                           : 'bg-gray-50 dark:bg-slate-900/50 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400'
                       }`}
                     >
-                      <div className={`w-4 h-4 rounded-full border mt-0.5 flex items-center justify-center shrink-0 ${aiMode === 'replace' ? 'border-purple-600 bg-purple-600 text-white' : 'border-gray-300'}`}>
-                        {aiMode === 'replace' && <Check className="w-2.5 h-2.5 stroke-[3]" />}
-                      </div>
+                      <div className={`w-3.5 h-3.5 rounded-full border mt-0.5 shrink-0 transition-all ${aiMode === 'replace' ? 'border-indigo-600 bg-indigo-600 ring-2 ring-indigo-200' : 'border-gray-300'}`} />
                       <div>
                         <p className="font-bold">Gantikan Lembar Soal Saat Ini</p>
-                        <p className="text-[10px] font-normal text-gray-400 mt-0.5">Membuat draft soal baru sepenuhnya dari awal.</p>
+                        <p className="text-[10px] font-normal text-gray-500 dark:text-slate-400 mt-0.5">Membuat draft soal baru sepenuhnya dari awal.</p>
                       </div>
                     </button>
 
@@ -1999,18 +2143,16 @@ CATATAN KHUSUS:
                       type="button"
                       onClick={() => setAiMode('append')}
                       disabled={aiGenerating}
-                      className={`p-3 rounded-2xl border text-xs font-bold transition-all text-left flex items-start gap-2.5 cursor-pointer ${
+                      className={`p-3.5 rounded-2xl border text-xs font-bold transition-all text-left flex items-start gap-3 cursor-pointer ${
                         aiMode === 'append'
-                          ? 'bg-purple-50 dark:bg-purple-900/30 border-purple-300 dark:border-purple-700 text-purple-900 dark:text-purple-100 ring-2 ring-purple-500/20'
+                          ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-300 dark:border-indigo-700 text-indigo-900 dark:text-indigo-100 ring-2 ring-indigo-500/20'
                           : 'bg-gray-50 dark:bg-slate-900/50 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400'
                       }`}
                     >
-                      <div className={`w-4 h-4 rounded-full border mt-0.5 flex items-center justify-center shrink-0 ${aiMode === 'append' ? 'border-purple-600 bg-purple-600 text-white' : 'border-gray-300'}`}>
-                        {aiMode === 'append' && <Check className="w-2.5 h-2.5 stroke-[3]" />}
-                      </div>
+                      <div className={`w-3.5 h-3.5 rounded-full border mt-0.5 shrink-0 transition-all ${aiMode === 'append' ? 'border-indigo-600 bg-indigo-600 ring-2 ring-indigo-200' : 'border-gray-300'}`} />
                       <div>
                         <p className="font-bold">Tambahkan ke Soal Saat Ini</p>
-                        <p className="text-[10px] font-normal text-gray-400 mt-0.5">Menyelipkan hasil AI di bawah daftar soal yang sudah ada.</p>
+                        <p className="text-[10px] font-normal text-gray-500 dark:text-slate-400 mt-0.5">Menyelipkan hasil AI di bawah daftar soal yang sudah ada.</p>
                       </div>
                     </button>
                   </div>
@@ -2027,7 +2169,7 @@ CATATAN KHUSUS:
                     value={aiCustomInstructions}
                     onChange={(e) => setAiCustomInstructions(e.target.value)}
                     disabled={aiGenerating}
-                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs placeholder-gray-400 focus:outline-none focus:bg-white dark:bg-slate-800 focus:border-purple-500 transition-all font-sans"
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:bg-white dark:bg-slate-800 focus:border-indigo-500 transition-all font-sans"
                   />
                 </div>
               </div>
@@ -2047,18 +2189,12 @@ CATATAN KHUSUS:
                   type="button"
                   onClick={handleGenerateAiAssignment}
                   disabled={aiGenerating || !aiPrompt.trim()}
-                  className="px-6 py-2.5 bg-gradient-to-r from-purple-600 via-indigo-600 to-sky-600 text-white font-bold text-xs rounded-xl shadow-lg hover:opacity-95 active:scale-95 transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
+                  className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-xs rounded-xl shadow-lg hover:shadow-indigo-500/20 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {aiGenerating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin text-white" />
-                      <span>Merancang Soal AI...</span>
-                    </>
+                    <span className="animate-pulse">Merancang Soal AI...</span>
                   ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 text-yellow-300 fill-yellow-300" />
-                      <span>Generasi Soal Otomatis</span>
-                    </>
+                    <span>Generasi Soal Otomatis</span>
                   )}
                 </button>
               </div>

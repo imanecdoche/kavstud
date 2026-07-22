@@ -54,6 +54,7 @@ import DevToolsMaintenance from './DevToolsMaintenance';
 import MaintenanceView from './MaintenanceView';
 import TeacherSchedule from './TeacherSchedule';
 import { getLocalFeatureFlags } from '../utils/featureFlags';
+import LogoutConfirmModal from './LogoutConfirmModal';
 
 interface TeacherDashboardProps {
   onNavigate: (path: string) => void;
@@ -239,11 +240,26 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
     }
   }, [students, activeTab, onNavigate]);
 
-  const handleLogout = async () => {
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const executeLogout = async () => {
+    setIsLoggingOut(true);
     onSetLoading(true);
-    await auth.signOut();
-    onNavigate('/login');
-    onSetLoading(false);
+    try {
+      await auth.signOut();
+      onNavigate('/login');
+    } catch (err) {
+      console.error('Error logging out:', err);
+    } finally {
+      setIsLoggingOut(false);
+      setIsLogoutModalOpen(false);
+      onSetLoading(false);
+    }
   };
 
   // Helper to determine active status of an assignment
@@ -1482,6 +1498,14 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
           </div>
         </div>
       )}
+
+      {/* Logout Confirmation Modal */}
+      <LogoutConfirmModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={executeLogout}
+        isLoading={isLoggingOut}
+      />
     </div>
   );
 }

@@ -26,8 +26,10 @@ import {
   ArrowUpDown
 } from 'lucide-react';
 import { UserProfile, Assignment, Submission } from '../types';
-import { db } from '../firebase';
-import { doc, updateDoc, deleteDoc, collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { db, firebaseConfig } from '../firebase';
+import { initializeApp, getApps } from 'firebase/app';
+import { getAuth, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import { doc, setDoc, updateDoc, deleteDoc, collection, query, orderBy, getDocs } from 'firebase/firestore';
 import CustomDropdown from './CustomDropdown';
 import { motion, AnimatePresence } from 'motion/react';
 import { Dialog } from '@capacitor/dialog';
@@ -67,6 +69,75 @@ export default function StudentManagement({
   const [studentAccessModuleIds, setStudentAccessModuleIds] = useState<string[]>([]);
   const [isSavingAccess, setIsSavingAccess] = useState(false);
   const [accessSortOrder, setAccessSortOrder] = useState<'title-asc' | 'title-desc'>('title-asc');
+
+  // New Student Account Creation Modal States
+  const [isCreateStudentModalOpen, setIsCreateStudentModalOpen] = useState(false);
+  const [newStudentFullName, setNewStudentFullName] = useState('');
+  const [newStudentUsername, setNewStudentUsername] = useState('');
+  const [newStudentPassword, setNewStudentPassword] = useState('');
+  const [newStudentClassType, setNewStudentClassType] = useState<'PRIVATE' | 'CIRCLE'>('PRIVATE');
+  const [newStudentCircleId, setNewStudentCircleId] = useState<string>('');
+  const [isCreatingStudent, setIsCreatingStudent] = useState(false);
+  const [createStudentError, setCreateStudentError] = useState<string | null>(null);
+  const [createStudentSuccess, setCreateStudentSuccess] = useState<string | null>(null);
+
+  const handleCreateStudentAccount = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const cleanUsername = newStudentUsername.trim().toLowerCase().replace(/[^a-zA-Z0-9._-]/g, '');
+    if (!newStudentFullName.trim() || !cleanUsername || !newStudentPassword) {
+      setCreateStudentError('Semua kolom wajib diisi.');
+      return;
+    }
+    if (newStudentPassword.length < 6) {
+      setCreateStudentError('Password minimal 6 karakter.');
+      return;
+    }
+
+    const fullEmail = `${cleanUsername}@kavio.stud.edu`;
+    setIsCreatingStudent(true);
+    setCreateStudentError(null);
+    setCreateStudentSuccess(null);
+
+    try {
+      // Use secondary firebase auth app so teacher's active session is NOT interrupted
+      const secondaryApp = getApps().find(a => a.name === 'Secondary') || initializeApp(firebaseConfig, 'Secondary');
+      const secondaryAuth = getAuth(secondaryApp);
+
+      const userCredential = await createUserWithEmailAndPassword(secondaryAuth, fullEmail, newStudentPassword);
+      const newUid = userCredential.user.uid;
+
+      await setDoc(doc(db, 'users', newUid), {
+        uid: newUid,
+        fullName: newStudentFullName.trim(),
+        email: fullEmail,
+        role: 'student',
+        classType: newStudentClassType,
+        circleId: newStudentClassType === 'CIRCLE' ? newStudentCircleId || null : null,
+        createdAt: new Date().toISOString()
+      });
+
+      await signOut(secondaryAuth);
+
+      setCreateStudentSuccess(`Akun siswa "${newStudentFullName}" (${fullEmail}) berhasil dibuat!`);
+      setNewStudentFullName('');
+      setNewStudentUsername('');
+      setNewStudentPassword('');
+      setTimeout(() => {
+        setIsCreateStudentModalOpen(false);
+        setCreateStudentSuccess(null);
+        window.location.reload();
+      }, 1500);
+    } catch (err: any) {
+      console.error('Error creating student account:', err);
+      if (err.code === 'auth/email-already-in-use') {
+        setCreateStudentError(`Email ${fullEmail} sudah digunakan siswa lain.`);
+      } else {
+        setCreateStudentError(err.message || 'Gagal membuat akun siswa.');
+      }
+    } finally {
+      setIsCreatingStudent(false);
+    }
+  };
 
   useEffect(() => {
     const fetchAllModules = async () => {
@@ -283,8 +354,15 @@ export default function StudentManagement({
           </h1>
         </div>
 
-        {/* Filter Controls */}
+        {/* Filter Controls & Create Student Action */}
         <div className="flex items-center gap-3 flex-wrap">
+          <button
+            onClick={() => setIsCreateStudentModalOpen(true)}
+            className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-xs rounded-xl shadow-md active:scale-95 transition-all flex items-center gap-2 cursor-pointer"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Buat Akun Siswa Baru</span>
+          </button>
           {/* Class Type Filter */}
           <div className="flex bg-gray-100 dark:bg-slate-700/80 p-1 rounded-xl text-xs font-bold">
             <button
@@ -897,6 +975,168 @@ export default function StudentManagement({
             </div>
           );
         })()}
+      </AnimatePresence>
+
+      {/* CREATE NEW STUDENT ACCOUNT MODAL */}
+      <AnimatePresence>
+        {isCreateStudentModalOpen && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 z-50 overflow-y-auto animate-fadeIn">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 15 }}
+              className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/60 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-6 relative"
+            >
+              <div className="flex items-start justify-between gap-4 border-b border-gray-100 dark:border-slate-700/50 pb-4">
+                <div>
+                  <h2 className="text-lg font-display font-bold text-gray-900 dark:text-white">
+                    Buat Akun Siswa Baru
+                  </h2>
+                  <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5">
+                    Buat kredensial login siswa baru secara resmi oleh Guru/Admin.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsCreateStudentModalOpen(false)}
+                  disabled={isCreatingStudent}
+                  className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-slate-200 rounded-xl hover:bg-gray-100 dark:hover:bg-slate-700 cursor-pointer"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {createStudentError && (
+                <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 rounded-2xl text-xs text-red-600 dark:text-red-300 font-medium">
+                  {createStudentError}
+                </div>
+              )}
+
+              {createStudentSuccess && (
+                <div className="p-4 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800/50 rounded-2xl text-xs text-green-700 dark:text-green-300 font-bold">
+                  {createStudentSuccess}
+                </div>
+              )}
+
+              <form onSubmit={handleCreateStudentAccount} className="space-y-4">
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                    Nama Lengkap Siswa <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newStudentFullName}
+                    onChange={(e) => setNewStudentFullName(e.target.value)}
+                    placeholder="Contoh: Ahmad Rizky"
+                    disabled={isCreatingStudent}
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-bold text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                    Username Email Siswa <span className="text-red-500">*</span>
+                  </label>
+                  <div className="flex items-center border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden bg-gray-50 dark:bg-slate-900 focus-within:border-indigo-500">
+                    <input
+                      type="text"
+                      required
+                      value={newStudentUsername}
+                      onChange={(e) => setNewStudentUsername(e.target.value.replace(/[^a-zA-Z0-9._-]/g, ''))}
+                      placeholder="rizky"
+                      disabled={isCreatingStudent}
+                      className="flex-1 px-3.5 py-2.5 bg-transparent text-xs font-bold font-mono text-gray-900 dark:text-white focus:outline-none"
+                    />
+                    <span className="px-3.5 py-2.5 bg-indigo-50 dark:bg-indigo-900/40 text-xs font-bold font-mono text-indigo-600 dark:text-indigo-300 border-l border-indigo-100 dark:border-indigo-800">
+                      @kavio.stud.edu
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-gray-400">
+                    Email login: <span className="font-mono font-bold text-indigo-600">{newStudentUsername.trim() ? `${newStudentUsername.trim().toLowerCase()}@kavio.stud.edu` : 'username@kavio.stud.edu'}</span>
+                  </p>
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                    Kata Sandi (Password) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={newStudentPassword}
+                    onChange={(e) => setNewStudentPassword(e.target.value)}
+                    placeholder="Min. 6 karakter"
+                    disabled={isCreatingStudent}
+                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-bold text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 font-mono"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="block text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                    Tipe Kelas Pembelajaran
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setNewStudentClassType('PRIVATE')}
+                      className={`p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                        newStudentClassType === 'PRIVATE'
+                          ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-500 text-indigo-700 dark:text-indigo-300'
+                          : 'bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400'
+                      }`}
+                    >
+                      Private
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setNewStudentClassType('CIRCLE')}
+                      className={`p-3 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                        newStudentClassType === 'CIRCLE'
+                          ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-500 text-indigo-700 dark:text-indigo-300'
+                          : 'bg-gray-50 dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400'
+                      }`}
+                    >
+                      Circle (Kelompok)
+                    </button>
+                  </div>
+                </div>
+
+                {newStudentClassType === 'CIRCLE' && (
+                  <div className="space-y-1.5 animate-fadeIn">
+                    <label className="block text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                      Pilih Kelompok Circle
+                    </label>
+                    <CustomDropdown
+                      value={newStudentCircleId}
+                      onChange={(val) => setNewStudentCircleId(val)}
+                      options={circles.map(c => ({ value: c.id, label: c.name }))}
+                    />
+                  </div>
+                )}
+
+                <div className="pt-4 border-t border-gray-100 dark:border-slate-700/50 flex justify-end gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsCreateStudentModalOpen(false)}
+                    disabled={isCreatingStudent}
+                    className="px-5 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 font-bold text-xs rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50 cursor-pointer"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isCreatingStudent}
+                    className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-lg hover:shadow-indigo-500/20 active:scale-95 transition-all disabled:opacity-50 cursor-pointer flex items-center gap-2"
+                  >
+                    {isCreatingStudent && <Loader2 className="w-4 h-4 animate-spin" />}
+                    <span>{isCreatingStudent ? 'Membuat Akun...' : 'Buat Akun Siswa'}</span>
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
       </AnimatePresence>
     </div>
   );

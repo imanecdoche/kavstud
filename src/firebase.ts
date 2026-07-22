@@ -5,7 +5,7 @@ import { getStorage } from 'firebase/storage';
 import { getMessaging, isSupported } from 'firebase/messaging';
 import firebaseConfigJson from '../firebase-applet-config.json';
 
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: firebaseConfigJson.apiKey,
   authDomain: firebaseConfigJson.authDomain,
   projectId: firebaseConfigJson.projectId,

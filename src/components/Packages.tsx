@@ -11,7 +11,8 @@ function PackageCardItem({
   priceLabel,
   onSelectPackage,
   goNext,
-  goPrev
+  goPrev,
+  isLandingPage = false
 }: {
   key?: string;
   pkg: PackageData;
@@ -21,6 +22,7 @@ function PackageCardItem({
   onSelectPackage: (pkg: PackageData) => void;
   goNext: () => void;
   goPrev: () => void;
+  isLandingPage?: boolean;
 }) {
   const [isHovered, setIsHovered] = useState(false);
   const xMouse = useMotionValue(0);
@@ -84,7 +86,7 @@ function PackageCardItem({
       onClick={() => {
         if (offset === 1) goNext();
         if (offset === -1) goPrev();
-        if (isActive) onSelectPackage(pkg);
+        if (isActive && !isLandingPage) onSelectPackage(pkg);
       }}
       onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
@@ -197,11 +199,15 @@ function PackageCardItem({
 function PackageCarousel({ 
   items, 
   priceLabel, 
-  onSelectPackage 
+  onSelectPackage,
+  isLandingPage = false,
+  onNavigateToContact
 }: { 
   items: PackageData[]; 
   priceLabel: string;
   onSelectPackage: (pkg: PackageData) => void;
+  isLandingPage?: boolean;
+  onNavigateToContact?: () => void;
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -216,25 +222,16 @@ function PackageCarousel({
         <button
           onClick={goPrev}
           disabled={activeIndex === 0}
-          className="absolute left-0 z-30 w-11 h-11 bg-white dark:bg-slate-800 rounded-full shadow-lg flex items-center justify-center text-gray-700 dark:text-gray-200 hover:scale-110 active:scale-90 transition-all cursor-pointer border border-gray-200 dark:border-slate-700 disabled:opacity-30 disabled:cursor-not-allowed"
+          className="absolute left-0 z-30 w-11 h-11 bg-white text-gray-800 rounded-full shadow-lg flex items-center justify-center border-2 border-gray-200 border-b-4 border-b-gray-300 hover:scale-110 active:scale-90 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
 
-        {/* Cards track with wider viewport & smooth edge mask */}
-        <div 
-          className="overflow-hidden w-full mx-2 sm:mx-6" 
-          style={{ 
-            height: '540px',
-            WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)',
-            maskImage: 'linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%)'
-          }}
-        >
-          <div className="relative w-full h-full flex items-center justify-center" style={{ perspective: 1200 }}>
+        {/* Carousel Window */}
+        <div className="relative w-full h-[520px] py-6 flex items-center justify-center overflow-visible sm:overflow-hidden">
+          <div className="relative w-full h-full flex items-center justify-center">
             {items.map((pkg, index) => {
               const offset = index - activeIndex;
-              if (Math.abs(offset) > 2) return null;
-
               return (
                 <PackageCardItem
                   key={pkg.id}
@@ -245,6 +242,7 @@ function PackageCarousel({
                   onSelectPackage={onSelectPackage}
                   goNext={goNext}
                   goPrev={goPrev}
+                  isLandingPage={isLandingPage}
                 />
               );
             })}
@@ -255,7 +253,7 @@ function PackageCarousel({
         <button
           onClick={goNext}
           disabled={activeIndex === items.length - 1}
-          className="absolute right-0 z-30 w-11 h-11 bg-white dark:bg-slate-800 rounded-full shadow-lg flex items-center justify-center text-gray-700 dark:text-gray-200 hover:scale-110 active:scale-90 transition-all cursor-pointer border border-gray-200 dark:border-slate-700 disabled:opacity-30 disabled:cursor-not-allowed"
+          className="absolute right-0 z-30 w-11 h-11 bg-white text-gray-800 rounded-full shadow-lg flex items-center justify-center border-2 border-gray-200 border-b-4 border-b-gray-300 hover:scale-110 active:scale-90 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
@@ -270,8 +268,14 @@ function PackageCarousel({
         className="flex justify-center"
       >
         <button 
-          onClick={() => onSelectPackage(items[activeIndex])}
-          className="bg-gray-900 text-white text-sm font-bold py-3 px-8 rounded-2xl shadow-lg hover:bg-gray-800 active:scale-95 transition-all cursor-pointer border-b-4 border-b-gray-950 active:border-b-0 active:translate-y-[4px]"
+          onClick={() => {
+            if (isLandingPage && onNavigateToContact) {
+              onNavigateToContact();
+            } else {
+              onSelectPackage(items[activeIndex]);
+            }
+          }}
+          className="btn-duo-green px-8 py-3.5 text-xs font-black uppercase tracking-wider shadow-lg"
           id="btn-learn-more"
         >
           Lihat Selengkapnya
@@ -286,8 +290,8 @@ function PackageCarousel({
             onClick={() => setActiveIndex(i)}
             className={`rounded-full transition-all duration-300 cursor-pointer ${
               i === activeIndex
-                ? 'w-7 h-3 bg-gray-800 dark:bg-white'
-                : 'w-3 h-3 bg-gray-300 dark:bg-slate-600 hover:bg-gray-400'
+                ? 'w-8 h-3 bg-[#1CB0F6] border border-[#0092E0]'
+                : 'w-3 h-3 bg-gray-300 hover:bg-gray-400'
             }`}
           />
         ))}
@@ -296,7 +300,12 @@ function PackageCarousel({
   );
 }
 
-export default function Packages() {
+interface PackagesProps {
+  isLandingPage?: boolean;
+  onNavigateToContact?: () => void;
+}
+
+export default function Packages({ isLandingPage = false, onNavigateToContact }: PackagesProps) {
   const [selectedPackage, setSelectedPackage] = useState<PackageData | null>(null);
   const [showRegisterForm, setShowRegisterForm] = useState(false);
 
@@ -391,7 +400,7 @@ export default function Packages() {
   ];
 
   // If a package is selected for detail view
-  if (selectedPackage) {
+  if (selectedPackage && !isLandingPage) {
     return (
       <>
         <PackageDetail 
@@ -416,29 +425,33 @@ export default function Packages() {
     <div className="space-y-16 animate-fadeIn max-w-4xl mx-auto pb-12 px-4">
       {/* PAKET PRIVATE */}
       <div>
-        <div className="text-center mb-6">
-          <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white uppercase tracking-wider font-display">
+        <div className="text-center mb-8">
+          <span className="inline-block px-6 py-2.5 bg-[#58CC02] text-white font-display font-black text-2xl md:text-3xl uppercase tracking-wider rounded-2xl border-b-4 border-b-[#46A302] shadow-md">
             PAKET PRIVATE
-          </h1>
+          </span>
         </div>
         <PackageCarousel 
           items={packages} 
           priceLabel="/bulan" 
           onSelectPackage={(pkg) => setSelectedPackage(pkg)} 
+          isLandingPage={isLandingPage}
+          onNavigateToContact={onNavigateToContact}
         />
       </div>
 
       {/* PAKET CIRCLE */}
       <div>
-        <div className="text-center mb-6">
-          <h1 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white uppercase tracking-wider font-display">
+        <div className="text-center mb-8">
+          <span className="inline-block px-6 py-2.5 bg-[#1CB0F6] text-white font-display font-black text-2xl md:text-3xl uppercase tracking-wider rounded-2xl border-b-4 border-b-[#0092E0] shadow-md">
             PAKET CIRCLE
-          </h1>
+          </span>
         </div>
         <PackageCarousel 
           items={circlePackages} 
           priceLabel="/sesi/siswa" 
           onSelectPackage={(pkg) => setSelectedPackage(pkg)} 
+          isLandingPage={isLandingPage}
+          onNavigateToContact={onNavigateToContact}
         />
       </div>
     </div>

@@ -4,6 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, onSnapshot } from 'firebase/firestore';
 import Lenis from 'lenis';
 // Component Imports
+import LandingPage from './components/LandingPage';
 import Login from './components/Login';
 import Register from './components/Register';
 import TeacherDashboard from './components/TeacherDashboard';
@@ -17,6 +18,7 @@ import AssignmentBuilder from './components/AssignmentBuilder';
 import KavioBlog from './components/KavioBlog';
 import NotFound from './components/NotFound';
 import Logo from './components/Logo';
+import LogoutConfirmModal from './components/LogoutConfirmModal';
 import { UserProfile } from './types';
 import { Loader2 } from 'lucide-react';
 
@@ -28,6 +30,24 @@ export default function App() {
   const [isAuthChecking, setIsAuthChecking] = useState(true);
   const [globalLoading, setGlobalLoading] = useState(false);
   const [isMaintenanceActive, setIsMaintenanceActive] = useState(false);
+  const [isGlobalLogoutOpen, setIsGlobalLogoutOpen] = useState(false);
+
+  const triggerGlobalLogout = () => {
+    setIsGlobalLogoutOpen(true);
+  };
+
+  const executeGlobalLogout = async () => {
+    setIsGlobalLogoutOpen(false);
+    setGlobalLoading(true);
+    try {
+      await auth.signOut();
+      navigate('/login');
+    } catch (err) {
+      console.error('Error signing out:', err);
+    } finally {
+      setGlobalLoading(false);
+    }
+  };
 
   // Listen to maintenance mode config
   useEffect(() => {
@@ -92,9 +112,9 @@ export default function App() {
             const profile = docSnap.data() as UserProfile;
             setUserProfile(profile);
             
-            // Redirect based on role if on Auth pages or home page
+            // Redirect based on role if on Login/Register pages
             const currentPath = window.location.pathname;
-            if (currentPath === '/' || currentPath === '/login' || currentPath === '/register') {
+            if (currentPath === '/login' || currentPath === '/register') {
               if (profile.role === 'teacher') {
                 navigate('/teacher');
               } else {
@@ -112,9 +132,9 @@ export default function App() {
         setCurrentUser(null);
         setUserProfile(null);
         
-        // Redirect anonymous users on dashboard pages
+        // Redirect anonymous users on protected pages
         const currentPath = window.location.pathname;
-        if (currentPath !== '/login' && currentPath !== '/register') {
+        if (currentPath !== '/' && currentPath !== '/login' && currentPath !== '/register' && currentPath !== '/blog') {
           navigate('/login');
         }
       }
@@ -223,7 +243,9 @@ export default function App() {
 
       {/* Main Switch Routing Layout */}
       <div className="flex-1">
-        {path === '/' || path === '/login' ? (
+        {path === '/' ? (
+          <LandingPage onNavigate={navigate} userProfile={userProfile} />
+        ) : path === '/login' ? (
           <Login onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : path === '/register' ? (
           <Register onNavigate={navigate} onSetLoading={setGlobalLoading} />
@@ -234,7 +256,7 @@ export default function App() {
         ) : path === '/settings' ? (
           <UserSettings onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : path === '/blog' ? (
-          <KavioBlog onNavigate={navigate} userProfile={userProfile} onLogout={() => auth.signOut()} />
+          <KavioBlog onNavigate={navigate} userProfile={userProfile} onLogout={triggerGlobalLogout} />
         ) : isStudentProfilePath ? (
           <StudentProfile studentId={studentIdParam} onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : isCircleProfilePath ? (
@@ -251,6 +273,14 @@ export default function App() {
           <NotFound onNavigate={navigate} />
         )}
       </div>
+
+      {/* Global Logout Confirmation Modal */}
+      <LogoutConfirmModal
+        isOpen={isGlobalLogoutOpen}
+        onClose={() => setIsGlobalLogoutOpen(false)}
+        onConfirm={executeGlobalLogout}
+        isLoading={globalLoading}
+      />
     </div>
   );
 }

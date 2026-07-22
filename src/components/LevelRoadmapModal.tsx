@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Award, Sparkles, CheckCircle2, Zap, Lock, ShieldCheck, Eye } from 'lucide-react';
+import { X, Award, CheckCircle2, Zap, Lock, Eye } from 'lucide-react';
 import { RANK_TIERS, calculateLevelData } from '../utils/leveling';
 import BadgePreviewModal from './BadgePreviewModal';
+import Rotating3DTrophy from './Rotating3DTrophy';
+import Icon3DTaskSheet from './Icon3DTaskSheet';
+import Icon3DCrownShield from './Icon3DCrownShield';
+import Icon3DFireFlame from './Icon3DFireFlame';
 
 interface LevelRoadmapModalProps {
   isOpen: boolean;
@@ -50,16 +54,15 @@ export default function LevelRoadmapModal({ isOpen, onClose, totalExp }: LevelRo
         >
           {/* Header */}
           <div className="p-6 border-b border-gray-100 dark:border-slate-800 flex items-center justify-between bg-gray-50/80 dark:bg-slate-900/80 backdrop-blur-md shrink-0">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center border border-indigo-100 dark:border-indigo-800/50 shadow-3xs">
-                <Award className="w-5 h-5" />
-              </div>
+            <div className="flex items-center gap-3.5">
+              {/* 3D Rotating Trophy Icon */}
+              <Rotating3DTrophy className="w-11 h-11 shrink-0" />
               <div>
                 <h2 className="text-base sm:text-lg font-display font-extrabold text-gray-900 dark:text-white tracking-tight">
                   Roadmap Level & Rank Badge
                 </h2>
                 <p className="text-xs text-gray-500 dark:text-slate-400">
-                  Tingkatkan EXP dari pengerjaan tugas untuk menaikkan level dan membuka badge kehormatan! Klik kartu badge untuk preview full HD & efek visual.
+                  Tingkatkan EXP dari pengerjaan tugas untuk menaikkan level dan membuka badge kehormatan!
                 </p>
               </div>
             </div>
@@ -156,7 +159,7 @@ export default function LevelRoadmapModal({ isOpen, onClose, totalExp }: LevelRo
               </div>
             </div>
 
-            {/* How to Earn EXP Section */}
+            {/* How to Earn EXP Section (With 3D Icons) */}
             <div className="space-y-4">
               <h3 className="text-sm font-extrabold text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                 <Zap className="w-4 h-4 text-amber-500 fill-amber-500" />
@@ -164,9 +167,10 @@ export default function LevelRoadmapModal({ isOpen, onClose, totalExp }: LevelRo
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="p-4 bg-gray-50 dark:bg-slate-800/60 rounded-2xl border border-gray-100 dark:border-slate-700/50 space-y-2">
-                  <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
-                    <CheckCircle2 className="w-4.5 h-4.5" />
+                {/* 3D Card 1: Tugas Harian */}
+                <div className="p-4 bg-gray-50 dark:bg-slate-800/60 rounded-2xl border border-gray-100 dark:border-slate-700/50 space-y-2 hover:border-amber-400 transition-colors">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-500/10 flex items-center justify-center">
+                    <Icon3DTaskSheet className="w-9 h-9" />
                   </div>
                   <h4 className="text-xs font-bold text-gray-900 dark:text-white">Kerjakan Tugas Harian</h4>
                   <p className="text-[11px] text-gray-500 dark:text-slate-400">
@@ -174,9 +178,10 @@ export default function LevelRoadmapModal({ isOpen, onClose, totalExp }: LevelRo
                   </p>
                 </div>
 
-                <div className="p-4 bg-gray-50 dark:bg-slate-800/60 rounded-2xl border border-gray-100 dark:border-slate-700/50 space-y-2">
-                  <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-bold">
-                    <ShieldCheck className="w-4.5 h-4.5" />
+                {/* 3D Card 2: Kuis & Ujian */}
+                <div className="p-4 bg-gray-50 dark:bg-slate-800/60 rounded-2xl border border-gray-100 dark:border-slate-700/50 space-y-2 hover:border-indigo-400 transition-colors">
+                  <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center">
+                    <Icon3DCrownShield className="w-9 h-9" />
                   </div>
                   <h4 className="text-xs font-bold text-gray-900 dark:text-white">Kuis & Ujian Kompetensi</h4>
                   <p className="text-[11px] text-gray-500 dark:text-slate-400">
@@ -184,9 +189,10 @@ export default function LevelRoadmapModal({ isOpen, onClose, totalExp }: LevelRo
                   </p>
                 </div>
 
-                <div className="p-4 bg-gray-50 dark:bg-slate-800/60 rounded-2xl border border-gray-100 dark:border-slate-700/50 space-y-2">
-                  <div className="w-8 h-8 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold">
-                    <Sparkles className="w-4.5 h-4.5" />
+                {/* 3D Card 3: Streak & On-Time */}
+                <div className="p-4 bg-gray-50 dark:bg-slate-800/60 rounded-2xl border border-gray-100 dark:border-slate-700/50 space-y-2 hover:border-rose-400 transition-colors">
+                  <div className="w-10 h-10 rounded-2xl bg-rose-500/10 flex items-center justify-center">
+                    <Icon3DFireFlame className="w-9 h-9" />
                   </div>
                   <h4 className="text-xs font-bold text-gray-900 dark:text-white">Streak & Pengumpulan Tepat Waktu</h4>
                   <p className="text-[11px] text-gray-500 dark:text-slate-400">
@@ -316,10 +322,7 @@ export default function LevelRoadmapModal({ isOpen, onClose, totalExp }: LevelRo
           </div>
 
           {/* Footer */}
-          <div className="p-4 sm:p-5 border-t border-gray-100 dark:border-slate-800 bg-gray-50/80 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-between shrink-0">
-            <span className="text-xs text-gray-400 font-medium">
-              Klik pada kartu badge mana saja untuk pratinjau full HD & efek visual aura.
-            </span>
+          <div className="p-4 sm:p-5 border-t border-gray-100 dark:border-slate-800 bg-gray-50/80 dark:bg-slate-900/80 backdrop-blur-md flex items-center justify-end shrink-0">
             <button
               onClick={onClose}
               className="btn-duo-blue px-6 py-2.5 text-xs font-black cursor-pointer"
