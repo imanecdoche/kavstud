@@ -313,7 +313,7 @@ export default function DevToolsCenter({ userProfile, onNavigate, onSetLoading }
   ];
 
   return (
-    <div className="min-h-screen bg-[#121212] text-white font-sans selection:bg-[#1DB954] selection:text-black p-4 sm:p-8 space-y-8 rounded-3xl" id="dev-tools-workspace">
+    <div className="min-h-screen bg-[#171A21] text-white font-sans p-4 sm:p-8 space-y-8 w-full" id="dev-tools-workspace">
       
       {/* Toast Notification (Spotify Styled) */}
       <AnimatePresence>

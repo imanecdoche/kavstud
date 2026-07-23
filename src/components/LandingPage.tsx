@@ -267,13 +267,13 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
   ];
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#4B4B4B] flex flex-col font-sans selection:bg-[#58CC02] selection:text-white max-w-full overflow-x-hidden pb-16 lg:pb-0">
-      {/* Navigation Header - Sticky Floating Glassmorphism Header */}
+    <div className="min-h-screen bg-[#171A21] text-white flex flex-col font-sans max-w-full overflow-x-hidden pb-16 lg:pb-0">
+      {/* Navigation Header - Sticky Header */}
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out ${
           isScrolled
-            ? 'bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-md py-3'
-            : 'bg-transparent border-b-0 shadow-none py-5'
+            ? 'bg-[#171A21]/95 backdrop-blur-md border-b border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.6)] py-3'
+            : 'bg-[#171A21]/80 backdrop-blur-sm border-b border-white/5 py-4'
         }`}
       >
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -293,10 +293,10 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
                 <button
                   key={item.id}
                   onClick={() => handleSmoothScroll(item.id)}
-                  className={`px-3 py-1.5 rounded-xl transition-all duration-200 cursor-pointer ${
+                  className={`px-3 py-1.5 rounded-[2px] transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? 'bg-[#1CB0F6]/10 text-[#0284C7] font-extrabold border border-[#1CB0F6]/30'
-                      : 'text-[#3C3C3C] hover:text-[#1CB0F6] font-bold hover:bg-slate-100/70'
+                      ? 'bg-[#66C0F4]/15 text-[#66C0F4] font-bold border border-[#66C0F4]/40'
+                      : 'text-[#C6D4DF] hover:text-white font-bold hover:bg-white/10'
                   }`}
                 >
                   {item.label}
@@ -310,7 +310,7 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
             {isLoggedIn ? (
               <button
                 onClick={() => onNavigate(dashboardPath)}
-                className="btn-duo-green h-[44px] px-5 text-xs font-bold uppercase tracking-wider cursor-pointer"
+                className="h-[36px] px-5 bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] text-xs font-bold uppercase tracking-wider cursor-pointer rounded-[2px] transition-all"
               >
                 Ke Dashboard Saya
               </button>
@@ -318,13 +318,13 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
               <>
                 <button
                   onClick={() => onNavigate('/login')}
-                  className="btn-duo-slate h-[44px] px-4 text-xs font-bold uppercase tracking-wider cursor-pointer hidden sm:block"
+                  className="h-[36px] px-4 bg-black/40 hover:bg-white/10 text-white border border-white/20 text-xs font-bold uppercase tracking-wider cursor-pointer rounded-[2px] hidden sm:block transition-all"
                 >
                   Masuk
                 </button>
                 <button
                   onClick={() => onNavigate('/register')}
-                  className="btn-duo-green h-[44px] px-5 text-xs font-bold uppercase tracking-wider cursor-pointer"
+                  className="h-[36px] px-5 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-xs font-bold uppercase tracking-wider cursor-pointer rounded-[2px] shadow-md transition-all"
                 >
                   Daftar Sekarang
                 </button>
@@ -335,22 +335,22 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
       </header>
 
       {/* 1. HERO SECTION */}
-      <section id="hero" className="relative overflow-hidden pt-24 pb-16 lg:pt-28 lg:pb-24 bg-white border-b border-[#E5E5E5]">
+      <section id="hero" className="relative overflow-hidden pt-24 pb-16 lg:pt-28 lg:pb-24 bg-[#171A21] border-b border-white/10">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 items-center">
             
             {/* Left Column: 45% Desktop Content */}
             <div className="lg:col-span-6 space-y-6 text-left relative z-20">
-              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#58CC02]/10 text-[#16A34A] font-bold text-xs uppercase tracking-wider border border-[#58CC02]/20">
-                <Sparkles className="w-4 h-4 text-[#58CC02]" />
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-[2px] bg-[#66C0F4]/15 text-[#66C0F4] font-bold text-xs uppercase tracking-wider border border-[#66C0F4]/30">
+                <Sparkles className="w-4 h-4 text-[#66C0F4]" />
                 PLATFORM BELAJAR TERPADU
               </span>
 
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-[#3C3C3C] tracking-tight uppercase leading-[1.15]">
-                Naik Level Bahasa Inggrismu Bersama <span className="text-[#1CB0F6]">KAVIO EDU</span>.
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white tracking-tight uppercase leading-[1.15]">
+                Naik Level Bahasa Inggrismu Bersama <span className="text-[#66C0F4]">KAVIO EDU</span>.
               </h1>
 
-              <p className="text-base sm:text-lg text-[#3C3C3C] font-medium leading-relaxed max-w-xl">
+              <p className="text-base sm:text-lg text-[#C6D4DF] font-normal leading-relaxed max-w-xl">
                 Belajar lebih terarah dengan bimbingan tutor personal, kelas Private & Circle, modul interaktif, dan progres yang terpantau nyata.
               </p>
 
@@ -358,15 +358,15 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-2">
                 <button
                   onClick={() => onNavigate('/register')}
-                  className="btn-duo-green h-[50px] px-7 text-[15px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md hover:shadow-lg"
+                  className="h-[48px] px-7 bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer rounded-[2px] shadow-[0_2px_4px_rgba(0,0,0,0.3)] transition-all"
                 >
                   <span>Daftar Sekarang</span>
-                  <ArrowRight className="w-5 h-5" />
+                  <ArrowRight className="w-4 h-4" />
                 </button>
 
                 <button
                   onClick={() => handleSmoothScroll('program')}
-                  className="btn-duo-slate h-[50px] px-6 text-[15px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer"
+                  className="h-[48px] px-6 bg-transparent hover:bg-white/10 text-white border border-white/20 text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer rounded-[2px] transition-all"
                 >
                   <span>Lihat Program</span>
                 </button>
@@ -374,21 +374,21 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
 
               {/* Quick Value Highlights Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-4">
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
-                  <Clock className="w-4 h-4 text-[#1CB0F6] mx-auto mb-1" />
-                  <span className="text-xs font-bold text-[#3C3C3C] block">Jadwal Fleksibel</span>
+                <div className="p-3 bg-[#2F3138] rounded-[2px] border border-white/10 text-center">
+                  <Clock className="w-4 h-4 text-[#66C0F4] mx-auto mb-1" />
+                  <span className="text-xs font-bold text-white block">Jadwal Fleksibel</span>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
-                  <UserCheck className="w-4 h-4 text-[#58CC02] mx-auto mb-1" />
-                  <span className="text-xs font-bold text-[#3C3C3C] block">Tutor Personal</span>
+                <div className="p-3 bg-[#2F3138] rounded-[2px] border border-white/10 text-center">
+                  <UserCheck className="w-4 h-4 text-[#A1CD44] mx-auto mb-1" />
+                  <span className="text-xs font-bold text-white block">Tutor Personal</span>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
-                  <Users className="w-4 h-4 text-[#FF9600] mx-auto mb-1" />
-                  <span className="text-xs font-bold text-[#3C3C3C] block">Private & Circle</span>
+                <div className="p-3 bg-[#2F3138] rounded-[2px] border border-white/10 text-center">
+                  <Users className="w-4 h-4 text-[#66C0F4] mx-auto mb-1" />
+                  <span className="text-xs font-bold text-white block">Private & Circle</span>
                 </div>
-                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-center">
-                  <Target className="w-4 h-4 text-[#0284C7] mx-auto mb-1" />
-                  <span className="text-xs font-bold text-[#3C3C3C] block">Materi Terarah</span>
+                <div className="p-3 bg-[#2F3138] rounded-[2px] border border-white/10 text-center">
+                  <Target className="w-4 h-4 text-[#B9A074] mx-auto mb-1" />
+                  <span className="text-xs font-bold text-white block">Materi Terarah</span>
                 </div>
               </div>
             </div>
@@ -404,48 +404,48 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
       </section>
 
       {/* 2. PROBLEM SECTION */}
-      <section id="masalah" className="py-16 sm:py-20 bg-[#F8FAFC] border-b border-[#E5E5E5]">
+      <section id="masalah" className="py-16 sm:py-20 bg-[#171A21] border-b border-white/10">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-xl bg-[#FF4B4B]/10 text-[#FF4B4B] font-bold text-xs uppercase tracking-wider border border-[#FF4B4B]/20">
-              <AlertCircle className="w-4 h-4" />
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-[2px] bg-[#FF4B4B]/10 text-[#FF4B4B] font-bold text-xs uppercase tracking-wider border border-[#FF4B4B]/30">
+              <AlertCircle className="w-4 h-4 text-[#FF4B4B]" />
               Tantangan Belajar Siswa
             </span>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#3C3C3C] tracking-tight uppercase">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight uppercase">
               Apakah Kamu Sering Mengalami Kendala Belajar Ini?
             </h2>
-            <p className="text-base text-[#3C3C3C] font-medium leading-relaxed">
+            <p className="text-base text-[#C6D4DF] font-normal leading-relaxed">
               Banyak siswa merasa kesulitan berkembang karena metode belajar konvensional yang tidak memperhatikan kebutuhan individual.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="card-duo !bg-white p-6 space-y-3 border-l-4 border-l-[#FF4B4B]">
-              <div className="w-10 h-10 rounded-xl bg-[#FF4B4B]/10 text-[#FF4B4B] font-bold flex items-center justify-center">
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-3 shadow-[0_2px_8px_rgba(0,0,0,0.5)] border-l-4 border-l-[#FF4B4B] text-white">
+              <div className="w-10 h-10 rounded-[2px] bg-[#FF4B4B]/10 text-[#FF4B4B] font-bold flex items-center justify-center">
                 01
               </div>
-              <h3 className="text-lg font-bold text-[#3C3C3C]">Sulit Memahami Pelajaran</h3>
-              <p className="text-sm text-[#4B4B4B] font-medium leading-relaxed">
+              <h3 className="text-lg font-bold text-white">Sulit Memahami Pelajaran</h3>
+              <p className="text-xs text-[#C6D4DF] leading-relaxed">
                 Penjelasan guru di sekolah sering kali terlalu cepat dan tidak ada waktu untuk bertanya secara mendalam.
               </p>
             </div>
 
-            <div className="card-duo !bg-white p-6 space-y-3 border-l-4 border-l-[#FF4B4B]">
-              <div className="w-10 h-10 rounded-xl bg-[#FF4B4B]/10 text-[#FF4B4B] font-bold flex items-center justify-center">
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-3 shadow-[0_2px_8px_rgba(0,0,0,0.5)] border-l-4 border-l-[#FF4B4B] text-white">
+              <div className="w-10 h-10 rounded-[2px] bg-[#FF4B4B]/10 text-[#FF4B4B] font-bold flex items-center justify-center">
                 02
               </div>
-              <h3 className="text-lg font-bold text-[#3C3C3C]">Kurang Percaya Diri Saat Ujian</h3>
-              <p className="text-sm text-[#4B4B4B] font-medium leading-relaxed">
+              <h3 className="text-lg font-bold text-white">Kurang Percaya Diri Saat Ujian</h3>
+              <p className="text-xs text-[#C6D4DF] leading-relaxed">
                 Merasa cemas dan ragu saat mengerjakan soal kuis atau ujian karena latihan soal yang terbatas.
               </p>
             </div>
 
-            <div className="card-duo !bg-white p-6 space-y-3 border-l-4 border-l-[#FF4B4B]">
-              <div className="w-10 h-10 rounded-xl bg-[#FF4B4B]/10 text-[#FF4B4B] font-bold flex items-center justify-center">
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-3 shadow-[0_2px_8px_rgba(0,0,0,0.5)] border-l-4 border-l-[#FF4B4B] text-white">
+              <div className="w-10 h-10 rounded-[2px] bg-[#FF4B4B]/10 text-[#FF4B4B] font-bold flex items-center justify-center">
                 03
               </div>
-              <h3 className="text-lg font-bold text-[#3C3C3C]">Jadwal Les Kaku & Bentrok</h3>
-              <p className="text-sm text-[#4B4B4B] font-medium leading-relaxed">
+              <h3 className="text-lg font-bold text-white">Jadwal Les Kaku & Bentrok</h3>
+              <p className="text-xs text-[#C6D4DF] leading-relaxed">
                 Jadwal tempat les biasa kaku sehingga sering bentrok dengan kegiatan sekolah dan ekskul.
               </p>
             </div>
@@ -454,42 +454,42 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
       </section>
 
       {/* 3. SOLUTION SECTION */}
-      <section id="solusi" className="py-16 sm:py-20 bg-white border-b border-[#E5E5E5]">
+      <section id="solusi" className="py-16 sm:py-20 bg-[#171A21] border-b border-white/10">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-xl bg-[#58CC02]/10 text-[#16A34A] font-bold text-xs uppercase tracking-wider border border-[#58CC02]/20">
-              <CheckCircle2 className="w-4 h-4 text-[#58CC02]" />
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-[2px] bg-[#A1CD44]/15 text-[#A1CD44] font-bold text-xs uppercase tracking-wider border border-[#A1CD44]/30">
+              <CheckCircle2 className="w-4 h-4 text-[#A1CD44]" />
               Solusi Terbaik KAVIO EDU
             </span>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#3C3C3C] tracking-tight uppercase">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight uppercase">
               Bagaimana KAVIO EDU Membantumu Berprestasi
             </h2>
-            <p className="text-base text-[#3C3C3C] font-medium leading-relaxed">
+            <p className="text-base text-[#C6D4DF] font-normal leading-relaxed">
               Kami menggabungkan bimbingan tutor personal dengan platform digital interaktif untuk memberikan pengalaman belajar terbaik.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="card-duo-interactive !bg-white p-6 space-y-3">
-              <UserCheck className="w-8 h-8 text-[#58CC02]" />
-              <h3 className="text-lg font-bold text-[#3C3C3C]">Pendampingan Tutor Personal</h3>
-              <p className="text-sm text-[#4B4B4B] font-medium leading-relaxed">
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-3 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hover:border-[#66C0F4] transition-all cursor-pointer text-white">
+              <UserCheck className="w-8 h-8 text-[#A1CD44]" />
+              <h3 className="text-lg font-bold text-white">Pendampingan Tutor Personal</h3>
+              <p className="text-xs text-[#C6D4DF] leading-relaxed">
                 Tutor membimbing secara sabar dan fokus pada area materi yang paling kamu butuhkan.
               </p>
             </div>
 
-            <div className="card-duo-interactive !bg-white p-6 space-y-3">
-              <Clock className="w-8 h-8 text-[#1CB0F6]" />
-              <h3 className="text-lg font-bold text-[#3C3C3C]">Jadwal Bebas & Fleksibel</h3>
-              <p className="text-sm text-[#4B4B4B] font-medium leading-relaxed">
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-3 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hover:border-[#66C0F4] transition-all cursor-pointer text-white">
+              <Clock className="w-8 h-8 text-[#66C0F4]" />
+              <h3 className="text-lg font-bold text-white">Jadwal Bebas & Fleksibel</h3>
+              <p className="text-xs text-[#C6D4DF] leading-relaxed">
                 Tentukan hari dan jam bimbingan sesuai waktu luangmu tanpa takut bentrok acara.
               </p>
             </div>
 
-            <div className="card-duo-interactive !bg-white p-6 space-y-3">
-              <BarChart3 className="w-8 h-8 text-[#FF9600]" />
-              <h3 className="text-lg font-bold text-[#3C3C3C]">Progres Belajar Terpantau</h3>
-              <p className="text-sm text-[#4B4B4B] font-medium leading-relaxed">
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-3 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hover:border-[#66C0F4] transition-all cursor-pointer text-white">
+              <BarChart3 className="w-8 h-8 text-[#B9A074]" />
+              <h3 className="text-lg font-bold text-white">Progres Belajar Terpantau</h3>
+              <p className="text-xs text-[#C6D4DF] leading-relaxed">
                 Hasil evaluasi, nilai kuis, dan grafik EXP dapat diakses secara transparan real-time.
               </p>
             </div>
@@ -498,47 +498,47 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
       </section>
 
       {/* 4. WHY CHOOSE KAVIO EDU */}
-      <section id="keunggulan" className="py-16 sm:py-24 bg-[#F8FAFC] border-b border-[#E5E5E5]">
+      <section id="keunggulan" className="py-16 sm:py-24 bg-[#171A21] border-b border-white/10">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
           <div className="text-center max-w-3xl mx-auto space-y-4">
-            <span className="inline-block px-3.5 py-1 rounded-xl bg-[#1CB0F6]/10 text-[#0284C7] font-bold text-xs uppercase tracking-wider border border-[#1CB0F6]/20">
+            <span className="inline-block px-3.5 py-1 rounded-[2px] bg-[#66C0F4]/15 text-[#66C0F4] font-bold text-xs uppercase tracking-wider border border-[#66C0F4]/30">
               Solusi Belajar Terintegrasi
             </span>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#3C3C3C] tracking-tight uppercase">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight uppercase">
               Tiga Pilar Utama Pengalaman Belajar di KAVIO Edu
             </h2>
-            <p className="text-base text-[#3C3C3C] font-medium leading-relaxed">
+            <p className="text-base text-[#C6D4DF] font-normal leading-relaxed">
               Semua fasilitas belajar dirancang agar siswa semakin aktif, paham materi, dan bersemangat meningkatkan pencapaian akademik.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div id="modul" className="card-duo-interactive !bg-white space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#58CC02] text-white font-bold text-lg flex items-center justify-center border-b-4 border-[#46A302]">
+            <div id="modul" className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hover:border-[#66C0F4] transition-all text-white">
+              <div className="w-10 h-10 rounded-[2px] bg-[#A1CD44] text-[#171A21] font-bold text-base flex items-center justify-center">
                 01
               </div>
-              <h3 className="text-xl font-bold text-[#3C3C3C] font-display uppercase tracking-wide">Pustaka Modul Belajar & Download PDF</h3>
-              <p className="text-sm text-[#4B4B4B] font-medium leading-relaxed">
-                Akses katalog materi pelajaran terlengkap untuk semua jenjang (Elementary, Junior, Senior). Siswa dapat menyimpan modul ke daftar <span className="font-bold text-[#0284C7]">Favorit Saya</span> serta mengunduh berkas PDF untuk dibaca kapan saja secara offline.
+              <h3 className="text-lg font-bold text-white uppercase tracking-wide">Pustaka Modul Belajar & Download PDF</h3>
+              <p className="text-xs text-[#C6D4DF] leading-relaxed">
+                Akses katalog materi pelajaran terlengkap untuk semua jenjang (Elementary, Junior, Senior). Siswa dapat menyimpan modul ke daftar <span className="font-bold text-[#66C0F4]">Favorit Saya</span> serta mengunduh berkas PDF untuk dibaca kapan saja secara offline.
               </p>
             </div>
 
-            <div className="card-duo-interactive !bg-white space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#1CB0F6] text-white font-bold text-lg flex items-center justify-center border-b-4 border-[#0092E0]">
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hover:border-[#66C0F4] transition-all text-white">
+              <div className="w-10 h-10 rounded-[2px] bg-[#66C0F4] text-[#171A21] font-bold text-base flex items-center justify-center">
                 02
               </div>
-              <h3 className="text-xl font-bold text-[#3C3C3C] font-display uppercase tracking-wide">Penugasan Terotomatisasi & Penilaian Instant</h3>
-              <p className="text-sm text-[#4B4B4B] font-medium leading-relaxed">
+              <h3 className="text-lg font-bold text-white uppercase tracking-wide">Penugasan Terotomatisasi & Penilaian Instant</h3>
+              <p className="text-xs text-[#C6D4DF] leading-relaxed">
                 Guru mengirimkan tugas dan kuis interaktif langsung lewat aplikasi. Siswa mengerjakan secara real-time dan mendapatkan skor serta umpan balik penilaian otomatis secara instant dari sistem.
               </p>
             </div>
 
-            <div className="card-duo-interactive !bg-white space-y-4">
-              <div className="w-12 h-12 rounded-xl bg-[#FF9600] text-white font-bold text-lg flex items-center justify-center border-b-4 border-[#E58500]">
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hover:border-[#66C0F4] transition-all text-white">
+              <div className="w-10 h-10 rounded-[2px] bg-[#B9A074] text-[#171A21] font-bold text-base flex items-center justify-center">
                 03
               </div>
-              <h3 className="text-xl font-bold text-[#3C3C3C] font-display uppercase tracking-wide">Sistem Leveling & Rangking Seperti Game</h3>
-              <p className="text-sm text-[#4B4B4B] font-medium leading-relaxed">
+              <h3 className="text-lg font-bold text-white uppercase tracking-wide">Sistem Leveling & Rangking Seperti Game</h3>
+              <p className="text-xs text-[#C6D4DF] leading-relaxed">
                 Semakin banyak tugas yang diselesaikan dengan benar dan streak belajar yang dijaga, semakin cepat siswa mengumpulkan EXP, menaikkan level akun, dan mendaki tangga Papan Peringkat (Leaderboard).
               </p>
             </div>
@@ -547,127 +547,127 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
       </section>
 
       {/* 5. LEARNING PROCESS */}
-      <section id="metode" className="py-16 sm:py-20 bg-white border-b border-[#E5E5E5]">
+      <section id="metode" className="py-16 sm:py-20 bg-[#171A21] border-b border-white/10">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="inline-block px-3.5 py-1 rounded-xl bg-[#58CC02]/10 text-[#16A34A] font-bold text-xs uppercase tracking-wider border border-[#58CC02]/20">
+            <span className="inline-block px-3.5 py-1 rounded-[2px] bg-[#A1CD44]/15 text-[#A1CD44] font-bold text-xs uppercase tracking-wider border border-[#A1CD44]/30">
               Alur Pembelajaran
             </span>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#3C3C3C] tracking-tight uppercase">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight uppercase">
               5 Langkah Mudah Dimulai di KAVIO EDU
             </h2>
-            <p className="text-base text-[#3C3C3C] font-medium leading-relaxed">
+            <p className="text-base text-[#C6D4DF] font-normal leading-relaxed">
               Proses pendaftaran yang sederhana dan terstruktur agar siswa dapat langsung memulai bimbingan.
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            <div className="card-duo !bg-white p-5 space-y-3 text-center">
-              <span className="w-8 h-8 rounded-full bg-[#1CB0F6] text-white font-extrabold text-sm flex items-center justify-center mx-auto">1</span>
-              <h4 className="font-bold text-base text-[#3C3C3C]">Daftar Akun</h4>
-              <p className="text-xs text-[#4B4B4B]">Buat akun siswa atau hubungi admin via WhatsApp.</p>
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-5 space-y-3 text-center text-white">
+              <span className="w-8 h-8 rounded-full bg-[#66C0F4] text-[#171A21] font-bold text-xs flex items-center justify-center mx-auto">1</span>
+              <h4 className="font-bold text-sm text-white">Daftar Akun</h4>
+              <p className="text-xs text-[#C6D4DF]">Buat akun siswa atau hubungi admin via WhatsApp.</p>
             </div>
 
-            <div className="card-duo !bg-white p-5 space-y-3 text-center">
-              <span className="w-8 h-8 rounded-full bg-[#1CB0F6] text-white font-extrabold text-sm flex items-center justify-center mx-auto">2</span>
-              <h4 className="font-bold text-base text-[#3C3C3C]">Pilih Program</h4>
-              <p className="text-xs text-[#4B4B4B]">Tentukan kelas Private 1-on-1 atau Circle Class.</p>
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-5 space-y-3 text-center text-white">
+              <span className="w-8 h-8 rounded-full bg-[#66C0F4] text-[#171A21] font-bold text-xs flex items-center justify-center mx-auto">2</span>
+              <h4 className="font-bold text-sm text-white">Pilih Program</h4>
+              <p className="text-xs text-[#C6D4DF]">Tentukan kelas Private 1-on-1 atau Circle Class.</p>
             </div>
 
-            <div className="card-duo !bg-white p-5 space-y-3 text-center">
-              <span className="w-8 h-8 rounded-full bg-[#1CB0F6] text-white font-extrabold text-sm flex items-center justify-center mx-auto">3</span>
-              <h4 className="font-bold text-base text-[#3C3C3C]">Tentukan Jadwal</h4>
-              <p className="text-xs text-[#4B4B4B]">Pilih hari dan jam belajar yang paling cocok.</p>
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-5 space-y-3 text-center text-white">
+              <span className="w-8 h-8 rounded-full bg-[#66C0F4] text-[#171A21] font-bold text-xs flex items-center justify-center mx-auto">3</span>
+              <h4 className="font-bold text-sm text-white">Tentukan Jadwal</h4>
+              <p className="text-xs text-[#C6D4DF]">Pilih hari dan jam belajar yang paling cocok.</p>
             </div>
 
-            <div className="card-duo !bg-white p-5 space-y-3 text-center">
-              <span className="w-8 h-8 rounded-full bg-[#1CB0F6] text-white font-extrabold text-sm flex items-center justify-center mx-auto">4</span>
-              <h4 className="font-bold text-base text-[#3C3C3C]">Mulai Belajar</h4>
-              <p className="text-xs text-[#4B4B4B]">Dapatkan bimbingan intensif dari tutor personal.</p>
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-5 space-y-3 text-center text-white">
+              <span className="w-8 h-8 rounded-full bg-[#66C0F4] text-[#171A21] font-bold text-xs flex items-center justify-center mx-auto">4</span>
+              <h4 className="font-bold text-sm text-white">Mulai Belajar</h4>
+              <p className="text-xs text-[#C6D4DF]">Dapatkan bimbingan intensif dari tutor personal.</p>
             </div>
 
-            <div className="card-duo !bg-white p-5 space-y-3 text-center">
-              <span className="w-8 h-8 rounded-full bg-[#58CC02] text-white font-extrabold text-sm flex items-center justify-center mx-auto">5</span>
-              <h4 className="font-bold text-base text-[#3C3C3C]">Pantau Progres</h4>
-              <p className="text-xs text-[#4B4B4B]">Lacak hasil nilai kuis dan kenaikan level EXP.</p>
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-5 space-y-3 text-center text-white">
+              <span className="w-8 h-8 rounded-full bg-[#A1CD44] text-[#171A21] font-bold text-xs flex items-center justify-center mx-auto">5</span>
+              <h4 className="font-bold text-sm text-white">Pantau Progres</h4>
+              <p className="text-xs text-[#C6D4DF]">Lacak hasil nilai kuis dan kenaikan level EXP.</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* 6. PROGRAM BELAJAR */}
-      <section id="program" className="py-16 sm:py-20 bg-[#F8FAFC] border-b border-[#E5E5E5]">
+      <section id="program" className="py-16 sm:py-20 bg-[#171A21] border-b border-white/10">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="inline-block px-3.5 py-1 rounded-xl bg-[#1CB0F6]/10 text-[#0284C7] font-bold text-xs uppercase tracking-wider border border-[#1CB0F6]/20">
+            <span className="inline-block px-3.5 py-1 rounded-[2px] bg-[#66C0F4]/15 text-[#66C0F4] font-bold text-xs uppercase tracking-wider border border-[#66C0F4]/30">
               Format Pembelajaran
             </span>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#3C3C3C] tracking-tight uppercase">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight uppercase">
               Program Belajar Sesuai Kebutuhan Siswa
             </h2>
-            <p className="text-base text-[#3C3C3C] font-medium leading-relaxed">
+            <p className="text-base text-[#C6D4DF] font-normal leading-relaxed">
               Dua format bimbingan yang dirancang untuk efektivitas maksimal.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {/* Private Class Card */}
-            <div className="card-duo-interactive !bg-white p-8 space-y-6">
-              <div className="w-12 h-12 rounded-xl bg-[#1CB0F6] text-white flex items-center justify-center border-b-4 border-[#0092E0]">
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-8 space-y-6 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hover:border-[#66C0F4] transition-all text-white">
+              <div className="w-12 h-12 rounded-[2px] bg-[#66C0F4] text-[#171A21] flex items-center justify-center">
                 <UserCheck className="w-6 h-6" />
               </div>
-              <h3 className="text-2xl font-bold text-[#3C3C3C] uppercase">Private Class (1-on-1)</h3>
-              <p className="text-sm text-[#4B4B4B] font-medium leading-relaxed">
+              <h3 className="text-2xl font-bold text-white uppercase">Private Class (1-on-1)</h3>
+              <p className="text-xs text-[#C6D4DF] font-normal leading-relaxed">
                 Bimbingan belajar personal 1-on-1 dengan perhatian 100% dari tutor. Sangat cocok bagi siswa yang membutuhkan pendampingan intensif.
               </p>
-              <ul className="space-y-2 text-xs font-bold text-[#3C3C3C]">
+              <ul className="space-y-2 text-xs font-bold text-white">
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#58CC02]" />
+                  <CheckCircle2 className="w-4 h-4 text-[#A1CD44]" />
                   <span>Jadwal 100% Fleksibel</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#58CC02]" />
+                  <CheckCircle2 className="w-4 h-4 text-[#A1CD44]" />
                   <span>Materi Disesuaikan Kebutuhan Siswa</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#58CC02]" />
+                  <CheckCircle2 className="w-4 h-4 text-[#A1CD44]" />
                   <span>Pendampingan Spesifik Ujian & UTBK</span>
                 </li>
               </ul>
               <button
                 onClick={() => handleSmoothScroll('paket')}
-                className="w-full btn-duo-blue h-[48px] text-xs font-bold uppercase tracking-wider cursor-pointer"
+                className="w-full h-[44px] bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] text-xs font-bold uppercase tracking-wider cursor-pointer rounded-[2px] transition-all"
               >
                 Pilih Private Class
               </button>
             </div>
 
             {/* Circle Class Card */}
-            <div className="card-duo-interactive !bg-white p-8 space-y-6">
-              <div className="w-12 h-12 rounded-xl bg-[#58CC02] text-white flex items-center justify-center border-b-4 border-[#46A302]">
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-8 space-y-6 shadow-[0_2px_8px_rgba(0,0,0,0.5)] hover:border-[#66C0F4] transition-all text-white">
+              <div className="w-12 h-12 rounded-[2px] bg-[#A1CD44] text-[#171A21] flex items-center justify-center">
                 <Users className="w-6 h-6" />
               </div>
-              <h3 className="text-2xl font-bold text-[#3C3C3C] uppercase">Circle Class (Kelompok Kecil)</h3>
-              <p className="text-sm text-[#4B4B4B] font-medium leading-relaxed">
+              <h3 className="text-2xl font-bold text-white uppercase">Circle Class (Kelompok Kecil)</h3>
+              <p className="text-xs text-[#C6D4DF] font-normal leading-relaxed">
                 Belajar kelompok kecil (3-5 siswa) dengan suasana interaktif yang seru dan biaya yang jauh lebih hemat.
               </p>
-              <ul className="space-y-2 text-xs font-bold text-[#3C3C3C]">
+              <ul className="space-y-2 text-xs font-bold text-white">
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#58CC02]" />
+                  <CheckCircle2 className="w-4 h-4 text-[#A1CD44]" />
                   <span>Maksimal 3-5 Siswa Per Kelompok</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#58CC02]" />
+                  <CheckCircle2 className="w-4 h-4 text-[#A1CD44]" />
                   <span>Biaya Bulanan Lebih Terjangkau</span>
                 </li>
                 <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-[#58CC02]" />
+                  <CheckCircle2 className="w-4 h-4 text-[#A1CD44]" />
                   <span>Diskusi Belajar Aktif & Menyenangkan</span>
                 </li>
               </ul>
               <button
                 onClick={() => handleSmoothScroll('paket')}
-                className="w-full btn-duo-green h-[48px] text-xs font-bold uppercase tracking-wider cursor-pointer"
+                className="w-full h-[44px] bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-xs font-bold uppercase tracking-wider cursor-pointer rounded-[2px] transition-all"
               >
                 Pilih Circle Class
               </button>
@@ -677,16 +677,16 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
       </section>
 
       {/* 7. PRICING SECTION */}
-      <section id="paket" className="py-16 sm:py-20 bg-white border-b border-[#E5E5E5]">
+      <section id="paket" className="py-16 sm:py-20 bg-[#171A21] border-b border-white/10">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="inline-block px-3.5 py-1 rounded-xl bg-[#58CC02]/10 text-[#16A34A] font-bold text-xs uppercase tracking-wider border border-[#58CC02]/20">
+            <span className="inline-block px-3.5 py-1 rounded-[2px] bg-[#A1CD44]/15 text-[#A1CD44] font-bold text-xs uppercase tracking-wider border border-[#A1CD44]/30">
               Pilihan Paket & Harga
             </span>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#3C3C3C] tracking-tight uppercase">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight uppercase">
               Investasi Belajar Transparan
             </h2>
-            <p className="text-base text-[#3C3C3C] font-medium leading-relaxed">
+            <p className="text-base text-[#C6D4DF] font-normal leading-relaxed">
               Pilih Paket Private atau Circle sesuai kebutuhan belajarmu.
             </p>
           </div>
@@ -699,29 +699,29 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
       </section>
 
       {/* 8. GALLERY / APP SHOWCASE */}
-      <section id="tampilan-aplikasi" className="py-16 sm:py-20 bg-[#F8FAFC] border-b border-[#E5E5E5]">
+      <section id="tampilan-aplikasi" className="py-16 sm:py-20 bg-[#171A21] border-b border-white/10">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="inline-block px-3.5 py-1 rounded-xl bg-[#1CB0F6]/10 text-[#0284C7] font-bold text-xs uppercase tracking-wider border border-[#1CB0F6]/20">
+            <span className="inline-block px-3.5 py-1 rounded-[2px] bg-[#66C0F4]/15 text-[#66C0F4] font-bold text-xs uppercase tracking-wider border border-[#66C0F4]/30">
               Antarmuka Aplikasi
             </span>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#3C3C3C] tracking-tight uppercase">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight uppercase">
               Galeri Tampilan Aplikasi KAVIO Edu
             </h2>
-            <p className="text-base text-[#3C3C3C] font-medium leading-relaxed">
+            <p className="text-base text-[#C6D4DF] font-normal leading-relaxed">
               Jelajahi kejelasan antarmuka yang bersih, ramah pengguna, dan interaktif pada setiap halaman utama aplikasi.
             </p>
           </div>
 
           {/* Screenshot Photo Slider Container */}
-          <div className="bg-white border-2 border-slate-200 border-b-4 border-b-slate-300 rounded-2xl p-3 sm:p-4 max-w-5xl mx-auto relative group shadow-md">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-2.5 mb-3 px-2">
+          <div className="bg-[#2F3138] border border-white/15 rounded-[4px] p-3 sm:p-4 max-w-5xl mx-auto relative group shadow-[0_6px_16px_rgba(0,0,0,0.6)]">
+            <div className="flex items-center justify-between border-b border-white/10 pb-2.5 mb-3 px-2">
               <div className="flex items-center gap-1.5">
                 <div className="w-3 h-3 rounded-full bg-[#FF4B4B]" />
-                <div className="w-3 h-3 rounded-full bg-[#FFC800]" />
-                <div className="w-3 h-3 rounded-full bg-[#58CC02]" />
+                <div className="w-3 h-3 rounded-full bg-[#B9A074]" />
+                <div className="w-3 h-3 rounded-full bg-[#A1CD44]" />
               </div>
-              <div className="px-4 py-1 bg-slate-100 rounded-lg text-xs font-mono font-bold text-[#3C3C3C] border border-slate-200 truncate max-w-[240px] sm:max-w-md text-center">
+              <div className="px-4 py-1 bg-black/40 rounded-[2px] text-xs font-mono font-bold text-[#66C0F4] border border-white/10 truncate max-w-[240px] sm:max-w-md text-center">
                 {activeSlide.path}
               </div>
               <div className="w-10" />
@@ -734,13 +734,13 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.25}
               onDragEnd={handleDragEnd}
-              className="relative h-[280px] xs:h-[340px] sm:h-[460px] md:h-[520px] lg:h-[580px] w-full rounded-xl overflow-hidden bg-slate-100 flex items-center justify-center border border-slate-200 cursor-grab active:cursor-grabbing touch-pan-y select-none"
+              className="relative h-[280px] xs:h-[340px] sm:h-[460px] md:h-[520px] lg:h-[580px] w-full rounded-[2px] overflow-hidden bg-black/40 flex items-center justify-center border border-white/10 cursor-grab active:cursor-grabbing touch-pan-y select-none"
             >
               {/* Image Loading Spinner Overlay */}
               {isImageLoading && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 bg-slate-100/90 backdrop-blur-2xs z-20 animate-fadeIn">
-                  <Loader2 className="w-8 h-8 text-[#1CB0F6] animate-spin" />
-                  <span className="text-xs font-bold text-[#3C3C3C] uppercase tracking-wider">Memuat Tampilan...</span>
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 bg-black/70 backdrop-blur-2xs z-20 animate-fadeIn">
+                  <Loader2 className="w-8 h-8 text-[#66C0F4] animate-spin" />
+                  <span className="text-xs font-bold text-white uppercase tracking-wider">Memuat Tampilan...</span>
                 </div>
               )}
 
@@ -751,7 +751,7 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
                 draggable={false}
                 onLoad={() => setIsImageLoading(false)}
                 onError={() => setIsImageLoading(false)}
-                className={`w-full h-full object-contain object-top rounded-xl transition-opacity duration-300 pointer-events-none ${
+                className={`w-full h-full object-contain object-top rounded-[2px] transition-opacity duration-300 pointer-events-none ${
                   isImageLoading ? 'opacity-0' : 'opacity-100'
                 }`}
               />
@@ -760,7 +760,7 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); prevSlide(); }}
-                className="absolute left-3 top-1/2 -translate-y-1/2 btn-duo-slate p-2.5 rounded-xl transition-all active:scale-95 cursor-pointer shadow-md opacity-80 hover:opacity-100 z-30"
+                className="absolute left-3 top-1/2 -translate-y-1/2 bg-[#2F3138] border border-white/20 p-2.5 rounded-[2px] transition-all cursor-pointer shadow-md opacity-80 hover:opacity-100 z-30 text-white"
                 title="Slide Sebelumnya"
               >
                 <ChevronLeft className="w-5 h-5" />
@@ -770,7 +770,7 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
               <button
                 type="button"
                 onClick={(e) => { e.stopPropagation(); nextSlide(); }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 btn-duo-slate p-2.5 rounded-xl transition-all active:scale-95 cursor-pointer shadow-md opacity-80 hover:opacity-100 z-30"
+                className="absolute right-3 top-1/2 -translate-y-1/2 bg-[#2F3138] border border-white/20 p-2.5 rounded-[2px] transition-all cursor-pointer shadow-md opacity-80 hover:opacity-100 z-30 text-white"
                 title="Slide Selanjutnya"
               >
                 <ChevronRight className="w-5 h-5" />
@@ -778,17 +778,17 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
             </motion.div>
 
             {/* Description Card OUTSIDE Below Image */}
-            <div className="card-duo mt-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 !bg-white">
+            <div className="bg-[#171A21] border border-white/10 rounded-[3px] mt-3.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 text-white">
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold bg-[#1CB0F6]/10 text-[#0284C7] px-2.5 py-0.5 rounded-lg uppercase tracking-wider">
+                  <span className="text-xs font-bold bg-[#66C0F4]/15 text-[#66C0F4] px-2.5 py-0.5 rounded-[2px] uppercase tracking-wider">
                     {currentSlideIndex + 1} dari {SCREENSHOT_SLIDES.length}
                   </span>
-                  <h4 className="font-bold text-sm sm:text-base text-[#3C3C3C] font-display uppercase tracking-wide">
+                  <h4 className="font-bold text-sm sm:text-base text-white uppercase tracking-wide">
                     {activeSlide.title}
                   </h4>
                 </div>
-                <p className="text-xs sm:text-sm text-[#4B4B4B] font-medium leading-relaxed">
+                <p className="text-xs sm:text-sm text-[#C6D4DF] font-normal leading-relaxed">
                   {activeSlide.desc}
                 </p>
               </div>
@@ -800,7 +800,7 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
                     type="button"
                     onClick={() => setCurrentSlideIndex(idx)}
                     className={`h-2.5 rounded-full transition-all cursor-pointer ${
-                      currentSlideIndex === idx ? 'w-7 bg-[#1CB0F6]' : 'w-2.5 bg-slate-300 hover:bg-slate-400'
+                      currentSlideIndex === idx ? 'w-7 bg-[#66C0F4]' : 'w-2.5 bg-white/20 hover:bg-white/40'
                     }`}
                     aria-label={`Ke slide ${idx + 1}`}
                   />
@@ -812,36 +812,36 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
       </section>
 
       {/* 9. TESTIMONIAL SECTION */}
-      <section id="testimoni" className="py-16 sm:py-20 bg-white border-b border-[#E5E5E5]">
+      <section id="testimoni" className="py-16 sm:py-20 bg-[#171A21] border-b border-white/10">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="inline-block px-3.5 py-1 rounded-xl bg-[#FF9600]/10 text-[#FF9600] font-bold text-xs uppercase tracking-wider border border-[#FF9600]/20">
+            <span className="inline-block px-3.5 py-1 rounded-[2px] bg-[#B9A074]/15 text-[#B9A074] font-bold text-xs uppercase tracking-wider border border-[#B9A074]/30">
               Bukti Sosial & Testimoni
             </span>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#3C3C3C] tracking-tight uppercase">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight uppercase">
               Kisah Sukses Siswa KAVIO EDU
             </h2>
-            <p className="text-base text-[#3C3C3C] font-medium leading-relaxed">
+            <p className="text-base text-[#C6D4DF] font-normal leading-relaxed">
               Dengarkan ulasan jujur dari siswa dan orang tua yang telah menguji keunggulan bimbingan KAVIO EDU.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {TESTIMONIALS.map((item, idx) => (
-              <div key={idx} className="card-duo !bg-white p-6 space-y-4 flex flex-col justify-between">
+              <div key={idx} className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-4 flex flex-col justify-between shadow-[0_2px_8px_rgba(0,0,0,0.5)] text-white">
                 <div className="space-y-3">
-                  <div className="flex items-center gap-1 text-[#FF9600]">
+                  <div className="flex items-center gap-1 text-[#B9A074]">
                     {Array.from({ length: item.rating }).map((_, i) => (
                       <Star key={i} className="w-4 h-4 fill-current" />
                     ))}
                   </div>
-                  <p className="text-sm text-[#4B4B4B] font-medium leading-relaxed italic">
+                  <p className="text-xs text-[#C6D4DF] font-normal leading-relaxed italic">
                     "{item.text}"
                   </p>
                 </div>
-                <div className="pt-4 border-t border-slate-100">
-                  <h4 className="font-bold text-base text-[#3C3C3C]">{item.name}</h4>
-                  <p className="text-xs font-bold text-[#1CB0F6]">{item.grade} • {item.program}</p>
+                <div className="pt-4 border-t border-white/10">
+                  <h4 className="font-bold text-sm text-white">{item.name}</h4>
+                  <p className="text-xs font-bold text-[#66C0F4]">{item.grade} • {item.program}</p>
                 </div>
               </div>
             ))}
@@ -850,17 +850,17 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
       </section>
 
       {/* 10. FAQ SECTION */}
-      <section id="faq" className="py-16 sm:py-20 bg-[#F8FAFC] border-b border-[#E5E5E5]">
+      <section id="faq" className="py-16 sm:py-20 bg-[#171A21] border-b border-white/10">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-3">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-xl bg-[#1CB0F6]/10 text-[#0284C7] font-bold text-xs uppercase tracking-wider border border-[#1CB0F6]/20">
+            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-[2px] bg-[#66C0F4]/15 text-[#66C0F4] font-bold text-xs uppercase tracking-wider border border-[#66C0F4]/30">
               <HelpCircle className="w-4 h-4" />
               Pertanyaan Umum (FAQ)
             </span>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#3C3C3C] tracking-tight uppercase">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight uppercase">
               Semua yang Perlu Kamu Ketahui
             </h2>
-            <p className="text-base text-[#3C3C3C] font-medium leading-relaxed">
+            <p className="text-base text-[#C6D4DF] font-normal leading-relaxed">
               Temukan jawaban cepat atas pertanyaan seputar pendaftaran, sistem belajar, dan bimbingan.
             </p>
           </div>
@@ -869,14 +869,14 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
             {FAQ_ITEMS.map((faq, idx) => {
               const isOpen = openFaqIndex === idx;
               return (
-                <div key={idx} className="card-duo !bg-white p-0 overflow-hidden">
+                <div key={idx} className="bg-[#2F3138] border border-white/10 rounded-[3px] overflow-hidden text-white">
                   <button
                     type="button"
                     onClick={() => toggleFaq(idx)}
-                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-base text-[#3C3C3C] hover:text-[#1CB0F6] transition-colors cursor-pointer"
+                    className="w-full p-5 text-left flex items-center justify-between gap-4 font-bold text-sm text-white hover:text-[#66C0F4] transition-colors cursor-pointer"
                   >
                     <span>{faq.q}</span>
-                    <ChevronDown className={`w-5 h-5 transition-transform duration-200 text-[#1CB0F6] shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown className={`w-5 h-5 transition-transform duration-200 text-[#66C0F4] shrink-0 ${isOpen ? 'rotate-180' : ''}`} />
                   </button>
 
                   <AnimatePresence>
@@ -885,7 +885,7 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        className="px-5 pb-5 text-sm text-[#4B4B4B] font-medium leading-relaxed border-t border-slate-100 pt-3"
+                        className="px-5 pb-5 text-xs text-[#C6D4DF] font-normal leading-relaxed border-t border-white/10 pt-3"
                       >
                         {faq.a}
                       </motion.div>
@@ -896,11 +896,11 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
             })}
           </div>
 
-          {/* Tombol PERTANYAAN LAINNYA -> Navigasi ke /faq */}
+          {/* Tombol PERTANYAAN LAINNYA */}
           <div className="text-center pt-4">
             <button
               onClick={() => onNavigate('/faq')}
-              className="btn-duo-blue h-[50px] px-8 text-xs sm:text-sm font-bold uppercase tracking-wider inline-flex items-center gap-2.5 shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              className="h-[48px] px-8 bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] text-xs font-bold uppercase tracking-wider inline-flex items-center gap-2.5 shadow-md hover:scale-105 active:scale-95 transition-all cursor-pointer rounded-[2px]"
               id="view-all-faq-button"
             >
               <HelpCircle className="w-4 h-4" />
@@ -912,16 +912,16 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
       </section>
 
       {/* 11. CALL TO ACTION & CONTACT SECTION */}
-      <section id="kontak" className="py-16 sm:py-20 bg-white border-b border-[#E5E5E5]">
+      <section id="kontak" className="py-16 sm:py-20 bg-[#171A21] border-b border-white/10">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-10">
           <div className="space-y-3">
-            <span className="inline-block px-3.5 py-1 rounded-xl bg-[#58CC02]/10 text-[#16A34A] font-bold text-xs uppercase tracking-wider border border-[#58CC02]/20">
+            <span className="inline-block px-3.5 py-1 rounded-[2px] bg-[#A1CD44]/15 text-[#A1CD44] font-bold text-xs uppercase tracking-wider border border-[#A1CD44]/30">
               Mulai Langkah Belajarmu
             </span>
-            <h2 className="text-3xl sm:text-4xl font-display font-bold text-[#3C3C3C] tracking-tight uppercase">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white tracking-tight uppercase">
               Siap Meningkatkan Hasil Belajarmu Bersama KAVIO EDU?
             </h2>
-            <p className="text-base text-[#3C3C3C] font-medium leading-relaxed max-w-2xl mx-auto">
+            <p className="text-base text-[#C6D4DF] font-normal leading-relaxed max-w-2xl mx-auto">
               Konsultasikan kebutuhan belajarmu sekarang atau langsung buat akun untuk memulai bimbingan bersama tutor personal terbaik.
             </p>
           </div>
@@ -929,18 +929,18 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
             <button
               onClick={() => onNavigate('/register')}
-              className="w-full sm:w-auto btn-duo-green h-[50px] px-8 text-[15px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md"
+              className="w-full sm:w-auto h-[48px] px-8 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer rounded-[2px] transition-all shadow-md"
             >
               <span>Daftar Sekarang</span>
-              <ArrowRight className="w-5 h-5" />
+              <ArrowRight className="w-4 h-4" />
             </button>
             <a
               href="https://wa.me/6282111500190"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto btn-duo-blue h-[50px] px-8 text-[15px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer shadow-md"
+              className="w-full sm:w-auto h-[48px] px-8 bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer rounded-[2px] transition-all shadow-md"
             >
-              <MessageCircle className="w-5 h-5" />
+              <MessageCircle className="w-4 h-4" />
               <span>Konsultasi WA</span>
             </a>
           </div>
@@ -948,34 +948,34 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
           {/* Contact Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto pt-6">
             {/* Contact 1 */}
-            <div className="card-duo !bg-white p-6 space-y-4 text-center">
-              <span className="px-3 py-1 rounded-xl text-xs font-bold bg-emerald-50 text-[#15803D] border border-emerald-200 inline-block uppercase">
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-4 text-center text-white shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+              <span className="px-3 py-1 rounded-[2px] text-xs font-bold bg-[#A1CD44]/20 text-[#A1CD44] border border-[#A1CD44]/30 inline-block uppercase">
                 Founder KAVIO Edu
               </span>
-              <h3 className="text-xl font-bold text-[#3C3C3C]">Fatih Farhat</h3>
-              <p className="text-xs font-bold text-[#4B4B4B]">Konsultasi Utama & Kerjasama</p>
+              <h3 className="text-xl font-bold text-white">Fatih Farhat</h3>
+              <p className="text-xs font-bold text-[#C6D4DF]">Konsultasi Utama & Kerjasama</p>
               <a
                 href="https://wa.me/6282111500190"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full btn-duo-green h-[44px] text-xs font-bold flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full h-[40px] bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-xs font-bold flex items-center justify-center gap-2 cursor-pointer rounded-[2px] transition-all"
               >
                 <span>Chat via WhatsApp</span>
               </a>
             </div>
 
             {/* Contact 2 */}
-            <div className="card-duo !bg-white p-6 space-y-4 text-center">
-              <span className="px-3 py-1 rounded-xl text-xs font-bold bg-sky-50 text-[#0284C7] border border-sky-200 inline-block uppercase">
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-4 text-center text-white shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+              <span className="px-3 py-1 rounded-[2px] text-xs font-bold bg-[#66C0F4]/20 text-[#66C0F4] border border-[#66C0F4]/30 inline-block uppercase">
                 Customer Service
               </span>
-              <h3 className="text-xl font-bold text-[#3C3C3C]">Eni Eka Riyanti</h3>
-              <p className="text-xs font-bold text-[#4B4B4B]">Layanan Pelanggan & Informasi</p>
+              <h3 className="text-xl font-bold text-white">Eni Eka Riyanti</h3>
+              <p className="text-xs font-bold text-[#C6D4DF]">Layanan Pelanggan & Informasi</p>
               <a
                 href="https://wa.me/6283813838883"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full btn-duo-blue h-[44px] text-xs font-bold flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full h-[40px] bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] text-xs font-bold flex items-center justify-center gap-2 cursor-pointer rounded-[2px] transition-all"
               >
                 <span>Chat via WhatsApp</span>
               </a>
@@ -985,23 +985,23 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
       </section>
 
       {/* Footer */}
-      <footer className="py-10 bg-white text-[#3C3C3C] text-xs font-bold border-t border-[#E5E5E5]">
+      <footer className="py-10 bg-[#171A21] text-white text-xs font-bold border-t border-white/10">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center cursor-pointer" onClick={() => onNavigate('/')}>
-            <Logo className="h-7 w-auto" />
+            <Logo className="h-7 w-auto text-[#66C0F4]" />
           </div>
-          <p className="text-[#4B4B4B] font-medium">&copy; {new Date().getFullYear()} KAVIO Edu. Seluruh hak cipta dilindungi.</p>
+          <p className="text-[#8A8A8A] font-normal">&copy; {new Date().getFullYear()} KAVIO Edu. Seluruh hak cipta dilindungi.</p>
           <div className="flex items-center gap-6">
-            <button onClick={() => onNavigate('/faq')} className="hover:text-[#1CB0F6] transition-colors cursor-pointer uppercase font-bold">FAQ</button>
-            <button onClick={() => onNavigate('/terms')} className="hover:text-[#1CB0F6] transition-colors cursor-pointer uppercase font-bold">Syarat & Ketentuan</button>
-            <button onClick={() => onNavigate('/blog')} className="hover:text-[#1CB0F6] transition-colors cursor-pointer uppercase font-bold">Blog</button>
-            <button onClick={() => onNavigate('/login')} className="hover:text-[#1CB0F6] transition-colors cursor-pointer uppercase font-bold">Masuk</button>
-            <button onClick={() => onNavigate('/register')} className="hover:text-[#1CB0F6] transition-colors cursor-pointer uppercase font-bold">Daftar</button>
+            <button onClick={() => onNavigate('/faq')} className="hover:text-[#66C0F4] transition-colors cursor-pointer uppercase font-bold text-[#C6D4DF]">FAQ</button>
+            <button onClick={() => onNavigate('/terms')} className="hover:text-[#66C0F4] transition-colors cursor-pointer uppercase font-bold text-[#C6D4DF]">Syarat & Ketentuan</button>
+            <button onClick={() => onNavigate('/blog')} className="hover:text-[#66C0F4] transition-colors cursor-pointer uppercase font-bold text-[#C6D4DF]">Blog</button>
+            <button onClick={() => onNavigate('/login')} className="hover:text-[#66C0F4] transition-colors cursor-pointer uppercase font-bold text-[#C6D4DF]">Masuk</button>
+            <button onClick={() => onNavigate('/register')} className="hover:text-[#66C0F4] transition-colors cursor-pointer uppercase font-bold text-[#C6D4DF]">Daftar</button>
           </div>
         </div>
       </footer>
 
-      {/* STICKY WHATSAPP FLOATING BUTTON (Always visible at bottom right) */}
+      {/* STICKY WHATSAPP FLOATING BUTTON */}
       <a
         href="https://wa.me/6282111500190"
         target="_blank"
@@ -1011,29 +1011,29 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
         title="Konsultasi Gratis via WhatsApp"
       >
         <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#FF4B4B] rounded-full animate-ping" />
-        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#FF4B4B] rounded-full border-2 border-white" />
+        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-[#FF4B4B] rounded-full border-2 border-[#171A21]" />
         <MessageCircle className="w-7 h-7 fill-current" />
       </a>
 
-      {/* FLOATING MOBILE CTA BAR (Sticky on Mobile screens bottom) */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 shadow-lg flex items-center justify-between gap-3">
+      {/* FLOATING MOBILE CTA BAR */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#171A21]/95 backdrop-blur-md border-t border-white/10 p-3 shadow-lg flex items-center justify-between gap-3 text-white">
         <div className="flex flex-col min-w-0">
-          <span className="text-[10px] font-bold text-[#1CB0F6] uppercase tracking-wider">KAVIO EDU</span>
-          <span className="text-xs font-bold text-[#3C3C3C] truncate">Bimbingan Belajar Terpadu</span>
+          <span className="text-[10px] font-bold text-[#66C0F4] uppercase tracking-wider">KAVIO EDU</span>
+          <span className="text-xs font-bold text-white truncate">Bimbingan Belajar Terpadu</span>
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <a
             href="https://wa.me/6282111500190"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-duo-blue h-[38px] px-3 text-xs font-bold flex items-center gap-1"
+            className="h-[36px] px-3 bg-[#66C0F4] text-[#171A21] text-xs font-bold flex items-center gap-1 rounded-[2px]"
           >
             <MessageCircle className="w-4 h-4" />
             <span>WA</span>
           </a>
           <button
             onClick={() => onNavigate('/register')}
-            className="btn-duo-green h-[38px] px-3.5 text-xs font-bold uppercase tracking-wider"
+            className="h-[36px] px-3.5 bg-[#A1CD44] text-[#171A21] text-xs font-bold uppercase tracking-wider rounded-[2px]"
           >
             Daftar
           </button>

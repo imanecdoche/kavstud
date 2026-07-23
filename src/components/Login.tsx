@@ -18,14 +18,13 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Safely clear any stuck global loading overlay on mount
   useEffect(() => {
     onSetLoading(false);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSubmitting) return; // Prevent multiple clicks
+    if (isSubmitting) return;
     if (!email || !password) {
       setError('Email dan password wajib diisi.');
       return;
@@ -71,41 +70,40 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -15 }}
       transition={{ duration: 0.25 }}
-      className="min-h-screen bg-[#F7F7F7] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 font-sans selection:bg-[#58CC02] selection:text-white" 
+      className="min-h-screen bg-[#171A21] flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 text-white select-none" 
       id="login-page"
     >
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center space-y-4">
-        {/* Typemark Logo */}
         <div className="flex justify-center cursor-pointer" onClick={() => onNavigate('/')}>
-          <Logo className="h-10 w-auto" />
+          <Logo className="h-10 w-auto text-[#66C0F4]" />
         </div>
 
         <div className="space-y-1.5">
-          <h2 className="text-2xl sm:text-3xl font-display font-bold text-[#3C3C3C] tracking-tight uppercase">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight uppercase">
             Masuk ke Akun Anda
           </h2>
-          <p className="text-sm text-[#4B4B4B] max-w-sm mx-auto font-medium">
+          <p className="text-xs text-[#C6D4DF] max-w-sm mx-auto font-normal">
             Akses dashboard LMS Kavio Edu untuk memulai kegiatan belajar mengajar secara real-time.
           </p>
         </div>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="card-duo !bg-white space-y-6 shadow-[0px_8px_24px_rgba(0,0,0,0.12)] relative rounded-2xl p-6 sm:p-8 border border-[#E5E5E5]">
+        <div className="bg-[#2F3138] border border-white/20 rounded-[4px] p-6 sm:p-8 space-y-6 shadow-[0_6px_16px_rgba(0,0,0,0.6)] text-white relative">
           {error && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 flex items-start gap-2.5 animate-fadeIn" id="login-error-alert">
+            <div className="p-3.5 bg-[#FF4B4B]/10 border border-[#FF4B4B]/30 rounded-[2px] text-xs text-[#FF4B4B] flex items-start gap-2.5 animate-fadeIn" id="login-error-alert">
               <span className="font-bold shrink-0">Kesalahan:</span>
-              <p className="leading-relaxed font-semibold">{error}</p>
+              <p className="leading-relaxed font-normal">{error}</p>
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5" id="login-form">
             <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-xs font-bold text-[#3C3C3C] uppercase tracking-wider">
+              <label htmlFor="email" className="block text-xs font-bold text-white uppercase tracking-wider">
                 Email / Username <span className="text-[#FF4B4B]">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#848E94]">
                   <Mail className="h-4 w-4" />
                 </div>
                 <input
@@ -116,7 +114,7 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="input-duo input-duo-has-icon-left !bg-white !text-[#3C3C3C]"
+                  className="w-full pl-10 pr-3.5 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4]"
                   placeholder="name@kavio.stud.edu"
                   disabled={isSubmitting}
                 />
@@ -124,11 +122,11 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="password" className="block text-xs font-bold text-[#3C3C3C] uppercase tracking-wider">
+              <label htmlFor="password" className="block text-xs font-bold text-white uppercase tracking-wider">
                 Kata Sandi <span className="text-[#FF4B4B]">*</span>
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#848E94]">
                   <Lock className="h-4 w-4" />
                 </div>
                 <input
@@ -139,15 +137,15 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="input-duo input-duo-has-icon-both !bg-white !text-[#3C3C3C]"
+                  className="w-full pl-10 pr-10 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4]"
                   placeholder="Masukkan kata sandi"
                   disabled={isSubmitting}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-                  style={{ minWidth: '44px', minHeight: '44px' }}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-[#848E94] hover:text-white transition-colors cursor-pointer"
+                  style={{ minWidth: '40px', minHeight: '40px' }}
                   aria-label={showPassword ? 'Sembunyikan sandi' : 'Tampilkan sandi'}
                   disabled={isSubmitting}
                 >
@@ -159,7 +157,7 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full btn-duo-green h-[50px] text-[15px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              className="w-full h-11 bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer rounded-[2px] transition-all disabled:opacity-50 shadow-[0_2px_4px_rgba(0,0,0,0.3)]"
               id="login-submit-button"
             >
               {isSubmitting ? (
@@ -176,12 +174,12 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
             </button>
           </form>
 
-          <div className="pt-2 border-t border-gray-200 text-center space-y-3">
-            <p className="text-xs text-gray-600 font-bold">Belum memiliki akun Siswa?</p>
+          <div className="pt-3 border-t border-white/10 text-center space-y-3">
+            <p className="text-xs text-[#C6D4DF] font-normal">Belum memiliki akun Siswa?</p>
             <button
               type="button"
               onClick={() => onNavigate('/register')}
-              className="w-full btn-duo-blue py-2.5 text-xs font-black flex items-center justify-center cursor-pointer"
+              className="w-full h-10 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] py-2 text-xs font-bold flex items-center justify-center cursor-pointer rounded-[2px] transition-all"
               id="go-to-register-button"
               disabled={isSubmitting}
             >

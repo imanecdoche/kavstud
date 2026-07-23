@@ -538,14 +538,14 @@ export default function FaqPage({ onNavigate, userProfile }: FaqPageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#3C3C3C] font-sans selection:bg-[#58CC02] selection:text-white flex flex-col">
+    <div className="min-h-screen bg-[#171A21] text-white font-sans flex flex-col">
       {/* Top Sticky Header */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[#E5E5E5] py-3.5 px-4 sm:px-8">
+      <header className="sticky top-0 z-40 bg-[#171A21] backdrop-blur-md border-b border-white/10 py-3.5 px-4 sm:px-8 shadow-[0_4px_16px_rgba(0,0,0,0.6)] text-white">
         <div className="max-w-[1200px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
               onClick={() => onNavigate('/')}
-              className="btn-duo-slate h-[40px] px-3.5 text-xs font-bold flex items-center gap-2 cursor-pointer"
+              className="h-[36px] px-3.5 bg-black/40 hover:bg-white/10 text-white border border-white/20 text-xs font-bold uppercase rounded-[2px] flex items-center gap-2 cursor-pointer transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Kembali</span>
@@ -559,32 +559,32 @@ export default function FaqPage({ onNavigate, userProfile }: FaqPageProps) {
             href="https://wa.me/6282111500190"
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-duo-blue h-[40px] px-4 text-xs font-bold flex items-center gap-2 cursor-pointer hidden sm:flex"
+            className="h-[36px] px-4 bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] text-xs font-bold uppercase rounded-[2px] flex items-center gap-2 cursor-pointer hidden sm:flex transition-all"
           >
-            <MessageCircle className="w-4 h-4" />
+            <MessageCircle className="w-4 h-4 text-[#171A21]" />
             <span>Tanya Admin WA</span>
           </a>
         </div>
       </header>
 
       {/* Main Container */}
-      <main className="flex-1 max-w-[1200px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
+      <main className="flex-1 max-w-[1200px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8 text-white">
         {/* Page Hero Banner */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#1CB0F6]/10 text-[#0284C7] font-bold text-xs uppercase tracking-wider border border-[#1CB0F6]/20">
-            <HelpCircle className="w-4 h-4 text-[#1CB0F6]" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[2px] bg-[#66C0F4]/15 text-[#66C0F4] font-bold text-[10px] uppercase tracking-wider border border-[#66C0F4]/30">
+            <HelpCircle className="w-3.5 h-3.5 text-[#66C0F4]" />
             PUSAT BANTUAN & FAQ
           </span>
-          <h1 className="text-3xl sm:text-4xl font-display font-bold text-[#3C3C3C] tracking-tight uppercase">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight uppercase">
             Pertanyaan Yang Sering Diajukan
           </h1>
-          <p className="text-sm sm:text-base text-[#4B4B4B] font-medium leading-relaxed">
+          <p className="text-sm sm:text-base text-[#C6D4DF] font-normal leading-relaxed">
             Temukan jawaban lengkap mengenai program pembelajaran Bahasa Inggris, sistem jadwal, platform, dan pendaftaran di KAVIO EDU.
           </p>
 
           {/* Search Box */}
           <div className="relative max-w-xl mx-auto pt-2">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[#8A8A8A]">
               <Search className="w-5 h-5" />
             </div>
             <input
@@ -592,13 +592,13 @@ export default function FaqPage({ onNavigate, userProfile }: FaqPageProps) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari kata kunci (misal: reschedule, private, pembayaran)..."
-              className="input-duo input-duo-has-icon-left !bg-white shadow-sm border border-slate-300 focus:border-[#1CB0F6]"
+              className="w-full pl-11 pr-4 py-3 rounded-[2px] bg-black/40 border border-white/15 text-white placeholder-[#8A8A8A] text-xs font-medium focus:border-[#66C0F4] focus:outline-none transition-colors"
             />
           </div>
         </div>
 
         {/* Category Pills Slider / Filter Tabs */}
-        <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+        <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
           {CATEGORIES.map((cat) => {
             const Icon = cat.icon;
             const isSelected = selectedCategory === cat.id;
@@ -606,10 +606,10 @@ export default function FaqPage({ onNavigate, userProfile }: FaqPageProps) {
               <button
                 key={cat.id}
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-4 py-2 rounded-[2px] text-xs font-bold uppercase tracking-wider flex items-center gap-2 whitespace-nowrap transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-[#1CB0F6] text-white shadow-md border-b-4 border-[#0092E0]'
-                    : 'bg-white text-[#4B4B4B] hover:text-[#3C3C3C] hover:bg-slate-100 border border-slate-200'
+                    ? 'bg-[#66C0F4] text-[#171A21] shadow-sm border border-[#66C0F4]'
+                    : 'bg-black/40 hover:bg-white/10 text-[#C6D4DF] hover:text-white border border-white/15'
                 }`}
               >
                 <Icon className="w-4 h-4" />
@@ -620,23 +620,23 @@ export default function FaqPage({ onNavigate, userProfile }: FaqPageProps) {
         </div>
 
         {/* Top Control Bar (Item count & Expand/Collapse All) */}
-        <div className="flex items-center justify-between border-b border-slate-200 pb-4 pt-2">
-          <p className="text-xs sm:text-sm font-bold text-[#4B4B4B]">
-            Menampilkan <span className="text-[#1CB0F6] font-extrabold">{filteredFaqs.length}</span> pertanyaan
+        <div className="flex items-center justify-between border-b border-white/10 pb-4 pt-2">
+          <p className="text-xs sm:text-sm font-semibold text-[#C6D4DF]">
+            Menampilkan <span className="text-[#66C0F4] font-bold">{filteredFaqs.length}</span> pertanyaan
             {selectedCategory !== 'Semua' && ` dalam "${selectedCategory}"`}
           </p>
 
           <div className="flex items-center gap-3 text-xs font-bold">
             <button
               onClick={expandAll}
-              className="text-[#0284C7] hover:underline cursor-pointer"
+              className="text-[#66C0F4] hover:underline cursor-pointer"
             >
               Buka Semua
             </button>
-            <span className="text-slate-300">|</span>
+            <span className="text-[#8A8A8A]">|</span>
             <button
               onClick={collapseAll}
-              className="text-slate-500 hover:underline cursor-pointer"
+              className="text-[#C6D4DF] hover:underline cursor-pointer"
             >
               Tutup Semua
             </button>
@@ -645,10 +645,10 @@ export default function FaqPage({ onNavigate, userProfile }: FaqPageProps) {
 
         {/* Accordion FAQ List */}
         {filteredFaqs.length === 0 ? (
-          <div className="card-duo !bg-white p-12 text-center space-y-3">
-            <HelpCircle className="w-12 h-12 text-slate-300 mx-auto" />
-            <h3 className="text-lg font-bold text-[#3C3C3C]">Pertanyaan tidak ditemukan</h3>
-            <p className="text-xs sm:text-sm text-slate-500 max-w-md mx-auto">
+          <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-12 text-center space-y-3 shadow-[0_2px_8px_rgba(0,0,0,0.5)] text-white">
+            <HelpCircle className="w-12 h-12 text-[#8A8A8A] mx-auto" />
+            <h3 className="text-lg font-bold text-white">Pertanyaan tidak ditemukan</h3>
+            <p className="text-xs sm:text-sm text-[#C6D4DF] max-w-md mx-auto">
               Coba kata kunci pencarian lain atau hubungi admin KAVIO EDU via WhatsApp jika ada hal yang ingin ditanyakan.
             </p>
           </div>
@@ -659,18 +659,18 @@ export default function FaqPage({ onNavigate, userProfile }: FaqPageProps) {
               return (
                 <div
                   key={faq.id}
-                  className="card-duo !bg-white p-0 border border-slate-200 rounded-2xl overflow-hidden transition-all duration-200 shadow-xs"
+                  className="bg-[#2F3138] border border-white/10 rounded-[3px] p-0 overflow-hidden transition-all duration-200 shadow-[0_2px_8px_rgba(0,0,0,0.5)] text-white"
                 >
                   <button
                     type="button"
                     onClick={() => toggleItem(faq.id)}
                     aria-expanded={isOpen}
-                    className="w-full text-left p-5 flex items-center justify-between gap-4 cursor-pointer hover:bg-slate-50/80 transition-colors"
+                    className="w-full text-left p-5 flex items-center justify-between gap-4 cursor-pointer hover:bg-white/5 transition-colors"
                   >
-                    <span className="font-bold text-base sm:text-lg text-[#3C3C3C] font-display">
+                    <span className="font-bold text-base sm:text-lg text-white">
                       {faq.question}
                     </span>
-                    <div className={`w-8 h-8 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180 bg-[#1CB0F6]/10 text-[#0284C7]' : ''}`}>
+                    <div className={`w-8 h-8 rounded-[2px] bg-black/40 text-[#66C0F4] flex items-center justify-center shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180 bg-[#66C0F4]/20 text-[#66C0F4]' : ''}`}>
                       <ChevronDown className="w-5 h-5" />
                     </div>
                   </button>
@@ -683,7 +683,7 @@ export default function FaqPage({ onNavigate, userProfile }: FaqPageProps) {
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.2, ease: 'easeInOut' }}
                       >
-                        <div className="p-5 pt-0 border-t border-slate-100 bg-slate-50/50">
+                        <div className="p-5 pt-0 border-t border-white/10 bg-black/20 text-[#C6D4DF]">
                           {faq.answer}
                         </div>
                       </motion.div>
@@ -696,15 +696,15 @@ export default function FaqPage({ onNavigate, userProfile }: FaqPageProps) {
         )}
 
         {/* Bottom CTA Card */}
-        <div className="card-duo !bg-white p-8 sm:p-10 text-center space-y-4 max-w-3xl mx-auto border-2 border-[#1CB0F6]/30">
-          <div className="w-12 h-12 rounded-2xl bg-[#1CB0F6]/10 text-[#1CB0F6] flex items-center justify-center mx-auto">
+        <div className="bg-[#2F3138] border border-white/20 rounded-[4px] p-8 sm:p-10 text-center space-y-4 max-w-3xl mx-auto shadow-[0_6px_16px_rgba(0,0,0,0.6)] text-white">
+          <div className="w-12 h-12 rounded-[2px] bg-[#66C0F4]/15 text-[#66C0F4] flex items-center justify-center mx-auto border border-[#66C0F4]/30">
             <MessageCircle className="w-6 h-6" />
           </div>
           <div className="space-y-1">
-            <h3 className="text-xl sm:text-2xl font-bold text-[#3C3C3C] font-display uppercase">
+            <h3 className="text-xl sm:text-2xl font-bold text-white uppercase">
               Masih Memiliki Pertanyaan Lain?
             </h3>
-            <p className="text-xs sm:text-sm text-[#4B4B4B] font-medium leading-relaxed max-w-md mx-auto">
+            <p className="text-xs sm:text-sm text-[#C6D4DF] font-normal leading-relaxed max-w-md mx-auto">
               Tim KAVIO EDU siap memberikan penjelasan lebih detail dan membantu memberikan rekomendasi paket belajar yang tepat.
             </p>
           </div>
@@ -713,14 +713,14 @@ export default function FaqPage({ onNavigate, userProfile }: FaqPageProps) {
               href="https://wa.me/6282111500190"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-duo-green h-[48px] px-6 text-xs font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center"
+              className="h-[44px] px-6 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-xs font-bold uppercase tracking-wider flex items-center gap-2 cursor-pointer w-full sm:w-auto justify-center rounded-[2px] transition-all"
             >
               <MessageCircle className="w-4 h-4" />
               <span>Konsultasi Gratis via WA</span>
             </a>
             <button
               onClick={() => onNavigate('/register')}
-              className="btn-duo-blue h-[48px] px-6 text-xs font-bold uppercase tracking-wider cursor-pointer w-full sm:w-auto"
+              className="h-[44px] px-6 bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] text-xs font-bold uppercase tracking-wider cursor-pointer w-full sm:w-auto rounded-[2px] transition-all"
             >
               Daftar Sekarang
             </button>
@@ -729,15 +729,15 @@ export default function FaqPage({ onNavigate, userProfile }: FaqPageProps) {
       </main>
 
       {/* Footer */}
-      <footer className="py-8 bg-white text-[#3C3C3C] text-xs font-bold border-t border-[#E5E5E5] mt-12">
+      <footer className="py-8 bg-[#171A21] text-white text-xs font-bold border-t border-white/10 mt-12">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center cursor-pointer" onClick={() => onNavigate('/')}>
             <Logo className="h-7 w-auto" />
           </div>
-          <p className="text-[#4B4B4B] font-medium">&copy; {new Date().getFullYear()} KAVIO Edu. Pusat Bantuan & FAQ.</p>
+          <p className="text-[#C6D4DF] font-medium">&copy; {new Date().getFullYear()} KAVIO Edu. Pusat Bantuan & FAQ.</p>
           <button
             onClick={() => onNavigate('/')}
-            className="hover:text-[#1CB0F6] transition-colors cursor-pointer uppercase font-bold"
+            className="hover:text-[#66C0F4] transition-colors cursor-pointer uppercase font-bold text-white"
           >
             Halaman Utama
           </button>

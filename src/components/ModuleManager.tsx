@@ -227,30 +227,27 @@ function MarkdownRenderer({ content }: { content: string }) {
 
       // Headers
       if (trimmed.startsWith('# ')) {
-        elements.push(<h1 key={idx} className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white border-b-2 border-gray-100 dark:border-slate-700/50 pb-2 mt-6 mb-3 uppercase font-display">{formatText(trimmed.substring(2))}</h1>);
+        elements.push(<h1 key={idx} className="text-xl sm:text-2xl font-bold text-white border-b border-white/10 pb-2 mt-6 mb-3 uppercase tracking-tight">{formatText(trimmed.substring(2))}</h1>);
         continue;
       }
       if (trimmed.startsWith('## ')) {
-        elements.push(<h2 key={idx} className="text-base sm:text-lg font-black text-indigo-700 mt-5 mb-2.5 uppercase">{formatText(trimmed.substring(3))}</h2>);
+        elements.push(<h2 key={idx} className="text-base sm:text-lg font-bold text-[#66C0F4] mt-5 mb-2.5 uppercase tracking-tight">{formatText(trimmed.substring(3))}</h2>);
         continue;
       }
       if (trimmed.startsWith('### ')) {
-        elements.push(<h3 key={idx} className="text-xs sm:text-sm font-bold text-gray-800 dark:text-slate-100 mt-4 mb-2">{formatText(trimmed.substring(4))}</h3>);
+        elements.push(<h3 key={idx} className="text-xs sm:text-sm font-bold text-[#A1CD44] mt-4 mb-2 uppercase tracking-wider">{formatText(trimmed.substring(4))}</h3>);
         continue;
       }
       if (trimmed.startsWith('#### ')) {
-        elements.push(<h4 key={idx} className="text-xs font-bold text-gray-700 dark:text-slate-200 mt-3 mb-1.5">{formatText(trimmed.substring(5))}</h4>);
+        elements.push(<h4 key={idx} className="text-xs font-bold text-white mt-3 mb-1.5 uppercase">{formatText(trimmed.substring(5))}</h4>);
         continue;
       }
       
       // Blockquotes / Callouts
       if (trimmed.startsWith('> ')) {
         const textOnly = trimmed.replace('> ', '');
-        const isCallout = textOnly.includes('**') || textOnly.length > 50;
         elements.push(
-          <blockquote key={idx} className={`my-4 pl-4 py-3.5 border-l-4 border-indigo-500 rounded-r-2xl text-xs leading-relaxed italic ${
-            isCallout ? 'bg-indigo-50 dark:bg-indigo-900/30/50 text-indigo-950 font-medium' : 'bg-gray-50 dark:bg-slate-900 text-gray-600 dark:text-slate-300'
-          }`}>
+          <blockquote key={idx} className="my-4 pl-4 py-3 border-l-2 border-[#66C0F4] bg-black/40 text-[#C6D4DF] text-xs leading-relaxed italic rounded-[2px]">
             {formatText(textOnly)}
           </blockquote>
         );
@@ -260,7 +257,7 @@ function MarkdownRenderer({ content }: { content: string }) {
       // Bullet lists
       if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
         elements.push(
-          <ul key={idx} className="list-disc list-inside pl-4 my-1.5 text-xs text-gray-600 dark:text-slate-300 leading-relaxed">
+          <ul key={idx} className="list-disc list-inside pl-4 my-2 text-xs text-[#C6D4DF] leading-relaxed space-y-1">
             <li>{formatText(trimmed.substring(2))}</li>
           </ul>
         );
@@ -270,7 +267,7 @@ function MarkdownRenderer({ content }: { content: string }) {
       // Number lists
       if (/^\d+\.\s/.test(trimmed)) {
         elements.push(
-          <motion.ol key={idx} className="list-decimal list-inside pl-4 my-1.5 text-xs text-gray-600 dark:text-slate-300 leading-relaxed">
+          <motion.ol key={idx} className="list-decimal list-inside pl-4 my-2 text-xs text-[#C6D4DF] leading-relaxed space-y-1">
             <li>{formatText(trimmed.replace(/^\d+\.\s/, ''))}</li>
           </motion.ol>
         );
@@ -279,7 +276,7 @@ function MarkdownRenderer({ content }: { content: string }) {
 
       // Horizontal rule
       if (trimmed === '---') {
-        elements.push(<hr key={idx} className="my-6 border-t-2 border-dashed border-gray-200 dark:border-slate-700" />);
+        elements.push(<hr key={idx} className="my-6 border-t border-white/10" />);
         continue;
       }
       
@@ -291,7 +288,7 @@ function MarkdownRenderer({ content }: { content: string }) {
 
       // Default paragraph
       elements.push(
-        <p key={idx} className="text-xs text-gray-600 dark:text-slate-300 leading-relaxed my-2">
+        <p key={idx} className="text-xs text-[#C6D4DF] leading-relaxed my-2.5">
           {formatText(trimmed)}
         </p>
       );
@@ -652,47 +649,47 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
 
   if (isModuleModalOpen) {
     return (
-      <div className="p-4 sm:p-6 lg:p-8 w-full max-w-4xl mx-auto space-y-6 animate-fadeIn" id="module-editor-page">
+      <div className="p-4 sm:p-6 lg:p-8 w-full max-w-4xl mx-auto space-y-6 animate-fadeIn text-white font-sans" id="module-editor-page">
         {/* Navigation & Header */}
-        <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-700/50 pb-4 shrink-0">
+        <div className="flex items-center justify-between border-b border-white/10 pb-4 shrink-0">
           <button
             type="button"
             onClick={() => setIsModuleModalOpen(false)}
-            className="flex items-center gap-1.5 text-xs font-black text-gray-500 dark:text-slate-400 hover:text-indigo-600 dark:text-indigo-400 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 text-xs font-bold text-[#C6D4DF] hover:text-[#66C0F4] transition-colors cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Kembali ke Kelola Modul</span>
           </button>
           
-          <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
-            {isEditMode ? 'Mode Edit' : 'Modul Baru'}
+          <span className="text-[10px] font-bold text-[#8A8A8A] uppercase tracking-widest">
+            {isEditMode ? 'MODE EDIT' : 'MODUL BARU'}
           </span>
         </div>
 
         <div className="space-y-1">
-          <h1 className="text-xl sm:text-2xl font-display font-black text-gray-900 dark:text-white leading-tight">
+          <h1 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-tight leading-tight">
             {isEditMode ? 'EDIT MODUL BELAJAR' : 'BUAT MODUL BELAJAR BARU'}
           </h1>
-          <p className="text-xs text-gray-400 mt-0.5 font-medium">Tulis materi belajar dengan formatting terstruktur untuk siswa Anda.</p>
+          <p className="text-xs text-[#C6D4DF] mt-0.5">Tulis materi belajar dengan formatting terstruktur untuk siswa Anda.</p>
         </div>
 
-        <form onSubmit={handleSaveModule} className="space-y-5 bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 rounded-3xl p-6 sm:p-8 shadow-3xs flex flex-col h-[70vh]">
+        <form onSubmit={handleSaveModule} className="space-y-5 bg-[#2F3138] border border-white/10 rounded-[3px] p-6 sm:p-8 shadow-[0_4px_16px_rgba(0,0,0,0.6)] flex flex-col h-[70vh] text-white">
           {/* Meta Inputs row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs shrink-0">
             <div className="space-y-1">
-              <label className="block text-[10px] font-black text-gray-700 dark:text-slate-200 uppercase tracking-wider">Judul Modul</label>
+              <label className="block text-[10px] font-bold text-[#C6D4DF] uppercase tracking-wider">Judul Modul</label>
               <input
                 type="text"
                 required
                 value={moduleTitle}
                 onChange={(e) => setModuleTitle(e.target.value)}
                 placeholder="Contoh: UNIT 1 - MY HOME"
-                className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-3xs"
+                className="w-full px-4 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4]"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="block text-[10px] font-black text-gray-700 dark:text-slate-200 uppercase tracking-wider">Level Tingkatan</label>
+              <label className="block text-[10px] font-bold text-[#C6D4DF] uppercase tracking-wider">Level Tingkatan</label>
               <CustomDropdown
                 value={moduleLevel}
                 onChange={(val) => setModuleLevel(val as any)}
@@ -707,12 +704,12 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
           </div>
 
           {/* Sub Tab: Tulis Konten vs Pratinjau */}
-          <div className="flex bg-gray-100 dark:bg-slate-700 p-1 rounded-xl text-[10px] font-bold w-fit shrink-0">
+          <div className="flex bg-black/40 p-1 rounded-[2px] border border-white/10 text-[10px] font-bold w-fit shrink-0">
             <button
               type="button"
               onClick={() => setEditorMode('write')}
-              className={`px-4 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
-                editorMode === 'write' ? 'bg-white dark:bg-slate-800 text-indigo-700 shadow-3xs' : 'text-gray-500 dark:text-slate-400'
+              className={`px-4 py-1.5 rounded-[2px] transition-all cursor-pointer flex items-center gap-1 ${
+                editorMode === 'write' ? 'bg-[#66C0F4] text-[#171A21]' : 'text-[#C6D4DF] hover:text-white'
               }`}
             >
               <Pencil className="w-3.5 h-3.5" />
@@ -721,8 +718,8 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
             <button
               type="button"
               onClick={() => setEditorMode('preview')}
-              className={`px-4 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1 ${
-                editorMode === 'preview' ? 'bg-white dark:bg-slate-800 text-indigo-700 shadow-3xs' : 'text-gray-500 dark:text-slate-400'
+              className={`px-4 py-1.5 rounded-[2px] transition-all cursor-pointer flex items-center gap-1 ${
+                editorMode === 'preview' ? 'bg-[#66C0F4] text-[#171A21]' : 'text-[#C6D4DF] hover:text-white'
               }`}
             >
               <Eye className="w-3.5 h-3.5" />
@@ -735,18 +732,18 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
             {editorMode === 'write' ? (
               <>
                 <div className="flex items-center justify-between shrink-0">
-                  <label className="block text-[10px] font-black text-gray-700 dark:text-slate-200 uppercase tracking-wider">Konten Materi (Markdown)</label>
+                  <label className="block text-[10px] font-bold text-[#C6D4DF] uppercase tracking-wider">Konten Materi (Markdown)</label>
                   
                   {/* Helper toolbar */}
-                  <div className="flex items-center gap-1 bg-gray-150 p-1 rounded-xl shrink-0">
-                    <button type="button" onClick={() => insertFormat('h1')} className="p-1.5 text-gray-500 dark:text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-white dark:bg-slate-800 rounded-lg transition-colors cursor-pointer" title="Header 1"><Heading1 className="w-3.5 h-3.5" /></button>
-                    <button type="button" onClick={() => insertFormat('h2')} className="p-1.5 text-gray-500 dark:text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-white dark:bg-slate-800 rounded-lg transition-colors cursor-pointer" title="Header 2"><Heading2 className="w-3.5 h-3.5" /></button>
-                    <button type="button" onClick={() => insertFormat('h3')} className="p-1.5 text-gray-500 dark:text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-white dark:bg-slate-800 rounded-lg transition-colors cursor-pointer" title="Header 3"><Heading3 className="w-3.5 h-3.5" /></button>
-                    <button type="button" onClick={() => insertFormat('h4')} className="p-1.5 text-gray-500 dark:text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-white dark:bg-slate-800 rounded-lg transition-colors cursor-pointer" title="Header 4"><Heading4 className="w-3.5 h-3.5" /></button>
-                    <div className="h-4 w-[1px] bg-gray-300 mx-0.5" />
-                    <button type="button" onClick={() => insertFormat('quote')} className="p-1.5 text-gray-500 dark:text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-white dark:bg-slate-800 rounded-lg transition-colors cursor-pointer" title="Quotes / Callouts"><Quote className="w-3.5 h-3.5" /></button>
-                    <button type="button" onClick={() => insertFormat('list')} className="p-1.5 text-gray-500 dark:text-slate-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-white dark:bg-slate-800 rounded-lg transition-colors cursor-pointer" title="Bullet list"><List className="w-3.5 h-3.5" /></button>
-                    <button type="button" onClick={() => insertFormat('bold')} title="Teks Tebal" className="text-[10px] font-black w-6.5 h-6.5 flex items-center justify-center hover:bg-white dark:bg-slate-800 hover:text-indigo-600 dark:text-indigo-400 rounded-lg transition-colors cursor-pointer">B</button>
+                  <div className="flex items-center gap-1 bg-black/40 p-1 rounded-[2px] border border-white/10 shrink-0">
+                    <button type="button" onClick={() => insertFormat('h1')} className="p-1.5 text-[#C6D4DF] hover:text-[#66C0F4] hover:bg-white/10 rounded-[2px] transition-colors cursor-pointer" title="Header 1"><Heading1 className="w-3.5 h-3.5" /></button>
+                    <button type="button" onClick={() => insertFormat('h2')} className="p-1.5 text-[#C6D4DF] hover:text-[#66C0F4] hover:bg-white/10 rounded-[2px] transition-colors cursor-pointer" title="Header 2"><Heading2 className="w-3.5 h-3.5" /></button>
+                    <button type="button" onClick={() => insertFormat('h3')} className="p-1.5 text-[#C6D4DF] hover:text-[#66C0F4] hover:bg-white/10 rounded-[2px] transition-colors cursor-pointer" title="Header 3"><Heading3 className="w-3.5 h-3.5" /></button>
+                    <button type="button" onClick={() => insertFormat('h4')} className="p-1.5 text-[#C6D4DF] hover:text-[#66C0F4] hover:bg-white/10 rounded-[2px] transition-colors cursor-pointer" title="Header 4"><Heading4 className="w-3.5 h-3.5" /></button>
+                    <div className="h-4 w-[1px] bg-white/10 mx-0.5" />
+                    <button type="button" onClick={() => insertFormat('quote')} className="p-1.5 text-[#C6D4DF] hover:text-[#66C0F4] hover:bg-white/10 rounded-[2px] transition-colors cursor-pointer" title="Quotes / Callouts"><Quote className="w-3.5 h-3.5" /></button>
+                    <button type="button" onClick={() => insertFormat('list')} className="p-1.5 text-[#C6D4DF] hover:text-[#66C0F4] hover:bg-white/10 rounded-[2px] transition-colors cursor-pointer" title="Bullet list"><List className="w-3.5 h-3.5" /></button>
+                    <button type="button" onClick={() => insertFormat('bold')} title="Teks Tebal" className="text-[10px] font-bold w-6.5 h-6.5 flex items-center justify-center hover:bg-white/10 text-[#C6D4DF] hover:text-[#66C0F4] rounded-[2px] transition-colors cursor-pointer">B</button>
                   </div>
                 </div>
 
@@ -756,13 +753,13 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
                   value={moduleContent}
                   onChange={(e) => setModuleContent(e.target.value)}
                   placeholder="# **UNIT 1: ALL ABOUT ME**&#10;&#10;## **Materi Utama**&#10;Tulis materi detail di sini. Gunakan tombol editor di atas untuk membantu formatting cepat..."
-                  className="flex-1 w-full p-4 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-3xs font-mono resize-none overflow-y-auto"
+                  className="flex-1 w-full p-4 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4] font-mono resize-none overflow-y-auto"
                 />
               </>
             ) : (
               <>
-                <label className="block text-[10px] font-black text-gray-700 dark:text-slate-200 uppercase tracking-wider shrink-0">Hasil Pratinjau Tampilan Siswa</label>
-                <div className="flex-1 w-full p-6 sm:p-8 bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-700/50 rounded-2xl overflow-y-auto select-text shadow-3xs custom-scrollbar text-xs leading-relaxed font-sans prose max-w-none">
+                <label className="block text-[10px] font-bold text-[#C6D4DF] uppercase tracking-wider shrink-0">Hasil Pratinjau Tampilan Siswa</label>
+                <div className="flex-1 w-full p-6 sm:p-8 bg-black/40 border border-white/10 rounded-[2px] overflow-y-auto select-text shadow-inner custom-scrollbar text-xs leading-relaxed font-sans prose prose-invert max-w-none text-white">
                   <MarkdownRenderer content={moduleContent || '*Materi masih kosong. Tulis sesuatu untuk melihat hasil preview.*'} />
                 </div>
               </>
@@ -770,34 +767,34 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
           </div>
 
           {/* Footer switches & actions */}
-          <div className="flex items-center justify-between pt-3 border-t border-gray-50 shrink-0 text-xs">
+          <div className="flex items-center justify-between pt-3 border-t border-white/10 shrink-0 text-xs">
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setIsModulePublished(!isModulePublished)}
                 className={`w-9 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none shrink-0 ${
-                  isModulePublished ? 'bg-indigo-600' : 'bg-gray-250'
+                  isModulePublished ? 'bg-[#A1CD44]' : 'bg-black/60 border border-white/10'
                 }`}
               >
-                <div className={`w-4 h-4 rounded-full bg-white dark:bg-slate-800 transition-transform duration-200 ${
+                <div className={`w-4 h-4 rounded-full bg-[#171A21] transition-transform duration-200 ${
                   isModulePublished ? 'translate-x-4' : 'translate-x-0'
                 }`} />
               </button>
-              <span className="text-[10px] font-bold text-gray-600 dark:text-slate-300">Publikasikan Modul Langsung ke Siswa</span>
+              <span className="text-[10px] font-bold text-[#C6D4DF]">Publikasikan Modul Langsung ke Siswa</span>
             </div>
 
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={() => setIsModuleModalOpen(false)}
-                className="btn-duo-slate px-4 py-2.5 font-black"
+                className="h-[40px] px-4 bg-transparent hover:bg-white/10 text-white border border-white/20 text-xs font-bold uppercase rounded-[2px] cursor-pointer transition-all"
               >
                 Batal
               </button>
               <button
                 type="submit"
                 disabled={moduleFormLoading}
-                className="btn-duo-green px-5 py-2.5 font-black flex items-center gap-1.5 shadow-xs disabled:opacity-40"
+                className="h-[40px] px-5 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-xs font-bold uppercase rounded-[2px] flex items-center gap-1.5 cursor-pointer shadow-md disabled:opacity-40 transition-all"
               >
                 {moduleFormLoading && <Loader2 className="w-4 h-4 animate-spin" />}
                 <span>SIMPAN MODUL</span>
@@ -810,25 +807,25 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
   }
 
   return (
-    <div className="space-y-8 p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto" id="module-manager-page">
+    <div className="space-y-8 p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto text-white font-sans" id="module-manager-page">
       
       {/* Alert Banner */}
       <AnimatePresence>
         {alert && (
-          <div className={`fixed bottom-6 right-6 p-4 rounded-2xl border shadow-xl flex items-center gap-2.5 z-50 animate-fadeIn ${
-            alert.type === 'success' ? 'bg-emerald-50 dark:bg-emerald-900/30 border-emerald-200 text-emerald-800' : 'bg-red-50 border-red-200 text-red-800'
+          <div className={`fixed bottom-6 right-6 p-4 rounded-[2px] border shadow-[0_4px_16px_rgba(0,0,0,0.6)] flex items-center gap-2.5 z-50 animate-fadeIn ${
+            alert.type === 'success' ? 'bg-[#2F3138] border-[#A1CD44] text-[#A1CD44]' : 'bg-[#2F3138] border-[#FF4B4B] text-[#FF4B4B]'
           }`}>
-            {alert.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /> : <AlertCircle className="w-5 h-5 text-red-600" />}
+            {alert.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-[#A1CD44]" /> : <AlertCircle className="w-5 h-5 text-[#FF4B4B]" />}
             <span className="text-xs font-bold">{alert.msg}</span>
           </div>
         )}
       </AnimatePresence>
 
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-100 dark:border-slate-700/50 pb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-6">
         <div>
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Kelola Pembelajaran</span>
-          <h1 className="text-xl sm:text-2xl font-display font-bold text-gray-900 dark:text-white tracking-tight mt-0.5">
+          <span className="text-[11px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Kelola Pembelajaran</span>
+          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight mt-0.5">
             Pustaka & Akses Modul
           </h1>
         </div>
@@ -837,9 +834,9 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
         <div className="flex items-center gap-2.5 flex-wrap">
           <button
             onClick={handleSeedModules}
-            className="px-4 py-2.5 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 text-indigo-700 rounded-xl text-xs font-black flex items-center justify-center gap-2 cursor-pointer hover:bg-indigo-100 transition-colors"
+            className="bg-transparent hover:bg-[#66C0F4]/15 text-[#66C0F4] border border-[#66C0F4] px-4 py-2 rounded-[2px] text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-colors min-h-[38px]"
           >
-            <Sparkles className="w-4 h-4" />
+            <Sparkles className="w-4 h-4 text-[#66C0F4]" />
             <span>SEED MODUL BAWAAN ({defaultModules.length})</span>
           </button>
           
@@ -851,8 +848,7 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
               setKeyUsageLimit('');
               setIsKeyModalOpen(true);
             }}
-            className="btn-duo-green px-5 py-3 text-xs font-black flex items-center justify-center gap-2 shadow-sm cursor-pointer"
-            style={{ minHeight: '44px' }}
+            className="bg-[#66C0F4] hover:bg-[#5DADE2] active:bg-[#52A4CC] text-white px-5 py-2.5 text-[13px] font-bold rounded-[2px] flex items-center justify-center gap-2 shadow-[0_2px_6px_rgba(0,0,0,0.3)] cursor-pointer min-h-[44px]"
           >
             <Plus className="w-4.5 h-4.5" />
             <span>{activeSubTab === 'modules' ? 'BUAT MODUL BARU' : 'BUAT KUNCI VOUCHER'}</span>
@@ -861,11 +857,11 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
       </div>
 
       {/* Tab Switch Selector (Modules vs Access Keys) */}
-      <div className="flex bg-gray-100 dark:bg-slate-700/80 p-1 rounded-2xl text-xs font-bold self-start w-fit">
+      <div className="flex bg-[#2F3138] p-1 rounded-[2px] border border-white/10 text-xs font-normal self-start w-fit">
         <button
           onClick={() => setActiveSubTab('modules')}
-          className={`px-5 py-2.5 rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
-            activeSubTab === 'modules' ? 'bg-white dark:bg-slate-800 text-indigo-700 shadow-xs' : 'text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:text-slate-200'
+          className={`px-5 py-2 rounded-[2px] transition-all cursor-pointer flex items-center gap-2 ${
+            activeSubTab === 'modules' ? 'bg-[#66C0F4] text-[#171A21] font-bold shadow-[0_2px_6px_rgba(0,0,0,0.3)]' : 'text-[#C6D4DF] hover:text-white'
           }`}
         >
           <BookOpen className="w-4 h-4" />
@@ -873,8 +869,8 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
         </button>
         <button
           onClick={() => setActiveSubTab('keys')}
-          className={`px-5 py-2.5 rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
-            activeSubTab === 'keys' ? 'bg-white dark:bg-slate-800 text-indigo-700 shadow-xs' : 'text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:text-slate-200'
+          className={`px-5 py-2 rounded-[2px] transition-all cursor-pointer flex items-center gap-2 ${
+            activeSubTab === 'keys' ? 'bg-[#66C0F4] text-[#171A21] font-bold shadow-[0_2px_6px_rgba(0,0,0,0.3)]' : 'text-[#C6D4DF] hover:text-white'
           }`}
         >
           <Key className="w-4 h-4" />
@@ -890,45 +886,45 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
             <div className="flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
               {/* Search */}
               <div className="relative flex-1 max-w-md">
-                <Search className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-[#848E94] absolute left-4 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   value={moduleSearch}
                   onChange={(e) => setModuleSearch(e.target.value)}
                   placeholder="Cari judul modul atau teks konten..."
-                  className="w-full pl-11 pr-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 shadow-3xs"
+                  className="bg-black/40 border border-white/15 text-white placeholder-[#8A8A8A] text-xs pl-11 pr-4 py-2.5 rounded-[2px] focus:outline-none focus:border-[#66C0F4] transition-all w-full"
                 />
               </div>
 
               {/* Level Filters */}
-              <div className="flex bg-gray-100 dark:bg-slate-700/85 p-1 rounded-xl text-xs font-bold w-fit self-start md:self-auto">
-                <button onClick={() => setLevelFilter('all')} className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${levelFilter === 'all' ? 'bg-white dark:bg-slate-800 text-gray-900 dark:text-white shadow-3xs' : 'text-gray-500 dark:text-slate-400'}`}>Semua Level</button>
-                <button onClick={() => setLevelFilter('elementary')} className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${levelFilter === 'elementary' ? 'bg-white dark:bg-slate-800 text-amber-700 shadow-3xs' : 'text-gray-500 dark:text-slate-400'}`}>Elementary</button>
-                <button onClick={() => setLevelFilter('junior')} className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${levelFilter === 'junior' ? 'bg-white dark:bg-slate-800 text-purple-700 shadow-3xs' : 'text-gray-500 dark:text-slate-400'}`}>Junior</button>
-                <button onClick={() => setLevelFilter('senior')} className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${levelFilter === 'senior' ? 'bg-white dark:bg-slate-800 text-emerald-700 shadow-3xs' : 'text-gray-500 dark:text-slate-400'}`}>Senior</button>
+              <div className="flex bg-[#2F3138] p-1 rounded-[2px] border border-white/10 text-xs font-normal w-fit self-start md:self-auto">
+                <button onClick={() => setLevelFilter('all')} className={`px-3 py-1 rounded-[2px] transition-all cursor-pointer ${levelFilter === 'all' ? 'bg-[#66C0F4] text-[#171A21] font-bold' : 'text-[#C6D4DF] hover:text-white'}`}>Semua Level</button>
+                <button onClick={() => setLevelFilter('elementary')} className={`px-3 py-1 rounded-[2px] transition-all cursor-pointer ${levelFilter === 'elementary' ? 'bg-[#66C0F4] text-[#171A21] font-bold' : 'text-[#C6D4DF] hover:text-white'}`}>Elementary</button>
+                <button onClick={() => setLevelFilter('junior')} className={`px-3 py-1 rounded-[2px] transition-all cursor-pointer ${levelFilter === 'junior' ? 'bg-[#66C0F4] text-[#171A21] font-bold' : 'text-[#C6D4DF] hover:text-white'}`}>Junior</button>
+                <button onClick={() => setLevelFilter('senior')} className={`px-3 py-1 rounded-[2px] transition-all cursor-pointer ${levelFilter === 'senior' ? 'bg-[#66C0F4] text-[#171A21] font-bold' : 'text-[#C6D4DF] hover:text-white'}`}>Senior</button>
               </div>
             </div>
 
             {/* Additional Status Filter & Sorting Row */}
-            <div className="flex flex-wrap items-center gap-4 text-xs font-bold text-gray-500 dark:text-slate-400">
+            <div className="flex flex-wrap items-center gap-4 text-xs font-normal text-[#C6D4DF]">
               {/* Status Filter */}
               <div className="flex items-center gap-2">
-                <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Status:</span>
-                <div className="flex bg-gray-100 dark:bg-slate-700 p-0.5 rounded-lg">
-                  <button type="button" onClick={() => setStatusFilter('all')} className={`px-2.5 py-1 rounded-md text-[10px] transition-all cursor-pointer ${statusFilter === 'all' ? 'bg-white dark:bg-slate-800 text-gray-800 dark:text-slate-100 shadow-3xs' : 'hover:text-gray-800 dark:text-slate-100'}`}>Semua</button>
-                  <button type="button" onClick={() => setStatusFilter('published')} className={`px-2.5 py-1 rounded-md text-[10px] transition-all cursor-pointer ${statusFilter === 'published' ? 'bg-white dark:bg-slate-800 text-indigo-750 shadow-3xs' : 'hover:text-gray-800 dark:text-slate-100'}`}>Terbit</button>
-                  <button type="button" onClick={() => setStatusFilter('draft')} className={`px-2.5 py-1 rounded-md text-[10px] transition-all cursor-pointer ${statusFilter === 'draft' ? 'bg-white dark:bg-slate-800 text-amber-700 shadow-3xs' : 'hover:text-gray-800 dark:text-slate-100'}`}>Draf</button>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A8A8A]">Status:</span>
+                <div className="flex bg-black/40 border border-white/15 p-0.5 rounded-[2px]">
+                  <button type="button" onClick={() => setStatusFilter('all')} className={`px-2.5 py-1 rounded-[2px] text-[10px] transition-all cursor-pointer ${statusFilter === 'all' ? 'bg-[#66C0F4] text-[#171A21] font-bold' : 'hover:text-white'}`}>Semua</button>
+                  <button type="button" onClick={() => setStatusFilter('published')} className={`px-2.5 py-1 rounded-[2px] text-[10px] transition-all cursor-pointer ${statusFilter === 'published' ? 'bg-[#66C0F4] text-[#171A21] font-bold' : 'hover:text-white'}`}>Terbit</button>
+                  <button type="button" onClick={() => setStatusFilter('draft')} className={`px-2.5 py-1 rounded-[2px] text-[10px] transition-all cursor-pointer ${statusFilter === 'draft' ? 'bg-[#66C0F4] text-[#171A21] font-bold' : 'hover:text-white'}`}>Draf</button>
                 </div>
               </div>
 
               {/* Sorting Filter */}
               <div className="flex items-center gap-2 ml-0 sm:ml-auto">
-                <span className="text-[10px] font-black uppercase tracking-wider text-gray-400">Urutan:</span>
-                <div className="flex bg-gray-100 dark:bg-slate-700 p-0.5 rounded-lg">
-                  <button type="button" onClick={() => setModuleSortOrder('title-asc')} className={`px-2.5 py-1 rounded-md text-[10px] transition-all cursor-pointer ${moduleSortOrder === 'title-asc' ? 'bg-white dark:bg-slate-800 text-indigo-750 shadow-3xs' : 'hover:text-gray-800 dark:text-slate-100'}`}>A-Z</button>
-                  <button type="button" onClick={() => setModuleSortOrder('title-desc')} className={`px-2.5 py-1 rounded-md text-[10px] transition-all cursor-pointer ${moduleSortOrder === 'title-desc' ? 'bg-white dark:bg-slate-800 text-indigo-750 shadow-3xs' : 'hover:text-gray-800 dark:text-slate-100'}`}>Z-A</button>
-                  <button type="button" onClick={() => setModuleSortOrder('newest')} className={`px-2.5 py-1 rounded-md text-[10px] transition-all cursor-pointer ${moduleSortOrder === 'newest' ? 'bg-white dark:bg-slate-800 text-indigo-750 shadow-3xs' : 'hover:text-gray-800 dark:text-slate-100'}`}>Terbaru</button>
-                  <button type="button" onClick={() => setModuleSortOrder('oldest')} className={`px-2.5 py-1 rounded-md text-[10px] transition-all cursor-pointer ${moduleSortOrder === 'oldest' ? 'bg-white dark:bg-slate-800 text-indigo-750 shadow-3xs' : 'hover:text-gray-800 dark:text-slate-100'}`}>Terlama</button>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#8A8A8A]">Urutan:</span>
+                <div className="flex bg-black/40 border border-white/15 p-0.5 rounded-[2px]">
+                  <button type="button" onClick={() => setModuleSortOrder('title-asc')} className={`px-2.5 py-1 rounded-[2px] text-[10px] transition-all cursor-pointer ${moduleSortOrder === 'title-asc' ? 'bg-[#66C0F4] text-[#171A21] font-bold' : 'hover:text-white'}`}>A-Z</button>
+                  <button type="button" onClick={() => setModuleSortOrder('title-desc')} className={`px-2.5 py-1 rounded-[2px] text-[10px] transition-all cursor-pointer ${moduleSortOrder === 'title-desc' ? 'bg-[#66C0F4] text-[#171A21] font-bold' : 'hover:text-white'}`}>Z-A</button>
+                  <button type="button" onClick={() => setModuleSortOrder('newest')} className={`px-2.5 py-1 rounded-[2px] text-[10px] transition-all cursor-pointer ${moduleSortOrder === 'newest' ? 'bg-[#66C0F4] text-[#171A21] font-bold' : 'hover:text-white'}`}>Terbaru</button>
+                  <button type="button" onClick={() => setModuleSortOrder('oldest')} className={`px-2.5 py-1 rounded-[2px] text-[10px] transition-all cursor-pointer ${moduleSortOrder === 'oldest' ? 'bg-[#66C0F4] text-[#171A21] font-bold' : 'hover:text-white'}`}>Terlama</button>
                 </div>
               </div>
             </div>
@@ -936,53 +932,53 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
 
           {/* Grid Modules */}
           {loading.modules ? (
-            <div className="flex items-center justify-center p-12"><Loader2 className="w-8 h-8 text-indigo-600 dark:text-indigo-400 animate-spin" /></div>
+            <div className="flex items-center justify-center p-12"><Loader2 className="w-8 h-8 text-[#66C0F4] animate-spin" /></div>
           ) : filteredModules.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredModules.map((m) => (
-                <div key={m.id} className="card-duo p-5 flex flex-col justify-between space-y-4 hover:border-indigo-200 transition-colors">
+                <div key={m.id} className="bg-[#2F3138] border border-white/10 hover:border-[#66C0F4]/40 rounded-[3px] p-5 flex flex-col justify-between space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.5)] transition-all cursor-pointer">
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-black uppercase border ${
-                        m.level === 'elementary' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 border-amber-200' :
-                        m.level === 'junior' ? 'bg-purple-50 text-purple-700 border-purple-200' :
-                        'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 border-emerald-200'
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[10px] font-bold uppercase ${
+                        m.level === 'elementary' ? 'bg-[#A1CD44] text-[#171A21]' :
+                        m.level === 'junior' ? 'bg-[#66C0F4] text-[#171A21]' :
+                        'bg-[#B9A074] text-[#171A21]'
                       }`}>
                         {m.level}
                       </span>
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-md ${m.isPublished ? 'bg-green-50 text-green-700' : 'bg-gray-150 text-gray-500 dark:text-slate-400'}`}>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-[2px] ${m.isPublished ? 'bg-[#A1CD44]/20 border border-[#A1CD44] text-[#A1CD44]' : 'bg-white/10 text-[#8A8A8A]'}`}>
                         {m.isPublished ? 'Publish' : 'Draft'}
                       </span>
                     </div>
-                    <h3 className="text-sm font-bold text-gray-900 dark:text-white truncate">{m.title}</h3>
-                    <p className="text-[11px] text-gray-400 line-clamp-3 leading-relaxed">
+                    <h3 className="text-sm font-bold text-[#FFFFFF] truncate">{m.title}</h3>
+                    <p className="text-[11px] text-[#C6D4DF] line-clamp-3 leading-relaxed">
                       {m.content.replace(/[#>*-]/g, '').substring(0, 120)}...
                     </p>
                   </div>
 
-                  <div className="flex gap-2 pt-3 border-t border-gray-50">
+                  <div className="flex gap-2 pt-3 border-t border-white/10">
                     <button
                       onClick={() => handleOpenEditModule(m)}
-                      className="flex-1 btn-duo-blue py-2 text-xs font-black flex items-center justify-center gap-1 cursor-pointer"
+                      className="flex-1 bg-[#66C0F4] hover:bg-[#5DADE2] text-white py-2 text-xs font-normal rounded-[2px] flex items-center justify-center gap-1 cursor-pointer min-h-[36px]"
                     >
                       <Pencil className="w-3.5 h-3.5" />
                       <span>EDIT</span>
                     </button>
                     <button
                       onClick={() => handleDeleteModule(m.id, m.title)}
-                      className="p-2 text-red-500 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-xl transition-all cursor-pointer"
+                      className="p-2 text-[#FF4B4B] hover:bg-[#FF4B4B]/20 border border-white/10 rounded-[2px] transition-all cursor-pointer"
                       title="Hapus Modul"
                     >
-                      <Trash2 className="w-4.5 h-4.5" />
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 rounded-3xl p-12 text-center">
-              <BookOpen className="w-10 h-10 text-gray-300 mx-auto" />
-              <p className="text-xs text-gray-400 mt-3">Tidak ada modul belajar yang ditemukan.</p>
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-12 text-center">
+              <BookOpen className="w-10 h-10 text-[#848E94] mx-auto" />
+              <p className="text-xs text-[#C6D4DF] mt-3">Tidak ada modul belajar yang ditemukan.</p>
             </div>
           )}
         </div>

@@ -43,13 +43,13 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
   return (
     <>
       {/* Mobile Header */}
-      <header className="lg:hidden h-14 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700/50 px-4 flex items-center justify-between sticky top-0 z-40">
+      <header className="lg:hidden h-14 bg-[#171A21] border-b border-white/10 px-4 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-2 min-w-0">
-          <Logo className="h-5 max-w-[130px] w-auto text-indigo-600 dark:text-indigo-400 shrink-0" />
+          <Logo className="h-5 max-w-[130px] w-auto text-[#66C0F4] shrink-0" />
         </div>
         <button
           onClick={() => setIsOpen(true)}
-          className="p-2 -mr-2 text-gray-500 dark:text-slate-400 hover:text-black hover:bg-gray-50 dark:bg-slate-900 rounded-lg active:scale-95 transition-all"
+          className="p-2 -mr-2 text-[#C6D4DF] hover:text-white hover:bg-white/10 rounded-[2px] transition-all"
           aria-label="Open navigation menu"
           id="btn-mobile-menu"
         >
@@ -65,7 +65,7 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="fixed inset-0 bg-black/30 backdrop-blur-xs z-40 lg:hidden"
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 lg:hidden"
             id="sidebar-backdrop"
           />
         )}
@@ -84,7 +84,7 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
             setIsOpen(false);
           }
         }}
-        className={`fixed inset-y-0 left-0 w-[280px] bg-white dark:bg-slate-800 border-r border-gray-100 dark:border-slate-700/50 flex flex-col z-50 lg:sticky lg:translate-x-0 lg:opacity-100 transition-none`}
+        className={`fixed inset-y-0 left-0 w-[280px] bg-[#171A21] border-r border-white/10 flex flex-col z-50 lg:sticky lg:translate-x-0 lg:opacity-100 transition-none text-white`}
         id="app-sidebar"
         style={{
           // Override position-fixed on desktop so it embeds naturally in layout
@@ -92,16 +92,16 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
         }}
       >
         {/* Header inside sidebar */}
-        <div className="h-16 px-6 border-b border-gray-50 flex items-center justify-between">
+        <div className="h-16 px-6 border-b border-white/10 flex items-center justify-between">
           <div className="flex flex-col min-w-0">
-            <Logo className="h-5 max-w-[135px] w-auto text-indigo-600 dark:text-indigo-400 shrink-0" />
-            <span className="text-[10px] text-gray-400 font-sans tracking-widest uppercase mt-1 font-medium pl-0.5">
-              Design System
+            <Logo className="h-5 max-w-[135px] w-auto text-[#66C0F4] shrink-0" />
+            <span className="text-[10px] text-[#8A8A8A] tracking-widest uppercase mt-1 font-bold pl-0.5">
+              Steam Design System
             </span>
           </div>
           <button
             onClick={() => setIsOpen(false)}
-            className="lg:hidden p-1.5 text-gray-400 hover:text-black hover:bg-gray-50 dark:bg-slate-900 rounded-lg"
+            className="lg:hidden p-1.5 text-[#8A8A8A] hover:text-white hover:bg-white/10 rounded-[2px]"
             aria-label="Close menu"
             id="btn-close-sidebar"
           >
@@ -121,21 +121,21 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
                   setActiveTab(item.id);
                   setIsOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold transition-all duration-150 group cursor-pointer ${
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-[2px] text-xs font-bold transition-all duration-150 group cursor-pointer ${
                   isActive 
-                    ? 'bg-[#1CB0F6]/10 text-[#0284C7] dark:text-[#1CB0F6] font-extrabold' 
-                    : 'text-[#3C3C3C] dark:text-slate-400 hover:text-black hover:bg-slate-100/70 dark:bg-slate-900'
+                    ? 'bg-[#66C0F4]/15 text-[#66C0F4] border-l-2 border-[#66C0F4]' 
+                    : 'text-[#C6D4DF] hover:text-white hover:bg-white/5'
                 }`}
                 id={`menu-item-${item.id}`}
               >
                 <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${
-                  isActive ? 'text-[#0284C7] dark:text-[#1CB0F6]' : 'text-gray-400 group-hover:text-gray-600 dark:text-slate-300'
+                  isActive ? 'text-[#66C0F4]' : 'text-[#848E94] group-hover:text-white'
                 }`} />
                 <span>{item.label}</span>
                 {isActive && (
                   <motion.div 
                     layoutId="active-indicator" 
-                    className="ml-auto w-2 h-2 rounded-full bg-[#1CB0F6]"
+                    className="ml-auto w-1.5 h-1.5 rounded-full bg-[#66C0F4]"
                   />
                 )}
               </button>
@@ -144,12 +144,12 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
         </nav>
 
         {/* Footer info inside sidebar */}
-        <div className="p-4 border-t border-gray-50 bg-gray-50 dark:bg-slate-900/50">
+        <div className="p-4 border-t border-white/10 bg-[#2F3138]">
           <div className="flex items-center gap-2.5 px-2">
-            <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="w-2 h-2 rounded-full bg-[#A1CD44] animate-pulse" />
             <div className="flex flex-col">
-              <span className="text-[11px] font-semibold text-gray-700 dark:text-slate-200">Sandbox v1.2.0</span>
-              <span className="text-[9px] text-gray-400">Environment: Dev</span>
+              <span className="text-[11px] font-bold text-white">Sandbox v1.2.0</span>
+              <span className="text-[9px] text-[#8A8A8A]">Environment: Steam Dev</span>
             </div>
           </div>
         </div>

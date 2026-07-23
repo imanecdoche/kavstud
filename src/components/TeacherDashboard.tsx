@@ -480,7 +480,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col lg:flex-row font-sans" id="teacher-dashboard">
+    <div className="min-h-screen bg-[#171A21] text-[#FFFFFF] flex flex-col lg:flex-row font-sans" id="teacher-dashboard">
       <NavigationSidebar 
         role="teacher"
         activeTab={activeTab}
@@ -495,8 +495,8 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
       {/* Main Container Content */}
       <main className="flex-1 min-w-0 relative">
         {error && (
-          <div className="m-6 p-4 bg-red-50 border border-red-200/50 rounded-2xl text-xs text-red-600 flex items-center gap-2">
-            <AlertCircle className="w-4.5 h-4.5 text-red-500 shrink-0" />
+          <div className="m-6 p-4 bg-[#FF4B4B]/10 border border-[#FF4B4B]/30 rounded-[2px] text-xs text-[#FF4B4B] flex items-center gap-2">
+            <AlertCircle className="w-4.5 h-4.5 text-[#FF4B4B] shrink-0" />
             <p className="font-semibold">{error}</p>
           </div>
         )}
@@ -518,152 +518,107 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
               {/* TAB 1: MAIN DASHBOARD */}
               {activeTab === 'dashboard' && (
                 <>
-                  {/* 3D Animated Hero Section */}
-                  <div className="relative w-full rounded-[2.5rem] bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 dark:from-slate-800/80 dark:via-emerald-900/40 dark:to-slate-800/80 p-8 sm:p-10 md:p-12 mb-8 overflow-hidden shadow-sm border border-white dark:border-slate-700/50 flex flex-col md:flex-row items-center justify-between gap-8 stagger-item">
+                  {/* Steam Featured Hero Section */}
+                  <div className="relative w-full rounded-[4px] bg-gradient-to-br from-[#2F3138] to-[#171A21] p-8 sm:p-10 md:p-12 mb-8 overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.6)] border border-white/10 flex flex-col md:flex-row items-center justify-between gap-8">
                     
-                    {/* Abstract Background Shapes */}
-                    <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-teal-400/20 rounded-full blur-3xl pointer-events-none" />
-                    <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl pointer-events-none" />
+                    {/* Background Accents */}
+                    <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-[#66C0F4]/10 rounded-full blur-3xl pointer-events-none" />
 
                     {/* Left Content */}
                     <div className="relative z-10 flex-1 space-y-4">
                       <div className="flex items-center gap-3 mb-4">
-                        <motion.div 
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className="relative group cursor-default inline-flex items-center gap-2 px-4 py-1.5 rounded-2xl text-[11px] font-black uppercase tracking-widest border overflow-hidden backdrop-blur-md shadow-sm transition-all bg-emerald-100/80 text-emerald-900 border-emerald-300 hover:shadow-[0_0_20px_rgba(16,185,129,0.4)] dark:bg-emerald-900/40 dark:text-emerald-100 dark:border-emerald-700"
-                        >
-                          {/* Shine effect on hover */}
-                          <div className="absolute inset-0 -translate-x-[150%] group-hover:translate-x-[150%] bg-gradient-to-r from-transparent via-white/60 dark:via-white/20 to-transparent transition-transform duration-1000 ease-in-out" />
-                          <span className="relative z-10">PORTAL GURU</span>
-                          <motion.span
-                            className="relative z-10 text-lg drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] filter"
-                            animate={{ scale: [1, 1.2, 1], rotateZ: [0, 10, -10, 0] }}
-                            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                            style={{ display: 'inline-block', transformOrigin: 'center' }}
-                          >
-                            👨‍🏫
-                          </motion.span>
-                        </motion.div>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[2px] text-[11px] font-bold uppercase tracking-wider bg-[#A1CD44] text-[#171A21]">
+                          <span>PORTAL GURU</span>
+                        </div>
                       </div>
 
-                      <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 dark:text-white tracking-[-0.03em] text-balance leading-[1.1]">
+                      <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white tracking-tight leading-[1.1]">
                         Halo,{' '}
-                        {/* Animated Name Effect */}
-                        <motion.span
-                          className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500"
-                          style={{ backgroundSize: '200% auto' }}
-                          animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-                          transition={{ duration: 5, ease: 'linear', repeat: Infinity }}
-                        >
+                        <span className="text-[#66C0F4]">
                           {teacherProfile?.fullName?.split(' ')[0] || 'Guru'}!
-                        </motion.span>
+                        </span>
                       </h1>
                       
-                      <p className="text-sm md:text-base font-semibold text-gray-600 dark:text-slate-300 max-w-md">
+                      <p className="text-sm md:text-base font-normal text-[#C6D4DF] max-w-md">
                         Kelola tugas kelas, evaluasi jawaban siswa, dan pantau perkembangan belajar secara langsung.
                       </p>
 
                       <div className="pt-4">
                         <button
                           onClick={() => onNavigate('/teacher/assignments/create')}
-                          className="btn-duo-green px-8 py-4 text-sm font-black flex items-center justify-center gap-2.5 shrink-0 text-white w-full sm:w-auto"
+                          className="bg-[#66C0F4] hover:bg-[#5DADE2] active:bg-[#52A4CC] text-[#FFFFFF] text-[13px] font-normal px-6 py-3 rounded-[2px] min-h-[44px] transition-all cursor-pointer flex items-center justify-center gap-2 shadow-[0_2px_6px_rgba(0,0,0,0.3)] w-full sm:w-auto uppercase tracking-wider font-bold"
                         >
-                          <Plus className="w-5 h-5 text-white animate-pulse" />
+                          <Plus className="w-5 h-5 text-white" />
                           <span>BUAT TUGAS BARU</span>
                         </button>
                       </div>
                     </div>
 
-                    {/* Right Content: 3D Waving Mascot (Apple) */}
-                    <div className="relative z-10 w-48 h-48 sm:w-56 sm:h-56 md:w-64 md:h-64 shrink-0 flex items-center justify-center pointer-events-none text-[8rem] sm:text-[10rem] md:text-[12rem] filter drop-shadow-[0_20px_30px_rgba(0,0,0,0.3)]">
+                    {/* Right Content: Mascot */}
+                    <div className="relative z-10 w-40 h-40 sm:w-48 sm:h-48 md:w-56 md:h-56 shrink-0 flex items-center justify-center pointer-events-none">
                       <motion.div
                         animate={{
-                          y: [0, -15, 0], // Floating effect
-                          rotateZ: [0, -5, 10, -5, 0], // Waving effect
+                          y: [0, -10, 0],
                         }}
                         transition={{
                           duration: 4,
                           ease: 'easeInOut',
                           repeat: Infinity,
                         }}
+                        className="w-24 h-24 rounded-full bg-[#66C0F4]/20 border border-[#66C0F4]/40 flex items-center justify-center font-bold text-[#66C0F4]"
                       >
-                        🍎
+                        KAVIO
                       </motion.div>
                     </div>
                   </div>
 
-                  {/* Stats Block Grid */}
+                  {/* Steam Tile Stats Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {/* Widget 1: Siswa Terdaftar */}
-                    <div className="bg-purple-50 dark:bg-purple-900/20 border-2 border-purple-200 dark:border-purple-800 border-b-[6px] border-purple-400 dark:border-b-purple-600 p-5 rounded-3xl flex items-center justify-between shadow-sm relative overflow-hidden stagger-item">
+                    <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-5 flex items-center justify-between shadow-[0_2px_8px_rgba(0,0,0,0.5)] relative overflow-hidden">
                       <div className="space-y-1 z-10">
                         <div className="flex items-baseline gap-2">
-                          <span className="text-4xl font-display font-black text-gray-900 dark:text-white leading-none">
+                          <span className="text-3xl font-bold text-[#FFFFFF] leading-none">
                             {students.length}
                           </span>
-                          <span className="text-xs font-black text-purple-900 dark:text-purple-300 uppercase tracking-wider">SISWA</span>
+                          <span className="text-[11px] font-bold text-[#A1CD44] uppercase tracking-wider">SISWA</span>
                         </div>
-                        <p className="text-xs font-bold text-purple-800/80 dark:text-purple-400/80">Siswa Terdaftar Aktif</p>
+                        <p className="text-xs text-[#C6D4DF]">Siswa Terdaftar Aktif</p>
                       </div>
-                      <div className="relative w-14 h-14 bg-purple-400/30 rounded-2xl flex items-center justify-center shrink-0 z-10 overflow-hidden shadow-inner border border-purple-300/50">
-                        <div className="absolute w-12 h-12 bg-purple-500/40 rounded-full blur-md animate-pulse" />
-                        <motion.span 
-                          className="relative z-10 text-3xl drop-shadow-md filter"
-                          animate={{ y: [0, -5, 0], scale: [1, 1.1, 1] }}
-                          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                          style={{ display: 'inline-block' }}
-                        >
-                          👥
-                        </motion.span>
+                      <div className="w-12 h-12 bg-[#66C0F4]/10 rounded-[2px] border border-[#66C0F4]/30 flex items-center justify-center shrink-0 z-10">
+                        <Users className="w-6 h-6 text-[#66C0F4]" />
                       </div>
                     </div>
 
                     {/* Widget 2: Total Tugas */}
-                    <div className="bg-sky-50 dark:bg-sky-900/20 border-2 border-sky-200 dark:border-sky-800 border-b-[6px] border-sky-400 dark:border-b-sky-600 p-5 rounded-3xl flex items-center justify-between shadow-sm relative overflow-hidden stagger-item">
+                    <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-5 flex items-center justify-between shadow-[0_2px_8px_rgba(0,0,0,0.5)] relative overflow-hidden">
                       <div className="space-y-1 z-10">
                         <div className="flex items-baseline gap-2">
-                          <span className="text-4xl font-display font-black text-gray-900 dark:text-white leading-none">
+                          <span className="text-3xl font-bold text-[#FFFFFF] leading-none">
                             {assignments.length}
                           </span>
-                          <span className="text-xs font-black text-sky-900 dark:text-sky-300 uppercase tracking-wider">TUGAS</span>
+                          <span className="text-[11px] font-bold text-[#66C0F4] uppercase tracking-wider">TUGAS</span>
                         </div>
-                        <p className="text-xs font-bold text-sky-800/80 dark:text-sky-400/80">Total Tugas Diberikan</p>
+                        <p className="text-xs text-[#C6D4DF]">Total Tugas Diberikan</p>
                       </div>
-                      <div className="relative w-14 h-14 bg-sky-400/30 rounded-2xl flex items-center justify-center shrink-0 z-10 overflow-hidden shadow-inner border border-sky-300/50">
-                        <div className="absolute w-12 h-12 bg-sky-500/40 rounded-full blur-md animate-pulse" />
-                        <motion.span 
-                          className="relative z-10 text-3xl drop-shadow-md filter"
-                          animate={{ y: [0, -5, 0], scale: [1, 1.1, 1] }}
-                          transition={{ duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
-                          style={{ display: 'inline-block' }}
-                        >
-                          📋
-                        </motion.span>
+                      <div className="w-12 h-12 bg-[#66C0F4]/10 rounded-[2px] border border-[#66C0F4]/30 flex items-center justify-center shrink-0 z-10">
+                        <FileText className="w-6 h-6 text-[#66C0F4]" />
                       </div>
                     </div>
 
                     {/* Widget 3: Total Submisi */}
-                    <div className="bg-emerald-50 dark:bg-emerald-900/20 border-2 border-emerald-200 dark:border-emerald-800 border-b-[6px] border-emerald-400 dark:border-b-emerald-600 p-5 rounded-3xl flex items-center justify-between shadow-sm relative overflow-hidden stagger-item sm:col-span-2 lg:col-span-1">
+                    <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-5 flex items-center justify-between shadow-[0_2px_8px_rgba(0,0,0,0.5)] relative overflow-hidden sm:col-span-2 lg:col-span-1">
                       <div className="space-y-1 z-10">
                         <div className="flex items-baseline gap-2">
-                          <span className="text-4xl font-display font-black text-gray-900 dark:text-white leading-none">
+                          <span className="text-3xl font-bold text-[#FFFFFF] leading-none">
                             {submissions.length}
                           </span>
-                          <span className="text-xs font-black text-emerald-900 dark:text-emerald-300 uppercase tracking-wider">JAWABAN</span>
+                          <span className="text-[11px] font-bold text-[#A1CD44] uppercase tracking-wider">JAWABAN</span>
                         </div>
-                        <p className="text-xs font-bold text-emerald-800/80 dark:text-emerald-400/80">Total Submisi Masuk</p>
+                        <p className="text-xs text-[#C6D4DF]">Total Submisi Masuk</p>
                       </div>
-                      <div className="relative w-14 h-14 bg-emerald-400/30 rounded-2xl flex items-center justify-center shrink-0 z-10 overflow-hidden shadow-inner border border-emerald-300/50">
-                        <div className="absolute w-12 h-12 bg-emerald-500/40 rounded-full blur-md animate-pulse" />
-                        <motion.span 
-                          className="relative z-10 text-3xl drop-shadow-md filter"
-                          animate={{ y: [0, -5, 0], scale: [1, 1.1, 1], rotateZ: [0, 5, -5, 0] }}
-                          transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
-                          style={{ display: 'inline-block' }}
-                        >
-                          ✅
-                        </motion.span>
+                      <div className="w-12 h-12 bg-[#A1CD44]/10 rounded-[2px] border border-[#A1CD44]/30 flex items-center justify-center shrink-0 z-10">
+                        <CheckCircle2 className="w-6 h-6 text-[#A1CD44]" />
                       </div>
                     </div>
                   </div>
@@ -674,10 +629,10 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                     <div className="xl:col-span-2 space-y-8">
                       
                       {/* Section: Submisi Masuk Terbaru */}
-                      <div className="card-duo p-6 space-y-4">
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 uppercase tracking-wide">
-                            <CheckCircle2 className="w-4.5 h-4.5 text-emerald-500" />
+                      <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+                        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                          <h3 className="text-xs font-bold text-[#FFFFFF] flex items-center gap-2 uppercase tracking-wide">
+                            <CheckCircle2 className="w-4 h-4 text-[#A1CD44]" />
                             Submisi Masuk Terbaru
                           </h3>
                         </div>
@@ -689,50 +644,41 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                             description="Siswa belum mengirimkan jawaban untuk tugas yang diberikan."
                           />
                         ) : (
-                          <div className="divide-y divide-gray-50 max-h-96 overflow-y-auto pr-1 space-y-1">
+                          <div className="divide-y divide-white/5 max-h-96 overflow-y-auto pr-1 space-y-1">
                             {submissions.slice(0, 5).map((sub) => (
                               <div 
                                 key={sub.id}
                                 onClick={() => onNavigate(`/submission/${sub.id}`)}
-                                className="group relative py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-4 -mx-2 rounded-2xl transition-all duration-300 cursor-pointer overflow-hidden border border-transparent hover:border-indigo-200 dark:hover:border-indigo-500/30 hover:shadow-md bg-white dark:bg-transparent"
+                                className="group relative py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 px-3 rounded-[2px] transition-all cursor-pointer bg-white/5 hover:bg-white/10 border border-transparent hover:border-[#66C0F4]/30"
                               >
-                                {/* Animated Mesh Background on Hover */}
-                                <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                                  <motion.div 
-                                    className="absolute -inset-[100%] w-[300%] h-[300%] bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.06)_0%,transparent_50%),radial-gradient(circle_at_80%_20%,rgba(14,165,233,0.06)_0%,transparent_50%),radial-gradient(circle_at_20%_80%,rgba(236,72,153,0.06)_0%,transparent_50%)]"
-                                    animate={{ rotate: [0, 90, 180, 270, 360], scale: [1, 1.1, 1] }}
-                                    transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                                  />
-                                </div>
-
-                                <div className="min-w-0 relative z-10">
+                                <div className="min-w-0">
                                   <div className="flex items-center gap-2 flex-wrap mb-1">
-                                    <h4 className="text-xs font-bold text-gray-900 dark:text-white truncate">{sub.assignmentTitle}</h4>
-                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-xl text-[9px] font-black uppercase tracking-widest border backdrop-blur-md shadow-sm transition-all ${
+                                    <h4 className="text-xs font-bold text-[#FFFFFF] truncate">{sub.assignmentTitle}</h4>
+                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[10px] font-bold uppercase tracking-wider ${
                                       sub.status === 'graded' 
-                                        ? 'bg-green-100/80 text-green-800 border-green-300 dark:bg-green-900/40 dark:text-green-300' 
-                                        : 'bg-amber-100/80 text-amber-800 border-amber-300 animate-pulse dark:bg-amber-900/40 dark:text-amber-300'
+                                        ? 'bg-[#A1CD44] text-[#171A21]' 
+                                        : 'bg-[#FFA500]/20 border border-[#FFA500] text-[#FFA500]'
                                     }`}>
                                       {sub.status === 'graded' ? 'Sudah Dinilai' : 'Butuh Dinilai'}
                                     </span>
                                   </div>
-                                  <p className="text-[10px] text-gray-500 dark:text-slate-400 truncate">
-                                    Oleh: <span className="font-bold text-gray-700 dark:text-slate-200">{sub.studentName}</span>
+                                  <p className="text-[11px] text-[#C6D4DF] truncate">
+                                    Oleh: <span className="font-bold text-[#FFFFFF]">{sub.studentName}</span>
                                   </p>
                                 </div>
 
-                                <div className="flex items-center justify-between sm:justify-end gap-3.5 shrink-0 relative z-10">
+                                <div className="flex items-center justify-between sm:justify-end gap-3.5 shrink-0">
                                   {sub.score !== null ? (
                                     <div className="text-right">
-                                      <p className="text-[10px] text-gray-400">Total EXP</p>
-                                      <p className="text-xs font-bold text-amber-500 font-mono">{sub.score} EXP</p>
+                                      <p className="text-[10px] text-[#8A8A8A]">Total EXP</p>
+                                      <p className="text-xs font-bold text-[#66C0F4] font-mono">{sub.score} EXP</p>
                                     </div>
                                   ) : (
-                                    <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-black bg-indigo-50/80 backdrop-blur-sm border border-indigo-200 shadow-sm dark:bg-indigo-900/40 dark:border-indigo-800 px-3 py-1.5 rounded-xl uppercase tracking-wider">
-                                      Beri EXP Sekarang
+                                    <span className="text-[11px] text-[#66C0F4] font-bold bg-[#66C0F4]/10 border border-[#66C0F4] px-3 py-1 rounded-[2px] uppercase tracking-wider">
+                                      Beri EXP
                                     </span>
                                   )}
-                                  <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-indigo-500 transition-colors" />
+                                  <ChevronRight className="w-4 h-4 text-[#848E94] group-hover:text-[#66C0F4] transition-colors" />
                                 </div>
                               </div>
                             ))}
@@ -741,13 +687,13 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       </div>
 
                       {/* Section: Tugas Terbaru Dibuat */}
-                      <div className="card-duo p-6 space-y-4">
-                        <div className="flex items-center justify-between">
-                          <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 uppercase tracking-wide">
-                            <FileText className="w-4.5 h-4.5 text-indigo-500" />
+                      <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+                        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                          <h3 className="text-xs font-bold text-[#FFFFFF] flex items-center gap-2 uppercase tracking-wide">
+                            <FileText className="w-4 h-4 text-[#66C0F4]" />
                             Daftar Tugas Baru
                           </h3>
-                        </div>
+                        </div>     </div>
 
                         {assignments.length === 0 ? (
                           <EmptyState 
@@ -758,31 +704,22 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                             onActionClick={() => onNavigate('/teacher/assignments/create')}
                           />
                         ) : (
-                          <div className="divide-y divide-gray-50 max-h-80 overflow-y-auto pr-1 space-y-1">
+                          <div className="divide-y divide-white/5 max-h-80 overflow-y-auto pr-1 space-y-1">
                             {assignments.slice(0, 5).map((assign) => (
                               <div 
                                 key={assign.id}
-                                className="group relative py-3.5 flex items-center justify-between gap-4 px-4 -mx-2 rounded-2xl transition-all duration-300 cursor-pointer overflow-hidden border border-transparent hover:border-sky-200 dark:hover:border-sky-500/30 hover:shadow-md bg-white dark:bg-transparent"
+                                className="group relative py-3 flex items-center justify-between gap-4 px-3 rounded-[2px] transition-all cursor-pointer bg-white/5 hover:bg-white/10 border border-transparent hover:border-[#66C0F4]/30"
                                 onClick={() => onNavigate(`/assignment/${assign.id}`)}
                               >
-                                {/* Animated Mesh Background on Hover */}
-                                <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                                  <motion.div 
-                                    className="absolute -inset-[100%] w-[300%] h-[300%] bg-[radial-gradient(circle_at_50%_50%,rgba(14,165,233,0.06)_0%,transparent_50%),radial-gradient(circle_at_80%_20%,rgba(139,92,246,0.06)_0%,transparent_50%),radial-gradient(circle_at_20%_80%,rgba(236,72,153,0.06)_0%,transparent_50%)]"
-                                    animate={{ rotate: [360, 270, 180, 90, 0], scale: [1, 1.1, 1] }}
-                                    transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                                  />
-                                </div>
-
                                 <div className="min-w-0 relative z-10">
-                                  <h4 className="text-xs font-bold text-gray-900 dark:text-white truncate">{assign.title}</h4>
-                                  <p className="text-[10px] text-gray-500 dark:text-slate-400 mt-1 truncate">Siswa: <span className="font-bold text-gray-700 dark:text-slate-200">{assign.studentName}</span></p>
+                                  <h4 className="text-xs font-bold text-[#FFFFFF] truncate">{assign.title}</h4>
+                                  <p className="text-[11px] text-[#C6D4DF] mt-0.5 truncate">Siswa: <span className="font-bold text-[#FFFFFF]">{assign.studentName}</span></p>
                                 </div>
                                 <div className="flex items-center gap-3 shrink-0 relative z-10">
-                                  <span className="text-[10px] font-bold text-sky-600 dark:text-sky-400 bg-sky-50/80 backdrop-blur-sm border border-sky-200 shadow-sm dark:bg-sky-900/40 dark:border-sky-800 px-3 py-1.5 rounded-xl uppercase tracking-wider">
+                                  <span className="text-[10px] font-bold text-[#66C0F4] bg-[#66C0F4]/10 border border-[#66C0F4]/30 px-2 py-0.5 rounded-[2px] uppercase tracking-wider">
                                     {assign.createdAt ? new Date(assign.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) : 'Baru saja'}
                                   </span>
-                                  <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-sky-500 transition-colors" />
+                                  <ChevronRight className="w-4 h-4 text-[#848E94] group-hover:text-[#66C0F4] transition-colors" />
                                 </div>
                               </div>
                             ))}
@@ -795,37 +732,37 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                     {/* Right column: Quick Actions & Student list */}
                     <div className="space-y-8">
                       {/* Quick Actions Panel */}
-                      <div className="card-duo p-6 space-y-4">
-                        <h3 className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider">Aksi Cepat</h3>
-                        <div className="grid grid-cols-1 gap-3">
+                      <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+                        <h3 className="text-xs font-bold text-[#FFFFFF] uppercase tracking-wider border-b border-white/10 pb-2">Aksi Cepat</h3>
+                        <div className="grid grid-cols-1 gap-2.5">
                           <button
                             onClick={() => onNavigate('/teacher/assignments/create')}
-                            className="btn-duo-blue w-full py-3 px-4 text-xs font-black flex items-center gap-3"
+                            className="bg-[#66C0F4] hover:bg-[#5DADE2] active:bg-[#52A4CC] text-[#FFFFFF] text-[13px] font-normal py-2.5 px-4 rounded-[2px] min-h-[38px] transition-all cursor-pointer flex items-center gap-3 justify-center shadow-[0_2px_6px_rgba(0,0,0,0.3)]"
                           >
                             <Plus className="w-4 h-4 shrink-0" />
                             <span>Kirim Tugas Baru</span>
                           </button>
                           <button
                             onClick={() => setActiveTab('assignments')}
-                            className="w-full py-3 px-4 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:bg-slate-600 rounded-2xl font-black text-xs border-b-4 border-gray-300 dark:border-slate-600 flex items-center gap-3 transition-all cursor-pointer active:translate-y-[2px] active:border-b-2"
+                            className="bg-transparent hover:bg-[#66C0F4]/15 text-[#FFFFFF] hover:text-[#66C0F4] text-[13px] font-normal py-2.5 px-4 rounded-[2px] border border-white/20 hover:border-[#66C0F4] min-h-[38px] flex items-center gap-3 justify-center transition-all cursor-pointer"
                           >
-                            <Layers className="w-4 h-4 text-gray-500 dark:text-slate-400 shrink-0" />
+                            <Layers className="w-4 h-4 text-[#66C0F4] shrink-0" />
                             <span>Kelola Semua Tugas</span>
                           </button>
                           <button
                             onClick={() => setActiveTab('settings')}
-                            className="w-full py-3 px-4 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:bg-slate-600 rounded-2xl font-black text-xs border-b-4 border-gray-300 dark:border-slate-600 flex items-center gap-3 transition-all cursor-pointer active:translate-y-[2px] active:border-b-2"
+                            className="bg-transparent hover:bg-[#66C0F4]/15 text-[#FFFFFF] hover:text-[#66C0F4] text-[13px] font-normal py-2.5 px-4 rounded-[2px] border border-white/20 hover:border-[#66C0F4] min-h-[38px] flex items-center gap-3 justify-center transition-all cursor-pointer"
                           >
-                            <Award className="w-4 h-4 text-gray-500 dark:text-slate-400 shrink-0" />
+                            <Award className="w-4 h-4 text-[#B9A074] shrink-0" />
                             <span>Pengaturan Profil</span>
                           </button>
                         </div>
                       </div>
 
                       {/* Student list */}
-                      <div className="card-duo p-6 space-y-4">
-                        <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 uppercase tracking-wide">
-                          <Users className="w-4 h-4 text-indigo-500" />
+                      <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+                        <h3 className="text-xs font-bold text-[#FFFFFF] flex items-center gap-2 uppercase tracking-wide border-b border-white/10 pb-2">
+                          <Users className="w-4 h-4 text-[#66C0F4]" />
                           Daftar Siswa Kelas
                         </h3>
 
@@ -836,15 +773,15 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                             description="Belum ada siswa yang mendaftar di kelas Anda."
                           />
                         ) : (
-                          <div className="space-y-2.5 max-h-96 overflow-y-auto pr-1">
+                          <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
                             {students.map((stud) => (
                               <div 
                                 key={stud.uid}
                                 onClick={() => onNavigate(`/student/${stud.uid}`)}
-                                className="p-3 bg-gray-50 dark:bg-slate-900/50 hover:bg-gray-50 dark:bg-slate-900 border border-gray-100 dark:border-slate-700/50 rounded-2xl flex items-center justify-between gap-3 cursor-pointer transition-colors"
+                                className="p-2.5 bg-white/5 hover:bg-white/10 border border-white/5 hover:border-[#66C0F4]/30 rounded-[2px] flex items-center justify-between gap-3 cursor-pointer transition-colors"
                               >
                                 <div className="flex items-center gap-3 min-w-0">
-                                  <div className="w-8 h-8 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden border border-indigo-100 dark:border-indigo-800/50">
+                                  <div className="w-8 h-8 bg-[#66C0F4]/20 text-[#66C0F4] rounded-full flex items-center justify-center font-bold text-xs shrink-0 overflow-hidden border border-[#66C0F4]/30">
                                     <img 
                                       src={stud.photoURL || '/aset/default-avatar.svg'} 
                                       alt={stud.fullName} 
@@ -856,69 +793,67 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                                   </div>
                                   <div className="min-w-0">
                                     <div className="flex items-center gap-1.5 flex-wrap">
-                                      <p className="text-xs font-bold text-gray-900 dark:text-white truncate leading-tight">{stud.fullName}</p>
-                                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[8px] font-bold uppercase ${
+                                      <p className="text-xs font-bold text-[#FFFFFF] truncate leading-tight">{stud.fullName}</p>
+                                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded-[2px] text-[9px] font-bold uppercase ${
                                         stud.classType === 'PRIVATE'
-                                          ? 'bg-teal-50 text-teal-700 border border-teal-100'
-                                          : 'bg-fuchsia-50 text-fuchsia-700 border border-fuchsia-100'
+                                          ? 'bg-[#A1CD44] text-[#171A21]'
+                                          : 'bg-[#66C0F4]/20 text-[#66C0F4] border border-[#66C0F4]/40'
                                       }`}>
                                         {stud.classType || 'PRIVATE'}
                                       </span>
                                     </div>
-                                    <p className="text-[10px] text-gray-400 truncate mt-0.5">{stud.email}</p>
+                                    <p className="text-[10px] text-[#8A8A8A] truncate mt-0.5">{stud.email}</p>
                                   </div>
                                 </div>
-                                <ChevronRight className="w-4 h-4 text-gray-300 shrink-0" />
+                                <ChevronRight className="w-4 h-4 text-[#848E94] shrink-0" />
                               </div>
                             ))}
                           </div>
                         )}
                       </div>
                     </div>
-                  </div>
-                </>
+                  </>
               )}
 
               {/* TAB 2: FULL ASSIGNMENTS MANAGER */}
               {activeTab === 'assignments' && (
                 <>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 dark:border-slate-700/50 pb-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-white/10 pb-6">
                     <div>
-                      <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 dark:text-white tracking-tight">
+                      <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight uppercase">
                         Daftar Penugasan Kelas
                       </h1>
-                      <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
+                      <p className="text-xs text-[#C6D4DF] mt-1">
                         Cari, saring, dan tinjau seluruh tugas belajar yang telah didistribusikan ke siswa.
                       </p>
                     </div>
 
                     <button
                       onClick={() => onNavigate('/teacher/assignments/create')}
-                      className="btn-duo-blue px-5 py-3 text-xs font-black flex items-center justify-center gap-2 shadow-xs shrink-0 cursor-pointer"
-                      style={{ minHeight: '44px' }}
+                      className="bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] font-bold text-xs uppercase px-5 py-2.5 rounded-[2px] min-h-[40px] flex items-center justify-center gap-2 cursor-pointer shadow-md shrink-0 transition-all"
                     >
-                      <Plus className="w-4.5 h-4.5" />
+                      <Plus className="w-4 h-4 text-[#171A21]" />
                       <span>Buat Tugas Baru</span>
                     </button>
                   </div>
 
                   {/* Search and Filters panel */}
-                  <div className="card-duo p-4 sm:p-5 flex flex-col md:flex-row gap-4 items-center justify-between">
+                  <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-4 sm:p-5 flex flex-col md:flex-row gap-4 items-center justify-between shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
                     <div className="relative w-full md:w-80">
-                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A8A8A] w-4 h-4" />
                       <input
                         type="text"
                         placeholder="Cari tugas, tipe, status, atau siswa..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600 rounded-2xl text-xs font-bold placeholder-gray-400 focus:outline-none focus:bg-white dark:bg-slate-800 focus:border-sky-400 focus:border-b-sky-500 transition-all"
+                        className="w-full pl-10 pr-4 py-2 bg-black/40 border border-white/15 text-white placeholder-[#8A8A8A] text-xs font-bold rounded-[2px] focus:outline-none focus:border-[#66C0F4] transition-all"
                       />
                     </div>
 
                     <div className="flex flex-wrap gap-3 w-full md:w-auto">
                       {/* Filter by Status */}
-                      <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600 dark:text-slate-300">
-                        <Filter className="w-3.5 h-3.5 text-gray-400" />
+                      <div className="flex items-center gap-1.5 bg-black/40 border border-white/15 px-3 py-1.5 rounded-[2px] text-xs font-bold text-white shadow-xs">
+                        <Filter className="w-3.5 h-3.5 text-[#66C0F4]" />
                         <CustomDropdown
                           variant="minimal"
                           size="sm"
@@ -937,8 +872,8 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       </div>
 
                       {/* Filter by Type */}
-                      <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600 dark:text-slate-300">
-                        <Layers className="w-3.5 h-3.5 text-gray-400" />
+                      <div className="flex items-center gap-1.5 bg-black/40 border border-white/15 px-3 py-1.5 rounded-[2px] text-xs font-bold text-white shadow-xs">
+                        <Layers className="w-3.5 h-3.5 text-[#66C0F4]" />
                         <CustomDropdown
                           variant="minimal"
                           size="sm"
@@ -955,8 +890,8 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       </div>
 
                       {/* Filter by Student */}
-                      <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600 dark:text-slate-300">
-                        <UserCheck className="w-3.5 h-3.5 text-gray-400" />
+                      <div className="flex items-center gap-1.5 bg-black/40 border border-white/15 px-3 py-1.5 rounded-[2px] text-xs font-bold text-white shadow-xs">
+                        <UserCheck className="w-3.5 h-3.5 text-[#66C0F4]" />
                         <CustomDropdown
                           variant="minimal"
                           size="sm"
@@ -974,16 +909,16 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       <button
                         type="button"
                         onClick={() => setHideDone(!hideDone)}
-                        className={`px-4 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 border flex items-center gap-2 cursor-pointer shadow-xs ${
+                        className={`px-4 py-1.5 rounded-[2px] text-xs font-bold uppercase tracking-wider transition-all border flex items-center gap-2 cursor-pointer ${
                           hideDone
-                            ? 'bg-sky-600 text-white border-sky-600 dark:bg-sky-500 dark:border-sky-500 shadow-sky-500/20 ring-2 ring-sky-500/30'
-                            : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100 dark:bg-slate-900/50 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800'
+                            ? 'bg-[#66C0F4] text-[#171A21] border-[#66C0F4] shadow-sm'
+                            : 'bg-black/40 text-[#C6D4DF] border-white/15 hover:bg-white/10 hover:text-white'
                         }`}
                       >
-                        <EyeOff className={`w-3.5 h-3.5 ${hideDone ? 'text-white' : 'text-gray-500 dark:text-slate-400'}`} />
+                        <EyeOff className={`w-3.5 h-3.5 ${hideDone ? 'text-[#171A21]' : 'text-[#8A8A8A]'}`} />
                         <span>HIDE DONE</span>
                         {hideDone && (
-                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
+                          <span className="w-2 h-2 rounded-full bg-[#171A21] animate-pulse ml-0.5" />
                         )}
                       </button>
                     </div>
@@ -1014,21 +949,21 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                           <div 
                             key={assign.id}
                             onClick={() => onNavigate(`/assignment/${assign.id}`)}
-                            className="card-duo-interactive p-5 flex flex-col justify-between gap-4 relative"
+                            className="bg-[#2F3138] border border-white/10 hover:border-[#66C0F4]/40 rounded-[3px] p-5 flex flex-col justify-between gap-4 relative shadow-[0_2px_8px_rgba(0,0,0,0.5)] transition-all cursor-pointer"
                           >
                             <div className="space-y-2">
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex gap-1.5 flex-wrap">
-                                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                                  <span className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[10px] font-bold uppercase tracking-wider ${
                                     status === 'completed' 
-                                      ? 'bg-green-50 text-green-700' 
+                                      ? 'bg-[#A1CD44] text-[#171A21]' 
                                       : status === 'review' 
-                                        ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 animate-pulse' 
+                                        ? 'bg-[#FFA500]/20 border border-[#FFA500] text-[#FFA500]' 
                                         : status === 'remedial'
-                                          ? 'bg-orange-50 text-orange-700'
+                                          ? 'bg-orange-900/40 text-orange-300 border border-orange-500/30'
                                           : status === 'expired'
-                                            ? 'bg-red-50 text-red-700'
-                                            : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400'
+                                            ? 'bg-[#FF4B4B]/20 text-[#FF4B4B] border border-[#FF4B4B]/30'
+                                            : 'bg-white/10 text-[#C6D4DF]'
                                   }`}>
                                     {status === 'completed' 
                                       ? 'Selesai' 
@@ -1041,7 +976,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                                             : 'Dikirim'}
                                   </span>
 
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700">
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[10px] font-normal bg-[#66C0F4]/10 border border-[#66C0F4] text-[#66C0F4]">
                                     {type === 'short_answer' 
                                       ? 'Jawaban Singkat' 
                                       : type === 'multiple_choice' 
@@ -1053,14 +988,14 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                                 <div className="flex items-center gap-2">
                                   <button
                                     onClick={(e) => { e.stopPropagation(); onNavigate(`/teacher/assignments/${assign.id}/edit`); }}
-                                    className="p-1 text-gray-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-900/30 rounded-md transition-colors cursor-pointer"
+                                    className="p-1 text-[#848E94] hover:text-[#66C0F4] hover:bg-white/10 rounded-[2px] transition-colors cursor-pointer"
                                     title="Edit Tugas"
                                   >
                                     <Pencil className="w-3.5 h-3.5" />
                                   </button>
                                   <button
                                     onClick={(e) => openDeleteConfirm(assign, e)}
-                                    className="p-1 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors cursor-pointer"
+                                    className="p-1 text-[#848E94] hover:text-[#FF4B4B] hover:bg-white/10 rounded-[2px] transition-colors cursor-pointer"
                                     title="Hapus Tugas"
                                   >
                                     <Trash2 className="w-3.5 h-3.5" />
@@ -1068,18 +1003,18 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                                 </div>
                               </div>
 
-                              <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-tight">{assign.title}</h3>
-                              <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">{assign.question}</p>
+                              <h3 className="text-sm font-bold text-[#FFFFFF] leading-tight">{assign.title}</h3>
+                              <p className="text-xs text-[#C6D4DF] line-clamp-2 leading-relaxed">{assign.question}</p>
                             </div>
 
-                            <div className="space-y-2 border-t border-gray-50 pt-3 mt-1 text-[11px]">
-                              <div className="flex items-center justify-between text-gray-400 font-mono">
+                            <div className="space-y-2 border-t border-white/10 pt-3 mt-1 text-[11px]">
+                              <div className="flex items-center justify-between text-[#8A8A8A]">
                                 <span className="flex items-center gap-1">
-                                  <Calendar className="w-3 h-3" />
+                                  <Calendar className="w-3 h-3 text-[#66C0F4]" />
                                   Diberikan: {assign.createdAt ? new Date(assign.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) : 'Baru saja'}
                                 </span>
                                 {assign.deadline && (
-                                  <span className={`flex items-center gap-1 font-bold ${status === 'expired' ? 'text-red-500' : 'text-gray-500 dark:text-slate-400'}`}>
+                                  <span className={`flex items-center gap-1 font-bold ${status === 'expired' ? 'text-[#FF4B4B]' : 'text-[#C6D4DF]'}`}>
                                     Batas: {new Date(assign.deadline).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'})}
                                   </span>
                                 )}
@@ -1087,13 +1022,13 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                  <div className="w-6 h-6 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-md flex items-center justify-center text-[10px] font-bold uppercase shrink-0">
+                                  <div className="w-6 h-6 bg-[#66C0F4]/20 text-[#66C0F4] rounded-full flex items-center justify-center text-[10px] font-bold uppercase shrink-0">
                                     {assign.studentName?.charAt(0).toUpperCase()}
                                   </div>
-                                  <span className="font-semibold text-gray-600 dark:text-slate-300 truncate max-w-[120px]">{assign.studentName}</span>
+                                  <span className="font-semibold text-[#FFFFFF] truncate max-w-[120px]">{assign.studentName}</span>
                                 </div>
                                 
-                                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center gap-0.5">
+                                <span className="text-[10px] font-bold text-[#66C0F4] hover:underline inline-flex items-center gap-0.5">
                                   Detail Tugas
                                   <ArrowRight className="w-3.5 h-3.5" />
                                 </span>
@@ -1170,7 +1105,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 <PackageRegistrationsDev />
               )}
 
-              {/* TAB: DEV TOOLS CENTER (SPOTIFY DESIGN SYSTEM POWERED) */}
+              {/* TAB: DEV TOOLS CENTER */}
               {activeTab === 'devtools' && (
                 <DevToolsCenter 
                   userProfile={teacherProfile}
@@ -1186,7 +1121,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
               {/* TAB 3: SETTINGS INLINE */}
               {activeTab === 'settings' && (
-                <div className="max-w-4xl mx-auto space-y-6">
+                <div className="-mx-4 sm:-mx-8 lg:-mx-10 -mt-4 sm:-mt-8 lg:-mt-10">
                   <UserSettings 
                     onNavigate={(p) => {
                       if (p === '/teacher') {
@@ -1206,22 +1141,22 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
       {/* Delete Confirmation Modal */}
       {isDeleteConfirmOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fadeIn">
-          <div className="modal-duo w-[460px] h-[250px] max-w-[95vw] max-h-[90vh] p-6 space-y-5 relative animate-scaleUp flex flex-col justify-between">
-            <h3 className="text-xs font-black text-red-600 uppercase tracking-wider">Hapus Tugas Penugasan</h3>
-            <p className="text-xs text-gray-600 dark:text-slate-300 font-medium leading-relaxed">
-              Apakah Anda yakin ingin menghapus tugas <strong className="text-gray-900 dark:text-white font-extrabold">"{deletingAssignmentTitle}"</strong>? Tindakan ini permanen dan akan menghapus semua riwayat pengerjaan serta nilai siswa terkait tugas ini.
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="bg-[#2F3138] border border-white/20 rounded-[4px] shadow-[0_6px_16px_rgba(0,0,0,0.6)] w-[460px] h-[250px] max-w-[95vw] max-h-[90vh] p-6 space-y-5 relative flex flex-col justify-between text-white">
+            <h3 className="text-xs font-bold text-[#FF4B4B] uppercase tracking-wider border-b border-white/10 pb-2">Hapus Tugas Penugasan</h3>
+            <p className="text-xs text-[#C6D4DF] leading-relaxed">
+              Apakah Anda yakin ingin menghapus tugas <strong className="text-white">"{deletingAssignmentTitle}"</strong>? Tindakan ini permanen dan akan menghapus semua riwayat pengerjaan serta nilai siswa terkait tugas ini.
             </p>
             <div className="flex gap-3 pt-2">
               <button
                 onClick={() => setIsDeleteConfirmOpen(false)}
-                className="btn-duo-slate flex-1 py-3 text-xs font-black"
+                className="bg-transparent hover:bg-white/10 text-white text-[13px] font-normal flex-1 py-2.5 rounded-[2px] border border-white/20 min-h-[38px] transition-all cursor-pointer"
               >
                 Batal
               </button>
               <button
                 onClick={handleDeleteAssignment}
-                className="btn-duo-red flex-1 py-3 text-xs font-black"
+                className="bg-[#FF4B4B] hover:bg-[#E03E3E] text-white text-[13px] font-normal flex-1 py-2.5 rounded-[2px] min-h-[38px] transition-all cursor-pointer"
               >
                 Ya, Hapus Permanen
               </button>
@@ -1232,18 +1167,18 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
       {/* Create / Edit Assignment Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto animate-fadeIn">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 z-50 overflow-y-auto animate-fadeIn">
           <div 
-            className="modal-duo w-[540px] h-[640px] max-w-[95vw] max-h-[90vh] p-6 sm:p-8 space-y-5 relative animate-scaleUp overflow-y-auto my-auto"
+            className="bg-[#2F3138] border border-white/20 rounded-[4px] shadow-[0_6px_16px_rgba(0,0,0,0.6)] w-[540px] max-w-[95vw] max-h-[90vh] p-6 sm:p-8 space-y-5 relative overflow-y-auto my-auto text-white"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between pb-2 border-b border-gray-50">
-              <h2 className="text-lg font-display font-bold text-gray-900 dark:text-white">
+            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+              <h2 className="text-lg font-bold text-white">
                 {isEditMode ? 'Sunting Tugas Kelas' : 'Buat Tugas Baru'}
               </h2>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 text-gray-400 hover:text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:bg-slate-900 rounded-lg cursor-pointer"
+                className="p-2 text-[#848E94] hover:text-white hover:bg-white/10 rounded-[2px] cursor-pointer"
                 style={{ minWidth: '44px', minHeight: '44px' }}
                 aria-label="Tutup"
               >
@@ -1252,7 +1187,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
             </div>
 
             {formError && (
-              <div className="p-4 bg-red-50 border border-red-200/50 rounded-2xl text-xs text-red-600">
+              <div className="p-3 bg-[#FF4B4B]/10 border border-[#FF4B4B]/30 rounded-[2px] text-xs text-[#FF4B4B]">
                 {formError}
               </div>
             )}
@@ -1260,15 +1195,15 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
             <form onSubmit={handleSaveAssignment} className="space-y-4">
               {/* Title */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
-                  Judul Tugas <span className="text-red-500">*</span>
+                <label className="block text-[12px] text-[#C6D4DF]">
+                  Judul Tugas <span className="text-[#FF4B4B]">*</span>
                 </label>
                 <input
                   type="text"
                   required
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                  className="bg-black/40 border border-white/15 text-white placeholder-[#8A8A8A] text-[13px] px-3 py-2 rounded-[2px] focus:outline-none focus:border-[#66C0F4] transition-all w-full"
                   placeholder="Contoh: Esai Refleksi Sejarah Indonesia"
                 />
               </div>
@@ -1276,8 +1211,8 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
               {/* Target Selection (Individual vs. Circle) */}
               {!isEditMode && (
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
-                    Target Penerima Tugas <span className="text-red-500">*</span>
+                  <label className="block text-[12px] text-[#C6D4DF]">
+                    Target Penerima Tugas <span className="text-[#FF4B4B]">*</span>
                   </label>
                   <div className="flex gap-2">
                     <button
@@ -1286,10 +1221,10 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                         setAssignmentTarget('INDIVIDUAL');
                         setSelectedCircleId('');
                       }}
-                      className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                      className={`flex-1 py-2 px-3 rounded-[2px] text-xs font-normal border transition-all cursor-pointer ${
                         assignmentTarget === 'INDIVIDUAL'
-                          ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 border-indigo-200'
-                          : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:bg-slate-900'
+                          ? 'bg-[#66C0F4] text-[#171A21] font-bold border-[#66C0F4]'
+                          : 'bg-transparent text-[#C6D4DF] border-white/20 hover:border-[#66C0F4]'
                       }`}
                     >
                       Individu Siswa
@@ -1300,10 +1235,10 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                         setAssignmentTarget('CIRCLE');
                         setSelectedStudentId('');
                       }}
-                      className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                      className={`flex-1 py-2 px-3 rounded-[2px] text-xs font-normal border transition-all cursor-pointer ${
                         assignmentTarget === 'CIRCLE'
-                          ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 border-indigo-200'
-                          : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:bg-slate-900'
+                          ? 'bg-[#66C0F4] text-[#171A21] font-bold border-[#66C0F4]'
+                          : 'bg-transparent text-[#C6D4DF] border-white/20 hover:border-[#66C0F4]'
                       }`}
                     >
                       Kavio Circle
@@ -1315,8 +1250,8 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
               {/* Conditional Recipient Field */}
               {assignmentTarget === 'INDIVIDUAL' ? (
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
-                    Pilih Siswa <span className="text-red-500">*</span>
+                  <label className="block text-[12px] text-[#C6D4DF]">
+                    Pilih Siswa <span className="text-[#FF4B4B]">*</span>
                   </label>
                   <CustomDropdown
                     disabled={isEditMode}
@@ -1329,16 +1264,16 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                       badge: {
                         text: s.classType || 'PRIVATE',
                         className: s.classType === 'CIRCLE'
-                          ? 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100'
-                          : 'bg-teal-50 text-teal-700 border border-teal-100'
+                          ? 'bg-[#66C0F4]/20 text-[#66C0F4] border-0'
+                          : 'bg-[#A1CD44] text-[#171A21] border-0'
                       }
                     }))}
                   />
                 </div>
               ) : (
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
-                    Pilih Kelompok Belajar (Circle) <span className="text-red-500">*</span>
+                  <label className="block text-[12px] text-[#C6D4DF]">
+                    Pilih Kelompok Belajar (Circle) <span className="text-[#FF4B4B]">*</span>
                   </label>
                   <CustomDropdown
                     disabled={isEditMode}
@@ -1359,8 +1294,8 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
               {/* Assignment Type Selector */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
-                  Jenis Tugas <span className="text-red-500">*</span>
+                <label className="block text-[12px] text-[#C6D4DF]">
+                  Jenis Tugas <span className="text-[#FF4B4B]">*</span>
                 </label>
                 <CustomDropdown
                   value={assignmentType}
@@ -1375,25 +1310,25 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
               {/* Conditional Fields: Multiple Choice */}
               {assignmentType === 'multiple_choice' && (
-                <div className="space-y-3 border-l-2 border-indigo-100 dark:border-indigo-800/50 pl-4 py-1.5 bg-gray-50 dark:bg-slate-900/30 p-3 rounded-xl">
-                  <span className="block text-xs font-bold text-gray-700 dark:text-slate-200">Opsi Jawaban & Kunci Jawaban</span>
+                <div className="space-y-3 border-l-2 border-[#66C0F4] pl-4 py-2 bg-black/30 p-3 rounded-[2px]">
+                  <span className="block text-xs font-bold text-white">Opsi Jawaban & Kunci Jawaban</span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                     {['A', 'B', 'C', 'D'].map((opt) => (
                       <div key={opt} className="space-y-1">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase">Pilihan {opt} <span className="text-red-500">*</span></span>
+                        <span className="text-[10px] font-bold text-[#8A8A8A] uppercase">Pilihan {opt} <span className="text-[#FF4B4B]">*</span></span>
                         <input
                           type="text"
                           required
                           value={choices[opt as 'A' | 'B' | 'C' | 'D']}
                           onChange={(e) => setChoices({ ...choices, [opt]: e.target.value })}
-                          className="w-full px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:border-indigo-500"
+                          className="bg-black/40 border border-white/15 text-white placeholder-[#8A8A8A] text-xs px-3 py-1.5 rounded-[2px] focus:outline-none focus:border-[#66C0F4] w-full"
                           placeholder={`Jawaban opsi ${opt}...`}
                         />
                       </div>
                     ))}
                   </div>
-                  <div className="space-y-1.5 pt-2 border-t border-gray-100 dark:border-slate-700/50">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase">Pilihan Kunci Jawaban Benar</span>
+                  <div className="space-y-1.5 pt-2 border-t border-white/10">
+                    <span className="text-[10px] font-bold text-[#8A8A8A] uppercase">Pilihan Kunci Jawaban Benar</span>
                     <CustomDropdown
                       value={correctChoice}
                       onChange={(val) => setCorrectChoice(val as any)}
@@ -1410,13 +1345,13 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
               {/* Conditional Fields: Multi Short Answer */}
               {assignmentType === 'multi_short_answer' && (
-                <div className="space-y-3.5 border-l-2 border-indigo-100 dark:border-indigo-800/50 pl-4 py-1.5 bg-gray-50 dark:bg-slate-900/30 p-3 rounded-xl">
+                <div className="space-y-3.5 border-l-2 border-[#66C0F4] pl-4 py-2 bg-black/30 p-3 rounded-[2px]">
                   <div className="flex items-center justify-between">
-                    <span className="block text-xs font-bold text-gray-700 dark:text-slate-200">Sub-Pertanyaan ({subQuestions.length})</span>
+                    <span className="block text-xs font-bold text-white">Sub-Pertanyaan ({subQuestions.length})</span>
                     <button
                       type="button"
                       onClick={() => setSubQuestions([...subQuestions, ''])}
-                      className="text-[10px] bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 text-indigo-700 font-bold px-2.5 py-1 rounded-lg transition-colors"
+                      className="text-[11px] bg-[#66C0F4]/10 hover:bg-[#66C0F4]/20 border border-[#66C0F4] text-[#66C0F4] font-bold px-2.5 py-1 rounded-[2px] transition-colors"
                     >
                       + Tambah Soal
                     </button>
@@ -1424,7 +1359,7 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                   <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
                     {subQuestions.map((q, idx) => (
                       <div key={idx} className="flex gap-2 items-center">
-                        <span className="text-[10px] font-mono font-bold text-gray-400 w-5">#{idx + 1}</span>
+                        <span className="text-[10px] font-mono font-bold text-[#848E94] w-5">#{idx + 1}</span>
                         <input
                           type="text"
                           required
@@ -1434,14 +1369,14 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                             next[idx] = e.target.value;
                             setSubQuestions(next);
                           }}
-                          className="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs focus:outline-none focus:border-indigo-500"
+                          className="flex-1 bg-black/40 border border-white/15 text-white placeholder-[#8A8A8A] text-xs px-3 py-1.5 rounded-[2px] focus:outline-none focus:border-[#66C0F4]"
                           placeholder={`Pertanyaan sub-soal #${idx + 1}...`}
                         />
                         {subQuestions.length > 1 && (
                           <button
                             type="button"
                             onClick={() => setSubQuestions(subQuestions.filter((_, i) => i !== idx))}
-                            className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer"
+                            className="p-1.5 text-[#FF4B4B] hover:bg-[#FF4B4B]/20 rounded-[2px] cursor-pointer"
                           >
                             <X className="w-4 h-4" />
                           </button>
@@ -1454,25 +1389,25 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
 
               {/* Question Text Area / Main Instructions */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
+                <label className="block text-[12px] text-[#C6D4DF]">
                   {assignmentType === 'multiple_choice' 
                     ? 'Pertanyaan Soal / Instruksi Penyelenggaraan' 
-                    : 'Pertanyaan Utama / Detail Instruksi Tugas'} <span className="text-red-500">*</span>
+                    : 'Pertanyaan Utama / Detail Instruksi Tugas'} <span className="text-[#FF4B4B]">*</span>
                 </label>
                 <textarea
                   required
                   rows={4}
                   value={newQuestion}
                   onChange={(e) => setNewQuestion(e.target.value)}
-                  className="block w-full px-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"
+                  className="bg-black/40 border border-white/15 text-white placeholder-[#8A8A8A] text-xs px-3 py-2 rounded-[2px] focus:outline-none focus:border-[#66C0F4] w-full resize-none"
                   placeholder="Tuliskan detail pertanyaan atau instruksi tugas secara rinci di sini..."
                 />
               </div>
 
               {/* Deadline Date Input */}
               <div className="space-y-1.5">
-                <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
-                  Batas Waktu Pengumpulan (Deadline) <span className="text-gray-400">(Opsional)</span>
+                <label className="block text-[12px] text-[#C6D4DF]">
+                  Batas Waktu Pengumpulan (Deadline) <span className="text-[#8A8A8A]">(Opsional)</span>
                 </label>
                 <CustomDatePicker
                   value={deadline}
@@ -1485,16 +1420,14 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="btn-duo-slate flex-1 py-3 text-xs font-black"
-                  style={{ minHeight: '44px' }}
+                  className="bg-transparent hover:bg-white/10 text-white text-[13px] font-normal flex-1 py-2.5 rounded-[2px] border border-white/20 min-h-[38px] transition-all cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="btn-duo-blue flex-1 py-3 text-xs font-black"
-                  style={{ minHeight: '44px' }}
+                  className="bg-[#66C0F4] hover:bg-[#5DADE2] active:bg-[#52A4CC] text-white text-[13px] font-normal flex-1 py-2.5 rounded-[2px] min-h-[38px] transition-all cursor-pointer font-bold shadow-[0_2px_6px_rgba(0,0,0,0.3)] disabled:bg-[#BDBDBD]"
                 >
                   {isSubmitting ? 'Memproses...' : isEditMode ? 'Simpan Perubahan' : 'Kirim Tugas'}
                 </button>

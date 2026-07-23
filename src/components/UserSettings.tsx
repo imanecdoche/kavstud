@@ -36,6 +36,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { UserProfile } from '../types';
+import { motion, AnimatePresence } from 'motion/react';
 import Logo from './Logo';
 import CustomDropdown from './CustomDropdown';
 import CustomDatePicker from './CustomDatePicker';
@@ -611,49 +612,51 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
   const isTeacher = currentUserProfile?.role === 'teacher';
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col font-sans" id="user-settings-page">
+    <div className="min-h-screen bg-[#171A21] text-white flex flex-col font-sans" id="user-settings-page">
       {/* Toast Alert Banner */}
-      {toast && (
-        <div 
-          className={`fixed bottom-6 right-6 z-50 p-4 rounded-2xl shadow-lg border text-xs font-semibold flex items-center gap-3 animate-slideIn ${
-            toast.type === 'success' 
-              ? 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-800 border-emerald-200' 
-              : 'bg-rose-50 text-rose-800 border-rose-200'
-          }`}
-          id="toast-notification"
-        >
-          {toast.type === 'success' ? (
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
-          ) : (
-            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
-          )}
-          <span>{toast.message}</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {toast && (
+          <motion.div 
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.18 }}
+            className={`fixed bottom-6 right-6 z-50 p-4 rounded-[2px] shadow-[0_8px_24px_rgba(0,0,0,0.8)] border text-xs font-bold flex items-center gap-3 bg-[#2F3138] text-white ${
+              toast.type === 'success' 
+                ? 'border-[#A1CD44]' 
+                : 'border-[#FF4B4B]'
+            }`}
+            id="toast-notification"
+          >
+            {toast.type === 'success' ? (
+              <CheckCircle2 className="w-5 h-5 text-[#A1CD44] shrink-0" />
+            ) : (
+              <AlertCircle className="w-5 h-5 text-[#FF4B4B] shrink-0" />
+            )}
+            <span className="uppercase tracking-wider">{toast.message}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main Header */}
-      <header className="bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700/50 px-4 py-4 sticky top-0 z-30">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
+      <header className="bg-[#2F3138] border-b border-white/10 px-4 sm:px-8 py-4 sticky top-0 z-30 shadow-[0_4px_16px_rgba(0,0,0,0.6)] w-full">
+        <div className="w-full flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
               onClick={handleBack}
-              className="btn-duo-slate p-2.5 flex items-center justify-center cursor-pointer"
+              className="bg-black/40 hover:bg-white/10 text-white border border-white/15 p-2.5 rounded-[2px] flex items-center justify-center cursor-pointer transition-colors"
               style={{ minWidth: '44px', minHeight: '44px' }}
               aria-label="Kembali"
             >
-              <ArrowLeft className="w-5 h-5 text-gray-700 dark:text-slate-200" />
+              <ArrowLeft className="w-5 h-5 text-white" />
             </button>
             
             <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none">Konfigurasi Pengguna</span>
-              <h1 className="text-lg sm:text-xl font-display font-bold text-gray-900 dark:text-white tracking-tight mt-1">
+              <span className="text-[10px] font-bold text-[#8A8A8A] uppercase tracking-widest leading-none font-mono">Konfigurasi Pengguna</span>
+              <h1 className="text-lg sm:text-xl font-bold text-white tracking-tight uppercase mt-1">
                 Pengaturan Akun & Profil
               </h1>
             </div>
-          </div>
-
-          <div className="hidden sm:block">
-            <Logo className="h-6 w-auto text-indigo-600 dark:text-indigo-400" />
           </div>
         </div>
       </header>
@@ -665,10 +668,10 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
         <div className="w-full md:w-64 shrink-0 flex flex-col gap-4">
           
           {/* User Profile Summary Card */}
-          <div className="card-duo p-6 space-y-4">
+          <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.5)] text-white">
             <div className="flex items-center gap-3.5">
               <div className="relative group">
-                <div className="w-12 h-12 bg-indigo-50 dark:bg-indigo-900/30 border-2 border-indigo-100 dark:border-indigo-800/50 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-base overflow-hidden shrink-0 shadow-3xs">
+                <div className="w-12 h-12 bg-black/40 border border-white/15 rounded-full flex items-center justify-center text-[#66C0F4] font-bold text-base overflow-hidden shrink-0 shadow-xs">
                   <img 
                     src={photoURL || '/aset/default-avatar.svg'} 
                     alt={fullName} 
@@ -681,30 +684,30 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                 </div>
               </div>
               <div className="min-w-0">
-                <h3 className="text-xs font-bold text-gray-900 dark:text-white truncate">{fullName || 'Memuat...'}</h3>
-                <span className={`inline-flex items-center gap-1 px-2 py-0.5 mt-1 rounded-md text-[9px] font-bold uppercase border ${
+                <h3 className="text-xs font-bold text-white truncate">{fullName || 'Memuat...'}</h3>
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 mt-1 rounded-[2px] text-[9px] font-bold uppercase border ${
                   isTeacher 
-                    ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 border-indigo-100 dark:border-indigo-800/50' 
-                    : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 border-emerald-100 dark:border-emerald-800/50'
+                    ? 'bg-[#66C0F4]/20 text-[#66C0F4] border-[#66C0F4]/40' 
+                    : 'bg-[#A1CD44]/20 text-[#A1CD44] border-[#A1CD44]/40'
                 }`}>
                   {isTeacher ? 'Pengajar' : 'Siswa'}
                 </span>
               </div>
             </div>
 
-            <div className="border-t border-gray-50 pt-3">
-              <p className="text-[10px] text-gray-400 font-mono truncate">{currentUserProfile?.email}</p>
+            <div className="border-t border-white/10 pt-3">
+              <p className="text-[10px] text-[#C6D4DF] font-mono truncate">{currentUserProfile?.email}</p>
             </div>
           </div>
 
           {/* Navigation Tabs */}
-          <div className="card-duo p-3 flex flex-row md:flex-col gap-1.5 overflow-x-auto">
+          <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-3 flex flex-row md:flex-col gap-1.5 overflow-x-auto shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
             <button
               onClick={() => setActiveTab('profile')}
-              className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-2xl text-xs font-black flex items-center gap-3 transition-all ${
+              className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-[2px] text-xs font-bold flex items-center gap-3 transition-all ${
                 activeTab === 'profile'
-                  ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs'
-                  : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-slate-700'
+                  ? 'bg-[#66C0F4] text-[#171A21]'
+                  : 'text-[#C6D4DF] hover:text-white hover:bg-white/5'
               }`}
             >
               <User className="w-4 h-4 shrink-0" />
@@ -713,10 +716,10 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
             <button
               onClick={() => setActiveTab('security')}
-              className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-2xl text-xs font-black flex items-center gap-3 transition-all ${
+              className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-[2px] text-xs font-bold flex items-center gap-3 transition-all ${
                 activeTab === 'security'
-                  ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs'
-                  : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-slate-700'
+                  ? 'bg-[#66C0F4] text-[#171A21]'
+                  : 'text-[#C6D4DF] hover:text-white hover:bg-white/5'
               }`}
             >
               <Shield className="w-4 h-4 shrink-0" />
@@ -725,10 +728,10 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
             <button
               onClick={() => setActiveTab('preferences')}
-              className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-2xl text-xs font-black flex items-center gap-3 transition-all ${
+              className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-[2px] text-xs font-bold flex items-center gap-3 transition-all ${
                 activeTab === 'preferences'
-                  ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs'
-                  : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-slate-700'
+                  ? 'bg-[#66C0F4] text-[#171A21]'
+                  : 'text-[#C6D4DF] hover:text-white hover:bg-white/5'
               }`}
             >
               <Sliders className="w-4 h-4 shrink-0" />
@@ -737,10 +740,10 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
             <button
               onClick={() => setActiveTab('account')}
-              className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-2xl text-xs font-black flex items-center gap-3 transition-all ${
+              className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-[2px] text-xs font-bold flex items-center gap-3 transition-all ${
                 activeTab === 'account'
-                  ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs'
-                  : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-slate-700'
+                  ? 'bg-[#66C0F4] text-[#171A21]'
+                  : 'text-[#C6D4DF] hover:text-white hover:bg-white/5'
               }`}
             >
               <UserCheck className="w-4 h-4 shrink-0" />
@@ -751,26 +754,26 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
               <button
                 type="button"
                 onClick={() => setActiveTab('dev')}
-                className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-2xl text-xs font-black flex items-center gap-3 transition-all ${
+                className={`flex-1 md:flex-initial text-left px-4 py-3 rounded-[2px] text-xs font-bold flex items-center gap-3 transition-all ${
                   activeTab === 'dev'
-                    ? 'bg-[#E53E3E] text-white border-b-4 border-[#C53030] shadow-xs'
-                    : 'text-red-600 hover:text-red-700 hover:bg-red-50 border border-dashed border-red-200'
+                    ? 'bg-[#FF4B4B] text-[#171A21]'
+                    : 'text-[#FF4B4B] hover:bg-[#FF4B4B]/10 border border-dashed border-[#FF4B4B]/40'
                 }`}
               >
                 <Terminal className="w-4 h-4 shrink-0" />
-                <span>Dev Tools 🛠️</span>
+                <span>Dev Tools</span>
               </button>
             )}
           </div>
 
           {/* Unsaved Warning Banner */}
           {hasUnsavedChanges && (
-            <div className="bg-amber-50 dark:bg-amber-900/30/80 border border-amber-200 p-4 rounded-3xl space-y-3">
+            <div className="bg-[#2F3138] border border-[#B9A074]/50 p-4 rounded-[3px] space-y-3 text-white">
               <div className="flex gap-2">
-                <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                <AlertCircle className="w-4 h-4 text-[#B9A074] shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-xs font-bold text-amber-900 dark:text-amber-100">Perubahan Belum Disimpan</p>
-                  <p className="text-[10px] text-amber-700/90 leading-relaxed mt-0.5">
+                  <p className="text-xs font-bold text-white">Perubahan Belum Disimpan</p>
+                  <p className="text-[10px] text-[#C6D4DF] leading-relaxed mt-0.5">
                     Anda memodifikasi beberapa informasi profil. Simpan perubahan sebelum meninggalkan halaman.
                   </p>
                 </div>
@@ -779,14 +782,14 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                 <button
                   onClick={handleSaveProfile}
                   disabled={isSaving}
-                  className="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-[10px] font-bold shadow-xs active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1"
+                  className="flex-1 py-1.5 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] rounded-[2px] text-[10px] font-bold shadow-sm transition-all cursor-pointer flex items-center justify-center gap-1"
                 >
                   {isSaving ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
                   Simpan
                 </button>
                 <button
                   onClick={handleCancelChanges}
-                  className="flex-1 py-1.5 bg-white dark:bg-slate-800 hover:bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 rounded-xl text-[10px] font-bold active:scale-95 transition-all cursor-pointer"
+                  className="flex-1 py-1.5 bg-transparent hover:bg-white/10 border border-white/20 text-white rounded-[2px] text-[10px] font-bold transition-all cursor-pointer"
                 >
                   Batalkan
                 </button>
@@ -800,37 +803,37 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
           
           {loading ? (
             /* Loading Skeletons */
-            <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 rounded-3xl p-6 sm:p-8 space-y-6 shadow-3xs animate-pulse">
-              <div className="h-6 w-48 bg-gray-200 dark:bg-slate-600 rounded-lg" />
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 sm:p-8 space-y-6 shadow-[0_2px_8px_rgba(0,0,0,0.5)] animate-pulse">
+              <div className="h-6 w-48 bg-black/40 rounded-[2px]" />
               <div className="flex items-center gap-4">
-                <div className="w-20 h-20 bg-gray-200 dark:bg-slate-600 rounded-2xl" />
+                <div className="w-20 h-20 bg-black/40 rounded-full" />
                 <div className="space-y-2 flex-1">
-                  <div className="h-4 bg-gray-200 dark:bg-slate-600 rounded-lg w-1/3" />
-                  <div className="h-3 bg-gray-200 dark:bg-slate-600 rounded-lg w-1/4" />
+                  <div className="h-4 bg-black/40 rounded-[2px] w-1/3" />
+                  <div className="h-3 bg-black/40 rounded-[2px] w-1/4" />
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="h-10 bg-gray-200 dark:bg-slate-600 rounded-xl" />
-                <div className="h-10 bg-gray-200 dark:bg-slate-600 rounded-xl" />
-                <div className="h-10 bg-gray-200 dark:bg-slate-600 rounded-xl" />
-                <div className="h-10 bg-gray-200 dark:bg-slate-600 rounded-xl" />
+                <div className="h-10 bg-black/40 rounded-[2px]" />
+                <div className="h-10 bg-black/40 rounded-[2px]" />
+                <div className="h-10 bg-black/40 rounded-[2px]" />
+                <div className="h-10 bg-black/40 rounded-[2px]" />
               </div>
             </div>
           ) : (
-            <div className="card-duo p-6 sm:p-8 space-y-6">
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 sm:p-8 space-y-6 shadow-[0_2px_8px_rgba(0,0,0,0.5)] text-white">
               
               {/* TAB 1: PROFILE FORM */}
               {activeTab === 'profile' && (
                 <form onSubmit={handleSaveProfile} className="space-y-6">
                   <div>
-                    <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Profil Publik Saya</h2>
-                    <p className="text-[11px] text-gray-400 mt-0.5">Kelola foto identitas, nomor kontak, serta deskripsi biografi akademis.</p>
+                    <h2 className="text-sm font-bold text-white uppercase tracking-wider">Profil Publik Saya</h2>
+                    <p className="text-[11px] text-[#C6D4DF] mt-0.5">Kelola foto identitas, nomor kontak, serta deskripsi biografi akademis.</p>
                   </div>
 
                   {/* Profile Photo Uploader */}
-                  <div className="p-5 bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600 rounded-2xl flex flex-col sm:flex-row items-center gap-5">
+                  <div className="p-5 bg-black/40 border border-white/10 rounded-[3px] flex flex-col sm:flex-row items-center gap-5 text-white">
                     <div className="relative">
-                      <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-900/30 border-2 border-indigo-100 dark:border-indigo-800/50 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-2xl overflow-hidden shadow-xs">
+                      <div className="w-20 h-20 bg-black/40 border border-white/20 rounded-full flex items-center justify-center text-[#66C0F4] font-bold text-2xl overflow-hidden shadow-xs">
                         {photoURL ? (
                           <img src={photoURL} alt="Avatar Preview" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                         ) : (
@@ -840,7 +843,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                       <button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="absolute -bottom-1.5 -right-1.5 bg-indigo-600 hover:bg-indigo-700 text-white p-1.5 rounded-lg border-2 border-white shadow-xs cursor-pointer transition-transform hover:scale-110 active:scale-95"
+                        className="absolute -bottom-1.5 -right-1.5 bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] p-1.5 rounded-full border border-white/20 shadow-xs cursor-pointer transition-transform hover:scale-110"
                         style={{ minWidth: '28px', minHeight: '28px' }}
                         aria-label="Ubah Foto"
                       >
@@ -849,8 +852,8 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                     </div>
 
                     <div className="flex-1 text-center sm:text-left space-y-2">
-                      <p className="text-xs font-bold text-gray-800 dark:text-slate-100">Foto Identitas Akun</p>
-                      <p className="text-[10px] text-gray-400 leading-relaxed max-w-sm">
+                      <p className="text-xs font-bold text-white">Foto Identitas Akun</p>
+                      <p className="text-[10px] text-[#C6D4DF] leading-relaxed max-w-sm">
                         Mendukung file format JPG, PNG, atau WEBP. Maksimal ukuran 5 MB.
                       </p>
 
@@ -858,7 +861,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                         <button
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
-                          className="btn-duo-blue px-4 py-2 text-xs font-black"
+                          className="h-[36px] bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] px-4 text-xs font-bold uppercase rounded-[2px] transition-all cursor-pointer"
                         >
                           Pilih Foto Baru
                         </button>
@@ -867,7 +870,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                           <button
                             type="button"
                             onClick={handleRemovePhoto}
-                            className="btn-duo-red px-4 py-2 text-xs font-black flex items-center gap-1"
+                            className="h-[36px] bg-transparent hover:bg-[#FF4B4B]/20 text-[#FF4B4B] border border-[#FF4B4B]/40 px-4 text-xs font-bold uppercase rounded-[2px] flex items-center gap-1 transition-all cursor-pointer"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                             <span>Lepas Foto</span>
@@ -877,18 +880,18 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
                       {uploadProgress !== null && (
                         <div className="space-y-1.5 max-w-xs pt-1 mx-auto sm:mx-0">
-                          <div className="flex justify-between items-center text-[10px] font-bold text-indigo-500">
+                          <div className="flex justify-between items-center text-[10px] font-bold text-[#66C0F4]">
                             <span>Mengunggah file...</span>
                             <span>{uploadProgress}%</span>
                           </div>
-                          <div className="w-full h-1.5 bg-indigo-100 rounded-full overflow-hidden">
-                            <div className="h-full bg-indigo-600 transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                          <div className="w-full h-1.5 bg-black/60 rounded-full overflow-hidden border border-white/10">
+                            <div className="h-full bg-[#66C0F4] transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
                           </div>
                         </div>
                       )}
 
                       {uploadError && (
-                        <p className="text-[10px] font-semibold text-rose-600 flex items-center justify-center sm:justify-start gap-1">
+                        <p className="text-[10px] font-bold text-[#FF4B4B] flex items-center justify-center sm:justify-start gap-1">
                           <AlertCircle className="w-3.5 h-3.5" />
                           {uploadError}
                         </p>
@@ -908,51 +911,51 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                     {/* Full Name */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Nama Lengkap <span className="text-red-500">*</span></label>
+                      <label className="block text-xs font-bold text-[#C6D4DF] uppercase tracking-wider">Nama Lengkap <span className="text-[#FF4B4B]">*</span></label>
                       <input
                         type="text"
                         required
                         value={fullName}
                         onChange={(e) => setFullName(e.target.value)}
-                        className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                        className="block w-full px-4 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs font-bold text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4]"
                         placeholder="Nama lengkap Anda"
                       />
                     </div>
 
                     {/* Email (Read-only) */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-500 dark:text-slate-400">Alamat Email (Akun Utama)</label>
+                      <label className="block text-xs font-bold text-[#8A8A8A] uppercase tracking-wider">Alamat Email (Akun Utama)</label>
                       <div className="relative">
                         <input
                           type="email"
                           readOnly
                           value={currentUserProfile?.email || ''}
-                          className="block w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 text-gray-400 rounded-xl text-xs cursor-not-allowed"
+                          className="block w-full px-4 py-2.5 bg-black/60 border border-white/10 text-[#C6D4DF] rounded-[2px] text-xs cursor-not-allowed"
                         />
-                        <Mail className="absolute right-3.5 top-3 w-4 h-4 text-gray-300" />
+                        <Mail className="absolute right-3.5 top-3 w-4 h-4 text-[#8A8A8A]" />
                       </div>
-                      <p className="text-[9px] text-gray-400 mt-1">Guna mengganti alamat email silakan hubungi administrator Kavio Edu.</p>
+                      <p className="text-[9px] text-[#8A8A8A] mt-1">Guna mengganti alamat email silakan hubungi administrator Kavio Edu.</p>
                     </div>
 
                     {/* Phone Number */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Nomor Telepon</label>
+                      <label className="block text-xs font-bold text-[#C6D4DF] uppercase tracking-wider">Nomor Telepon</label>
                       <div className="relative">
                         <input
                           type="text"
                           value={phone}
                           onChange={(e) => setPhone(e.target.value)}
-                          className="block w-full pl-10 pr-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                          className="block w-full pl-10 pr-4 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs font-bold text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4]"
                           placeholder="+628123456789"
                         />
-                        <Phone className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
+                        <Phone className="absolute left-3.5 top-3 w-4 h-4 text-[#8A8A8A]" />
                       </div>
-                      <p className="text-[9px] text-gray-400 mt-1">Gunakan format angka internasional (misal +628123456789).</p>
+                      <p className="text-[9px] text-[#8A8A8A] mt-1">Gunakan format angka internasional (misal +628123456789).</p>
                     </div>
 
                     {/* Date of Birth & Age Block */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Tanggal Lahir</label>
+                      <label className="block text-xs font-bold text-[#C6D4DF] uppercase tracking-wider">Tanggal Lahir</label>
                       <div className="grid grid-cols-3 gap-2">
                         <div className="col-span-2">
                           <CustomDatePicker
@@ -961,9 +964,9 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                             placeholder="Pilih Tanggal Lahir"
                           />
                         </div>
-                        <div className="col-span-1 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl px-2.5 py-2 text-center flex flex-col justify-center min-w-0">
-                          <span className="text-[8px] font-bold text-gray-400 uppercase tracking-wider block">Umur</span>
-                          <span className="text-xs font-bold text-gray-800 dark:text-slate-100 block truncate">
+                        <div className="col-span-1 bg-black/40 border border-white/15 rounded-[2px] px-2.5 py-2 text-center flex flex-col justify-center min-w-0">
+                          <span className="text-[8px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Umur</span>
+                          <span className="text-xs font-bold text-white block truncate">
                             {calculatedAge !== null ? `${calculatedAge} Thn` : '-'}
                           </span>
                         </div>
@@ -972,7 +975,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
                     {/* Gender */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Jenis Kelamin</label>
+                      <label className="block text-xs font-bold text-[#C6D4DF] uppercase tracking-wider">Jenis Kelamin</label>
                       <CustomDropdown
                         value={gender}
                         placeholder="Pilih jenis kelamin"
@@ -988,35 +991,35 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
                     {/* Bio / About */}
                     <div className="space-y-1.5 sm:col-span-2">
-                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Tentang Saya / Bio Singkat</label>
+                      <label className="block text-xs font-bold text-[#C6D4DF] uppercase tracking-wider">Tentang Saya / Bio Singkat</label>
                       <textarea
                         value={bio}
                         onChange={(e) => setBio(e.target.value)}
                         rows={3}
                         maxLength={500}
-                        className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none"
+                        className="block w-full px-4 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs font-bold text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4] resize-none"
                         placeholder="Tuliskan biografi akademis singkat Anda..."
                       />
                       <div className="flex justify-end">
-                        <span className="text-[9px] text-gray-400 font-mono">{bio.length} / 500 karakter</span>
+                        <span className="text-[9px] text-[#8A8A8A] font-mono">{bio.length} / 500 karakter</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Form Footer Action */}
-                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-slate-700/50">
+                  <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
                     <button
                       type="button"
                       onClick={handleCancelChanges}
                       disabled={!hasUnsavedChanges || isSaving}
-                      className="btn-duo-slate px-5 py-3 text-xs font-black disabled:opacity-40"
+                      className="h-[40px] px-5 bg-transparent hover:bg-white/10 text-white border border-white/20 text-xs font-bold uppercase rounded-[2px] cursor-pointer transition-all disabled:opacity-40"
                     >
                       Batal
                     </button>
                     <button
                       type="submit"
                       disabled={!hasUnsavedChanges || isSaving}
-                      className="btn-duo-green px-6 py-3 text-xs font-black disabled:opacity-40 flex items-center justify-center gap-1.5"
+                      className="h-[40px] px-6 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-xs font-bold uppercase rounded-[2px] disabled:opacity-40 flex items-center justify-center gap-1.5 cursor-pointer shadow-md transition-all"
                     >
                       {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                       <span>Simpan Perubahan</span>
@@ -1029,35 +1032,35 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
               {activeTab === 'security' && (
                 <form onSubmit={handleChangePassword} className="space-y-6">
                   <div>
-                    <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Keamanan & Sandi Akses</h2>
-                    <p className="text-[11px] text-gray-400 mt-0.5">Amankan akses sistem dengan memperbarui kata sandi secara periodik.</p>
+                    <h2 className="text-sm font-bold text-white uppercase tracking-wider">Keamanan & Sandi Akses</h2>
+                    <p className="text-[11px] text-[#C6D4DF] mt-0.5">Amankan akses sistem dengan memperbarui kata sandi secara periodik.</p>
                   </div>
 
                   {passwordError && (
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-xs text-red-600 flex items-center gap-2">
-                      <AlertCircle className="w-4 h-4 shrink-0 text-red-500" />
-                      <p className="font-semibold">{passwordError}</p>
+                    <div className="p-4 bg-[#FF4B4B]/20 border border-[#FF4B4B]/40 rounded-[2px] text-xs text-[#FF4B4B] flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 shrink-0 text-[#FF4B4B]" />
+                      <p className="font-bold">{passwordError}</p>
                     </div>
                   )}
 
                   <div className="space-y-4 max-w-lg">
                     {/* Current Password */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Kata Sandi Saat Ini <span className="text-red-500">*</span></label>
+                      <label className="block text-xs font-bold text-[#C6D4DF] uppercase tracking-wider">Kata Sandi Saat Ini <span className="text-[#FF4B4B]">*</span></label>
                       <div className="relative">
                         <input
                           type={showCurrentPassword ? 'text' : 'password'}
                           required
                           value={currentPassword}
                           onChange={(e) => setCurrentPassword(e.target.value)}
-                          className="block w-full pl-10 pr-10 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                          className="block w-full pl-10 pr-10 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4]"
                           placeholder="Masukkan kata sandi lama"
                         />
-                        <Lock className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
+                        <Lock className="absolute left-3.5 top-3 w-4 h-4 text-[#8A8A8A]" />
                         <button
                           type="button"
                           onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                          className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 p-1 rounded-md"
+                          className="absolute right-3 top-2.5 text-[#8A8A8A] hover:text-white p-1 rounded-md"
                         >
                           {showCurrentPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                         </button>
@@ -1066,61 +1069,44 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
                     {/* New Password */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Kata Sandi Baru <span className="text-red-500">*</span></label>
+                      <label className="block text-xs font-bold text-[#C6D4DF] uppercase tracking-wider">Kata Sandi Baru <span className="text-[#FF4B4B]">*</span></label>
                       <div className="relative">
                         <input
                           type={showNewPassword ? 'text' : 'password'}
                           required
                           value={newPassword}
                           onChange={(e) => setNewPassword(e.target.value)}
-                          className="block w-full pl-10 pr-10 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                          className="block w-full pl-10 pr-10 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4]"
                           placeholder="Minimal 8 karakter"
                         />
-                        <Lock className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
+                        <Lock className="absolute left-3.5 top-3 w-4 h-4 text-[#8A8A8A]" />
                         <button
                           type="button"
                           onClick={() => setShowNewPassword(!showNewPassword)}
-                          className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 p-1 rounded-md"
+                          className="absolute right-3 top-2.5 text-[#8A8A8A] hover:text-white p-1 rounded-md"
                         >
                           {showNewPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                         </button>
                       </div>
-
-                      {/* Password Strength Indicator */}
-                      {newPassword && (
-                        <div className="space-y-1.5 pt-1">
-                          <div className="flex justify-between items-center text-[10px]">
-                            <span className="font-semibold text-gray-500 dark:text-slate-400">Kekuatan Sandi:</span>
-                            <span className="font-bold text-gray-700 dark:text-slate-200">{passwordStrength.text}</span>
-                          </div>
-                          <div className="w-full h-1.5 bg-gray-100 dark:bg-slate-700 rounded-full overflow-hidden flex gap-0.5">
-                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 1 ? passwordStrength.color : 'bg-gray-100 dark:bg-slate-700'}`} />
-                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 2 ? passwordStrength.color : 'bg-gray-100 dark:bg-slate-700'}`} />
-                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 3 ? passwordStrength.color : 'bg-gray-100 dark:bg-slate-700'}`} />
-                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 4 ? passwordStrength.color : 'bg-gray-100 dark:bg-slate-700'}`} />
-                            <div className={`h-full flex-1 transition-all ${passwordStrength.score >= 5 ? passwordStrength.color : 'bg-gray-100 dark:bg-slate-700'}`} />
-                          </div>
-                        </div>
-                      )}
                     </div>
 
                     {/* Confirm Password */}
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Konfirmasi Kata Sandi Baru <span className="text-red-500">*</span></label>
+                      <label className="block text-xs font-bold text-[#C6D4DF] uppercase tracking-wider">Konfirmasi Kata Sandi Baru <span className="text-[#FF4B4B]">*</span></label>
                       <div className="relative">
                         <input
                           type={showConfirmPassword ? 'text' : 'password'}
                           required
                           value={confirmPassword}
                           onChange={(e) => setConfirmPassword(e.target.value)}
-                          className="block w-full pl-10 pr-10 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500"
+                          className="block w-full pl-10 pr-10 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4]"
                           placeholder="Masukkan ulang kata sandi baru"
                         />
-                        <Lock className="absolute left-3.5 top-3 w-4 h-4 text-gray-400" />
+                        <Lock className="absolute left-3.5 top-3 w-4 h-4 text-[#8A8A8A]" />
                         <button
                           type="button"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 p-1 rounded-md"
+                          className="absolute right-3 top-2.5 text-[#8A8A8A] hover:text-white p-1 rounded-md"
                         >
                           {showConfirmPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                         </button>
@@ -1128,11 +1114,11 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                     </div>
                   </div>
 
-                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-50">
+                  <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
                     <button
                       type="submit"
                       disabled={isUpdatingPassword || !newPassword || !currentPassword}
-                      className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold rounded-xl text-xs shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                      className="h-[40px] px-6 bg-[#66C0F4] hover:bg-[#5DADE2] disabled:opacity-40 text-[#171A21] text-xs font-bold uppercase rounded-[2px] shadow-md flex items-center justify-center gap-1.5 cursor-pointer transition-all"
                     >
                       {isUpdatingPassword && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                       Ubah Kata Sandi
@@ -1141,26 +1127,25 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                 </form>
               )}
 
-              {/* TAB 3: PREFERENCES (LANGUAGE, THEME, NOTIFICATIONS) */}
+              {/* TAB 3: PREFERENCES */}
               {activeTab === 'preferences' && (
                 <div className="space-y-8">
                   <div>
-                    <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Preferensi Aplikasi</h2>
-                    <p className="text-[11px] text-gray-400 mt-0.5">Atur bahasa tampilan, preferensi visual, dan notifikasi aktivitas kelas digital.</p>
+                    <h2 className="text-sm font-bold text-white uppercase tracking-wider">Preferensi Aplikasi</h2>
+                    <p className="text-[11px] text-[#C6D4DF] mt-0.5">Atur bahasa tampilan, preferensi visual, dan notifikasi aktivitas kelas digital.</p>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                    
                     {/* Column 1: Localization & Appearance */}
                     <div className="space-y-6">
-                      <div className="flex items-center gap-2 border-b border-gray-50 pb-3">
-                        <Globe className="w-4 h-4 text-indigo-500" />
-                        <h3 className="text-xs font-bold text-gray-800 dark:text-slate-100">Tampilan & Regional</h3>
+                      <div className="flex items-center gap-2 border-b border-white/10 pb-3">
+                        <Globe className="w-4 h-4 text-[#66C0F4]" />
+                        <h3 className="text-xs font-bold text-white">Tampilan & Regional</h3>
                       </div>
 
                       {/* Language */}
                       <div className="space-y-1.5">
-                        <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Bahasa Tampilan (Localization)</label>
+                        <label className="block text-xs font-bold text-[#C6D4DF] uppercase tracking-wider">Bahasa Tampilan (Localization)</label>
                         <CustomDropdown
                           value={language}
                           onChange={(val) => setLanguage(val as any)}
@@ -1169,127 +1154,32 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                             { value: 'Bahasa Indonesia', label: 'Bahasa Indonesia' }
                           ]}
                         />
-                        <p className="text-[9px] text-gray-400 mt-1">Bahasa pengantar sistem yang diutamakan oleh Anda.</p>
-                      </div>
-
-                      {/* Theme selection placeholder */}
-                      <div className="space-y-1.5">
-                        <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Tema Visual (Theme Color)</label>
-                        <div className="grid grid-cols-3 gap-2">
-                          {(['Light', 'Dark', 'System'] as const).map((t) => (
-                            <button
-                              key={t}
-                              type="button"
-                              onClick={() => setTheme(t)}
-                              className={`py-2 px-3 rounded-xl border text-center text-xs font-bold transition-all cursor-pointer ${
-                                theme === t
-                                  ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 border-indigo-200'
-                                  : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:bg-slate-900'
-                              }`}
-                            >
-                              {t === 'Light' && 'Terang'}
-                              {t === 'Dark' && 'Gelap'}
-                              {t === 'System' && 'Sistem'}
-                            </button>
-                          ))}
-                        </div>
                       </div>
                     </div>
 
                     {/* Column 2: Notification Toggle Panel */}
                     <div className="space-y-6">
-                      <div className="flex items-center gap-2 border-b border-gray-50 pb-3">
-                        <Bell className="w-4 h-4 text-indigo-500" />
-                        <h3 className="text-xs font-bold text-gray-800 dark:text-slate-100">Pemberitahuan & Notifikasi</h3>
+                      <div className="flex items-center gap-2 border-b border-white/10 pb-3">
+                        <Bell className="w-4 h-4 text-[#66C0F4]" />
+                        <h3 className="text-xs font-bold text-white">Pemberitahuan & Notifikasi</h3>
                       </div>
 
                       <div className="space-y-4">
-                        {/* PWA Push Notification */}
-                        <div className="flex items-start justify-between gap-4 p-3 bg-indigo-50 dark:bg-indigo-900/30/50 rounded-xl border border-indigo-100 dark:border-indigo-800/50">
-                          <div className="space-y-0.5">
-                            <span className="text-xs font-bold text-gray-800 dark:text-slate-100 block">Push Notification (FCM)</span>
-                            <span className="text-[10px] text-gray-500 dark:text-slate-400 block leading-relaxed">
-                              Terima notifikasi di latar belakang meskipun browser ditutup.
-                            </span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (notificationPermissionStatus !== 'granted') {
-                                requestPermission();
-                              }
-                            }}
-                            className={`w-10 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none shrink-0 ${
-                              notificationPermissionStatus === 'granted' ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-slate-600'
-                            }`}
-                          >
-                            <div className={`w-4 h-4 rounded-full bg-white dark:bg-slate-800 transition-transform duration-200 ${
-                              notificationPermissionStatus === 'granted' ? 'translate-x-5' : 'translate-x-0'
-                            }`} />
-                          </button>
-                        </div>
-
                         {/* Email Notification */}
-                        <div className="flex items-start justify-between gap-4 p-3 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700/50">
+                        <div className="flex items-start justify-between gap-4 p-3 bg-black/40 rounded-[2px] border border-white/10">
                           <div className="space-y-0.5">
-                            <span className="text-xs font-bold text-gray-800 dark:text-slate-100 block">Notifikasi Email</span>
-                            <span className="text-[10px] text-gray-400 block leading-relaxed">Terima laporan dan pengumuman kelas via email terdaftar.</span>
+                            <span className="text-xs font-bold text-white block">Notifikasi Email</span>
+                            <span className="text-[10px] text-[#C6D4DF] block leading-relaxed">Terima laporan dan pengumuman kelas via email terdaftar.</span>
                           </div>
                           <button
                             type="button"
                             onClick={() => setEmailNotification(!emailNotification)}
                             className={`w-10 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none shrink-0 ${
-                              emailNotification ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-slate-600'
+                              emailNotification ? 'bg-[#A1CD44]' : 'bg-black/60 border border-white/10'
                             }`}
                           >
-                            <div className={`w-4 h-4 rounded-full bg-white dark:bg-slate-800 transition-transform duration-200 ${
+                            <div className={`w-4 h-4 rounded-full bg-[#171A21] transition-transform duration-200 ${
                               emailNotification ? 'translate-x-5' : 'translate-x-0'
-                            }`} />
-                          </button>
-                        </div>
-
-                        {/* Assignment Notification */}
-                        <div className="flex items-start justify-between gap-4 p-3 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700/50">
-                          <div className="space-y-0.5">
-                            <span className="text-xs font-bold text-gray-800 dark:text-slate-100 block">Notifikasi Tugas Baru</span>
-                            <span className="text-[10px] text-gray-400 block leading-relaxed">
-                              {isTeacher 
-                                ? 'Terima notifikasi instan saat siswa mengumpulkan esai tugas.' 
-                                : 'Terima notifikasi instan saat guru merilis esai tugas baru.'}
-                            </span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setAssignmentNotification(!assignmentNotification)}
-                            className={`w-10 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none shrink-0 ${
-                              assignmentNotification ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-slate-600'
-                            }`}
-                          >
-                            <div className={`w-4 h-4 rounded-full bg-white dark:bg-slate-800 transition-transform duration-200 ${
-                              assignmentNotification ? 'translate-x-5' : 'translate-x-0'
-                            }`} />
-                          </button>
-                        </div>
-
-                        {/* Score Notification */}
-                        <div className="flex items-start justify-between gap-4 p-3 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700/50">
-                          <div className="space-y-0.5">
-                            <span className="text-xs font-bold text-gray-800 dark:text-slate-100 block">Notifikasi Hasil Penilaian</span>
-                            <span className="text-[10px] text-gray-400 block leading-relaxed">
-                              {isTeacher 
-                                ? 'Terima pengingat untuk tugas esai siswa yang belum dinilai.' 
-                                : 'Terima pemberitahuan instan saat guru selesai menilai esai Anda.'}
-                            </span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => setScoreNotification(!scoreNotification)}
-                            className={`w-10 h-5 rounded-full p-0.5 transition-colors duration-200 focus:outline-none shrink-0 ${
-                              scoreNotification ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-slate-600'
-                            }`}
-                          >
-                            <div className={`w-4 h-4 rounded-full bg-white dark:bg-slate-800 transition-transform duration-200 ${
-                              scoreNotification ? 'translate-x-5' : 'translate-x-0'
                             }`} />
                           </button>
                         </div>
@@ -1298,12 +1188,12 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                   </div>
 
                   {/* Save preference button */}
-                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-50">
+                  <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
                     <button
                       type="button"
                       onClick={handleSaveProfile}
                       disabled={!hasUnsavedChanges || isSaving}
-                      className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-bold rounded-xl text-xs shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all"
+                      className="h-[40px] px-6 bg-[#A1CD44] hover:bg-[#86AE33] disabled:opacity-40 text-[#171A21] font-bold text-xs uppercase rounded-[2px] shadow-md flex items-center justify-center gap-1.5 cursor-pointer transition-all"
                     >
                       {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
                       Simpan Preferensi
@@ -1316,25 +1206,25 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
               {activeTab === 'account' && (
                 <div className="space-y-6">
                   <div>
-                    <h2 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Informasi Status Akun</h2>
-                    <p className="text-[11px] text-gray-400 mt-0.5">Detail pendaftaran akademis, peran pengguna, dan metadata keamanan login.</p>
+                    <h2 className="text-sm font-bold text-white uppercase tracking-wider">Informasi Status Akun</h2>
+                    <p className="text-[11px] text-[#C6D4DF] mt-0.5">Detail pendaftaran akademis, peran pengguna, dan metadata keamanan login.</p>
                   </div>
 
-                  <div className="bg-gray-50 dark:bg-slate-900/50 border border-gray-100 dark:border-slate-700/50 rounded-2xl p-5 space-y-4">
+                  <div className="bg-black/40 border border-white/10 rounded-[3px] p-5 space-y-4 text-white">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                       
-                      <div className="p-4 bg-white dark:bg-slate-800 border border-gray-50 rounded-xl space-y-1">
-                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Peran Sistem (Account Role)</span>
-                        <span className="text-xs font-bold text-gray-900 dark:text-white block flex items-center gap-1.5 mt-1">
-                          <UserCheck className={`w-4 h-4 ${isTeacher ? 'text-indigo-500' : 'text-emerald-500'}`} />
+                      <div className="p-4 bg-[#171A21] border border-white/10 rounded-[2px] space-y-1">
+                        <span className="text-[10px] text-[#8A8A8A] font-bold uppercase tracking-wider block">Peran Sistem (Account Role)</span>
+                        <span className="text-xs font-bold text-white block flex items-center gap-1.5 mt-1">
+                          <UserCheck className={`w-4 h-4 ${isTeacher ? 'text-[#66C0F4]' : 'text-[#A1CD44]'}`} />
                           {isTeacher ? 'Teacher / Pengajar Utama' : 'Student / Siswa Terdaftar'}
                         </span>
                       </div>
 
-                      <div className="p-4 bg-white dark:bg-slate-800 border border-gray-50 rounded-xl space-y-1">
-                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Tanggal Registrasi (Member Since)</span>
-                        <span className="text-xs font-bold text-gray-900 dark:text-white block flex items-center gap-1.5 mt-1">
-                          <Clock className="w-4 h-4 text-gray-400" />
+                      <div className="p-4 bg-[#171A21] border border-white/10 rounded-[2px] space-y-1">
+                        <span className="text-[10px] text-[#8A8A8A] font-bold uppercase tracking-wider block">Tanggal Registrasi (Member Since)</span>
+                        <span className="text-xs font-bold text-white block flex items-center gap-1.5 mt-1">
+                          <Clock className="w-4 h-4 text-[#8A8A8A]" />
                           {currentUserProfile?.createdAt?.seconds 
                             ? new Date(currentUserProfile.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})
                             : auth.currentUser?.metadata.creationTime 
@@ -1344,10 +1234,10 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                         </span>
                       </div>
 
-                      <div className="p-4 bg-white dark:bg-slate-800 border border-gray-50 rounded-xl space-y-1 sm:col-span-2">
-                        <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Aktivitas Login Terakhir (Last Logged In)</span>
-                        <span className="text-xs font-mono font-bold text-gray-700 dark:text-slate-200 block flex items-center gap-1.5 mt-1">
-                          <Clock className="w-4 h-4 text-indigo-500" />
+                      <div className="p-4 bg-[#171A21] border border-white/10 rounded-[2px] space-y-1 sm:col-span-2">
+                        <span className="text-[10px] text-[#8A8A8A] font-bold uppercase tracking-wider block">Aktivitas Login Terakhir (Last Logged In)</span>
+                        <span className="text-xs font-mono font-bold text-[#C6D4DF] block flex items-center gap-1.5 mt-1">
+                          <Clock className="w-4 h-4 text-[#66C0F4]" />
                           {auth.currentUser?.metadata.lastSignInTime 
                             ? new Date(auth.currentUser.metadata.lastSignInTime).toLocaleString('id-ID', {day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'})
                             : 'Sekarang'
@@ -1357,11 +1247,11 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                     </div>
                   </div>
 
-                  <div className="p-4 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/50 rounded-2xl flex items-start gap-3">
-                    <ShieldCheck className="w-5 h-5 text-indigo-500 shrink-0 mt-0.5" />
+                  <div className="p-4 bg-[#66C0F4]/10 border border-[#66C0F4]/30 rounded-[3px] flex items-start gap-3">
+                    <ShieldCheck className="w-5 h-5 text-[#66C0F4] shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-xs font-bold text-indigo-900 dark:text-indigo-100">Edisi Kavio Enterprise</p>
-                      <p className="text-[10px] text-indigo-700/90 leading-relaxed mt-0.5">
+                      <p className="text-xs font-bold text-white uppercase">Edisi Kavio Enterprise</p>
+                      <p className="text-[10px] text-[#C6D4DF] leading-relaxed mt-0.5">
                         Akun Anda dilindungi oleh enkripsi modern Kavio Edu. Data profil Anda disimpan secara aman dan real-time di server Cloud Firestore Enterprise.
                       </p>
                     </div>
@@ -1371,29 +1261,27 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
               {activeTab === 'dev' && currentUserProfile?.email === 'fatih@kavio.tec.edu' && (
                 <div className="space-y-6">
-                  <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-700/50 pb-4">
-                    <div>
-                      <h2 className="text-sm font-black text-indigo-650 uppercase tracking-wider">DEVELOPER & ADMINISTRATOR TOOLS</h2>
-                      <p className="text-[10px] text-gray-400 mt-0.5">Seluruh alat pengembang, pemeliharaan sistem, feature flags, dan inspektor database telah dipusatkan pada DEV TOOLS CENTER.</p>
-                    </div>
+                  <div className="border-b border-white/10 pb-4">
+                    <h2 className="text-sm font-bold text-white uppercase tracking-wider">DEVELOPER & ADMINISTRATOR TOOLS</h2>
+                    <p className="text-[10px] text-[#C6D4DF] mt-0.5">Seluruh alat pengembang, pemeliharaan sistem, feature flags, dan inspektor database telah dipusatkan pada DEV TOOLS CENTER.</p>
                   </div>
 
-                  {/* Spotify Styled Redirection Banner */}
-                  <div className="bg-[#121212] text-white p-6 sm:p-8 rounded-3xl space-y-6 shadow-2xl border border-[#282828] font-sans">
+                  {/* Dev Redirection Banner */}
+                  <div className="bg-[#171A21] text-white p-6 sm:p-8 rounded-[3px] space-y-6 shadow-md border border-white/10 font-sans">
                     <div className="flex items-center gap-3">
-                      <span className="bg-[#1DB954] text-black font-extrabold text-[10px] px-3 py-1 rounded-full uppercase tracking-wider">
-                        SPOTIFY DESIGN SYSTEM
+                      <span className="bg-[#66C0F4] text-[#171A21] font-bold text-[10px] px-3 py-1 rounded-[2px] uppercase tracking-wider">
+                        STEAM DESIGN SYSTEM
                       </span>
-                      <span className="bg-[#282828] text-[#B3B3B3] font-bold text-[10px] px-3 py-1 rounded-full uppercase border border-[#3E3E3E]">
+                      <span className="bg-black/40 text-[#C6D4DF] font-bold text-[10px] px-3 py-1 rounded-[2px] uppercase border border-white/10">
                         PENGALIHAN TERPUSAT
                       </span>
                     </div>
 
                     <div className="space-y-2">
-                      <h3 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight font-display">
+                      <h3 className="text-xl font-bold text-white uppercase tracking-tight">
                         DEV TOOLS CENTER TELAH SIAP
                       </h3>
-                      <p className="text-xs text-[#B3B3B3] leading-relaxed max-w-xl">
+                      <p className="text-xs text-[#C6D4DF] leading-relaxed max-w-xl">
                         Untuk pengalaman pengelolaan yang lebih cepat, aman, dan terorganisir, seluruh fitur developer (User Bypass, Feature Flags, Maintenance Mode, Package Registrations, dan Terminal Logs) telah dipindahkan ke <strong className="text-white">DEV TOOLS CENTER</strong> pada Sidebar utama.
                       </p>
                     </div>
@@ -1404,7 +1292,7 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
                         onClick={() => {
                           onNavigate?.('/teacher');
                         }}
-                        className="px-6 py-3 bg-[#1DB954] hover:bg-[#1ED760] text-black text-xs font-black rounded-full transition-all cursor-pointer inline-flex items-center gap-2 shadow-lg"
+                        className="px-6 py-3 bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] text-xs font-bold uppercase rounded-[2px] transition-all cursor-pointer inline-flex items-center gap-2 shadow-md"
                       >
                         <Terminal className="w-4 h-4" />
                         <span>Buka DEV TOOLS CENTER di Sidebar</span>

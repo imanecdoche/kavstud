@@ -351,89 +351,83 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-3 sm:p-6 lg:p-8 w-full max-w-6xl mx-auto" id="assignment-detail-page">
+    <div className="min-h-screen bg-[#171A21] text-white p-4 sm:p-6 lg:p-8 w-full" id="assignment-detail-page">
       {/* Back button header */}
-      <div className="flex items-center gap-4 border-b border-gray-100 dark:border-slate-700/50 pb-6">
+      <div className="flex items-center gap-4 border-b border-white/10 pb-6">
         <button
           onClick={handleBack}
-          className="btn-duo-slate p-2.5 flex items-center justify-center cursor-pointer"
-          style={{ minWidth: '44px', minHeight: '44px' }}
+          className="h-[36px] px-3 bg-black/40 hover:bg-white/10 text-white border border-white/20 text-xs font-bold uppercase rounded-[2px] flex items-center justify-center cursor-pointer transition-all"
+          style={{ minWidth: '36px' }}
           aria-label="Kembali"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-700 dark:text-slate-200" />
+          <ArrowLeft className="w-4 h-4 text-white" />
         </button>
         <div>
-          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Detail Lembar Tugas</span>
-          <h1 className="text-xl sm:text-2xl font-display font-bold text-gray-900 dark:text-white tracking-tight mt-0.5">
+          <span className="text-[10px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Detail Lembar Tugas</span>
+          <h1 className="text-xl sm:text-2xl font-bold text-white tracking-tight mt-0.5">
             {assignment?.title || 'Loading...'}
           </h1>
         </div>
       </div>
 
       {error && (
-        <div className="p-4 bg-red-50 border border-red-200/50 rounded-2xl text-xs text-red-600 flex items-center gap-2 mt-6">
-          <AlertCircle className="w-4.5 h-4.5 text-red-500 shrink-0" />
+        <div className="p-4 bg-red-950/60 border border-red-500/40 rounded-[2px] text-xs text-red-200 flex items-center gap-2 mt-6">
+          <AlertCircle className="w-4.5 h-4.5 text-red-400 shrink-0" />
           <p className="font-semibold">{error}</p>
         </div>
       )}
 
       {loading ? (
         <div className="space-y-6 animate-pulse mt-8">
-          <div className="h-40 bg-gray-200 dark:bg-slate-600/60 rounded-3xl" />
-          <div className="h-64 bg-gray-200 dark:bg-slate-600/60 rounded-3xl" />
+          <div className="h-40 bg-[#2F3138] border border-white/10 rounded-[3px]" />
+          <div className="h-64 bg-[#2F3138] border border-white/10 rounded-[3px]" />
         </div>
       ) : assignment ? (
         <div className="space-y-8 mt-8">
           {/* Assignment Information Card */}
-          <div className="card-duo p-4 sm:p-6 lg:p-8 space-y-6">
+          <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 lg:p-8 space-y-6 shadow-[0_2px_8px_rgba(0,0,0,0.5)] text-white">
             <div className="flex items-center gap-3.5 flex-wrap">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-sky-100 text-sky-800 rounded-full border border-sky-200 text-[10px] font-extrabold uppercase">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#66C0F4]/15 border border-[#66C0F4]/40 text-[#66C0F4] rounded-[2px] text-[10px] font-bold uppercase tracking-wider">
                 <BookOpen className="w-3.5 h-3.5" />
                 Lembar Soal
               </div>
-              <span className="text-xs text-gray-500 dark:text-slate-400 font-medium">
-                Dibuat oleh: <span className="font-extrabold text-gray-800 dark:text-slate-100">{assignment.teacherName}</span>
+              <span className="text-xs text-[#C6D4DF] font-medium">
+                Dibuat oleh: <span className="font-bold text-white">{assignment.teacherName}</span>
               </span>
             </div>
 
             {/* Assignment Metadata Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4.5 bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600 rounded-2xl text-xs">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 bg-black/40 border border-white/10 rounded-[2px] text-xs text-white">
               {assignment.deadline && (
                 <div className="space-y-0.5">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Tenggat Waktu</span>
-                  <span className="font-semibold text-gray-800 dark:text-slate-100">{assignment.deadline}</span>
+                  <span className="text-[9px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Tenggat Waktu</span>
+                  <span className="font-bold text-white">{assignment.deadline}</span>
                 </div>
               )}
               {assignment.estimatedDuration && (
                 <div className="space-y-0.5">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Durasi</span>
-                  <span className="font-semibold text-gray-800 dark:text-slate-100">{assignment.estimatedDuration} Menit</span>
+                  <span className="text-[9px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Durasi</span>
+                  <span className="font-bold text-white">{assignment.estimatedDuration} Menit</span>
                 </div>
               )}
               {(assignment.totalQuestions !== undefined || questions.length > 0) && (
                 <div className="space-y-0.5">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Total Soal</span>
-                  <span className="font-semibold text-gray-800 dark:text-slate-100">{assignment.totalQuestions || questions.length} Soal</span>
+                  <span className="text-[9px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Total Soal</span>
+                  <span className="font-bold text-white">{assignment.totalQuestions || questions.length} Soal</span>
                 </div>
               )}
               {(assignment.totalPoints !== undefined || questions.length > 0) && (
                 <div className="space-y-0.5">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Total Bobot</span>
-                  <span className="font-semibold text-gray-800 dark:text-slate-100">
+                  <span className="text-[9px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Total Bobot</span>
+                  <span className="font-bold text-white">
                     {assignment.totalPoints || questions.reduce((sum, q) => sum + (q.points || 0), 0)} Poin
                   </span>
                 </div>
               )}
               {assignment.difficulty && (
                 <div className="space-y-0.5 col-span-2 md:col-span-1">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Tingkat Kesulitan</span>
-                  <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                    assignment.difficulty === 'Mudah'
-                      ? 'bg-green-50 text-green-700 border border-green-100'
-                      : assignment.difficulty === 'Sedang'
-                        ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 border border-amber-100 dark:border-amber-800/50'
-                        : 'bg-red-50 text-red-700 border border-red-100'
-                  }`}>
+                  <span className="text-[9px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Tingkat Kesulitan</span>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[10px] font-bold uppercase tracking-wider bg-[#A1CD44]/20 text-[#A1CD44] border border-[#A1CD44]/40">
                     {assignment.difficulty}
                   </span>
                 </div>
@@ -441,18 +435,18 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
             </div>
 
             {assignment.description && (
-              <div className="space-y-3 bg-gray-50 dark:bg-slate-900 p-5 rounded-2xl border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600">
-                <span className="text-[10px] font-black text-gray-500 dark:text-slate-400 uppercase tracking-wider block">Petunjuk Pengerjaan:</span>
-                <p className="text-xs font-semibold text-gray-800 dark:text-slate-100 leading-relaxed whitespace-pre-wrap">
+              <div className="space-y-2 bg-black/40 p-5 rounded-[2px] border border-white/10 text-white">
+                <span className="text-[10px] font-bold text-[#66C0F4] uppercase tracking-wider block">Petunjuk Pengerjaan:</span>
+                <p className="text-xs font-normal text-[#C6D4DF] leading-relaxed whitespace-pre-wrap">
                   {assignment.description}
                 </p>
               </div>
             )}
 
             {assignment.question && (!assignment.description || assignment.question !== assignment.description) && (
-              <div className="space-y-3 bg-gray-50 dark:bg-slate-900/50 p-5 rounded-2xl border border-gray-100 dark:border-slate-700/50">
-                <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Pertanyaan / Instruksi Guru:</span>
-                <p className="text-xs text-gray-700 dark:text-slate-200 leading-relaxed whitespace-pre-wrap">
+              <div className="space-y-2 bg-black/40 p-5 rounded-[2px] border border-white/10 text-white">
+                <span className="text-[10px] font-bold text-[#66C0F4] uppercase tracking-wider block">Pertanyaan / Instruksi Guru:</span>
+                <p className="text-xs font-normal text-[#C6D4DF] leading-relaxed whitespace-pre-wrap">
                   {assignment.question}
                 </p>
               </div>
@@ -461,19 +455,19 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
 
           {/* Student Answer Panel / Submission Status */}
           {currentUserProfile?.role === 'student' && (
-            <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-6 sm:p-8 rounded-3xl shadow-3xs space-y-6">
-              <div className="flex items-center justify-between border-b border-gray-50 pb-4">
-                <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide flex items-center gap-2">
-                  <Clock className="w-4.5 h-4.5 text-indigo-500" />
+            <div className="bg-[#2F3138] border border-white/10 p-6 sm:p-8 rounded-[3px] shadow-[0_2px_8px_rgba(0,0,0,0.5)] space-y-6 text-white">
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                <h3 className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                  <Clock className="w-4 h-4 text-[#66C0F4]" />
                   Lembar Jawaban Anda
                 </h3>
                 {existingSubmission && (
-                  <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase ${
+                  <span className={`inline-flex items-center px-2.5 py-1 rounded-[2px] text-[10px] font-bold uppercase tracking-wider border ${
                     existingSubmission.status === 'graded' 
-                      ? 'bg-green-50 text-green-700 border border-green-100' 
+                      ? 'bg-[#A1CD44]/20 text-[#A1CD44] border-[#A1CD44]/40' 
                       : existingSubmission.status === 'remedial'
-                        ? 'bg-orange-50 text-orange-700 border border-orange-100'
-                        : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 border border-amber-100 dark:border-amber-800/50'
+                        ? 'bg-orange-500/20 text-orange-400 border-orange-500/40'
+                        : 'bg-[#66C0F4]/20 text-[#66C0F4] border-[#66C0F4]/40'
                   }`}>
                     {existingSubmission.status === 'graded' 
                       ? 'Sudah Dinilai' 
@@ -487,11 +481,11 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
               {existingSubmission && existingSubmission.status !== 'remedial' && !isEditingResubmit ? (
                 /* Already Submitted View */
                 <div className="space-y-4">
-                  <div className="p-4 bg-green-50/50 border border-green-100 rounded-2xl text-xs text-green-700 flex items-start gap-2.5">
-                    <CheckCircle className="w-4.5 h-4.5 text-green-600 shrink-0 mt-0.5" />
+                  <div className="p-4 bg-black/40 border border-[#A1CD44]/40 rounded-[2px] text-xs text-white flex items-start gap-2.5">
+                    <CheckCircle className="w-4.5 h-4.5 text-[#A1CD44] shrink-0 mt-0.5" />
                     <div>
-                      <p className="font-bold">Jawaban telah terkirim!</p>
-                      <p className="text-[11px] mt-0.5 text-green-600/90 leading-relaxed">
+                      <p className="font-bold text-[#A1CD44]">Jawaban telah terkirim!</p>
+                      <p className="text-[11px] mt-0.5 text-[#C6D4DF] leading-relaxed">
                         Anda telah mengirimkan jawaban tugas ini. Klik tombol di bawah untuk melihat detail skor dan tanggapan guru secara real-time.
                       </p>
                     </div>
@@ -500,8 +494,7 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                   <div className="flex flex-col sm:flex-row gap-3">
                     <button
                       onClick={() => onNavigate(`/submission/${assignmentId}`)}
-                      className="w-full sm:w-auto px-5 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
-                      style={{ minHeight: '44px' }}
+                      className="w-full sm:w-auto h-[40px] px-5 bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] rounded-[2px] text-xs font-bold uppercase tracking-wider shadow-md flex items-center justify-center gap-1.5 cursor-pointer transition-all"
                     >
                       Buka Detail Submisi & Nilai
                       <ArrowLeft className="w-4 h-4 rotate-180" />
@@ -531,30 +524,29 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                           }
                           setIsEditingResubmit(true);
                         }}
-                        className="w-full sm:w-auto px-5 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:bg-slate-900 text-gray-700 dark:text-slate-200 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all"
-                        style={{ minHeight: '44px' }}
+                        className="w-full sm:w-auto h-[40px] px-5 bg-black/40 hover:bg-white/10 text-white border border-white/20 rounded-[2px] text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer transition-all"
                       >
-                        <Plus className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                        <Plus className="w-4 h-4 text-[#66C0F4]" />
                         Kirim Ulang / Perbarui Jawaban
                       </button>
                     )}
                   </div>
                 </div>
               ) : (
-                /* Form to write answer (or remedial retry form) */
+                /* Form to write answer */
                 <div className="space-y-5">
                   {existingSubmission?.status === 'remedial' && (
-                    <div className="p-4.5 bg-orange-50/50 border border-orange-200/50 rounded-2xl space-y-2">
-                      <div className="flex items-center gap-2 text-orange-800">
+                    <div className="p-4.5 bg-black/40 border border-orange-500/40 rounded-[2px] space-y-2 text-white">
+                      <div className="flex items-center gap-2 text-orange-400">
                         <AlertCircle className="w-4.5 h-4.5" />
                         <h4 className="text-xs font-bold uppercase tracking-wider">Tugas Perlu Perbaikan (Remedial)</h4>
                       </div>
-                      <p className="text-xs text-orange-700 leading-relaxed">
+                      <p className="text-xs text-[#C6D4DF] leading-relaxed">
                         Guru meminta Anda untuk memperbaiki jawaban tugas ini. Silakan baca catatan umpan balik di bawah, lalu kirim ulang jawaban terbaik Anda.
                       </p>
                       {existingSubmission.feedback && (
-                        <div className="p-3 bg-white dark:bg-slate-800/80 border border-orange-100 rounded-xl text-xs text-gray-700 dark:text-slate-200 font-medium">
-                          <strong className="text-[10px] text-orange-800 uppercase block mb-1">Catatan Guru:</strong>
+                        <div className="p-3 bg-black/60 border border-orange-500/30 rounded-[2px] text-xs text-[#C6D4DF] font-medium">
+                          <strong className="text-[10px] text-orange-400 uppercase block mb-1">Catatan Guru:</strong>
                           "{existingSubmission.feedback}"
                         </div>
                       )}
@@ -563,7 +555,7 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
 
                   <form onSubmit={handleSubmitAnswer} className="space-y-5">
                   {submitError && (
-                    <div className="p-4 bg-red-50 border border-red-200/50 rounded-2xl text-xs text-red-600">
+                    <div className="p-4 bg-red-950/60 border border-red-500/40 rounded-[2px] text-xs text-red-200">
                       {submitError}
                     </div>
                   )}
@@ -571,13 +563,13 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                   {/* LMS Composite Form Rendering */}
                   {assignment.assignmentType === 'lms_composite' && questions.length > 0 && (
                     <div className="space-y-6">
-                      <div className="bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 p-4 rounded-2xl flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div className="bg-black/40 border border-white/10 p-4 rounded-[2px] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-white">
                         <div className="text-xs">
-                          <p className="font-bold text-gray-800 dark:text-slate-100">Ujian Berbasis LMS</p>
-                          <p className="text-gray-400 mt-0.5">Total Pertanyaan: {questions.length} | Total Bobot: {assignment.totalPoints || questions.reduce((sum, q) => sum + q.points, 0)} Poin</p>
+                          <p className="font-bold text-white">Ujian Berbasis LMS</p>
+                          <p className="text-[#8A8A8A] mt-0.5">Total Pertanyaan: {questions.length} | Total Bobot: {assignment.totalPoints || questions.reduce((sum, q) => sum + q.points, 0)} Poin</p>
                         </div>
                         {assignment.estimatedDuration && (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/50 rounded-xl text-xs font-bold text-indigo-700">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#66C0F4]/15 border border-[#66C0F4]/30 rounded-[2px] text-xs font-bold text-[#66C0F4]">
                             <Clock className="w-3.5 h-3.5" />
                             Durasi: {assignment.estimatedDuration} Menit
                           </span>
@@ -588,24 +580,24 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                         const studentAnswer = answersMap[q.id] || '';
                         
                         return (
-                          <div key={q.id} className="p-6 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-3xl space-y-4 shadow-3xs relative">
+                          <div key={q.id} className="p-6 bg-black/40 border border-white/10 rounded-[3px] space-y-4 text-white relative">
                             {/* Question Header */}
-                            <div className="flex items-start justify-between gap-4 border-b border-gray-50 pb-3">
+                            <div className="flex items-start justify-between gap-4 border-b border-white/10 pb-3">
                               <div className="flex items-center gap-2">
-                                <span className="w-6 h-6 rounded-lg bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 text-xs font-bold flex items-center justify-center font-mono">
+                                <span className="w-6 h-6 rounded-[2px] bg-[#66C0F4]/20 text-[#66C0F4] text-xs font-bold flex items-center justify-center font-mono">
                                   {idx + 1}
                                 </span>
-                                <span className="text-[10px] uppercase font-bold text-gray-400 tracking-wider">
+                                <span className="text-[10px] uppercase font-bold text-[#8A8A8A] tracking-wider">
                                   {q.type.replace('_', ' ')}
                                 </span>
                               </div>
-                              <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30/50 px-2 py-0.5 rounded-md font-mono">
+                              <span className="text-[10px] font-bold text-[#66C0F4] bg-[#66C0F4]/15 px-2 py-0.5 rounded-[2px] font-mono border border-[#66C0F4]/30">
                                 {q.points || 10} Poin
                               </span>
                             </div>
 
                             {/* Question Body */}
-                            <p className="text-xs font-bold text-gray-800 dark:text-slate-100 leading-relaxed whitespace-pre-wrap">
+                            <p className="text-xs font-bold text-white leading-relaxed whitespace-pre-wrap">
                               {q.question}
                             </p>
 
@@ -617,7 +609,7 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                                 value={studentAnswer}
                                 onChange={(e) => setAnswersMap({ ...answersMap, [q.id]: e.target.value })}
                                 placeholder="Ketik jawaban esai Anda di sini..."
-                                className="block w-full px-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 font-sans resize-none"
+                                className="block w-full px-4 py-3 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4] font-sans resize-none"
                               />
                             )}
 
@@ -625,7 +617,7 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                             {q.type === 'multiple_choice' && q.choices && (
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                                 {q.choices.map((choice, cIdx) => {
-                                  const optLetter = String.fromCharCode(65 + cIdx); // A, B, C, D...
+                                  const optLetter = String.fromCharCode(65 + cIdx);
                                   const isSelected = studentAnswer === optLetter;
 
                                   return (
@@ -633,18 +625,18 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                                       key={cIdx}
                                       type="button"
                                       onClick={() => setAnswersMap({ ...answersMap, [q.id]: optLetter })}
-                                      className={`p-3.5 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
+                                      className={`p-3.5 rounded-[2px] border text-left flex items-center gap-3 transition-all cursor-pointer ${
                                         isSelected 
-                                          ? 'bg-indigo-50 dark:bg-indigo-900/30/50 border-indigo-600 ring-1 ring-indigo-600 shadow-3xs' 
-                                          : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:border-slate-600'
+                                          ? 'bg-[#66C0F4]/20 border-[#66C0F4] text-white' 
+                                          : 'bg-black/40 border-white/15 text-[#C6D4DF] hover:bg-white/5'
                                       }`}
                                     >
-                                      <span className={`w-5.5 h-5.5 rounded-full flex items-center justify-center text-[10px] font-bold font-mono transition-colors ${
-                                        isSelected ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400'
+                                      <span className={`w-5.5 h-5.5 rounded-[2px] flex items-center justify-center text-[10px] font-bold font-mono ${
+                                        isSelected ? 'bg-[#66C0F4] text-[#171A21]' : 'bg-black/60 text-[#8A8A8A]'
                                       }`}>
                                         {optLetter}
                                       </span>
-                                      <span className="text-xs font-semibold text-gray-700 dark:text-slate-200">{choice}</span>
+                                      <span className="text-xs font-semibold text-white">{choice}</span>
                                     </button>
                                   );
                                 })}
@@ -664,10 +656,10 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                                       key={option.val}
                                       type="button"
                                       onClick={() => setAnswersMap({ ...answersMap, [q.id]: option.val })}
-                                      className={`flex-1 py-3 px-4 rounded-xl border text-center text-xs font-bold transition-all cursor-pointer ${
+                                      className={`flex-1 py-3 px-4 rounded-[2px] border text-center text-xs font-bold transition-all cursor-pointer ${
                                         isSelected
-                                          ? 'bg-indigo-50 dark:bg-indigo-900/30/50 border-indigo-600 ring-1 ring-indigo-600 text-indigo-700'
-                                          : 'bg-white dark:bg-slate-800 text-gray-500 dark:text-slate-400 border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:bg-slate-900'
+                                          ? 'bg-[#66C0F4]/20 border-[#66C0F4] text-[#66C0F4]'
+                                          : 'bg-black/40 text-[#C6D4DF] border-white/15 hover:bg-white/5'
                                       }`}
                                     >
                                       {option.label}
@@ -677,158 +669,15 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                               </div>
                             )}
 
-                            {/* 4. Matching Type Input */}
-                            {q.type === 'matching' && q.matchingPairs && (
-                              <div className="space-y-3 pt-1">
-                                <p className="text-[10px] text-gray-400 font-bold uppercase">Pasangkan Unsur Kiri dengan Kanan:</p>
-                                <div className="space-y-2.5">
-                                  {q.matchingPairs.map((pair, pIdx) => {
-                                    const currentAnswersList = studentAnswer ? studentAnswer.split(',') : [];
-                                    const matchingMap: {[left: string]: string} = {};
-                                    currentAnswersList.forEach(item => {
-                                      const [l, r] = item.split('::');
-                                      if (l) matchingMap[l] = r || '';
-                                    });
-
-                                    const selectedRightVal = matchingMap[pair.left] || '';
-
-                                    return (
-                                      <div key={pIdx} className="flex flex-col sm:flex-row sm:items-center gap-2.5 p-3 bg-gray-50 dark:bg-slate-900/50 rounded-xl border border-gray-100 dark:border-slate-700/50">
-                                        <span className="text-xs font-bold text-gray-700 dark:text-slate-200 min-w-[120px]">{pair.left}</span>
-                                        <div className="hidden sm:block text-gray-400 font-mono">➡</div>
-                                        <CustomDropdown
-                                          value={selectedRightVal}
-                                          placeholder="-- Pilih Jawaban --"
-                                          onChange={(val) => {
-                                            matchingMap[pair.left] = val;
-                                            const serialized = Object.entries(matchingMap)
-                                              .map(([l, r]) => `${l}::${r}`)
-                                              .join(',');
-                                            setAnswersMap({ ...answersMap, [q.id]: serialized });
-                                          }}
-                                          options={[
-                                            { value: '', label: '-- Pilih Jawaban --' },
-                                            ...(q.matchingPairs?.map((itemRight) => ({
-                                              value: itemRight.right,
-                                              label: itemRight.right
-                                            })) || [])
-                                          ]}
-                                          className="flex-1"
-                                          size="sm"
-                                        />
-                                      </div>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            )}
-
-                            {/* 5. Fill Blank Input */}
+                            {/* 4. Fill Blank Input */}
                             {q.type === 'fill_blank' && (
                               <input
                                 type="text"
                                 value={studentAnswer}
                                 onChange={(e) => setAnswersMap({ ...answersMap, [q.id]: e.target.value })}
                                 placeholder="Tulis isian jawaban singkat Anda di sini..."
-                                className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                                className="block w-full px-4 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4]"
                               />
-                            )}
-
-                            {/* 6. Listening Input */}
-                            {q.type === 'listening' && (
-                              <div className="space-y-3 pt-1">
-                                {q.audioUrl ? (
-                                  <div className="p-3 bg-gray-50 dark:bg-slate-900 border border-gray-200 dark:border-slate-700 rounded-xl flex items-center gap-3">
-                                    <Volume2 className="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0" />
-                                    <audio src={q.audioUrl} controls className="w-full h-8" />
-                                  </div>
-                                ) : (
-                                  <div className="p-3 bg-yellow-50 text-yellow-800 rounded-xl text-[11px] font-semibold border border-yellow-100">
-                                    Audio soal tidak disiapkan oleh guru.
-                                  </div>
-                                )}
-                                <textarea
-                                  required={assignment.settings?.requireAll}
-                                  rows={3}
-                                  value={studentAnswer}
-                                  onChange={(e) => setAnswersMap({ ...answersMap, [q.id]: e.target.value })}
-                                  placeholder="Dengarkan audio di atas lalu tulis jawaban / rangkuman Anda di sini..."
-                                  className="block w-full px-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 font-sans resize-none"
-                                />
-                              </div>
-                            )}
-
-                            {/* 7. Speaking Input */}
-                            {q.type === 'speaking' && (
-                              <div className="space-y-3 pt-1">
-                                {q.speakingPrompt && (
-                                  <div className="p-3 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/50 rounded-xl text-xs font-semibold text-indigo-800">
-                                    "{q.speakingPrompt}"
-                                  </div>
-                                )}
-                                <div className="flex gap-2">
-                                  <input
-                                    type="text"
-                                    value={studentAnswer}
-                                    onChange={(e) => setAnswersMap({ ...answersMap, [q.id]: e.target.value })}
-                                    placeholder="Ketikan rekaman lafal kalimat Anda di sini..."
-                                    className="flex-1 px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      const isRecording = !!recordingStates[q.id];
-                                      setRecordingStates({ ...recordingStates, [q.id]: !isRecording });
-                                      if (!isRecording) {
-                                        setTimeout(() => {
-                                          setAnswersMap(prev => ({
-                                            ...prev,
-                                            [q.id]: q.speakingPrompt || "I am reading the speaking prompt clearly."
-                                          }));
-                                          setRecordingStates(prev => ({ ...prev, [q.id]: false }));
-                                        }, 1500);
-                                      }
-                                    }}
-                                    className={`px-4 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer border ${
-                                      recordingStates[q.id]
-                                        ? 'bg-red-500 text-white border-red-500 animate-pulse'
-                                        : 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 border-indigo-100 dark:border-indigo-800/50 hover:bg-indigo-100'
-                                    }`}
-                                  >
-                                    <Mic className="w-4 h-4" />
-                                    {recordingStates[q.id] ? 'Merekam...' : 'Bicara'}
-                                  </button>
-                                </div>
-                              </div>
-                            )}
-
-                            {/* 8. File Upload Input */}
-                            {q.type === 'file_upload' && (
-                              <div className="space-y-3 pt-1">
-                                <div className="p-4 border border-dashed border-gray-200 dark:border-slate-700 hover:border-indigo-400 bg-gray-50 dark:bg-slate-900/50 rounded-2xl text-center space-y-2 cursor-pointer transition-all relative">
-                                  <UploadCloud className="w-6 h-6 text-indigo-500 mx-auto" />
-                                  <div className="text-xs">
-                                    <p className="font-semibold text-gray-700 dark:text-slate-200">Pilih Berkas Tugas / Tarik Di Sini</p>
-                                    <p className="text-[10px] text-gray-400 mt-0.5">Mendukung berkas: {q.allowedFileTypes?.join(', ') || 'Semua format'}</p>
-                                  </div>
-                                  <input 
-                                    type="file" 
-                                    className="absolute inset-0 opacity-0 cursor-pointer" 
-                                    onChange={(e) => {
-                                      const file = e.target.files?.[0];
-                                      if (file) {
-                                        setAnswersMap({ ...answersMap, [q.id]: `Uploaded_File: ${file.name} (${(file.size / 1024).toFixed(1)} KB)` });
-                                      }
-                                    }}
-                                  />
-                                </div>
-                                {studentAnswer && (
-                                  <div className="p-3 bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-100 dark:border-emerald-800/50 text-[11px] font-bold text-emerald-700 rounded-xl flex items-center gap-2">
-                                    <Check className="w-4 h-4 shrink-0" />
-                                    {studentAnswer}
-                                  </div>
-                                )}
-                              </div>
                             )}
                           </div>
                         );
@@ -836,74 +685,18 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                     </div>
                   )}
 
-                  {/* Multiple Choice Options */}
-                  {assignment.assignmentType === 'multiple_choice' && assignment.choices && (
-                    <div className="space-y-3.5">
-                      <span className="block text-xs font-bold text-gray-700 dark:text-slate-200">Pilih Jawaban Anda <span className="text-red-500">*</span></span>
-                      <div className="grid grid-cols-1 gap-3">
-                        {(['A', 'B', 'C', 'D'] as const).map((opt) => (
-                          <button
-                            key={opt}
-                            type="button"
-                            onClick={() => setSelectedChoice(opt)}
-                            className={`w-full p-4 rounded-xl border text-left flex items-center gap-3 transition-all cursor-pointer ${
-                              selectedChoice === opt 
-                                ? 'bg-indigo-50 dark:bg-indigo-900/30/50 border-indigo-600 ring-1 ring-indigo-600 shadow-3xs' 
-                                : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:border-slate-600'
-                            }`}
-                          >
-                            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold font-mono transition-colors ${
-                              selectedChoice === opt 
-                                ? 'bg-indigo-600 text-white' 
-                                : 'bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400'
-                            }`}>
-                              {opt}
-                            </span>
-                            <span className="text-xs font-semibold text-gray-700 dark:text-slate-200">{assignment.choices[opt]}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Multi Short Answer Inputs */}
-                  {assignment.assignmentType === 'multi_short_answer' && assignment.subQuestions && (
-                    <div className="space-y-5">
-                      <span className="block text-xs font-bold text-gray-700 dark:text-slate-200">Jawab Setiap Sub-Pertanyaan <span className="text-red-500">*</span></span>
-                      {assignment.subQuestions.map((q, idx) => (
-                        <div key={idx} className="space-y-2 p-4.5 bg-gray-50 dark:bg-slate-900/50 rounded-2xl border border-gray-100 dark:border-slate-700/50">
-                          <label className="block text-xs font-bold text-indigo-900 dark:text-indigo-100 leading-normal">
-                            Soal {idx + 1}: {q}
-                          </label>
-                          <textarea
-                            required
-                            rows={3}
-                            value={multiAnswers[idx] || ''}
-                            onChange={(e) => {
-                              const next = [...multiAnswers];
-                              next[idx] = e.target.value;
-                              setMultiAnswers(next);
-                            }}
-                            className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500 font-sans resize-none"
-                            placeholder={`Tulis jawaban untuk soal nomor ${idx + 1}...`}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
                   {/* Single Answer field */}
                   {(!assignment.assignmentType || assignment.assignmentType === 'short_answer') && (
                     <div className="space-y-1.5">
                       <div className="flex items-center justify-between">
-                        <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">
-                          Tulis Jawaban <span className="text-red-500">*</span>
+                        <label className="block text-xs font-bold text-white">
+                          Tulis Jawaban <span className="text-red-400">*</span>
                         </label>
                         <button
                           type="button"
                           onClick={() => setIsPreviewMode(!isPreviewMode)}
                           disabled={!answer.trim()}
-                          className="text-[11px] text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 hover:underline font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                          className="text-[11px] text-[#66C0F4] hover:underline font-bold flex items-center gap-1 cursor-pointer disabled:opacity-50"
                         >
                           <Eye className="w-3.5 h-3.5" />
                           {isPreviewMode ? 'Kembali Edit' : 'Pratinjau Jawaban'}
@@ -911,8 +704,7 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                       </div>
 
                       {isPreviewMode ? (
-                        /* Plain Text Preview */
-                        <div className="p-4 min-h-[160px] bg-gray-50 dark:bg-slate-900 border border-dashed border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-700 dark:text-slate-200 leading-relaxed whitespace-pre-wrap font-sans">
+                        <div className="p-4 min-h-[160px] bg-black/40 border border-dashed border-white/20 rounded-[2px] text-xs text-white leading-relaxed whitespace-pre-wrap font-sans">
                           {answer}
                         </div>
                       ) : (
@@ -921,7 +713,7 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                           rows={8}
                           value={answer}
                           onChange={(e) => setAnswer(e.target.value)}
-                          className="block w-full px-4 py-3 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 resize-none font-sans"
+                          className="block w-full px-4 py-3 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4] resize-none font-sans"
                           placeholder="Ketik seluruh jawaban esai Anda secara lengkap dan teliti di sini..."
                         />
                       )}
@@ -929,30 +721,10 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
                   )}
 
                   <div className="flex justify-end gap-3 pt-2">
-                    {isPreviewMode && (!assignment.assignmentType || assignment.assignmentType === 'short_answer') && (
-                      <button
-                        type="button"
-                        onClick={() => setIsPreviewMode(false)}
-                        className="px-5 py-3 border border-gray-200 dark:border-slate-700 text-gray-500 dark:text-slate-400 font-semibold rounded-xl text-xs hover:bg-gray-50 dark:bg-slate-900 cursor-pointer active:scale-95 transition-all"
-                        style={{ minHeight: '44px' }}
-                      >
-                        Edit Jawaban
-                      </button>
-                    )}
                     <button
                       type="submit"
-                      disabled={
-                        isSubmitting ||
-                        (assignment.assignmentType === 'lms_composite'
-                          ? (assignment.settings?.requireAll && questions.some(q => !(answersMap[q.id] || '').trim()))
-                          : assignment.assignmentType === 'multiple_choice' 
-                            ? !selectedChoice 
-                            : assignment.assignmentType === 'multi_short_answer'
-                              ? multiAnswers.some(ans => !ans.trim())
-                              : !answer.trim())
-                      }
-                      className="btn-duo-green px-6 py-3 text-xs font-black flex items-center justify-center gap-2 cursor-pointer"
-                      style={{ minHeight: '44px' }}
+                      disabled={isSubmitting}
+                      className="h-[40px] px-6 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-xs font-bold uppercase tracking-wider rounded-[2px] shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
                     >
                       <Send className="w-4 h-4" />
                       <span>{isSubmitting ? 'Mengirim Jawaban...' : 'Kirim Jawaban Tugas'}</span>
@@ -966,27 +738,27 @@ export default function AssignmentDetail({ assignmentId, onNavigate, onSetLoadin
 
           {/* Teacher View Details Info */}
           {currentUserProfile?.role === 'teacher' && (
-            <div className="card-duo p-6 sm:p-8 space-y-4">
-              <h3 className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider">
+            <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 lg:p-8 space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.5)] text-white">
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider">
                 Status Tugas Siswa
               </h3>
 
               {existingSubmission ? (
-                <div className="p-4 bg-sky-50 border-2 border-sky-200 border-b-4 border-sky-300 rounded-2xl flex items-center justify-between gap-4 flex-wrap">
+                <div className="p-4 bg-black/40 border border-[#66C0F4]/40 rounded-[2px] flex items-center justify-between gap-4 flex-wrap text-white">
                   <div className="space-y-1">
-                    <p className="text-xs font-extrabold text-sky-950">Siswa telah merespon tugas ini!</p>
-                    <p className="text-[11px] font-semibold text-sky-800">Klik tombol di samping untuk segera memberikan penilaian dan umpan balik.</p>
+                    <p className="text-xs font-bold text-[#66C0F4]">Siswa telah merespon tugas ini!</p>
+                    <p className="text-[11px] font-normal text-[#C6D4DF]">Klik tombol di samping untuk segera memberikan penilaian dan umpan balik.</p>
                   </div>
                   <button
                     onClick={() => onNavigate(`/submission/${assignmentId}`)}
-                    className="btn-duo-blue px-5 py-2.5 text-xs font-black"
+                    className="h-[36px] px-5 bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] font-bold text-xs uppercase tracking-wider rounded-[2px] shadow-md cursor-pointer transition-all"
                   >
                     Buka Submisi Siswa
                   </button>
                 </div>
               ) : (
-                <div className="p-4 bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600 rounded-2xl text-xs font-semibold text-gray-600 dark:text-slate-300">
-                  Siswa <span className="font-extrabold text-gray-900 dark:text-white">{assignment.studentName}</span> belum mengirimkan jawaban esai untuk tugas ini.
+                <div className="p-4 bg-black/40 border border-white/10 rounded-[2px] text-xs font-normal text-[#C6D4DF]">
+                  Siswa <span className="font-bold text-white">{assignment.studentName}</span> belum mengirimkan jawaban esai untuk tugas ini.
                 </div>
               )}
             </div>

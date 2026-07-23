@@ -299,7 +299,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col lg:flex-row font-sans" id="student-dashboard">
+    <div className="min-h-screen bg-[#171A21] text-white flex flex-col lg:flex-row font-sans" id="student-dashboard">
       <NavigationSidebar 
         role="student"
         activeTab={activeTab}
@@ -352,90 +352,48 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
               {/* TAB 1: MAIN DASHBOARD */}
               {activeTab === 'dashboard' && (featureFlags.find(f => f.id === 'dashboard')?.enabled !== false) && (
                 <>
-                  {/* 3D Animated Hero Section */}
-                  <div className="relative w-full rounded-[2.5rem] bg-gradient-to-br from-indigo-50 via-purple-50 to-sky-50 dark:from-slate-800/80 dark:via-indigo-900/40 dark:to-slate-800/80 p-8 sm:p-10 md:p-12 mb-8 overflow-hidden shadow-sm border border-white dark:border-slate-700/50 flex flex-col md:flex-row items-center justify-between gap-8 stagger-item">
+                  {/* Steam Design System Hero Section */}
+                  <div className="relative w-full rounded-[3px] bg-[#2F3138] p-6 sm:p-8 md:p-10 mb-8 border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.6)] flex flex-col md:flex-row items-center justify-between gap-8 stagger-item text-white overflow-hidden">
                     
-                    {/* Abstract Background Shapes */}
-                    <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-purple-400/20 rounded-full blur-3xl pointer-events-none" />
-                    <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-sky-400/20 rounded-full blur-3xl pointer-events-none" />
-
                     {/* Left Content */}
                     <div className="relative z-10 flex-1 space-y-4">
-                      <div className="flex items-center gap-3 mb-4">
-                        <motion.div 
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          className={`relative group cursor-pointer inline-flex items-center gap-2 px-4 py-1.5 rounded-2xl text-[11px] font-black uppercase tracking-widest border overflow-hidden backdrop-blur-md shadow-sm transition-all ${
-                            studentProfile?.classType === 'CIRCLE'
-                              ? 'bg-purple-100/80 text-purple-900 border-purple-300 hover:shadow-[0_0_20px_rgba(168,85,247,0.4)] dark:bg-purple-900/40 dark:text-purple-100 dark:border-purple-700'
-                              : 'bg-sky-100/80 text-sky-900 border-sky-300 hover:shadow-[0_0_20px_rgba(14,165,233,0.4)] dark:bg-sky-900/40 dark:text-sky-100 dark:border-sky-700'
-                          }`}
-                        >
-                          {/* Shine effect on hover */}
-                          <div className="absolute inset-0 -translate-x-[150%] group-hover:translate-x-[150%] bg-gradient-to-r from-transparent via-white/60 dark:via-white/20 to-transparent transition-transform duration-1000 ease-in-out" />
-                          
-                          <span className="relative z-10">{studentProfile?.classType === 'CIRCLE' ? 'KELAS CIRCLE' : 'KELAS PRIVAT'}</span>
-                          
-                          <motion.span
-                            className="relative z-10 text-lg drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] filter"
-                            animate={
-                              studentProfile?.classType === 'CIRCLE'
-                                ? { scale: [1, 1.2, 1], rotateZ: [0, 15, -15, 0] }
-                                : { y: [0, -4, 0], scale: [1, 1.1, 1] }
-                            }
-                            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-                            style={{ display: 'inline-block', transformOrigin: 'center' }}
-                          >
-                            {studentProfile?.classType === 'CIRCLE' ? '⚡' : '🎯'}
-                          </motion.span>
-                        </motion.div>
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-[2px] text-[10px] font-bold uppercase tracking-wider bg-[#66C0F4]/10 text-[#66C0F4] border border-[#66C0F4]/30">
+                          <span>{studentProfile?.classType === 'CIRCLE' ? 'KELAS CIRCLE' : 'KELAS PRIVAT'}</span>
+                        </div>
                       </div>
 
-                      <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-extrabold text-gray-900 dark:text-white tracking-[-0.03em] text-balance leading-[1.1]">
+                      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight">
                         Halo,{' '}
-                        {/* Animated Name Effect */}
-                        <motion.span
-                          className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 via-purple-500 to-sky-500"
-                          style={{ backgroundSize: '200% auto' }}
-                          animate={{ backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'] }}
-                          transition={{ duration: 5, ease: 'linear', repeat: Infinity }}
-                        >
+                        <span className="text-[#66C0F4] font-bold">
                           {studentProfile?.fullName?.split(' ')[0] || 'Siswa'}!
-                        </motion.span>
+                        </span>
                       </h1>
                       
-                      <p className="text-sm md:text-base font-semibold text-gray-600 dark:text-slate-300 max-w-md">
-                        Selesaikan tugas harianmu dan tingkatkan streak belajar hari ini! Bersiaplah untuk menaklukkan materi baru.
+                      <p className="text-xs sm:text-sm font-medium text-[#C6D4DF] max-w-md leading-relaxed">
+                        Selesaikan tugas harianmu dan tingkatkan streak belajar hari ini. Bersiaplah untuk menaklukkan materi baru.
                       </p>
 
                       {/* Interactive Leveling & Rank Container */}
-                      <motion.div
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
+                      <div
                         onClick={() => setIsRoadmapModalOpen(true)}
-                        className="relative cursor-pointer group bg-white/80 dark:bg-slate-800/80 backdrop-blur-md border border-indigo-100 dark:border-indigo-800/40 p-4 rounded-2xl shadow-3xs hover:shadow-md transition-all flex items-center justify-between gap-4 max-w-lg my-3"
+                        className="relative cursor-pointer bg-black/40 border border-white/15 p-4 rounded-[2px] shadow-sm hover:border-[#66C0F4] transition-all flex items-center justify-between gap-4 max-w-lg my-3 text-white"
                       >
                         <div className="flex items-center gap-3.5 min-w-0">
-                          <div className="relative w-12 h-12 shrink-0 flex items-center justify-center">
-                            {levelData.rankTier.isTop3 && (
-                              <div 
-                                className="absolute inset-0 rounded-full blur-sm opacity-75 animate-pulse pointer-events-none"
-                                style={{ backgroundColor: levelData.rankTier.glowColor }}
-                              />
-                            )}
+                          <div className="relative w-10 h-10 shrink-0 flex items-center justify-center">
                             <img 
                               src={levelData.rankTier.badgePath} 
                               alt={levelData.rankTier.name} 
-                              className="w-full h-full object-contain filter drop-shadow-sm group-hover:scale-110 transition-transform" 
+                              className="w-full h-full object-contain filter drop-shadow-sm" 
                             />
                           </div>
 
                           <div className="min-w-0 space-y-1">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-indigo-100 dark:bg-indigo-900/50 text-indigo-700 dark:text-indigo-300">
+                              <span className="px-2 py-0.5 rounded-[2px] text-[10px] font-bold uppercase bg-[#66C0F4]/20 text-[#66C0F4] font-mono">
                                 Lvl. {levelData.level}
                               </span>
-                              <span className={`px-2 py-0.5 rounded-md text-[10px] font-black uppercase bg-gradient-to-r ${levelData.rankTier.color} text-white shadow-2xs`}>
+                              <span className="px-2 py-0.5 rounded-[2px] text-[10px] font-bold uppercase bg-[#A1CD44]/20 text-[#A1CD44] font-mono">
                                 {levelData.rankTier.name}
                               </span>
                             </div>
@@ -443,117 +401,68 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                             {/* EXP Progress Bar & Info */}
                             <div className="w-40 sm:w-52 space-y-1">
                               <div className="flex items-center justify-between text-[10px] font-bold">
-                                <span className="text-gray-600 dark:text-slate-300">EXP:</span>
-                                <span className="text-indigo-600 dark:text-indigo-400 font-mono">{totalExp.toLocaleString('id-ID')} / {levelData.nextLevelMinExp.toLocaleString('id-ID')}</span>
+                                <span className="text-[#8A8A8A]">EXP:</span>
+                                <span className="text-[#66C0F4] font-mono">{totalExp.toLocaleString('id-ID')} / {levelData.nextLevelMinExp.toLocaleString('id-ID')}</span>
                               </div>
-                              <div className="w-full h-2 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
-                                <motion.div 
-                                  className="h-full bg-gradient-to-r from-amber-400 via-orange-400 to-indigo-500 rounded-full"
-                                  initial={{ width: 0 }}
-                                  animate={{ width: `${levelData.progressPercent}%` }}
-                                  transition={{ duration: 0.8, ease: 'easeOut' }}
+                              <div className="w-full h-2 bg-black/60 border border-white/10 rounded-[2px] overflow-hidden">
+                                <div 
+                                  className="h-full bg-[#A1CD44] rounded-[2px] transition-all duration-500"
+                                  style={{ width: `${levelData.progressPercent}%` }}
                                 />
                               </div>
                             </div>
                           </div>
                         </div>
 
-                        <div className="flex items-center gap-1 text-xs font-bold text-indigo-600 dark:text-indigo-400 group-hover:translate-x-1 transition-transform shrink-0">
-                          <span className="hidden sm:inline text-[10px] uppercase font-black tracking-wider">Leveling Roadmap</span>
+                        <div className="flex items-center gap-1 text-xs font-bold text-[#66C0F4] shrink-0">
+                          <span className="hidden sm:inline text-[10px] uppercase font-bold tracking-wider">Roadmap</span>
                           <ChevronRight className="w-4 h-4" />
                         </div>
-                      </motion.div>
+                      </div>
 
-                      <div className="pt-4">
+                      <div className="pt-2">
                         <button
                           onClick={handleDoFirstTask}
-                          className="btn-duo-green px-8 py-4 text-sm font-black flex items-center justify-center gap-2.5 shrink-0 text-white w-full sm:w-auto"
+                          className="h-[44px] px-8 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] font-bold text-xs uppercase tracking-wider rounded-[2px] shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all w-full sm:w-auto"
                         >
-                          <Zap className="w-5 h-5 text-yellow-300 fill-yellow-300 animate-pulse" />
+                          <Zap className="w-4 h-4 text-[#171A21]" />
                           <span>MULAI BELAJAR SEKARANG</span>
                         </button>
                       </div>
                     </div>
 
-                    {/* Right Content: Interactive Eye-Tracking 3D Owl Mascot (Matches Reference Image) */}
-                    <div className="relative z-10 w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 lg:w-80 lg:h-80 shrink-0 flex items-center justify-center -mr-2 sm:-mr-4 -mb-2">
+                    {/* Right Content: Eye-Tracking 3D Owl Mascot - Large & Cropped at bottom */}
+                    <div className="relative z-10 w-72 h-72 sm:w-80 sm:h-80 md:w-[380px] md:h-[380px] shrink-0 flex items-end justify-center -mb-28 sm:-mb-32 md:-mb-40 -mr-6 sm:-mr-8 md:-mr-12 pointer-events-auto">
                       <InteractiveOwl className="w-full h-full" />
                     </div>
                   </div>
 
-                  {/* Duolingo Gamified Widgets Grid (Streak + Daily Goal Cards) */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                    {/* Widget 1: 3D Yellow Streak Card (Duolingo Style) */}
-                    <div className="card-duo-yellow p-5 flex items-center justify-between shadow-sm relative overflow-hidden stagger-item">
+                  {/* Gamified Widgets Grid (Streak + Daily Goal Cards) */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+                    {/* Widget 1: Streak Card */}
+                    <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-5 flex items-center justify-between shadow-[0_2px_8px_rgba(0,0,0,0.5)] relative overflow-hidden text-white stagger-item">
                       <div className="space-y-1 z-10">
                         <div className="flex items-baseline gap-2">
-                          <span className="text-4xl font-display font-black text-gray-900 dark:text-white leading-none">
+                          <span className="text-3xl sm:text-4xl font-bold text-white leading-none font-mono">
                             {completedTasksCount > 0 ? completedTasksCount * 3 + 1 : 1}
                           </span>
-                          <span className="text-xs font-black text-amber-900 dark:text-amber-100 uppercase tracking-wider">HARI</span>
+                          <span className="text-xs font-bold text-[#A1CD44] uppercase tracking-wider">HARI</span>
                         </div>
-                        <p className="text-xs font-bold text-amber-900 dark:text-amber-100/80">Streak Belajar Aktif</p>
+                        <p className="text-xs font-bold text-[#C6D4DF]">Streak Belajar Aktif</p>
                       </div>
-                      <div className="relative w-14 h-14 bg-amber-400/30 rounded-2xl flex items-center justify-center shrink-0 z-10 overflow-hidden shadow-inner border border-amber-300/50">
-                        {/* Base glow */}
-                        <div className="absolute w-12 h-12 bg-orange-500/40 rounded-full blur-md animate-pulse" />
-                        
-                        {/* Fire Container */}
-                        <div className="relative w-8 h-8 flex items-end justify-center translate-y-1">
-                          {/* Main flame (Red/Orange) */}
-                          <motion.div 
-                            className="absolute bottom-0 w-7 h-7 bg-gradient-to-br from-yellow-400 via-orange-500 to-red-600 shadow-[0_0_15px_rgba(239,68,68,0.6)]"
-                            style={{ borderRadius: '50% 0 50% 50%', rotate: '-45deg', transformOrigin: 'center' }}
-                            animate={{ 
-                              scale: [1, 1.1, 0.95, 1],
-                              rotate: ['-45deg', '-40deg', '-50deg', '-45deg']
-                            }}
-                            transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-                          />
-                          
-                          {/* Inner flame (Yellow/White) */}
-                          <motion.div 
-                            className="absolute bottom-1 w-4 h-4 bg-gradient-to-br from-white via-yellow-200 to-yellow-500 shadow-[0_0_10px_rgba(253,224,71,0.8)]"
-                            style={{ borderRadius: '50% 0 50% 50%', rotate: '-45deg', transformOrigin: 'center' }}
-                            animate={{ 
-                              scale: [1, 1.2, 0.85, 1],
-                              rotate: ['-45deg', '-35deg', '-55deg', '-45deg']
-                            }}
-                            transition={{ duration: 1.1, repeat: Infinity, ease: 'easeInOut', delay: 0.1 }}
-                          />
-                          
-                          {/* Floating sparks */}
-                          {[...Array(4)].map((_, i) => (
-                            <motion.div
-                              key={`spark-${i}`}
-                              className="absolute bottom-2 w-1.5 h-1.5 bg-yellow-300 rounded-full blur-[0.5px]"
-                              initial={{ y: 0, x: 0, opacity: 1, scale: 1 }}
-                              animate={{ 
-                                y: -20 - (i * 6), 
-                                x: (i % 2 === 0 ? 1 : -1) * (4 + i * 1.5),
-                                opacity: [1, 1, 0],
-                                scale: [1, 0.5, 0]
-                              }}
-                              transition={{ 
-                                duration: 0.8 + (i * 0.2), 
-                                repeat: Infinity, 
-                                ease: 'easeOut',
-                                delay: i * 0.25
-                              }}
-                            />
-                          ))}
-                        </div>
+                      <div className="w-12 h-12 bg-black/40 rounded-[2px] flex items-center justify-center shrink-0 z-10 border border-white/10">
+                        <Award className="w-6 h-6 text-[#A1CD44]" />
                       </div>
                     </div>
 
-                    {/* Widget 2: Daily Goal Progress Card (Duolingo Style) */}
-                    <div className="card-duo p-5 md:col-span-2 flex flex-col justify-between space-y-4 stagger-item">
+                    {/* Widget 2: Daily Goal Progress Card */}
+                    <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-5 md:col-span-2 flex flex-col justify-between space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.5)] text-white stagger-item">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
-                          <Target className="w-5 h-5 text-sky-500" />
-                          <h3 className="text-xs font-extrabold text-gray-800 dark:text-slate-100 uppercase tracking-wider">Target Harian (Daily Goal)</h3>
+                          <Target className="w-4.5 h-4.5 text-[#66C0F4]" />
+                          <h3 className="text-xs font-bold text-white uppercase tracking-wider">Target Harian (Daily Goal)</h3>
                         </div>
-                        <span className="text-xs font-black font-mono text-sky-600 bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-100">
+                        <span className="text-xs font-bold font-mono text-[#66C0F4] bg-black/40 px-2.5 py-1 rounded-[2px] border border-white/10">
                           {completedTasksCount} / {totalAssigned || 1} Selesai
                         </span>
                       </div>
@@ -565,14 +474,14 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                           return (
                             <div 
                               key={day}
-                              className={`p-2 rounded-xl text-center flex flex-col items-center gap-1 transition-all ${
+                              className={`p-2 rounded-[2px] text-center flex flex-col items-center gap-1 transition-all ${
                                 isActive 
-                                  ? 'bg-emerald-500 text-white shadow-xs border-b-2 border-emerald-700' 
-                                  : 'bg-gray-100 dark:bg-slate-700 text-gray-400 border-b-2 border-gray-200 dark:border-slate-700'
+                                  ? 'bg-[#A1CD44] text-[#171A21] font-bold shadow-xs' 
+                                  : 'bg-black/40 border border-white/10 text-[#8A8A8A] font-bold'
                               }`}
                             >
-                              <CheckCircle2 className={`w-3.5 h-3.5 ${isActive ? 'text-white fill-emerald-600' : 'text-gray-300'}`} />
-                              <span className="text-[10px] font-extrabold">{day}</span>
+                              <CheckCircle2 className={`w-3.5 h-3.5 ${isActive ? 'text-[#171A21]' : 'text-[#8A8A8A]'}`} />
+                              <span className="text-[10px] font-bold">{day}</span>
                             </div>
                           );
                         })}
@@ -581,57 +490,57 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                   </div>
 
                   {/* Stats Block Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-5 rounded-2xl shadow-3xs flex items-center gap-4 stagger-item">
-                      <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div className="bg-[#2F3138] border border-white/10 p-5 rounded-[3px] shadow-[0_2px_8px_rgba(0,0,0,0.5)] flex items-center gap-4 text-white stagger-item">
+                      <div className="w-10 h-10 rounded-[2px] bg-black/40 border border-white/10 flex items-center justify-center text-[#66C0F4] shrink-0">
                         <BookOpen className="w-5 h-5" />
                       </div>
                       <div className="space-y-0.5">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Total Tugas</span>
+                        <span className="text-[10px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Total Tugas</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-bold font-display text-gray-900 dark:text-white">{totalAssigned}</span>
-                          <span className="text-[10px] text-gray-400 font-semibold">Tugas</span>
+                          <span className="text-2xl font-bold font-mono text-white">{totalAssigned}</span>
+                          <span className="text-[10px] text-[#8A8A8A] font-semibold">Tugas</span>
                         </div>
                       </div>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-5 rounded-2xl shadow-3xs flex items-center gap-4 stagger-item">
-                      <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-600 shrink-0">
+                    <div className="bg-[#2F3138] border border-white/10 p-5 rounded-[3px] shadow-[0_2px_8px_rgba(0,0,0,0.5)] flex items-center gap-4 text-white stagger-item">
+                      <div className="w-10 h-10 rounded-[2px] bg-black/40 border border-white/10 flex items-center justify-center text-[#A1CD44] shrink-0">
                         <FileCheck className="w-5 h-5" />
                       </div>
                       <div className="space-y-0.5">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Diselesaikan</span>
+                        <span className="text-[10px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Diselesaikan</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-bold font-display text-gray-900 dark:text-white">{completedTasksCount}</span>
-                          <span className="text-[10px] text-gray-400 font-semibold">Selesai</span>
+                          <span className="text-2xl font-bold font-mono text-white">{completedTasksCount}</span>
+                          <span className="text-[10px] text-[#8A8A8A] font-semibold">Selesai</span>
                         </div>
                       </div>
                     </div>
 
                     {/* Total EXP Stat Card */}
-                    <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-5 rounded-2xl shadow-3xs flex items-center gap-4 stagger-item">
-                      <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 shrink-0">
-                        <Zap className="w-5 h-5 fill-amber-400" />
+                    <div className="bg-[#2F3138] border border-white/10 p-5 rounded-[3px] shadow-[0_2px_8px_rgba(0,0,0,0.5)] flex items-center gap-4 text-white stagger-item">
+                      <div className="w-10 h-10 rounded-[2px] bg-black/40 border border-white/10 flex items-center justify-center text-[#66C0F4] shrink-0">
+                        <Zap className="w-5 h-5" />
                       </div>
                       <div className="space-y-0.5">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Total EXP</span>
+                        <span className="text-[10px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Total EXP</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-bold font-display text-gray-900 dark:text-white font-mono">{totalExp.toLocaleString('id-ID')}</span>
-                          <span className="text-[10px] text-amber-600 font-extrabold uppercase">EXP</span>
+                          <span className="text-2xl font-bold font-mono text-white">{totalExp.toLocaleString('id-ID')}</span>
+                          <span className="text-[10px] text-[#66C0F4] font-bold uppercase font-mono">EXP</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Average EXP Stat Card (Decimal Precision e.g. 53.2) */}
-                    <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 p-5 rounded-2xl shadow-3xs flex items-center gap-4 stagger-item">
-                      <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 shrink-0">
+                    {/* Average EXP Stat Card */}
+                    <div className="bg-[#2F3138] border border-white/10 p-5 rounded-[3px] shadow-[0_2px_8px_rgba(0,0,0,0.5)] flex items-center gap-4 text-white stagger-item">
+                      <div className="w-10 h-10 rounded-[2px] bg-black/40 border border-white/10 flex items-center justify-center text-[#A1CD44] shrink-0">
                         <Award className="w-5 h-5" />
                       </div>
                       <div className="space-y-0.5">
-                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Rata-Rata EXP</span>
+                        <span className="text-[10px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Rata-Rata EXP</span>
                         <div className="flex items-baseline gap-1">
-                          <span className="text-2xl font-bold font-display text-gray-900 dark:text-white font-mono">{averageExp.toFixed(1)}</span>
-                          <span className="text-[10px] text-purple-600 font-extrabold uppercase">EXP</span>
+                          <span className="text-2xl font-bold font-mono text-white">{averageExp.toFixed(1)}</span>
+                          <span className="text-[10px] text-[#A1CD44] font-bold uppercase font-mono">EXP</span>
                         </div>
                       </div>
                     </div>
@@ -643,9 +552,9 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                     <div className="xl:col-span-2 space-y-8">
                       
                       {/* Section: Tugas yang Harus Dikerjakan */}
-                      <div className="card-duo p-6 space-y-4 stagger-item">
-                        <h3 className="text-xs font-black text-gray-900 dark:text-white flex items-center gap-2 uppercase tracking-wider">
-                          <Clock className="w-4.5 h-4.5 text-sky-500" />
+                      <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.5)] text-white stagger-item">
+                        <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
+                          <Clock className="w-4.5 h-4.5 text-[#66C0F4]" />
                           <span>Tugas yang Harus Dikerjakan</span>
                         </h3>
 
@@ -656,7 +565,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                             description="Selamat! Tidak ada tugas luar biasa yang perlu Anda kerjakan saat ini."
                           />
                         ) : (
-                          <div className="divide-y divide-gray-50 max-h-80 overflow-y-auto pr-1">
+                          <div className="divide-y divide-white/10 max-h-80 overflow-y-auto pr-1">
                             {assignments
                               .filter(a => !submissions.some(s => s.assignmentId === a.id))
                               .slice(0, 5)
@@ -664,20 +573,20 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                                 <div 
                                   key={assign.id}
                                   onClick={() => onNavigate(`/assignment/${assign.id}`)}
-                                  className="py-3.5 flex items-center justify-between gap-4 hover:bg-gray-50 dark:bg-slate-900/50 px-2 rounded-xl transition-colors cursor-pointer"
+                                  className="py-3.5 flex items-center justify-between gap-4 hover:bg-white/5 px-2 rounded-[2px] transition-colors cursor-pointer"
                                 >
                                   <div className="min-w-0">
-                                    <h4 className="text-xs font-bold text-gray-900 dark:text-white truncate">{assign.title}</h4>
-                                    <p className="text-[10px] text-gray-400 mt-0.5 truncate">Guru: {assign.teacherName}</p>
+                                    <h4 className="text-xs font-bold text-white truncate">{assign.title}</h4>
+                                    <p className="text-[10px] text-[#C6D4DF] mt-0.5 truncate">Guru: {assign.teacherName}</p>
                                   </div>
                                   <div className="flex items-center gap-2.5 shrink-0">
                                     <button
                                       type="button"
-                                      className="btn-duo-green px-3.5 py-1.5 text-[11px] font-black cursor-pointer shadow-xs"
+                                      className="px-3.5 py-1.5 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-[11px] font-bold uppercase rounded-[2px] cursor-pointer"
                                     >
                                       Kerjakan
                                     </button>
-                                    <ChevronRight className="w-4 h-4 text-gray-400" />
+                                    <ChevronRight className="w-4 h-4 text-[#8A8A8A]" />
                                   </div>
                                 </div>
                               ))}
@@ -686,9 +595,9 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                       </div>
 
                       {/* Section: Tugas yang Telah Dikirim */}
-                      <div className="card-duo p-6 space-y-4">
-                        <h3 className="text-xs font-black text-gray-900 dark:text-white flex items-center gap-2 uppercase tracking-wider">
-                          <FileCheck className="w-4.5 h-4.5 text-emerald-500" />
+                      <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.5)] text-white">
+                        <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
+                          <FileCheck className="w-4.5 h-4.5 text-[#A1CD44]" />
                           <span>Tugas yang Telah Dikirim</span>
                         </h3>
 
@@ -699,24 +608,24 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                             description="Anda belum mengunggah submisi atau jawaban tugas belajar apapun."
                           />
                         ) : (
-                          <div className="divide-y divide-gray-50 max-h-80 overflow-y-auto pr-1">
+                          <div className="divide-y divide-white/10 max-h-80 overflow-y-auto pr-1">
                             {submissions.slice(0, 5).map((sub) => (
                               <div 
                                 key={sub.id}
                                 onClick={() => onNavigate(`/submission/${sub.id}`)}
-                                className="py-4 flex items-center justify-between gap-4 hover:bg-gray-50 dark:bg-slate-900/50 px-2 rounded-xl transition-colors cursor-pointer"
+                                className="py-4 flex items-center justify-between gap-4 hover:bg-white/5 px-2 rounded-[2px] transition-colors cursor-pointer"
                               >
                                 <div className="min-w-0">
-                                  <h4 className="text-xs font-bold text-gray-900 dark:text-white truncate">{sub.assignmentTitle}</h4>
+                                  <h4 className="text-xs font-bold text-white truncate">{sub.assignmentTitle}</h4>
                                   <div className="flex items-center gap-2 mt-1 flex-wrap">
-                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold ${
+                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[9px] font-bold ${
                                       sub.status === 'graded' 
-                                        ? 'bg-green-50 text-green-700 border border-green-100' 
-                                        : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 border border-amber-100 dark:border-amber-800/50'
+                                        ? 'bg-[#A1CD44]/20 text-[#A1CD44] border border-[#A1CD44]/30' 
+                                        : 'bg-[#B9A074]/20 text-[#B9A074] border border-[#B9A074]/30'
                                     }`}>
                                       {sub.status === 'graded' ? 'Sudah Dinilai' : 'Menunggu Penilaian'}
                                     </span>
-                                    <span className="text-[10px] text-gray-400">
+                                    <span className="text-[10px] text-[#C6D4DF]">
                                       dikirim {sub.submittedAt ? new Date(sub.submittedAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) : 'baru saja'}
                                     </span>
                                   </div>
@@ -725,11 +634,11 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                                 <div className="flex items-center gap-3 shrink-0">
                                   {sub.status === 'graded' && sub.score !== null && (
                                     <div className="text-right">
-                                      <p className="text-[10px] text-gray-400">EXP</p>
-                                      <p className="text-xs font-bold text-amber-500 font-mono">{sub.score} EXP</p>
+                                      <p className="text-[10px] text-[#8A8A8A]">EXP</p>
+                                      <p className="text-xs font-bold text-[#B9A074] font-mono">{sub.score} EXP</p>
                                     </div>
                                   )}
-                                  <ChevronRight className="w-4 h-4 text-gray-300" />
+                                  <ChevronRight className="w-4 h-4 text-[#8A8A8A]" />
                                 </div>
                               </div>
                             ))}
@@ -742,28 +651,28 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                     {/* Right column: Quick Actions & Evaluation feedback notes */}
                     <div className="space-y-8">
                       {/* Quick Actions Panel */}
-                      <div className="card-duo p-6 space-y-4">
-                        <h3 className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider">Aksi Cepat</h3>
+                      <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-4 shadow-[0_2px_8px_rgba(0,0,0,0.5)] text-white">
+                        <h3 className="text-xs font-bold text-white uppercase tracking-wider">Aksi Cepat</h3>
                         <div className="grid grid-cols-1 gap-3">
                           <button
                             onClick={handleDoFirstTask}
-                            className="btn-duo-green w-full py-3 px-4 text-xs font-black flex items-center gap-3"
+                            className="w-full py-3 px-4 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-xs font-bold uppercase rounded-[2px] flex items-center gap-3 transition-all cursor-pointer shadow-md"
                           >
                             <BookOpen className="w-4 h-4 shrink-0" />
                             <span>Mulai Tugas Baru</span>
                           </button>
                           <button
                             onClick={() => setActiveTab('assignments')}
-                            className="w-full py-3 px-4 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:bg-slate-600 rounded-2xl font-black text-xs border-b-4 border-gray-300 dark:border-slate-600 flex items-center gap-3 transition-all cursor-pointer active:translate-y-[2px] active:border-b-2"
+                            className="w-full py-3 px-4 bg-[#171A21] hover:bg-black/40 text-white rounded-[2px] font-bold text-xs border border-white/10 flex items-center gap-3 transition-all cursor-pointer"
                           >
-                            <Layers className="w-4 h-4 text-gray-500 dark:text-slate-400 shrink-0" />
+                            <Layers className="w-4 h-4 text-[#66C0F4] shrink-0" />
                             <span>Buka Semua Tugas Saya</span>
                           </button>
                           <button
                             onClick={() => setActiveTab('settings')}
-                            className="w-full py-3 px-4 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 hover:bg-gray-200 dark:bg-slate-600 rounded-2xl font-black text-xs border-b-4 border-gray-300 dark:border-slate-600 flex items-center gap-3 transition-all cursor-pointer active:translate-y-[2px] active:border-b-2"
+                            className="w-full py-3 px-4 bg-[#171A21] hover:bg-black/40 text-white rounded-[2px] font-bold text-xs border border-white/10 flex items-center gap-3 transition-all cursor-pointer"
                           >
-                            <Star className="w-4 h-4 text-gray-500 dark:text-slate-400 shrink-0" />
+                            <Star className="w-4 h-4 text-[#B9A074] shrink-0" />
                             <span>Sunting Profil Akun</span>
                           </button>
                         </div>
@@ -771,30 +680,30 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
 
                       {/* Kavio Circle Saya */}
                       {studentProfile?.classType === 'CIRCLE' && myCircle && (
-                        <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 rounded-3xl p-6 shadow-3xs space-y-4">
+                        <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 shadow-[0_2px_8px_rgba(0,0,0,0.5)] space-y-4 text-white">
                           <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 uppercase tracking-wide">
-                              <Users className="w-4.5 h-4.5 text-fuchsia-500" />
-                              Kavio Circle Saya
+                            <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
+                              <Users className="w-4 h-4 text-[#A1CD44]" />
+                              <span>Kavio Circle Saya</span>
                             </h3>
-                            <span className="text-[10px] bg-fuchsia-50 text-fuchsia-700 px-2.5 py-0.5 rounded-full font-bold">
+                            <span className="text-[10px] bg-[#A1CD44]/20 text-[#A1CD44] border border-[#A1CD44]/30 px-2.5 py-0.5 rounded-[2px] font-bold">
                               {myCircleMembers.length} / {myCircle.capacity || 6} Anggota
                             </span>
                           </div>
 
-                          <div className="space-y-1 bg-gray-50 dark:bg-slate-900/50 p-3 rounded-2xl border border-gray-100 dark:border-slate-700/50">
-                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Nama Kelompok</span>
-                            <span className="text-sm font-bold text-gray-950 block">{myCircle.name}</span>
+                          <div className="space-y-1 bg-black/40 p-3 rounded-[2px] border border-white/10">
+                            <span className="text-[10px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Nama Kelompok</span>
+                            <span className="text-xs font-bold text-white block">{myCircle.name}</span>
                           </div>
 
                           <div className="space-y-2">
-                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Teman Belajar (Anggota)</span>
+                            <span className="text-[10px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Teman Belajar (Anggota)</span>
                             <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                               {myCircleMembers.map((member) => {
                                 const isMe = member.uid === studentProfile.uid;
                                 return (
-                                  <div key={member.uid} className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-gray-50 dark:bg-slate-900 transition-colors">
-                                    <div className="w-6 h-6 rounded-lg font-bold text-[10px] flex items-center justify-center overflow-hidden shrink-0">
+                                  <div key={member.uid} className="flex items-center gap-2 px-2.5 py-1.5 rounded-[2px] hover:bg-white/5 transition-colors">
+                                    <div className="w-6 h-6 rounded-full font-bold text-[10px] flex items-center justify-center overflow-hidden shrink-0 border border-white/10">
                                       <img 
                                         src={member.photoURL || '/aset/default-avatar.svg'} 
                                         alt={member.fullName} 
@@ -804,7 +713,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                                         }}
                                       />
                                     </div>
-                                    <span className={`text-xs font-semibold truncate flex-1 ${isMe ? 'text-indigo-600 dark:text-indigo-400 font-bold' : 'text-gray-700 dark:text-slate-200'}`}>
+                                    <span className={`text-xs font-semibold truncate flex-1 ${isMe ? 'text-[#66C0F4] font-bold' : 'text-white'}`}>
                                       {member.fullName} {isMe && '(Saya)'}
                                     </span>
                                   </div>
@@ -816,10 +725,10 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                       )}
 
                       {/* Evaluasi Catatan Guru */}
-                      <div className="bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 rounded-3xl p-6 shadow-3xs space-y-4">
-                        <h3 className="text-sm font-bold text-gray-900 dark:text-white flex items-center gap-2 uppercase tracking-wide">
-                          <Star className="w-4.5 h-4.5 text-indigo-500" />
-                          Catatan Penilaian Guru
+                      <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 shadow-[0_2px_8px_rgba(0,0,0,0.5)] space-y-4 text-white">
+                        <h3 className="text-xs font-bold text-white flex items-center gap-2 uppercase tracking-wider">
+                          <Star className="w-4 h-4 text-[#66C0F4]" />
+                          <span>Catatan Penilaian Guru</span>
                         </h3>
 
                         {latestFeedbacks.length === 0 ? (
@@ -829,18 +738,18 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                             description="Evaluasi nilai dan catatan umpan balik guru akan ditampilkan di sini."
                           />
                         ) : (
-                          <div className="space-y-4 max-h-[400px] overflow-y-auto pr-1">
+                          <div className="space-y-3 max-h-[400px] overflow-y-auto pr-1">
                             {latestFeedbacks.slice(0, 4).map((sub) => (
                               <div 
                                 key={sub.id}
                                 onClick={() => onNavigate(`/submission/${sub.id}`)}
-                                className="p-4 bg-indigo-50 dark:bg-indigo-900/30/10 border border-indigo-100 dark:border-indigo-800/50/20 rounded-2xl space-y-2 cursor-pointer hover:bg-indigo-50 dark:bg-indigo-900/30/20 transition-colors"
+                                className="p-4 bg-black/40 border border-white/10 rounded-[2px] space-y-2 cursor-pointer hover:border-[#66C0F4] transition-colors"
                               >
                                 <div className="flex items-center justify-between gap-2">
-                                  <h4 className="text-xs font-bold text-gray-900 dark:text-white truncate">{sub.assignmentTitle}</h4>
-                                  <span className="text-xs font-bold font-mono text-amber-500 shrink-0">{sub.score} EXP</span>
+                                  <h4 className="text-xs font-bold text-white truncate">{sub.assignmentTitle}</h4>
+                                  <span className="text-xs font-bold font-mono text-[#A1CD44] shrink-0">{sub.score} EXP</span>
                                 </div>
-                                <p className="text-[11px] text-gray-500 dark:text-slate-400 line-clamp-3 bg-white dark:bg-slate-800 p-2.5 rounded-lg border border-gray-50 italic">
+                                <p className="text-[11px] text-[#C6D4DF] line-clamp-3 bg-black/60 p-2.5 rounded-[2px] border border-white/10 italic">
                                   "{sub.feedback}"
                                 </p>
                               </div>
@@ -856,33 +765,33 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
               {/* TAB 2: DETAILED ASSIGNMENTS */}
               {activeTab === 'assignments' && (
                 <>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 dark:border-slate-700/50 pb-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-white/10 pb-6">
                     <div>
-                      <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 dark:text-white tracking-tight">
+                      <h1 className="text-2xl sm:text-3xl font-bold text-white uppercase tracking-tight">
                         Penugasan Belajar Saya
                       </h1>
-                      <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">
+                      <p className="text-xs text-[#C6D4DF] mt-1">
                         Daftar lengkap tugas kelas yang diberikan oleh guru pengajar Anda.
                       </p>
                     </div>
                   </div>
 
                   {/* Search and status filters panel */}
-                  <div className="bg-white dark:bg-slate-800 p-4 sm:p-5 border border-gray-100 dark:border-slate-700/50 rounded-2xl flex flex-col sm:flex-row gap-4 items-center justify-between">
+                  <div className="bg-[#2F3138] p-4 sm:p-5 border border-white/10 rounded-[3px] flex flex-col sm:flex-row gap-4 items-center justify-between text-white">
                     <div className="relative w-full sm:w-80">
-                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8A8A8A] w-4 h-4" />
                       <input
                         type="text"
                         placeholder="Cari judul tugas, tipe, status, atau guru..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs placeholder-gray-400 focus:outline-none focus:bg-white dark:bg-slate-800 focus:border-indigo-500 transition-all"
+                        className="w-full pl-10 pr-4 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs font-medium text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4] transition-all"
                       />
                     </div>
 
                     <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-end">
-                      <div className="flex items-center gap-1.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 px-3 py-1.5 rounded-xl text-xs font-semibold text-gray-600 dark:text-slate-300 w-full sm:w-auto">
-                        <Filter className="w-3.5 h-3.5 text-gray-400" />
+                      <div className="flex items-center gap-1.5 bg-black/40 border border-white/15 px-3 py-1.5 rounded-[2px] text-xs font-medium text-white w-full sm:w-auto">
+                        <Filter className="w-3.5 h-3.5 text-[#8A8A8A]" />
                         <CustomDropdown
                           variant="minimal"
                           size="sm"
@@ -904,17 +813,14 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                       <button
                         type="button"
                         onClick={() => setHideDone(!hideDone)}
-                        className={`px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-200 border flex items-center gap-2 cursor-pointer shadow-xs ${
+                        className={`px-4 py-2.5 rounded-[2px] text-xs font-bold uppercase tracking-wider transition-all duration-200 border flex items-center gap-2 cursor-pointer ${
                           hideDone
-                            ? 'bg-indigo-600 text-white border-indigo-600 dark:bg-indigo-500 dark:border-indigo-500 shadow-indigo-500/20 ring-2 ring-indigo-500/30'
-                            : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100 dark:bg-slate-900/50 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-800'
+                            ? 'bg-[#66C0F4] text-[#171A21] border-[#66C0F4]'
+                            : 'bg-black/40 text-[#C6D4DF] border-white/15 hover:bg-white/10 hover:text-white'
                         }`}
                       >
-                        <EyeOff className={`w-3.5 h-3.5 ${hideDone ? 'text-white' : 'text-gray-500 dark:text-slate-400'}`} />
+                        <EyeOff className={`w-3.5 h-3.5 ${hideDone ? 'text-[#171A21]' : 'text-[#8A8A8A]'}`} />
                         <span>HIDE DONE</span>
-                        {hideDone && (
-                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse ml-0.5" />
-                        )}
                       </button>
                     </div>
                   </div>
@@ -944,33 +850,21 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                             onClick={() => {
                               onNavigate(`/assignment/${assign.id}`);
                             }}
-                            className="group bg-white dark:bg-slate-800 border border-gray-100 dark:border-slate-700/50 hover:border-indigo-300 dark:hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/10 p-6 rounded-3xl flex flex-col justify-between gap-5 transition-all duration-300 cursor-pointer relative overflow-hidden"
+                            className="bg-[#2F3138] border border-white/10 hover:border-[#66C0F4] shadow-[0_2px_8px_rgba(0,0,0,0.5)] p-6 rounded-[3px] flex flex-col justify-between gap-5 transition-all duration-200 cursor-pointer relative overflow-hidden text-white"
                           >
-                            {/* Animated Mesh Gradient Background (Hover only) */}
-                            <div className="absolute inset-0 z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                              <motion.div 
-                                className="absolute -inset-[100%] w-[300%] h-[300%] bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.08)_0%,transparent_50%),radial-gradient(circle_at_80%_20%,rgba(14,165,233,0.08)_0%,transparent_50%),radial-gradient(circle_at_20%_80%,rgba(236,72,153,0.08)_0%,transparent_50%)]"
-                                animate={{ 
-                                  rotate: [0, 90, 180, 270, 360],
-                                  scale: [1, 1.1, 1]
-                                }}
-                                transition={{ duration: 15, repeat: Infinity, ease: 'linear' }}
-                              />
-                            </div>
-
                             <div className="relative z-10 space-y-3">
                               <div className="flex items-center justify-between gap-2">
                                 <div className="flex gap-2 flex-wrap">
-                                  <span className={`inline-flex items-center px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest border backdrop-blur-md shadow-sm transition-all ${
+                                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-[2px] text-[9px] font-bold uppercase tracking-wider border ${
                                     status === 'completed' 
-                                      ? 'bg-green-100/80 text-green-800 border-green-300 dark:bg-green-900/40 dark:text-green-300' 
+                                      ? 'bg-[#A1CD44]/20 text-[#A1CD44] border-[#A1CD44]/40' 
                                       : status === 'submitted' 
-                                        ? 'bg-amber-100/80 text-amber-800 border-amber-300 dark:bg-amber-900/40 dark:text-amber-300' 
+                                        ? 'bg-[#66C0F4]/20 text-[#66C0F4] border-[#66C0F4]/40' 
                                         : status === 'remedial'
-                                          ? 'bg-red-100/80 text-red-800 border-red-300 animate-pulse dark:bg-red-900/40 dark:text-red-300'
+                                          ? 'bg-red-500/20 text-red-400 border-red-500/40'
                                           : status === 'expired'
-                                            ? 'bg-gray-100/80 text-gray-500 border-gray-300 dark:bg-slate-800/80 dark:text-slate-400'
-                                            : 'bg-indigo-100/80 text-indigo-800 border-indigo-300 dark:bg-indigo-900/40 dark:text-indigo-300'
+                                            ? 'bg-white/10 text-[#8A8A8A] border-white/10'
+                                            : 'bg-[#66C0F4]/20 text-[#66C0F4] border-[#66C0F4]/40'
                                   }`}>
                                     {status === 'completed' 
                                       ? 'Selesai' 
@@ -983,7 +877,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                                             : 'Siap Dikerjakan'}
                                   </span>
 
-                                  <span className="inline-flex items-center px-3 py-1 rounded-xl text-[10px] font-black uppercase tracking-widest bg-slate-100/80 text-slate-700 border border-slate-200 backdrop-blur-md shadow-sm dark:bg-slate-800/80 dark:text-slate-300 dark:border-slate-700">
+                                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-[2px] text-[9px] font-bold uppercase tracking-wider bg-black/40 text-[#C6D4DF] border border-white/10">
                                     {type === 'short_answer' 
                                       ? 'Jawaban Singkat' 
                                       : type === 'multiple_choice' 
@@ -993,24 +887,24 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
                                 </div>
 
                                 {sub?.score !== null && sub?.score !== undefined && (
-                                  <span className="text-xs font-bold font-display text-indigo-600 dark:text-indigo-400 font-mono">
-                                    Nilai: {sub.score}
+                                  <span className="text-xs font-bold text-[#A1CD44] font-mono">
+                                    Nilai: {sub.score} EXP
                                   </span>
                                 )}
                               </div>
 
-                              <h3 className="text-sm font-bold text-gray-900 dark:text-white leading-tight">{assign.title}</h3>
-                              <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed">{assign.question}</p>
+                              <h3 className="text-sm font-bold text-white uppercase leading-tight">{assign.title}</h3>
+                              <p className="text-xs text-[#C6D4DF] line-clamp-2 leading-relaxed">{assign.question}</p>
                             </div>
 
-                            <div className="space-y-2 border-t border-gray-50 pt-3 mt-1 text-[11px]">
-                              <div className="flex items-center justify-between text-gray-400 font-mono">
+                            <div className="space-y-2 border-t border-white/10 pt-3 mt-1 text-[11px]">
+                              <div className="flex items-center justify-between text-[#8A8A8A] font-mono">
                                 <span className="flex items-center gap-1">
                                   <Calendar className="w-3 h-3" />
                                   Diberikan: {assign.createdAt ? new Date(assign.createdAt.seconds * 1000).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'}) : 'Baru saja'}
                                 </span>
                                 {assign.deadline && (
-                                  <span className={`flex items-center gap-1 font-bold ${status === 'expired' ? 'text-red-500' : 'text-gray-500 dark:text-slate-400'}`}>
+                                  <span className={`flex items-center gap-1 font-bold ${status === 'expired' ? 'text-red-400' : 'text-[#C6D4DF]'}`}>
                                     Batas: {new Date(assign.deadline).toLocaleDateString('id-ID', {day: 'numeric', month: 'short'})}
                                   </span>
                                 )}
@@ -1018,13 +912,13 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
 
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-2">
-                                  <div className="w-5 h-5 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-md flex items-center justify-center text-[9px] font-bold uppercase shrink-0">
+                                  <div className="w-5 h-5 bg-black/40 text-[#66C0F4] rounded-[2px] flex items-center justify-center text-[9px] font-bold uppercase shrink-0 border border-white/10">
                                     {assign.teacherName?.charAt(0).toUpperCase()}
                                   </div>
-                                  <span className="font-semibold text-gray-600 dark:text-slate-300 truncate max-w-[120px]">{assign.teacherName}</span>
+                                  <span className="font-semibold text-[#C6D4DF] truncate max-w-[120px]">{assign.teacherName}</span>
                                 </div>
                                 
-                                <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:underline inline-flex items-center gap-0.5">
+                                <span className="text-[10px] font-bold text-[#66C0F4] hover:underline inline-flex items-center gap-0.5">
                                   {status === 'completed' || status === 'submitted' ? 'Lihat Jawaban & Evaluasi' : status === 'remedial' ? 'Kerjakan Remedial' : 'Kerjakan Tugas'}
                                   <ArrowRight className="w-3.5 h-3.5" />
                                 </span>
@@ -1078,7 +972,7 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
 
               {/* TAB 5: SETTINGS INLINE */}
               {activeTab === 'settings' && (
-                <div className="max-w-4xl mx-auto space-y-6">
+                <div className="-mx-4 sm:-mx-8 lg:-mx-10 -mt-4 sm:-mt-8 lg:-mt-10">
                   <UserSettings 
                     onNavigate={(p) => {
                       if (p === '/student') {

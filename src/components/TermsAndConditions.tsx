@@ -62,14 +62,14 @@ export default function TermsAndConditions({ onNavigate, userProfile }: TermsAnd
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-[#3C3C3C] font-sans selection:bg-[#58CC02] selection:text-white flex flex-col">
+    <div className="min-h-screen bg-[#171A21] text-white font-sans flex flex-col">
       {/* Top Header */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[#E5E5E5] py-3.5 px-4 sm:px-8">
+      <header className="sticky top-0 z-40 bg-[#171A21] backdrop-blur-md border-b border-white/10 py-3.5 px-4 sm:px-8 shadow-[0_4px_16px_rgba(0,0,0,0.6)] text-white">
         <div className="max-w-[1200px] mx-auto flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
               onClick={() => onNavigate('/')}
-              className="btn-duo-slate h-[40px] px-3.5 text-xs font-bold flex items-center gap-2 cursor-pointer"
+              className="h-[36px] px-3.5 bg-black/40 hover:bg-white/10 text-white border border-white/20 text-xs font-bold uppercase rounded-[2px] flex items-center gap-2 cursor-pointer transition-all"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Kembali</span>
@@ -99,9 +99,9 @@ export default function TermsAndConditions({ onNavigate, userProfile }: TermsAnd
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column: Sticky Table of Contents (Desktop) */}
-          <aside className="hidden lg:block lg:col-span-4 sticky top-24 card-duo !bg-white p-5 space-y-3 shadow-xs max-h-[calc(100vh-120px)] overflow-y-auto">
-            <h3 className="font-bold text-xs text-gray-400 uppercase tracking-wider flex items-center gap-2 pb-2 border-b border-slate-100">
-              <FileText className="w-4 h-4 text-[#1CB0F6]" />
+          <aside className="hidden lg:block lg:col-span-4 sticky top-24 bg-[#2F3138] border border-white/10 rounded-[3px] p-5 space-y-3 shadow-[0_2px_8px_rgba(0,0,0,0.5)] max-h-[calc(100vh-120px)] overflow-y-auto text-white">
+            <h3 className="font-bold text-xs text-[#8A8A8A] uppercase tracking-wider flex items-center gap-2 pb-2 border-b border-white/10">
+              <FileText className="w-4 h-4 text-[#66C0F4]" />
               <span>Daftar Isi Dokumen</span>
             </h3>
             <nav className="space-y-1 text-xs">
@@ -109,10 +109,10 @@ export default function TermsAndConditions({ onNavigate, userProfile }: TermsAnd
                 <button
                   key={sec.id}
                   onClick={() => scrollToSection(sec.id)}
-                  className={`w-full text-left px-3 py-2 rounded-xl font-bold transition-all cursor-pointer truncate ${
+                  className={`w-full text-left px-3 py-2 rounded-[2px] font-bold transition-all cursor-pointer truncate ${
                     activeSection === sec.id
-                      ? 'bg-[#1CB0F6]/10 text-[#0284C7] font-extrabold border border-[#1CB0F6]/30'
-                      : 'text-[#4B4B4B] hover:text-[#3C3C3C] hover:bg-slate-100/70'
+                      ? 'bg-[#66C0F4]/15 text-[#66C0F4] border-l-2 border-[#66C0F4]'
+                      : 'text-[#C6D4DF] hover:text-white hover:bg-white/5'
                   }`}
                 >
                   {sec.title}
@@ -122,7 +122,7 @@ export default function TermsAndConditions({ onNavigate, userProfile }: TermsAnd
           </aside>
 
           {/* Right Column: Full Terms Content */}
-          <article className="lg:col-span-8 card-duo !bg-white p-6 sm:p-10 space-y-10 shadow-md">
+          <article className="lg:col-span-8 bg-[#2F3138] border border-white/10 rounded-[3px] p-6 sm:p-10 space-y-10 shadow-[0_2px_8px_rgba(0,0,0,0.5)] text-white">
             
             {/* 1. PENDAFTARAN */}
             <section id="sec-1" className="space-y-4 pt-2 border-b border-slate-100 pb-8">

@@ -7,7 +7,7 @@ interface NotFoundProps {
 
 export default function NotFound({ onNavigate }: NotFoundProps) {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col justify-center items-center p-4 text-center space-y-6" id="not-found-page">
+    <div className="min-h-screen bg-[#171A21] text-white flex flex-col justify-center items-center p-4 text-center space-y-6 font-sans" id="not-found-page">
       <div className="w-16 h-16 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800/50 rounded-3xl flex items-center justify-center text-indigo-600 dark:text-indigo-400">
         <HelpCircle className="w-8 h-8" />
       </div>

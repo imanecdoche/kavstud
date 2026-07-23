@@ -3,11 +3,17 @@ import React from 'react';
 interface LogoProps {
   className?: string;
   fillColor?: string;
+  textColor?: string;
   iconOnly?: boolean;
 }
 
-export default function Logo({ className = 'h-8 w-auto', fillColor = '#000000', iconOnly = false }: LogoProps) {
-  const actualFill = fillColor === 'currentColor' ? '#000000' : fillColor;
+export default function Logo({ 
+  className = 'h-8 w-auto', 
+  fillColor = '#FFFFFF', 
+  textColor = 'text-white',
+  iconOnly = false 
+}: LogoProps) {
+  const actualFill = fillColor === 'currentColor' ? 'currentColor' : fillColor;
 
   const icon = (
     <svg 
@@ -40,10 +46,10 @@ export default function Logo({ className = 'h-8 w-auto', fillColor = '#000000', 
     <div className={`inline-flex items-center gap-2 select-none ${className}`}>
       {icon}
       <div className="flex items-center gap-1.5 leading-none">
-        <span className="font-display font-black text-lg sm:text-xl tracking-tight uppercase text-black">
+        <span className={`font-bold text-lg sm:text-xl tracking-tight uppercase ${textColor}`}>
           KAVIO
         </span>
-        <span className="font-display font-black text-lg sm:text-xl tracking-tight uppercase text-black">
+        <span className={`font-bold text-lg sm:text-xl tracking-tight uppercase ${textColor}`}>
           EDU
         </span>
       </div>

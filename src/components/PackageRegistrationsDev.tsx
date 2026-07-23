@@ -234,25 +234,25 @@ export default function PackageRegistrationsDev() {
   };
 
   return (
-    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 animate-fadeIn font-sans pb-16">
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 font-sans pb-16 text-white">
       
       {/* Header Banner */}
-      <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-6 sm:p-8 border-2 border-gray-200 dark:border-slate-700 border-b-8 border-b-gray-300 dark:border-b-slate-900 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="bg-[#2F3138] rounded-[4px] p-6 sm:p-8 border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.6)] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#58CC02] text-white flex items-center justify-center shadow-md border-b-4 border-[#3b8c00] shrink-0">
+            <div className="w-12 h-12 rounded-[2px] bg-[#66C0F4] text-[#171A21] flex items-center justify-center font-bold shrink-0 shadow-[0_2px_6px_rgba(0,0,0,0.3)]">
               <FileSpreadsheet className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="bg-[#FFC800] text-gray-900 text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider">
+                <span className="bg-[#A1CD44] text-[#171A21] text-[10px] font-bold px-2 py-0.5 rounded-[2px] uppercase tracking-wider">
                   DEV / ADMIN PANEL
                 </span>
               </div>
-              <h1 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white uppercase tracking-tight font-display mt-0.5">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white uppercase tracking-tight mt-0.5">
                 PENDAFTARAN PAKET SISWA
               </h1>
-              <p className="text-xs font-bold text-gray-500 dark:text-slate-400">
+              <p className="text-xs text-[#C6D4DF]">
                 Kelola pendaftaran paket, persetujuan admin, penentuan jadwal, dan ekspor spreadsheet CSV.
               </p>
             </div>
@@ -262,13 +262,13 @@ export default function PackageRegistrationsDev() {
         {/* Action Toolbar: View Switcher & CSV Export */}
         <div className="flex flex-wrap items-center gap-3 self-stretch md:self-auto justify-between shrink-0">
           {/* View Mode Switcher */}
-          <div className="flex items-center bg-gray-100 dark:bg-slate-700/80 p-1.5 rounded-2xl border border-gray-200 dark:border-slate-600">
+          <div className="flex items-center bg-black/40 p-1 rounded-[2px] border border-white/15">
             <button
               onClick={() => setViewMode('table')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] text-xs font-bold transition-all cursor-pointer ${
                 viewMode === 'table'
-                  ? 'bg-white dark:bg-slate-800 text-gray-900 dark:text-white shadow-xs border-b-2 border-gray-300'
-                  : 'text-gray-500 hover:text-gray-900 dark:text-slate-300'
+                  ? 'bg-[#66C0F4] text-[#171A21]'
+                  : 'text-[#C6D4DF] hover:text-white'
               }`}
             >
               <FileSpreadsheet className="w-4 h-4" />
@@ -276,10 +276,10 @@ export default function PackageRegistrationsDev() {
             </button>
             <button
               onClick={() => setViewMode('card')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-[2px] text-xs font-bold transition-all cursor-pointer ${
                 viewMode === 'card'
-                  ? 'bg-white dark:bg-slate-800 text-gray-900 dark:text-white shadow-xs border-b-2 border-gray-300'
-                  : 'text-gray-500 hover:text-gray-900 dark:text-slate-300'
+                  ? 'bg-[#66C0F4] text-[#171A21]'
+                  : 'text-[#C6D4DF] hover:text-white'
               }`}
             >
               <LayoutGrid className="w-4 h-4" />
@@ -290,7 +290,7 @@ export default function PackageRegistrationsDev() {
           {/* Export to CSV Button */}
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-2 bg-[#1CB0F6] hover:bg-[#0092E0] text-white text-xs font-black py-2.5 px-4 rounded-2xl border-b-4 border-[#0092E0] active:border-b-0 active:translate-y-[4px] transition-all cursor-pointer shadow-xs"
+            className="flex items-center gap-2 bg-[#66C0F4] hover:bg-[#5DADE2] text-white text-xs font-bold py-2.5 px-4 rounded-[2px] transition-all cursor-pointer shadow-[0_2px_6px_rgba(0,0,0,0.3)]"
             id="btn-export-csv"
           >
             <Download className="w-4 h-4" />
@@ -303,13 +303,13 @@ export default function PackageRegistrationsDev() {
       <div className="flex flex-col sm:flex-row items-center gap-4 justify-between">
         {/* Search */}
         <div className="relative w-full sm:w-80">
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#848E94]" />
           <input
             type="text"
             placeholder="Cari siswa, wali, paket, atau alamat..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder-gray-400 pl-10 pr-4 py-2.5 rounded-2xl font-bold text-xs shadow-xs border-2 border-gray-200 dark:border-slate-700 border-b-4 focus:outline-none focus:border-[#1CB0F6]"
+            className="w-full bg-black/40 border border-white/15 text-white placeholder-[#8A8A8A] pl-10 pr-4 py-2 rounded-[2px] text-xs focus:outline-none focus:border-[#66C0F4]"
           />
         </div>
 
@@ -326,10 +326,10 @@ export default function PackageRegistrationsDev() {
               <button
                 key={tab.id}
                 onClick={() => setStatusFilter(tab.id as any)}
-                className={`px-3.5 py-2 rounded-xl text-xs font-black uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer border-b-3 ${
+                className={`px-3.5 py-1.5 rounded-[2px] text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer border ${
                   isSelected
-                    ? 'bg-[#58CC02] text-white border-[#46A302]'
-                    : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border-gray-200 dark:border-slate-700 hover:bg-gray-50'
+                    ? 'bg-[#66C0F4] text-[#171A21] border-[#66C0F4]'
+                    : 'bg-transparent text-[#C6D4DF] border-white/15 hover:border-white/40'
                 }`}
               >
                 {tab.label}

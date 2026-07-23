@@ -144,17 +144,17 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
     notifMap.set('system-feature-1', {
       id: 'system-feature-1',
       category: 'Fitur Baru',
-      title: 'Pembaruan Sistem: Desain Duolingo & Font Resmi Feather Bold ✨',
-      message: 'Kavio Edu kini menggunakan sistem warna resmi Duolingo (Feather Green, Eel, Macaw, dll.) serta font khusus Feather Bold & DIN Next Rounded!',
+      title: 'Pembaruan Sistem: Desain & Antarmuka Kavio Edu',
+      message: 'Kavio Edu kini menggunakan sistem desain antarmuka terpadu untuk memberikan pengalaman belajar yang profesional dan efisien.',
       date: dtFeature.date,
       time: dtFeature.time,
       timestamp: dtFeature.timestamp,
       isRead: readNotifIds.has('system-feature-1'),
       actionUrl: '/blog',
       actionLabel: 'Lihat Pengumuman',
-      iconBg: 'bg-[#CE82FF]',
-      badgeBg: 'bg-[#CE82FF]',
-      badgeText: 'text-white'
+      iconBg: 'bg-[#66C0F4]/20 border border-[#66C0F4]/30',
+      badgeBg: 'bg-[#66C0F4]/20 border border-[#66C0F4]/30',
+      badgeText: 'text-[#66C0F4]'
     });
 
     const dtSchedule = parseDateTime(null, 1);
@@ -169,16 +169,16 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
       isRead: readNotifIds.has('system-schedule-1'),
       actionUrl: '/circles',
       actionLabel: 'Cek Circle & Modul',
-      iconBg: 'bg-[#FF9600]',
-      badgeBg: 'bg-[#FF9600]',
-      badgeText: 'text-white'
+      iconBg: 'bg-[#B9A074]/20 border border-[#B9A074]/30',
+      badgeBg: 'bg-[#B9A074]/20 border border-[#B9A074]/30',
+      badgeText: 'text-[#B9A074]'
     });
 
     const dtEvent = parseDateTime(null, 2);
     notifMap.set('system-event-1', {
       id: 'system-event-1',
       category: 'Event',
-      title: 'Undangan Workshop Pembelajaran Interaktif Kavio Edu 🎓',
+      title: 'Undangan Workshop Pembelajaran Interaktif Kavio Edu',
       message: 'Ikuti sesi webinar bersama para pengajar berpengalaman tentang strategi belajar efektif dan persiapan ujian.',
       date: dtEvent.date,
       time: dtEvent.time,
@@ -186,9 +186,9 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
       isRead: readNotifIds.has('system-event-1'),
       actionUrl: '/blog',
       actionLabel: 'Lihat Detail Event',
-      iconBg: 'bg-[#FFC800]',
-      badgeBg: 'bg-[#FFC800]',
-      badgeText: 'text-gray-900'
+      iconBg: 'bg-[#A1CD44]/20 border border-[#A1CD44]/30',
+      badgeBg: 'bg-[#A1CD44]/20 border border-[#A1CD44]/30',
+      badgeText: 'text-[#A1CD44]'
     });
 
     // 2. Real Assignments Listener
@@ -213,9 +213,9 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
               isRead: readNotifIds.has(notifId),
               actionUrl: '/assignments',
               actionLabel: 'Kelola Tugas',
-              iconBg: 'bg-[#1CB0F6]',
-              badgeBg: 'bg-[#1CB0F6]',
-              badgeText: 'text-white'
+              iconBg: 'bg-[#66C0F4]/20 border border-[#66C0F4]/30',
+              badgeBg: 'bg-[#66C0F4]/20 border border-[#66C0F4]/30',
+              badgeText: 'text-[#66C0F4]'
             });
           }
         } else {
@@ -235,9 +235,9 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
               isRead: readNotifIds.has(notifId),
               actionUrl: '/assignments',
               actionLabel: 'Kerjakan Tugas',
-              iconBg: 'bg-[#1CB0F6]',
-              badgeBg: 'bg-[#1CB0F6]',
-              badgeText: 'text-white'
+              iconBg: 'bg-[#66C0F4]/20 border border-[#66C0F4]/30',
+              badgeBg: 'bg-[#66C0F4]/20 border border-[#66C0F4]/30',
+              badgeText: 'text-[#66C0F4]'
             });
           }
         }
@@ -271,9 +271,9 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
             isRead: readNotifIds.has(notifId),
             actionUrl: '/assignments',
             actionLabel: 'Periksa & Beri EXP',
-            iconBg: sub.status === 'graded' ? 'bg-[#58CC02]' : 'bg-[#1CB0F6]',
-            badgeBg: sub.status === 'graded' ? 'bg-[#58CC02]' : 'bg-[#1CB0F6]',
-            badgeText: 'text-white'
+            iconBg: sub.status === 'graded' ? 'bg-[#A1CD44]/20 border border-[#A1CD44]/30' : 'bg-[#66C0F4]/20 border border-[#66C0F4]/30',
+            badgeBg: sub.status === 'graded' ? 'bg-[#A1CD44]/20 border border-[#A1CD44]/30' : 'bg-[#66C0F4]/20 border border-[#66C0F4]/30',
+            badgeText: sub.status === 'graded' ? 'text-[#A1CD44]' : 'text-[#66C0F4]'
           });
         } else {
           if (sub.studentId === user.uid) {
@@ -282,7 +282,7 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
               notifMap.set(notifId, {
                 id: notifId,
                 category: 'Penilaian',
-                title: `Tugas Selesai Dinilai: ${sub.assignmentTitle || 'Tugas'} 🎉`,
+                title: `Tugas Selesai Dinilai: ${sub.assignmentTitle || 'Tugas'}`,
                 message: `EXP kamu untuk tugas "${sub.assignmentTitle}": ${sub.score ?? 0} EXP.${sub.feedback ? ` Catatan Guru: "${sub.feedback}"` : ''}`,
                 date: dtSubmitted.date,
                 time: dtSubmitted.time,
@@ -290,16 +290,16 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
                 isRead: readNotifIds.has(notifId),
                 actionUrl: '/assignments',
                 actionLabel: 'Lihat Hasil Nilai',
-                iconBg: 'bg-[#58CC02]',
-                badgeBg: 'bg-[#58CC02]',
-                badgeText: 'text-white'
+                iconBg: 'bg-[#A1CD44]/20 border border-[#A1CD44]/30',
+                badgeBg: 'bg-[#A1CD44]/20 border border-[#A1CD44]/30',
+                badgeText: 'text-[#A1CD44]'
               });
             } else if (sub.status === 'remedial') {
               const notifId = `sub-remedial-${subId}`;
               notifMap.set(notifId, {
                 id: notifId,
                 category: 'Remedial',
-                title: `Permintaan Perbaikan (Remedial): ${sub.assignmentTitle || 'Tugas'} ⚠️`,
+                title: `Permintaan Perbaikan (Remedial): ${sub.assignmentTitle || 'Tugas'}`,
                 message: `Guru telah meninjau jawabanmu pada "${sub.assignmentTitle}" dan memberikan catatan perbaikan: "${sub.feedback || 'Silakan pelajari ulang dan kirimkan perbaikan.'}"`,
                 date: dtSubmitted.date,
                 time: dtSubmitted.time,
@@ -307,9 +307,9 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
                 isRead: readNotifIds.has(notifId),
                 actionUrl: '/assignments',
                 actionLabel: 'Kerjakan Perbaikan',
-                iconBg: 'bg-[#FF4B4B]',
-                badgeBg: 'bg-[#FF4B4B]',
-                badgeText: 'text-white'
+                iconBg: 'bg-[#FF4B4B]/20 border border-[#FF4B4B]/30',
+                badgeBg: 'bg-[#FF4B4B]/20 border border-[#FF4B4B]/30',
+                badgeText: 'text-[#FF4B4B]'
               });
             }
           }
@@ -441,20 +441,20 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
   };
 
   return (
-    <div className="p-4 sm:p-8 max-w-5xl mx-auto space-y-8 animate-fadeIn font-sans pb-16">
+    <div className="p-4 sm:p-8 max-w-5xl mx-auto space-y-8 animate-fadeIn font-sans pb-16 text-white">
       
       {/* Header Banner */}
-      <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-6 sm:p-8 border-2 border-gray-200 dark:border-slate-700 border-b-8 border-b-gray-300 dark:border-b-slate-900 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="bg-[#2F3138] rounded-[4px] p-6 sm:p-8 border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.6)] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#1CB0F6] text-white flex items-center justify-center shadow-md border-b-4 border-[#0092E0] shrink-0">
+            <div className="w-12 h-12 rounded-[2px] bg-[#66C0F4] text-[#171A21] flex items-center justify-center font-bold shrink-0 shadow-[0_2px_6px_rgba(0,0,0,0.3)]">
               <InboxIcon className="w-6 h-6" />
             </div>
             <div>
-              <h1 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white uppercase tracking-tight font-display">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white uppercase tracking-tight">
                 KOTAK MASUK & NOTIFIKASI
               </h1>
-              <p className="text-xs font-bold text-gray-500 dark:text-slate-400">
+              <p className="text-xs text-[#C6D4DF]">
                 Pemberitahuan real-time mengenai pengiriman tugas, nilai, remedial, event, dan update sistem.
               </p>
             </div>
@@ -464,16 +464,16 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
         {/* Toolbar: Unread Counter, Mark Read, Clear All & Auto-Clean Retention */}
         <div className="flex flex-wrap items-center gap-3 self-stretch md:self-auto justify-between md:justify-end shrink-0">
           {unreadCount > 0 ? (
-            <div className="flex items-center gap-2 bg-indigo-50 dark:bg-indigo-900/30 px-3.5 py-2 rounded-2xl border border-indigo-100 dark:border-indigo-800">
+            <div className="flex items-center gap-2 bg-[#FF4B4B]/20 border border-[#FF4B4B]/30 px-3.5 py-2 rounded-[2px]">
               <span className="w-2.5 h-2.5 rounded-full bg-[#FF4B4B] animate-ping" />
-              <span className="text-xs font-black text-indigo-700 dark:text-indigo-300">
+              <span className="text-xs font-bold text-[#FF4B4B]">
                 {unreadCount} Belum Dibaca
               </span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/30 px-3.5 py-2 rounded-2xl border border-emerald-100 dark:border-emerald-800">
-              <CheckCircle2 className="w-4 h-4 text-[#58CC02]" />
-              <span className="text-xs font-black text-[#58CC02]">
+            <div className="flex items-center gap-2 bg-[#A1CD44]/20 border border-[#A1CD44]/30 px-3.5 py-2 rounded-[2px]">
+              <CheckCircle2 className="w-4 h-4 text-[#A1CD44]" />
+              <span className="text-xs font-bold text-[#A1CD44]">
                 Semua Dibaca
               </span>
             </div>
@@ -482,7 +482,7 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
           {unreadCount > 0 && (
             <button
               onClick={handleMarkAllAsRead}
-              className="flex items-center gap-1.5 bg-[#58CC02] hover:bg-[#46A302] text-white text-xs font-black py-2.5 px-4 rounded-2xl border-b-4 border-[#46A302] active:border-b-0 active:translate-y-[4px] transition-all cursor-pointer shadow-xs"
+              className="flex items-center gap-1.5 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-xs font-bold py-2.5 px-4 rounded-[2px] transition-all cursor-pointer shadow-md uppercase tracking-wider"
               id="btn-mark-all-read"
             >
               <CheckCheck className="w-4 h-4" />
@@ -493,11 +493,11 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
           {filteredNotifications.length > 0 && (
             <button
               onClick={handleClearAll}
-              className="flex items-center gap-1.5 bg-gray-100 dark:bg-slate-700 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950/30 text-gray-700 dark:text-slate-200 text-xs font-black py-2.5 px-4 rounded-2xl border-b-4 border-gray-300 dark:border-slate-900 active:border-b-0 active:translate-y-[4px] transition-all cursor-pointer shadow-xs"
+              className="flex items-center gap-1.5 bg-transparent hover:bg-[#FF4B4B]/20 text-[#FF4B4B] border border-[#FF4B4B]/40 text-xs font-bold py-2.5 px-4 rounded-[2px] transition-all cursor-pointer shadow-xs uppercase tracking-wider"
               id="btn-clear-inbox"
               title="Bersihkan semua notifikasi dari inbox"
             >
-              <Trash2 className="w-4 h-4 text-red-500" />
+              <Trash2 className="w-4 h-4 text-[#FF4B4B]" />
               <span>Bersihkan Inbox</span>
             </button>
           )}
@@ -509,19 +509,19 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {/* Global Search Input */}
           <div className="relative md:col-span-2">
-            <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-[#8A8A8A]" />
             <input
               type="text"
               placeholder="Cari notifikasi berdasarkan judul tugas, pesan, nama siswa/guru, atau tanggal/jam..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder-gray-400 pl-11 pr-4 py-3.5 rounded-2xl font-bold text-xs shadow-xs border-2 border-gray-200 dark:border-slate-700 border-b-4 focus:outline-none focus:border-[#1CB0F6]"
+              className="w-full bg-black/40 text-white placeholder-[#8A8A8A] pl-11 pr-4 py-3 rounded-[2px] font-normal text-xs border border-white/15 focus:outline-none focus:border-[#66C0F4]"
               id="input-search-inbox"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-gray-400 hover:text-gray-600"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-[#8A8A8A] hover:text-white"
               >
                 Hapus
               </button>
@@ -530,7 +530,7 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
 
           {/* Auto-Clean Retention Selector Dropdown */}
           <div className="flex flex-col min-w-[180px] shrink-0">
-            <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">
+            <label className="block text-[9px] font-bold text-[#8A8A8A] uppercase tracking-widest mb-1 ml-1">
               Pembersihan Otomatis
             </label>
             <CustomDropdown
@@ -558,15 +558,15 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer border-b-4 ${
+                className={`px-4 py-2 rounded-[2px] text-xs font-bold uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer border ${
                   isSelected
-                    ? 'bg-[#1CB0F6] text-white border-[#0092E0] shadow-sm'
-                    : 'bg-white dark:bg-slate-800 text-gray-600 dark:text-slate-300 border-gray-200 dark:border-slate-700 hover:bg-gray-100'
+                    ? 'bg-[#66C0F4] text-[#171A21] border-[#66C0F4] shadow-md'
+                    : 'bg-[#2F3138] text-[#C6D4DF] border-white/10 hover:text-white hover:bg-white/5'
                 }`}
               >
                 <span>{cat}</span>
-                <span className={`ml-1.5 px-1.5 py-0.2 rounded-md text-[10px] ${
-                  isSelected ? 'bg-white/20 text-white' : 'bg-gray-100 dark:bg-slate-700 text-gray-500'
+                <span className={`ml-1.5 px-1.5 py-0.2 rounded-[2px] text-[10px] ${
+                  isSelected ? 'bg-[#171A21]/20 text-[#171A21]' : 'bg-black/40 text-[#8A8A8A]'
                 }`}>
                   {count}
                 </span>
@@ -579,15 +579,15 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
       {/* Notifications List */}
       <div className="space-y-4">
         {loading ? (
-          <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-12 text-center space-y-3 border-2 border-gray-200 dark:border-slate-700">
-            <Loader2 className="w-8 h-8 text-[#1CB0F6] animate-spin mx-auto" />
-            <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Memuat Notifikasi Real-time...</p>
+          <div className="bg-[#2F3138] rounded-[3px] p-12 text-center space-y-3 border border-white/10">
+            <Loader2 className="w-8 h-8 text-[#66C0F4] animate-spin mx-auto" />
+            <p className="text-xs font-bold text-[#C6D4DF] uppercase tracking-widest">Memuat Notifikasi Real-time...</p>
           </div>
         ) : filteredNotifications.length === 0 ? (
-          <div className="bg-white dark:bg-slate-800 rounded-[2rem] p-12 text-center space-y-3 border-2 border-dashed border-gray-200 dark:border-slate-700">
-            <Bell className="w-12 h-12 text-gray-300 dark:text-slate-600 mx-auto" />
-            <h3 className="text-base font-black text-gray-800 dark:text-slate-200">Inbox Kosong / Tidak Ada Notifikasi</h3>
-            <p className="text-xs text-gray-400 font-bold max-w-sm mx-auto">
+          <div className="bg-[#2F3138] rounded-[3px] p-12 text-center space-y-3 border border-dashed border-white/10">
+            <Bell className="w-12 h-12 text-[#8A8A8A] mx-auto" />
+            <h3 className="text-base font-bold text-white uppercase">Inbox Kosong / Tidak Ada Notifikasi</h3>
+            <p className="text-xs text-[#C6D4DF] max-w-sm mx-auto">
               Tidak ada pemberitahuan dalam kategori ini, telah dibersihkan, atau kata kunci pencarian kamu tidak cocok.
             </p>
           </div>
@@ -602,39 +602,39 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
                   initial={{ opacity: 0, y: 12 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className={`bg-white dark:bg-slate-800 rounded-[2rem] p-5 sm:p-6 border-2 transition-all shadow-xs relative overflow-hidden ${
+                  className={`bg-[#2F3138] rounded-[3px] p-5 sm:p-6 border transition-all shadow-[0_2px_8px_rgba(0,0,0,0.5)] relative overflow-hidden text-white ${
                     !item.isRead 
-                      ? 'border-[#1CB0F6] dark:border-[#1CB0F6]/70 border-b-6 border-b-[#0092E0]' 
-                      : 'border-gray-200 dark:border-slate-700/80 border-b-4 border-b-gray-300 dark:border-b-slate-900 opacity-90'
+                      ? 'border-[#66C0F4] bg-[#66C0F4]/10' 
+                      : 'border-white/10 opacity-90'
                   }`}
                 >
                   {/* Unread Accent Line */}
                   {!item.isRead && (
-                    <div className="absolute top-0 left-0 bottom-0 w-2 bg-[#1CB0F6]" />
+                    <div className="absolute top-0 left-0 bottom-0 w-1 bg-[#66C0F4]" />
                   )}
 
                   <div className="flex items-start gap-4">
                     {/* Category Icon Badge */}
-                    <div className={`w-11 h-11 rounded-2xl ${item.iconBg} text-white flex items-center justify-center shrink-0 shadow-sm border-b-4 border-black/20`}>
-                      <IconComp className="w-5 h-5" />
+                    <div className={`w-11 h-11 rounded-[2px] bg-black/40 border border-white/10 text-[#66C0F4] flex items-center justify-center shrink-0 shadow-sm`}>
+                      <IconComp className="w-5 h-5 text-[#66C0F4]" />
                     </div>
 
                     {/* Content */}
                     <div className="flex-1 min-w-0 space-y-2">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                          <span className={`${item.badgeBg} ${item.badgeText} text-[10px] font-black px-2.5 py-0.5 rounded-lg uppercase tracking-wider`}>
+                          <span className={`bg-[#66C0F4]/20 border border-[#66C0F4]/30 text-[#66C0F4] text-[10px] font-bold px-2.5 py-0.5 rounded-[2px] uppercase tracking-wider`}>
                             {item.category}
                           </span>
                           {!item.isRead && (
-                            <span className="bg-[#FF4B4B] text-white text-[9px] font-black px-2 py-0.5 rounded-full uppercase animate-pulse">
+                            <span className="bg-[#FF4B4B]/20 border border-[#FF4B4B]/40 text-[#FF4B4B] text-[9px] font-bold px-2 py-0.5 rounded-[2px] uppercase">
                               BARU
                             </span>
                           )}
                         </div>
 
                         {/* Real Date & Time Stamp */}
-                        <div className="flex items-center gap-1.5 text-xs font-bold text-gray-400">
+                        <div className="flex items-center gap-1.5 text-xs font-bold text-[#8A8A8A]">
                           <Calendar className="w-3.5 h-3.5" />
                           <span>{item.date}</span>
                           <span>•</span>
@@ -643,22 +643,22 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
                         </div>
                       </div>
 
-                      <h3 className={`text-base sm:text-lg font-black leading-snug uppercase ${
-                        !item.isRead ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-slate-300'
+                      <h3 className={`text-base font-bold leading-snug uppercase ${
+                        !item.isRead ? 'text-white' : 'text-[#C6D4DF]'
                       }`}>
                         {item.title}
                       </h3>
 
-                      <p className="text-xs font-medium text-gray-600 dark:text-slate-300 leading-relaxed">
+                      <p className="text-xs font-normal text-[#C6D4DF] leading-relaxed">
                         {item.message}
                       </p>
 
                       {/* Bottom Action Footer */}
-                      <div className="pt-2 flex items-center justify-between gap-4 border-t border-gray-100 dark:border-slate-700/50">
+                      <div className="pt-2 flex items-center justify-between gap-4 border-t border-white/10">
                         {item.actionLabel ? (
                           <button
                             onClick={() => handleAction(item)}
-                            className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-xs font-black py-2 px-4 rounded-xl border-b-4 border-black dark:border-gray-300 active:border-b-0 active:translate-y-[4px] transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
+                            className="bg-[#66C0F4] hover:bg-[#5DADE2] text-[#171A21] text-xs font-bold py-2 px-4 rounded-[2px] transition-all cursor-pointer flex items-center gap-1.5 shadow-md uppercase tracking-wider"
                           >
                             <span>{item.actionLabel}</span>
                             <ArrowRight className="w-3.5 h-3.5" />
@@ -668,9 +668,9 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
                         {!item.isRead && (
                           <button
                             onClick={() => handleMarkAsRead(item.id)}
-                            className="text-xs font-bold text-gray-400 hover:text-gray-700 dark:hover:text-white flex items-center gap-1 cursor-pointer"
+                            className="text-xs font-bold text-[#8A8A8A] hover:text-[#A1CD44] flex items-center gap-1 cursor-pointer transition-colors"
                           >
-                            <CheckCircle2 className="w-3.5 h-3.5 text-[#58CC02]" />
+                            <CheckCircle2 className="w-3.5 h-3.5 text-[#A1CD44]" />
                             <span>Tandai dibaca</span>
                           </button>
                         )}

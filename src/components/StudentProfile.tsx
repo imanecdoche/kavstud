@@ -155,7 +155,7 @@ export default function StudentProfile({ studentId, onNavigate, onSetLoading }: 
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900 p-4 sm:p-8 lg:p-12 space-y-8 max-w-5xl mx-auto" id="student-profile-page">
+    <div className="min-h-screen bg-[#171A21] text-white p-4 sm:p-8 lg:p-12 space-y-8 w-full font-sans" id="student-profile-page">
       {/* Back Header */}
       <div className="flex items-center gap-4">
         <button

@@ -54,6 +54,25 @@ export default function NavigationSidebar({
     const saved = localStorage.getItem('kavio_sidebar_collapsed');
     return saved === 'true';
   });
+
+  // Custom Mouse-Follow Tooltip State
+  const [hoveredTooltip, setHoveredTooltip] = useState<string | null>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const handleMouseEnter = (text: string, e: React.MouseEvent) => {
+    if (!isCollapsed) return;
+    setHoveredTooltip(text);
+    setMousePos({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isCollapsed) return;
+    setMousePos({ x: e.clientX, y: e.clientY });
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredTooltip(null);
+  };
   
   const { theme, setTheme, isDarkMode } = useTheme();
 
@@ -99,6 +118,7 @@ export default function NavigationSidebar({
       localStorage.setItem('kavio_sidebar_collapsed', String(next));
       return next;
     });
+    setHoveredTooltip(null);
   };
 
   const isDevAccount = userProfile?.email === 'fatih@kavio.tec.edu';
@@ -108,7 +128,7 @@ export default function NavigationSidebar({
       title: 'TEACHER TOOLS',
       items: [
         { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard },
-        { id: 'schedules' as const, label: 'Jadwal & Bimbingan', icon: Calendar },
+        { id: 'schedules' as const, label: 'Jadwal Saya', icon: Calendar },
         { id: 'students' as const, label: 'Manajemen Siswa', icon: Users },
         { id: 'circles' as const, label: 'Kavio Circle', icon: CircleDot },
         { id: 'modules' as const, label: 'Kelola Modul', icon: BookOpen },
@@ -128,7 +148,7 @@ export default function NavigationSidebar({
       title: role === 'teacher' ? 'TEACHER TOOLS' : undefined,
       items: [
         { id: 'dashboard' as const, label: 'Dashboard', icon: LayoutDashboard },
-        { id: 'schedules' as const, label: 'Jadwal & Bimbingan', icon: Calendar },
+        { id: 'schedules' as const, label: role === 'teacher' ? 'Jadwal Bimbingan' : 'Jadwal Saya', icon: Calendar },
         ...(role === 'teacher' ? [
           { id: 'students' as const, label: 'Manajemen Siswa', icon: Users },
           { id: 'circles' as const, label: 'Kavio Circle', icon: CircleDot }
@@ -143,12 +163,25 @@ export default function NavigationSidebar({
 
   return (
     <>
-      {/* Mobile Top Navbar (Floating Header) */}
-      <header className="lg:hidden h-16 bg-white dark:bg-slate-800/80 backdrop-blur-md border-b border-gray-100 dark:border-slate-700/50 px-4 flex items-center justify-between sticky top-0 z-40 w-full">
-        <div className="flex items-center gap-2 min-w-0">
+      {/* Custom Steam Design System Tooltip */}
+      {hoveredTooltip && isCollapsed && (
+        <div
+          className="fixed z-[100] pointer-events-none bg-[#2F3138] border border-white/20 text-white text-[11px] font-bold px-3 py-1.5 rounded-[2px] shadow-[0_4px_16px_rgba(0,0,0,0.8)] tracking-wider uppercase whitespace-nowrap"
+          style={{
+            left: `${mousePos.x + 14}px`,
+            top: `${mousePos.y + 6}px`
+          }}
+        >
+          {hoveredTooltip}
+        </div>
+      )}
+
+      {/* Mobile Header Bar */}
+      <header className="lg:hidden h-14 bg-[#171A21] border-b border-white/10 px-4 flex items-center justify-between sticky top-0 z-40">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => setIsMobileOpen(!isMobileOpen)}
-            className="p-2.5 text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-2xl transition-colors cursor-pointer"
+            className="p-2.5 text-[#C6D4DF] hover:bg-white/10 rounded-[2px] transition-colors cursor-pointer"
             style={{ minWidth: '44px', minHeight: '44px' }}
             aria-label="Toggle navigation menu"
             id="btn-toggle-mobile-sidebar"
@@ -163,7 +196,7 @@ export default function NavigationSidebar({
         <div className="flex items-center gap-2">
           <button
             onClick={() => setTheme(isDarkMode ? 'light' : 'dark')}
-            className="p-2 text-gray-500 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl transition-colors cursor-pointer"
+            className="p-2 text-[#C6D4DF] hover:bg-white/10 rounded-[2px] transition-colors cursor-pointer"
             style={{ minWidth: '40px', minHeight: '40px' }}
             aria-label="Toggle theme"
           >
@@ -180,26 +213,26 @@ export default function NavigationSidebar({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsMobileOpen(false)}
-            className="lg:hidden fixed inset-0 bg-black/40 backdrop-blur-xs z-50"
+            className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-xs z-50"
           />
         )}
       </AnimatePresence>
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed lg:sticky lg:top-0 lg:h-screen inset-y-0 left-0 z-50 bg-white dark:bg-slate-800 border-r-2 border-gray-100 dark:border-slate-700/60 flex flex-col transition-all duration-300 shadow-sm ${
+        className={`fixed lg:sticky lg:top-0 lg:h-screen inset-y-0 left-0 z-50 flex flex-col transition-all duration-300 shadow-sm bg-[#171A21] text-[#FFFFFF] border-r border-white/10 ${
           isCollapsed ? 'w-20' : 'w-64'
         } ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
       >
         {/* Sidebar Header & Brand Logo */}
-        <div className="p-4 flex items-center justify-between border-b border-gray-50 dark:border-slate-800 shrink-0">
+        <div className="p-4 flex items-center justify-between border-b border-white/10 shrink-0">
           <Logo iconOnly={isCollapsed} />
           
           <button
             onClick={() => setIsMobileOpen(false)}
-            className="lg:hidden p-2 text-gray-400 hover:text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:bg-slate-900 rounded-xl cursor-pointer"
+            className="lg:hidden p-2 rounded-[2px] text-gray-400 hover:text-white hover:bg-white/10 cursor-pointer"
             style={{ minWidth: '44px', minHeight: '44px' }}
             aria-label="Close sidebar"
             id="btn-close-sidebar"
@@ -209,13 +242,13 @@ export default function NavigationSidebar({
         </div>
 
         {/* User Mini Profile Section */}
-        <div className="p-4 border-b border-gray-50 dark:border-slate-800">
+        <div className="p-4 border-b border-white/10">
           <div className={`flex items-center gap-3 transition-all ${
             isCollapsed 
               ? 'justify-center' 
-              : 'bg-gray-50 dark:bg-slate-900/70 border border-gray-100 dark:border-slate-700/50 rounded-2xl p-3'
+              : 'bg-[#2F3138] border border-white/10 rounded-[3px] p-3'
           }`}>
-            <div className="w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 dark:text-indigo-400 font-bold text-xs overflow-hidden shrink-0 border border-indigo-200/60 shadow-3xs">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs overflow-hidden shrink-0 border bg-[#66C0F4]/20 text-[#66C0F4] border-[#66C0F4]/40 shadow-xs">
               <img 
                 src={userProfile?.photoURL || '/aset/default-avatar.svg'} 
                 alt={userProfile?.fullName || 'User'} 
@@ -233,10 +266,10 @@ export default function NavigationSidebar({
                 animate={{ opacity: 1, width: 'auto' }}
                 className="min-w-0 flex-1"
               >
-                <p className="text-xs font-bold text-gray-900 dark:text-white truncate leading-tight">
+                <p className="text-xs font-bold truncate leading-tight text-[#FFFFFF]">
                   {userProfile?.fullName || 'Loading...'}
                 </p>
-                <p className="text-[9px] text-gray-400 truncate mt-0.5">
+                <p className="text-[9px] truncate mt-0.5 text-[#C6D4DF]">
                   {userProfile?.email}
                 </p>
               </motion.div>
@@ -244,20 +277,20 @@ export default function NavigationSidebar({
           </div>
         </div>
 
-        {/* Navigation Menu Links Categorized into TEACHER TOOLS & DEV TOOLS */}
+        {/* Navigation Menu Links Categorized */}
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-4">
           {menuSections.map((section, sIdx) => (
             <div key={sIdx} className="space-y-1">
               {section.title && !isCollapsed && (
                 <div className="px-3.5 pt-2 pb-1 flex items-center justify-between">
-                  <span className="text-[9px] font-black uppercase text-[#1CB0F6] dark:text-[#1CB0F6] tracking-widest font-display">
+                  <span className="text-[9px] font-bold uppercase tracking-widest text-[#66C0F4]">
                     {section.title}
                   </span>
-                  <div className="h-[1px] flex-1 bg-gray-200 dark:bg-slate-700/60 ml-2" />
+                  <div className="h-[1px] flex-1 ml-2 bg-white/10" />
                 </div>
               )}
               {isCollapsed && sIdx > 0 && (
-                <div className="my-2 border-t border-gray-200 dark:border-slate-700/60" />
+                <div className="my-2 border-t border-white/10" />
               )}
 
               {section.items.map((item) => {
@@ -265,6 +298,7 @@ export default function NavigationSidebar({
                 const isActive = activeTab === item.id;
                 const flag = featureFlags.find(f => f.id === item.id);
                 const isMaintenance = flag && !flag.enabled;
+                const tooltipText = isMaintenance ? `${item.label} (Maintenance)` : item.label;
 
                 return (
                   <button
@@ -272,25 +306,28 @@ export default function NavigationSidebar({
                     onClick={() => {
                       setActiveTab(item.id);
                       setIsMobileOpen(false);
+                      setHoveredTooltip(null);
                     }}
-                    className={`w-full flex items-center text-xs font-black transition-all group cursor-pointer ${
-                      isCollapsed ? 'justify-center p-2.5 rounded-xl' : 'px-3.5 py-2.5 gap-3 rounded-2xl'
+                    onMouseEnter={(e) => handleMouseEnter(tooltipText, e)}
+                    onMouseMove={handleMouseMove}
+                    onMouseLeave={handleMouseLeave}
+                    className={`w-full flex items-center text-xs font-bold transition-all group cursor-pointer ${
+                      isCollapsed ? 'justify-center p-2.5 rounded-[2px]' : 'px-3.5 py-2.5 gap-3 rounded-[2px]'
                     } ${
-                      isActive 
-                        ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs translate-y-[-1px]' 
+                      isActive
+                        ? 'bg-[#66C0F4] text-[#171A21] font-extrabold shadow-[0_2px_6px_rgba(0,0,0,0.3)]'
                         : isMaintenance
-                        ? 'text-amber-800 dark:text-amber-300 bg-amber-50/70 dark:bg-amber-950/40 border-b-2 border-amber-200'
-                        : 'text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:text-white hover:bg-gray-100 dark:bg-slate-700/70 border-b-2 border-transparent'
+                        ? 'text-[#B9A074] bg-[#B9A074]/10 border-l-2 border-[#B9A074]'
+                        : 'text-[#C6D4DF] hover:text-white hover:bg-white/10'
                     }`}
-                    title={isCollapsed ? (isMaintenance ? `${item.label} (Maintenance Mode)` : item.label) : undefined}
                     id={`menu-item-${item.id}`}
                   >
                     <div className="relative shrink-0">
                       <IconComponent className={`w-4.5 h-4.5 ${
-                        isActive ? 'text-white' : isMaintenance ? 'text-amber-500' : 'text-gray-400 group-hover:text-gray-700 dark:text-slate-200'
+                        isActive ? 'text-[#171A21]' : isMaintenance ? 'text-[#B9A074]' : 'text-[#848E94] group-hover:text-white'
                       }`} />
                       {isMaintenance && isCollapsed && (
-                        <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#FF9600] animate-ping" />
+                        <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#B9A074] animate-ping" />
                       )}
                     </div>
                     {!isCollapsed && (
@@ -303,8 +340,8 @@ export default function NavigationSidebar({
                           {item.label}
                         </motion.span>
                         {isMaintenance && (
-                          <span className="bg-[#FF9600] text-gray-900 text-[9px] font-black px-1.5 py-0.2 rounded-md uppercase shrink-0">
-                            🛠️ Maint
+                          <span className="bg-[#B9A074] text-[#171A21] text-[9px] font-black px-1.5 py-0.2 rounded-[2px] uppercase shrink-0">
+                            Maint
                           </span>
                         )}
                       </div>
@@ -317,7 +354,7 @@ export default function NavigationSidebar({
         </nav>
 
         {/* Desktop Collapse Toggle, Theme Toggle & Logout Button */}
-        <div className="p-3 border-t border-gray-50 dark:border-slate-800 bg-gray-50 dark:bg-slate-900/30 space-y-1 shrink-0">
+        <div className="p-3 border-t border-white/10 bg-[#2F3138] space-y-1 shrink-0">
           <button
             onClick={() => {
               if (onNavigate) {
@@ -326,41 +363,47 @@ export default function NavigationSidebar({
                 window.location.href = '/blog';
               }
               setIsMobileOpen(false);
+              setHoveredTooltip(null);
             }}
-            className={`w-full flex items-center rounded-xl text-xs font-bold text-gray-700 dark:text-slate-200 hover:text-indigo-600 hover:bg-indigo-50/70 dark:hover:bg-slate-800 transition-all cursor-pointer ${
+            onMouseEnter={(e) => handleMouseEnter('Kavio Blog', e)}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            className={`w-full flex items-center rounded-[2px] text-xs font-bold text-[#C6D4DF] hover:text-white hover:bg-white/10 transition-all cursor-pointer ${
               isCollapsed ? 'justify-center p-2.5' : 'px-3.5 py-2.5 gap-3'
             }`}
-            title={isCollapsed ? 'Kavio Blog' : undefined}
             id="btn-kavio-blog"
           >
-            <Newspaper className="w-4.5 h-4.5 shrink-0 text-indigo-500" />
-            {!isCollapsed && <span className="uppercase tracking-wider font-extrabold text-[11px]">Kavio Blog</span>}
+            <Newspaper className="w-4.5 h-4.5 shrink-0 text-[#66C0F4]" />
+            {!isCollapsed && <span className="uppercase tracking-wider font-bold text-[11px]">Kavio Blog</span>}
           </button>
 
           <button
             onClick={() => {
               setActiveTab('inbox');
               setIsMobileOpen(false);
+              setHoveredTooltip(null);
             }}
-            className={`w-full flex items-center rounded-xl text-xs font-bold transition-all cursor-pointer relative ${
+            onMouseEnter={(e) => handleMouseEnter('Inbox', e)}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            className={`w-full flex items-center rounded-[2px] text-xs font-bold transition-all cursor-pointer relative ${
               isCollapsed ? 'justify-center p-2.5' : 'px-3.5 py-2.5 gap-3'
             } ${
               activeTab === 'inbox'
-                ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs translate-y-[-1px]'
-                : 'text-gray-700 dark:text-slate-200 hover:text-indigo-600 hover:bg-indigo-50/70 dark:hover:bg-slate-800'
+                ? 'bg-[#66C0F4] text-[#171A21]'
+                : 'text-[#C6D4DF] hover:text-white hover:bg-white/10'
             }`}
-            title={isCollapsed ? 'Inbox / Notifikasi' : undefined}
             id="btn-sidebar-inbox"
           >
             <div className="relative shrink-0">
-              <Inbox className={`w-4.5 h-4.5 ${activeTab === 'inbox' ? 'text-white' : 'text-indigo-500'}`} />
+              <Inbox className={`w-4.5 h-4.5 ${activeTab === 'inbox' ? 'text-[#171A21]' : 'text-[#66C0F4]'}`} />
               {hasUnreadInbox && isCollapsed && (
                 <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#FF4B4B] animate-pulse" />
               )}
             </div>
             {!isCollapsed && (
               <div className="flex items-center justify-between flex-1">
-                <span className="uppercase tracking-wider font-extrabold text-[11px]">Inbox</span>
+                <span className="uppercase tracking-wider font-bold text-[11px]">Inbox</span>
                 {hasUnreadInbox && (
                   <span className="w-2 h-2 rounded-full bg-[#FF4B4B] animate-pulse" />
                 )}
@@ -370,21 +413,25 @@ export default function NavigationSidebar({
 
           <button
             onClick={() => setTheme(isDarkMode ? 'light' : 'dark')}
-            className={`w-full flex items-center rounded-xl text-xs font-bold text-gray-500 dark:text-slate-400 hover:text-gray-900 hover:bg-gray-100 dark:hover:text-white dark:hover:bg-slate-800 transition-all cursor-pointer ${
+            onMouseEnter={(e) => handleMouseEnter(isDarkMode ? 'Mode Terang' : 'Mode Gelap', e)}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            className={`w-full flex items-center rounded-[2px] text-xs font-bold text-[#C6D4DF] hover:text-white hover:bg-white/10 transition-all cursor-pointer ${
               isCollapsed ? 'justify-center p-2.5' : 'px-3.5 py-2.5 gap-3'
             }`}
-            title={isCollapsed ? (isDarkMode ? 'Mode Terang' : 'Mode Gelap') : undefined}
           >
-            {isDarkMode ? <Sun className="w-4.5 h-4.5 shrink-0" /> : <Moon className="w-4.5 h-4.5 shrink-0" />}
+            {isDarkMode ? <Sun className="w-4.5 h-4.5 shrink-0 text-[#66C0F4]" /> : <Moon className="w-4.5 h-4.5 shrink-0 text-[#66C0F4]" />}
             {!isCollapsed && <span>{isDarkMode ? 'Mode Terang' : 'Mode Gelap'}</span>}
           </button>
 
           <button
             onClick={onLogout}
-            className={`w-full flex items-center rounded-xl text-xs font-bold text-gray-500 dark:text-slate-400 hover:text-red-600 hover:bg-red-50/50 transition-all cursor-pointer ${
+            onMouseEnter={(e) => handleMouseEnter('Keluar', e)}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            className={`w-full flex items-center rounded-[2px] text-xs font-bold text-[#C6D4DF] hover:text-[#FF4B4B] hover:bg-[#FF4B4B]/10 transition-all cursor-pointer ${
               isCollapsed ? 'justify-center p-2.5' : 'px-3.5 py-2.5 gap-3'
             }`}
-            title={isCollapsed ? 'Keluar' : undefined}
             id="btn-logout"
           >
             <LogOut className="w-4.5 h-4.5 shrink-0" />
@@ -394,8 +441,10 @@ export default function NavigationSidebar({
           {/* Desktop Collapse Arrow Button */}
           <button
             onClick={toggleCollapse}
-            className="hidden lg:flex w-full items-center justify-center p-2 text-gray-400 hover:text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:bg-slate-700/50 rounded-xl cursor-pointer transition-colors"
-            title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
+            onMouseEnter={(e) => handleMouseEnter(isCollapsed ? 'Perluas Sidebar' : 'Kecilkan Sidebar', e)}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            className="hidden lg:flex w-full items-center justify-center p-2 text-[#8A8A8A] hover:text-white hover:bg-white/10 rounded-[2px] cursor-pointer transition-colors"
             id="btn-toggle-collapse"
           >
             {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}

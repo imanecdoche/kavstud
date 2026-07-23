@@ -50,51 +50,51 @@ export default function PackageDetail({ pkg, onBack, onRegister }: PackageDetail
   ];
 
   const highlights = [
-    { title: 'Metode Gamifikasi 3D', desc: 'Sistem poin, streak, dan lencana interaktif agar belajar terasa seperti bermain game.', icon: Sparkles, color: 'text-[#FFC800]' },
-    { title: 'Tutor Terverifikasi', desc: 'Pengajar profesional dengan seleksi ketat dan pendekatan ramah anak.', icon: ShieldCheck, color: 'text-[#58CC02]' },
-    { title: 'Kurikulum Terbaru', desc: 'Materi pelajaran terkini disesuaikan dengan standar kurikulum nasional.', icon: BookOpen, color: 'text-[#1CB0F6]' },
-    { title: 'Jadwal Fleksibel', desc: 'Pilihan opsi waktu pagi, siang, atau sore yang disesuaikan kebutuhan.', icon: Clock, color: 'text-[#CE82FF]' }
+    { title: 'Metode Gamifikasi 3D', desc: 'Sistem poin, streak, dan lencana interaktif agar belajar terasa lebih efisien.', icon: Sparkles, color: 'text-[#B9A074]' },
+    { title: 'Tutor Terverifikasi', desc: 'Pengajar profesional dengan seleksi ketat dan pendekatan akademis terukur.', icon: ShieldCheck, color: 'text-[#A1CD44]' },
+    { title: 'Kurikulum Terbaru', desc: 'Materi pelajaran terkini disesuaikan dengan standar kurikulum nasional.', icon: BookOpen, color: 'text-[#66C0F4]' },
+    { title: 'Jadwal Fleksibel', desc: 'Pilihan opsi waktu pagi, siang, atau sore yang disesuaikan kebutuhan.', icon: Clock, color: 'text-[#66C0F4]' }
   ];
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7] dark:bg-slate-900 text-[#4B4B4B] dark:text-slate-100 font-sans pb-28">
+    <div className="min-h-screen bg-[#171A21] text-white font-sans pb-28">
       {/* Top Header */}
-      <header className="sticky top-0 z-30 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-b-2 border-gray-200 dark:border-slate-700/60 px-4 sm:px-8 py-4 flex items-center justify-between shadow-xs">
+      <header className="sticky top-0 z-30 bg-[#2F3138] border-b border-white/10 px-4 sm:px-8 py-4 flex items-center justify-between shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
         <button
           onClick={onBack}
-          className="flex items-center gap-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-800 dark:text-white text-xs font-black py-2.5 px-4 rounded-2xl border-b-4 border-gray-300 dark:border-slate-900 active:border-b-0 active:translate-y-[4px] transition-all cursor-pointer"
+          className="flex items-center gap-2 bg-black/40 hover:bg-white/10 text-white text-xs font-bold py-2.5 px-4 rounded-[2px] border border-white/20 transition-all cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4" />
           <span className="uppercase tracking-wider">Kembali ke Daftar Paket</span>
         </button>
 
-        <span className="text-xs font-black uppercase text-gray-400 tracking-widest hidden sm:inline">
+        <span className="text-xs font-bold uppercase text-[#8A8A8A] tracking-widest hidden sm:inline">
           {isPrivate ? 'Kavio Private Program' : 'Kavio Circle Group'}
         </span>
       </header>
 
       {/* Main Body */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-8 py-8 space-y-8 animate-fadeIn">
+      <main className="max-w-4xl mx-auto px-4 sm:px-8 py-8 space-y-8 animate-fadeIn text-white">
         {/* Banner Section */}
-        <section className={`${pkg.bgColor} ${pkg.borderClass} rounded-[2.5rem] p-8 sm:p-12 relative overflow-hidden shadow-md flex flex-col md:flex-row items-center justify-between gap-8`}>
+        <section className="bg-[#2F3138] border border-white/15 rounded-[4px] p-8 sm:p-12 relative overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.6)] flex flex-col md:flex-row items-center justify-between gap-8 text-white">
           <div className="space-y-4 text-center md:text-left z-10 max-w-md">
-            <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/60 dark:bg-slate-900/40 backdrop-blur-md rounded-full text-xs font-black uppercase tracking-wider text-gray-900 dark:text-white border border-gray-200/50">
-              <Zap className="w-4 h-4 text-[#FF9600]" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 bg-black/40 rounded-[2px] text-xs font-bold uppercase tracking-wider text-[#66C0F4] border border-white/15">
+              <Zap className="w-4 h-4 text-[#66C0F4]" />
               <span>{isPrivate ? 'PAKET PRIVATE EXCLUSIVE' : 'PAKET CIRCLE KELOMPOK'}</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl font-black text-gray-900 tracking-tight uppercase leading-none font-display">
+            <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight uppercase leading-none">
               {pkg.name}
             </h1>
 
-            <p className="text-sm font-bold text-gray-800 leading-relaxed">
+            <p className="text-sm font-semibold text-[#C6D4DF] leading-relaxed">
               {pkg.details}
             </p>
 
-            <div className="pt-2 flex items-end justify-center md:justify-start gap-1.5 text-gray-900">
+            <div className="pt-2 flex items-end justify-center md:justify-start gap-1.5 text-[#A1CD44]">
               <span className="text-xl font-bold pb-1">Rp</span>
-              <span className="text-4xl sm:text-5xl font-black leading-none">{pkg.price}</span>
-              <span className="text-base font-bold pb-1 text-gray-800">
+              <span className="text-4xl sm:text-5xl font-bold font-mono leading-none">{pkg.price}</span>
+              <span className="text-base font-bold pb-1 text-[#C6D4DF]">
                 {pkg.priceLabel || (isPrivate ? '/bulan' : '/sesi/siswa')}
               </span>
             </div>
@@ -114,13 +114,13 @@ export default function PackageDetail({ pkg, onBack, onRegister }: PackageDetail
           {highlights.map((item, idx) => {
             const IconComp = item.icon;
             return (
-              <div key={idx} className="bg-white dark:bg-slate-800 rounded-3xl p-6 border-2 border-gray-200 dark:border-slate-700 border-b-6 border-b-gray-300 dark:border-b-slate-900 shadow-xs flex items-start gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-gray-100 dark:bg-slate-700 flex items-center justify-center shrink-0 border-b-4 border-gray-300 dark:border-slate-900">
+              <div key={idx} className="bg-[#2F3138] rounded-[3px] p-6 border border-white/10 shadow-xs flex items-start gap-4 text-white">
+                <div className="w-12 h-12 rounded-[2px] bg-black/40 flex items-center justify-center shrink-0 border border-white/10">
                   <IconComp className={`w-6 h-6 ${item.color}`} />
                 </div>
                 <div className="space-y-1">
-                  <h3 className="text-base font-black text-gray-900 dark:text-white uppercase tracking-tight font-display">{item.title}</h3>
-                  <p className="text-xs font-medium text-gray-500 dark:text-slate-400 leading-relaxed">{item.desc}</p>
+                  <h3 className="text-base font-bold text-white uppercase tracking-tight">{item.title}</h3>
+                  <p className="text-xs font-medium text-[#C6D4DF] leading-relaxed">{item.desc}</p>
                 </div>
               </div>
             );
@@ -128,54 +128,54 @@ export default function PackageDetail({ pkg, onBack, onRegister }: PackageDetail
         </section>
 
         {/* Detailed Benefits List */}
-        <section className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-8 border-2 border-gray-200 dark:border-slate-700 border-b-8 border-b-gray-300 dark:border-b-slate-900 shadow-sm space-y-6">
+        <section className="bg-[#2F3138] rounded-[4px] p-8 border border-white/10 shadow-md space-y-6 text-white">
           <div className="space-y-1">
-            <h2 className="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight font-display">
+            <h2 className="text-xl font-bold text-white uppercase tracking-tight">
               FASILITAS & BENEFIT PAKET {pkg.name}
             </h2>
-            <p className="text-xs font-bold text-gray-400">
+            <p className="text-xs font-bold text-[#8A8A8A]">
               Setiap pendaftaran menyakup fasilitas pembelajaran premium dari Kavio Edu.
             </p>
           </div>
 
           <ul className="space-y-3">
             {benefits.map((b, i) => (
-              <li key={i} className="flex items-start gap-3 bg-gray-50 dark:bg-slate-900/60 p-4 rounded-2xl border border-gray-100 dark:border-slate-700/50">
-                <CheckCircle2 className="w-5 h-5 text-[#58CC02] shrink-0 mt-0.5" />
-                <span className="text-xs sm:text-sm font-bold text-gray-800 dark:text-slate-200 leading-relaxed">{b}</span>
+              <li key={i} className="flex items-start gap-3 bg-black/40 p-4 rounded-[2px] border border-white/10">
+                <CheckCircle2 className="w-5 h-5 text-[#A1CD44] shrink-0 mt-0.5" />
+                <span className="text-xs sm:text-sm font-bold text-white leading-relaxed">{b}</span>
               </li>
             ))}
           </ul>
         </section>
 
-        {/* Guarantee & Testimonial Accent */}
-        <section className="bg-gradient-to-r from-[#58CC02] to-[#46A302] rounded-[2rem] p-6 text-white shadow-md flex items-center justify-between gap-4 border-b-4 border-[#3b8c00]">
+        {/* Guarantee Accent */}
+        <section className="bg-black/40 rounded-[3px] p-6 text-white shadow-md flex items-center justify-between gap-4 border border-[#A1CD44]/40">
           <div className="space-y-1">
-            <h3 className="text-lg font-black uppercase font-display">GARANSI PEMBELAJARAN SERU & EFEKTIF</h3>
-            <p className="text-xs font-bold text-white/90">
+            <h3 className="text-base font-bold uppercase text-[#A1CD44]">GARANSI PEMBELAJARAN SERU & EFEKTIF</h3>
+            <p className="text-xs font-medium text-[#C6D4DF]">
               Jika siswa kurang merasa cocok dengan tutor pada sesi pertama, Anda berhak mengajukan penggantian tutor gratis!
             </p>
           </div>
-          <Star className="w-10 h-10 text-[#FFC800] fill-[#FFC800] shrink-0 hidden sm:block" />
+          <Star className="w-10 h-10 text-[#B9A074] fill-[#B9A074] shrink-0 hidden sm:block" />
         </section>
       </main>
 
       {/* Sticky Bottom Bar with DAFTAR SEKARANG Button */}
-      <div className="fixed bottom-0 inset-x-0 z-40 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md border-t-2 border-gray-200 dark:border-slate-700/80 p-4 sm:px-8 shadow-2xl">
+      <div className="fixed bottom-0 inset-x-0 z-40 bg-[#2F3138] border-t border-white/10 p-4 sm:px-8 shadow-2xl text-white">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
           <div className="hidden sm:block">
-            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">PAKET TERPILIH</p>
-            <p className="text-lg font-black text-gray-900 dark:text-white uppercase leading-none font-display">
+            <p className="text-[10px] font-bold text-[#8A8A8A] uppercase tracking-widest">PAKET TERPILIH</p>
+            <p className="text-lg font-bold text-white uppercase leading-none mt-0.5">
               PAKET {pkg.name} — Rp {pkg.price}
             </p>
           </div>
 
           <button
             onClick={() => onRegister(pkg)}
-            className="w-full sm:w-auto flex-1 sm:flex-initial bg-[#58CC02] hover:bg-[#46A302] text-white text-base font-black py-4 px-10 rounded-2xl shadow-lg border-b-4 border-[#3b8c00] active:border-b-0 active:translate-y-[4px] transition-all cursor-pointer uppercase tracking-wider text-center"
+            className="w-full sm:w-auto flex-1 sm:flex-initial bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-xs font-bold py-3.5 px-10 rounded-[2px] shadow-md transition-all cursor-pointer uppercase tracking-wider text-center"
             id="btn-sticky-register"
           >
-            DAFTAR SEKARANG 🚀
+            Daftar Sekarang
           </button>
         </div>
       </div>

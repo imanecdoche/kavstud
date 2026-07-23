@@ -1,6 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Outfit:wght@500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap');
-@import url(https://db.onlinewebfonts.com/c/14936bb7a4b6575fd2eee80a3ab52cc2?family=Feather+Bold);
-@import url(https://db.onlinewebfonts.com/c/092c449c2b2bc64e9c6bbe8a7b9b291f?family=DIN+Next+Rounded+LT+W04+Medium);
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -12,57 +10,42 @@
 }
 
 html {
-  font-size: 90%; /* Global 10% UI scaling reduction across all rem-based typography, spacing, gaps, paddings & sizes */
+  font-size: 90%;
 }
 
 @theme {
-  /* Typography Tokens */
-  --font-sans: "DIN Next Rounded LT W04 Medium", "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: "Feather Bold", "Outfit", "Space Grotesk", sans-serif;
+  /* Global Typography - System Font Stack */
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, Verdana, sans-serif;
+  --font-display: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, Verdana, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
-  /* Duolingo Core Brand Colors */
-  --color-feather-green: #58CC02;
-  --color-mask-green: #89E219;
-  --color-eel: #4B4B4B;
-  --color-snow: #FFFFFF;
+  /* Steam Core Brand Colors */
+  --color-steam-navy: #171A21;
+  --color-steam-charcoal: #2F3138;
+  --color-steam-black: #000000;
+  --color-steam-blue: #66C0F4;
+  --color-steam-cyan: #1A9FFF;
+  --color-steam-green: #A1CD44;
+  --color-steam-gold: #B9A074;
+  --color-steam-white: #FFFFFF;
+  --color-steam-[#C6D4DF]: #C6D4DF;
+  --color-steam-muted: #8A8A8A;
+  --color-steam-icongray: #848E94;
 
-  /* Duolingo Secondary Colors */
-  --color-macaw: #1CB0F6;
-  --color-cardinal: #FF4B4B;
-  --color-bee: #FFC800;
-  --color-fox: #FF9600;
-  --color-beetle: #CE82FF;
-  --color-humpback: #2B70C9;
-
-  /* Duolingo Neutrals */
-  --color-wolf: #777777;
-  --color-hare: #AFAFAF;
-  --color-swan: #E5E5E5;
-  --color-polar: #F7F7F7;
-
-  /* Duolingo Mascot Palette Extensions */
-  --color-wing-overlay: #43C000;
-  --color-beak-inner: #B66E28;
-  --color-beak-lower: #F49000;
-  --color-beak-upper: #FFC200;
-  --color-beak-highlight: #FFDE00;
-  --color-tongue-pink: #FFCAFF;
-
-  /* Legacy & Gamified Mappings */
-  --color-duo-green: #58CC02;
-  --color-duo-green-dark: #46A302;
-  --color-duo-blue: #1CB0F6;
-  --color-duo-blue-dark: #0092E0;
-  --color-duo-orange: #FF9600;
-  --color-duo-orange-dark: #E58500;
-  --color-duo-yellow: #FFC800;
-  --color-duo-purple: #CE82FF;
+  /* Legacy Mappings to Steam Tokens */
+  --color-duo-green: #A1CD44;
+  --color-duo-green-dark: #86AE33;
+  --color-duo-blue: #66C0F4;
+  --color-duo-blue-dark: #4B9CCB;
+  --color-duo-orange: #B9A074;
+  --color-duo-orange-dark: #96815B;
+  --color-duo-yellow: #B9A074;
+  --color-duo-purple: #1A9FFF;
   --color-duo-red: #FF4B4B;
 
-  /* Semantic State Colors */
-  --color-surface-bg: #F7F7F7;
-  --color-surface-card: #FFFFFF;
+  /* Semantic Surface Colors */
+  --color-surface-bg: #171A21;
+  --color-surface-card: #2F3138;
 }
 
 body.modal-open {
@@ -81,18 +64,27 @@ body.modal-open {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(148, 163, 184, 0.35);
-  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(148, 163, 184, 0.6);
+  background-color: rgba(102, 192, 244, 0.5);
 }
 
 /* Custom Modal & Container Inner Scrollbar Utility */
-.custom-scrollbar {
+.custom-scrollbar,
+.overscroll-contain,
+[role="listbox"],
+[role="dialog"],
+[role="combobox"],
+.dropdown-menu,
+.accordion-content,
+.collapse-content {
   scrollbar-width: thin;
-  scrollbar-color: rgba(148, 163, 184, 0.35) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  overscroll-behavior: contain !important;
+  -ms-scroll-chaining: none;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -106,94 +98,28 @@ body.modal-open {
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(148, 163, 184, 0.35);
-  border-radius: 9999px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
   border: 1px solid transparent;
   background-clip: padding-box;
 }
 
-/* Top 3 Badge Soft Glow & Mist Effect */
-@keyframes mistGlow {
-  0% {
-    transform: scale(0.92) rotate(0deg);
-    opacity: 0.55;
-  }
-  50% {
-    transform: scale(1.12) rotate(180deg);
-    opacity: 0.85;
-  }
-  100% {
-    transform: scale(0.95) rotate(360deg);
-    opacity: 0.6;
-  }
-}
-
-.animate-mist-glow {
-  animation: mistGlow 7s ease-in-out infinite alternate;
-}
-
-/* Rotating Light Rays Effect for Full Badge Preview */
-@keyframes rotateRays {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-rotate-rays {
-  animation: rotateRays 25s linear infinite;
-}
-
-/* 3D Rotating Trophy Effect */
-@keyframes spin3DY {
-  0% {
-    transform: perspective(600px) rotateY(0deg);
-  }
-  100% {
-    transform: perspective(600px) rotateY(360deg);
-  }
-}
-
-.animate-spin-3d-y {
-  animation: spin3DY 8s linear infinite;
-  transform-style: preserve-3d;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(148, 163, 184, 0.65);
-}
-
-.dark .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(71, 85, 105, 0.5);
-}
-
-.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(71, 85, 105, 0.8);
-}
-
 /* Global focus ring styling */
 *:focus-visible {
-  outline: 3px solid #1CB0F6;
+  outline: 2px solid #66C0F4;
   outline-offset: 2px;
 }
 
 body {
-  font-family: var(--font-sans);
-  background-color: #F7F7F7;
-  color: #4B4B4B;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, Verdana, sans-serif;
+  background-color: #171A21;
+  color: #FFFFFF;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-}
-
-.dark body {
-  background-color: #0F172A;
-  color: #F8FAFC;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, Verdana, sans-serif;
 }
 
 /* Animation Keyframes */
@@ -225,12 +151,6 @@ h1, h2, h3, h4, h5, h6 {
 .stagger-item:nth-child(4) { animation-delay: 120ms; }
 .stagger-item:nth-child(5) { animation-delay: 160ms; }
 .stagger-item:nth-child(6) { animation-delay: 200ms; }
-.stagger-item:nth-child(7) { animation-delay: 240ms; }
-.stagger-item:nth-child(8) { animation-delay: 280ms; }
-.stagger-item:nth-child(9) { animation-delay: 320ms; }
-.stagger-item:nth-child(10) { animation-delay: 360ms; }
-.stagger-item:nth-child(11) { animation-delay: 400ms; }
-.stagger-item:nth-child(12) { animation-delay: 440ms; }
 
 .animate-fadeIn {
   animation: fadeIn 300ms var(--ease-out) forwards;
@@ -244,244 +164,192 @@ h1, h2, h3, h4, h5, h6 {
   animation: slideUp 300ms var(--ease-out) forwards;
 }
 
-/* Duolingo 3D Tactile Buttons & Component Utilities */
-/* Unified Button Base - 10% Compact Scaled */
-.btn-duo, 
-[class*="btn-duo-"] {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 40px;
-  height: 45px;
-  padding: 0px 14px;
-  border-radius: 11px; /* 10% scaled radius */
-  font-size: 13.5px;
-  font-weight: 700;
-  line-height: 16px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  transition: all 200ms ease;
-  cursor: pointer;
-  border-bottom: 3.5px solid transparent;
-}
-
-/* Variant Colors */
-.btn-duo-green {
-  background-color: var(--color-feather-green);
-  color: #ffffff;
-  border-bottom-color: #46A302;
-}
-.btn-duo-green:hover { background-color: #61E002; transform: scale(1.02); }
-.btn-duo-green:active { transform: translateY(2px) scale(0.98); border-bottom-width: 2px; }
-
-.btn-duo-blue {
-  background-color: var(--color-macaw);
-  color: #ffffff;
-  border-bottom-color: #0092E0;
-}
-.btn-duo-blue:hover { background-color: #0099D1; transform: scale(1.02); }
-.btn-duo-blue:active { background-color: #007BA5; transform: translateY(2px) scale(0.98); border-bottom-width: 2px; }
-
-.btn-duo-orange {
-  background-color: var(--color-fox);
-  color: #ffffff;
-  border-bottom-color: #E58500;
-}
-.btn-duo-orange:hover { background-color: #FFAB33; transform: scale(1.02); }
-.btn-duo-orange:active { transform: translateY(2px) scale(0.98); border-bottom-width: 2px; }
-
-.btn-duo-red {
-  background-color: var(--color-cardinal);
-  color: #ffffff;
-  border-bottom-color: #EA2B2B;
-}
-.btn-duo-red:hover { background-color: #FF5C5C; transform: scale(1.02); }
-.btn-duo-red:active { transform: translateY(2px) scale(0.98); border-bottom-width: 2px; }
-
-.btn-duo-slate {
-  background-color: #F1F5F9;
-  color: #3C3C3C;
-  border-bottom-color: #CBD5E1;
-}
-.btn-duo-slate:hover { background-color: #E2E8F0; color: #000000; transform: scale(1.02); }
-.btn-duo-slate:active { transform: translateY(2px) scale(0.98); border-bottom-width: 2px; }
-
-/* Outlined Secondary Button */
-.btn-duo-outline {
-  background-color: transparent;
-  color: #1CB0F6;
-  border: 2px solid #1CB0F6;
-  border-radius: 11px;
-  height: 45px;
-}
-.btn-duo-outline:hover { background-color: rgba(28, 176, 246, 0.08); transform: scale(1.02); }
-.btn-duo-outline:active { background-color: rgba(28, 176, 246, 0.15); transform: scale(0.98); }
-
-/* Ghost Button */
-.btn-duo-ghost {
-  background-color: transparent;
-  color: #0000EE;
-  border: none;
-  border-radius: 11px;
-  height: 45px;
-}
-.btn-duo-ghost:hover { background-color: rgba(0, 0, 238, 0.08); text-decoration: underline; }
-.btn-duo-ghost:active { color: #0000AA; }
-
-/* Dark mode overrides */
-.dark .btn-duo {
-  border-bottom: 3.5px solid transparent;
-}
-.dark .btn-duo-green { background-color: #3D8F01; border-bottom-color: #2E6B01; }
-.dark .btn-duo-green:hover { background-color: #4AA801; }
-.dark .btn-duo-slate { background-color: #334155; color: #F8FAFC; border-bottom-color: #1E293B; }
-.dark .btn-duo-slate:hover { background-color: #475569; color: #FFFFFF; }
-
-/* Duolingo Standard Cards & Containers - 10% Compact Scaled */
-.card-duo {
-  background-color: #FFFFFF;
-  color: #3C3C3C;
-  border: 2px solid #E5E7EB;
-  border-bottom: 4px solid #E5E7EB;
-  border-radius: 11px;
+/* Steam Design System Reusable Utility Classes */
+.card-steam {
+  background-color: #2F3138;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
   padding: 20px;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08); /* Raised elevation */
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.5);
   transition: all 200ms ease;
 }
 
-.card-duo-interactive {
-  background-color: #FFFFFF;
-  color: #3C3C3C;
-  border: 2px solid #E5E7EB;
-  border-bottom: 4px solid #E5E7EB;
-  border-radius: 11px;
+.card-steam-interactive {
+  background-color: #2F3138;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
   padding: 20px;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.5);
   transition: all 200ms ease;
   cursor: pointer;
 }
 
-.card-duo-interactive:hover {
-  border-color: #1CB0F6;
-  border-bottom-color: #0092E0;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.12); /* Floating elevation */
-  transform: translateY(-2px);
+.card-steam-interactive:hover {
+  border-color: #66C0F4;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.7);
+  transform: translateY(-1px);
 }
 
-.dark .card-duo {
-  background-color: #1E293B;
-  border-color: #334155;
-}
-
-.dark .card-duo-interactive {
-  background-color: #1E293B;
-  border-color: #334155;
-}
-
-.dark .card-duo-interactive:hover {
-  border-color: #38BDF8;
-}
-
-.card-duo-yellow {
-  background-color: #FFC800;
-  color: #3C3C3C;
-  border: 2px solid #E5B200;
-  border-bottom: 4px solid #CC9E00;
-  border-radius: 14px;
-  padding: 20px;
-}
-
-.dark .card-duo-yellow {
-  background-color: #997B00;
+.modal-steam {
+  background-color: #2F3138;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  padding: 24px;
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.6);
   color: #FFFFFF;
-  border-color: #7A6200;
-  border-bottom-color: #5C4A00;
 }
 
-.card-duo-orange {
-  background-color: #FF9600;
+.input-steam {
+  background-color: rgba(0, 0, 0, 0.4);
   color: #FFFFFF;
-  border: 2px solid #E58500;
-  border-bottom: 4px solid #CC7600;
-  border-radius: 14px;
-  padding: 20px;
-}
-
-.card-duo-blue {
-  background-color: #1CB0F6;
-  color: #FFFFFF;
-  border: 2px solid #0092E0;
-  border-bottom: 4px solid #007AB8;
-  border-radius: 14px;
-  padding: 20px;
-}
-
-/* Modals - 10% Compact Scaled */
-.modal-duo {
-  background-color: #FFFFFF;
-  border: 1px solid #E5E5E5;
-  border-radius: 20px; /* Generous 20px radius for compact modals */
-  padding: 20px;
-  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.16); /* Modal elevation */
-}
-
-.dark .modal-duo {
-  background-color: #1E293B;
-  border-color: #334155;
-}
-
-/* Input Fields - 10% Compact Scaled */
-.input-duo {
-  background-color: #FFFFFF;
-  color: #3C3C3C;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 22px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 14px;
-  padding-right: 14px;
-  min-height: 40px;
-  border-radius: 11px;
-  border: 1px solid #C1C1C1;
+  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: 2px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   transition: all 200ms ease;
   width: 100%;
 }
 
-.input-duo-has-icon-left {
-  padding-left: 42px !important;
+.input-steam::placeholder {
+  color: #8A8A8A;
 }
 
-.input-duo-has-icon-right {
-  padding-right: 42px !important;
-}
-
-.input-duo-has-icon-both {
-  padding-left: 42px !important;
-  padding-right: 42px !important;
-}
-
-.input-duo:focus {
+.input-steam:focus {
   outline: none;
-  border: 2px solid #1CB0F6;
-  box-shadow: 0px 0px 0px 3px rgba(28, 176, 246, 0.1);
+  border-color: #66C0F4;
 }
 
-.input-duo-error {
-  border: 2px solid #FF4B4B;
-  color: #FF4B4B;
+/* Backward Compatibility Utility Mappings for smooth migration */
+.card-duo, .card-duo-interactive {
+  background-color: #2F3138 !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 3px !important;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* Badge Component Tokens - 10% Compact Scaled */
-.badge-duo {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.22rem 0.55rem;
-  border-radius: 11px;
-  font-size: 13.5px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.modal-duo {
+  background-color: #2F3138 !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 4px !important;
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.6) !important;
 }
 
+.btn-duo, [class*="btn-duo-"] {
+  border-radius: 2px !important;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, Verdana, sans-serif !important;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.3) !important;
+  border-bottom-width: 0px !important;
+}
+
+.btn-duo-green {
+  background-color: #A1CD44 !important;
+  color: #171A21 !important;
+}
+.btn-duo-green:hover {
+  background-color: #86AE33 !important;
+}
+
+.btn-duo-blue {
+  background-color: #66C0F4 !important;
+  color: #171A21 !important;
+}
+.btn-duo-blue:hover {
+  background-color: #5DADE2 !important;
+}
+
+.btn-duo-slate {
+  background-color: transparent !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+.btn-duo-slate:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.btn-duo-purple, .btn-duo-yellow {
+  background-color: #B9A074 !important;
+  color: #171A21 !important;
+}
+
+.btn-duo-red {
+  background-color: #FF4B4B !important;
+  color: #FFFFFF !important;
+}
+
+/* ==========================================================================
+   CUSTOM MOUSE CURSOR SYSTEM (Blue & Black Steam Design Tokens)
+   ========================================================================== */
+
+/* 1. Default Arrow Cursor */
+html, body, *, ::before, ::after {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M3 2l16 12-7 1-4 7-5-20z' fill='%23171A21' stroke='%2366C0F4' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M6 6l9 7-4.5.6-2.4 4.4L6 6z' fill='%2366C0F4'/%3E%3C/svg%3E"), auto;
+}
+
+/* 2. Interactive Pointer Cursor (Buttons, Links, Clickables) */
+a, 
+button, 
+[role="button"], 
+input[type="button"], 
+input[type="submit"], 
+input[type="reset"],
+input[type="checkbox"],
+input[type="radio"],
+select, 
+.cursor-pointer,
+[onClick] {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M3 2l16 12-7 1-4 7-5-20z' fill='%2366C0F4' stroke='%23171A21' stroke-width='2' stroke-linejoin='round'/%3E%3Ccircle cx='18' cy='18' r='3.5' fill='%23A1CD44' stroke='%23171A21' stroke-width='1.5'/%3E%3C/svg%3E"), pointer !important;
+}
+
+/* 3. Text / I-Beam Input Cursor */
+input[type="text"], 
+input[type="email"], 
+input[type="password"], 
+input[type="number"], 
+input[type="search"], 
+input[type="tel"],
+input[type="url"],
+textarea, 
+[contenteditable="true"], 
+.cursor-text {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M7 4h10M12 4v16M7 20h10' stroke='%2366C0F4' stroke-width='3' stroke-linecap='round' fill='none'/%3E%3Cpath d='M7 4h10M12 4v16M7 20h10' stroke='%23171A21' stroke-width='1.2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") 12 12, text !important;
+}
+
+/* 4. Disabled / Not Allowed Cursor */
+:disabled, 
+.disabled, 
+[aria-disabled="true"], 
+.cursor-not-allowed {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9' fill='%23171A21' stroke='%23FF4B4B' stroke-width='2'/%3E%3Cline x1='5.6' y1='5.6' x2='18.4' y2='18.4' stroke='%23FF4B4B' stroke-width='2'/%3E%3C/svg%3E") 12 12, not-allowed !important;
+}
+
+/* 5. Grab / Grabbing Cursors */
+.cursor-grab {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M9 3v8M12 2v9M15 3v8M18 5v6M6 8v5c0 4.4 3.6 8 8 8s8-3.6 8-8V8' fill='%23171A21' stroke='%2366C0F4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 12 12, grab !important;
+}
+
+.cursor-grabbing {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M9 7v4M12 6v5M15 7v4M18 8v3M6 10v3c0 4.4 3.6 8 8 8s8-3.6 8-8v-3' fill='%2366C0F4' stroke='%23171A21' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") 12 12, grabbing !important;
+}
+
+/* 6. Loading / Wait Cursor */
+.cursor-wait, .cursor-progress {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='9' fill='%23171A21' stroke='%2366C0F4' stroke-width='2'/%3E%3Cpath d='M12 6v6l4 4' stroke='%23A1CD44' stroke-width='2.5' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") 12 12, wait !important;
+}
+
+/* Barber-Pole Looping Striped Animation Effect */
+@keyframes barberPole {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 24px 0;
+  }
+}
+
+.animate-barberPole {
+  animation: barberPole 1s linear infinite;
+}

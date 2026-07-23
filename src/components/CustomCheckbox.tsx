@@ -9,6 +9,7 @@ interface CustomCheckboxProps {
   disabled?: boolean;
   className?: string;
   label?: React.ReactNode;
+  description?: React.ReactNode;
   size?: 'sm' | 'md' | 'lg';
 }
 
@@ -20,6 +21,7 @@ export default function CustomCheckbox({
   disabled = false,
   className = '',
   label,
+  description,
   size = 'md'
 }: CustomCheckboxProps) {
   const sizeClasses = {
@@ -36,14 +38,14 @@ export default function CustomCheckbox({
 
   return (
     <label 
-      className={`inline-flex items-center gap-2 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${className}`}
+      className={`inline-flex items-start gap-2.5 ${disabled ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'} ${className}`}
       htmlFor={id}
     >
       <div 
-        className={`relative shrink-0 flex items-center justify-center border-2 rounded transition-colors duration-200 
+        className={`relative shrink-0 flex items-center justify-center border-2 rounded transition-colors duration-200 mt-0.5
           ${(checked || indeterminate) 
-            ? 'bg-[#1CB0F6] border-[#1CB0F6]' 
-            : 'bg-white dark:bg-slate-800 border-[#C1C1C1] dark:border-slate-600 hover:border-[#1CB0F6] dark:hover:border-[#1CB0F6]'
+            ? 'bg-[#66C0F4] border-[#66C0F4]' 
+            : 'bg-black/40 border-white/20 hover:border-[#66C0F4]'
           } 
           ${sizeClasses[size]}`}
       >
@@ -64,13 +66,22 @@ export default function CustomCheckbox({
           }}
           disabled={disabled}
         />
-        {(checked && !indeterminate) && <Check className={`text-white ${iconSizes[size]} shrink-0`} />}
-        {indeterminate && <div className={`bg-white rounded-sm ${size === 'sm' ? 'w-2 h-0.5' : size === 'md' ? 'w-2.5 h-0.5' : 'w-3 h-0.5'} shrink-0`} />}
+        {(checked && !indeterminate) && <Check className={`text-[#171A21] ${iconSizes[size]} shrink-0 stroke-[3]`} />}
+        {indeterminate && <div className={`bg-[#171A21] rounded-sm ${size === 'sm' ? 'w-2 h-0.5' : size === 'md' ? 'w-2.5 h-0.5' : 'w-3 h-0.5'} shrink-0`} />}
       </div>
-      {label && (
-        <span className="text-sm text-[#3C3C3C] dark:text-slate-200 font-medium select-none">
-          {label}
-        </span>
+      {(label || description) && (
+        <div className="space-y-0.5 select-none">
+          {label && (
+            <span className="block text-xs text-white font-medium">
+              {label}
+            </span>
+          )}
+          {description && (
+            <span className="block text-[11px] text-[#8A8A8A] font-normal leading-normal">
+              {description}
+            </span>
+          )}
+        </div>
       )}
     </label>
   );

@@ -41,32 +41,31 @@ export default function LogoutConfirmModal({
         onClick={onClose}
       >
         <motion.div
-          initial={{ scale: 0.92, opacity: 0, y: 15 }}
+          initial={{ scale: 0.95, opacity: 0, y: 10 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.92, opacity: 0, y: 15 }}
-          transition={{ duration: 0.2, ease: 'easeOut' }}
+          exit={{ scale: 0.95, opacity: 0, y: 10 }}
+          transition={{ duration: 0.15, ease: 'easeOut' }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-3xl w-full max-w-sm p-6 sm:p-7 flex flex-col items-center text-center shadow-2xl overflow-hidden relative my-auto"
+          className="bg-[#2F3138] border border-white/20 rounded-[4px] w-full max-w-sm p-6 sm:p-7 flex flex-col items-center text-center shadow-[0_6px_16px_rgba(0,0,0,0.6)] overflow-hidden relative my-auto text-white font-sans"
         >
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 dark:text-slate-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-800 rounded-xl cursor-pointer transition-colors"
+            className="absolute top-4 right-4 p-1.5 text-[#8A8A8A] hover:text-white hover:bg-white/10 rounded-[2px] cursor-pointer transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
 
-          {/* 3D Warning Icon Container */}
-          <div className="relative w-16 h-16 rounded-2xl bg-rose-50 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400 flex items-center justify-center border border-rose-100 dark:border-rose-800/50 shadow-inner mb-4">
-            <div className="absolute inset-0 rounded-2xl bg-rose-500/20 blur-md animate-pulse pointer-events-none" />
-            <LogOut className="w-8 h-8 relative z-10" />
+          {/* Warning Icon Container */}
+          <div className="w-12 h-12 rounded-[2px] bg-[#FF4B4B]/10 text-[#FF4B4B] flex items-center justify-center border border-[#FF4B4B]/30 mb-4">
+            <LogOut className="w-6 h-6" />
           </div>
 
-          <h3 className="text-lg font-display font-extrabold text-gray-900 dark:text-white tracking-tight">
+          <h3 className="text-base font-bold text-white tracking-tight">
             Konfirmasi Keluar Akun
           </h3>
 
-          <p className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed font-medium mt-2 max-w-xs">
+          <p className="text-xs text-[#C6D4DF] leading-relaxed font-normal mt-2 max-w-xs">
             Apakah Anda yakin ingin keluar dari akun Kavio Edu saat ini? Sesi belajar Anda akan diakhiri secara aman.
           </p>
 
@@ -76,7 +75,7 @@ export default function LogoutConfirmModal({
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="px-4 py-3 bg-gray-100 dark:bg-slate-800 hover:bg-gray-200 dark:hover:bg-slate-700 text-gray-700 dark:text-slate-200 rounded-2xl text-xs font-bold transition-all cursor-pointer disabled:opacity-50"
+              className="bg-transparent hover:bg-white/10 text-white border border-white/20 py-2.5 rounded-[2px] text-xs font-normal transition-all cursor-pointer disabled:opacity-40"
             >
               Batal
             </button>
@@ -85,7 +84,7 @@ export default function LogoutConfirmModal({
               type="button"
               onClick={onConfirm}
               disabled={isLoading}
-              className="px-4 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-2xl text-xs font-black shadow-md transition-all cursor-pointer active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+              className="bg-[#FF4B4B] hover:bg-[#E03E3E] text-white rounded-[2px] text-xs font-bold transition-all cursor-pointer disabled:opacity-40 flex items-center justify-center gap-2 py-2.5 shadow-[0_2px_4px_rgba(0,0,0,0.3)]"
             >
               {isLoading ? (
                 <span>Mengeluarkan...</span>

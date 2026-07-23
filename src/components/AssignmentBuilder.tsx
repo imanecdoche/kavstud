@@ -118,12 +118,12 @@ function CustomNumberStepper({
   };
 
   return (
-    <div className={`inline-flex items-center bg-gray-50 dark:bg-slate-900/60 border border-gray-200 dark:border-slate-700/80 rounded-xl p-1 gap-1 transition-all ${disabled ? 'opacity-50' : ''} ${className}`}>
+    <div className={`inline-flex items-center bg-black/40 border border-white/15 rounded-[2px] p-1 gap-1 transition-all ${disabled ? 'opacity-50' : ''} ${className}`}>
       <button
         type="button"
         onClick={handleDecrement}
         disabled={disabled || value <= min}
-        className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center border border-gray-200 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-30 disabled:hover:bg-white active:scale-95 transition-all shadow-xs cursor-pointer select-none"
+        className="w-7 h-7 rounded-[2px] bg-[#2F3138] text-white font-bold text-sm flex items-center justify-center border border-white/15 hover:border-[#66C0F4] disabled:opacity-30 cursor-pointer select-none"
         title="Kurangi"
       >
         -
@@ -136,15 +136,15 @@ function CustomNumberStepper({
           value={value}
           onChange={handleInputChange}
           disabled={disabled}
-          className="w-12 text-center bg-transparent text-xs font-bold text-gray-800 dark:text-slate-100 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="w-12 text-center bg-transparent text-xs font-bold text-white focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
-        {unit && <span className="text-[11px] font-semibold text-gray-400 dark:text-slate-400 ml-0.5">{unit}</span>}
+        {unit && <span className="text-[11px] font-normal text-[#8A8A8A] ml-0.5">{unit}</span>}
       </div>
       <button
         type="button"
         onClick={handleIncrement}
         disabled={disabled || value >= max}
-        className="w-8 h-8 rounded-lg bg-white dark:bg-slate-800 text-gray-700 dark:text-slate-200 font-bold text-sm flex items-center justify-center border border-gray-200 dark:border-slate-700 hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-30 disabled:hover:bg-white active:scale-95 transition-all shadow-xs cursor-pointer select-none"
+        className="w-7 h-7 rounded-[2px] bg-[#2F3138] text-white font-bold text-sm flex items-center justify-center border border-white/15 hover:border-[#66C0F4] disabled:opacity-30 cursor-pointer select-none"
         title="Tambah"
       >
         +
@@ -845,70 +845,70 @@ CATATAN KHUSUS:
 
   if (initialLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#171A21] flex items-center justify-center p-4">
         <div className="text-center space-y-4">
-          <Loader2 className="w-8 h-8 text-indigo-600 dark:text-indigo-400 animate-spin mx-auto" />
-          <p className="text-xs font-bold text-gray-500 dark:text-slate-400 uppercase tracking-widest">Memuat Lembar Kerja Builder...</p>
+          <Loader2 className="w-8 h-8 text-[#66C0F4] animate-spin mx-auto" />
+          <p className="text-xs font-bold text-[#C6D4DF] uppercase tracking-widest">Memuat Lembar Kerja Builder...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-900/60 flex flex-col font-sans" id="assignment-builder">
+    <div className="min-h-screen bg-[#171A21] flex flex-col font-sans text-white" id="assignment-builder">
       {/* 1. TOP HEADER SECTION */}
-      <header className="sticky top-0 bg-white dark:bg-slate-800 border-b border-gray-100 dark:border-slate-700/50 px-4 sm:px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-40 shadow-xs">
+      <header className="sticky top-0 bg-[#171A21] border-b border-white/10 px-4 sm:px-6 py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 z-40 shadow-[0_4px_16px_rgba(0,0,0,0.6)]">
         <div className="flex items-center gap-3">
           <button
             onClick={() => onNavigate('/teacher')}
-            className="btn-duo-slate p-2 flex items-center justify-center cursor-pointer shrink-0"
-            style={{ minWidth: '40px', minHeight: '40px' }}
+            className="bg-[#2F3138] hover:bg-white/10 text-white p-2 rounded-[2px] border border-white/15 flex items-center justify-center cursor-pointer shrink-0 transition-all"
+            style={{ minWidth: '38px', minHeight: '38px' }}
           >
-            <ArrowLeft className="w-4 h-4 text-gray-700 dark:text-slate-200" />
+            <ArrowLeft className="w-4 h-4 text-white" />
           </button>
           
           <div className="min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">LMS Assignment Builder</span>
-              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase ${
+              <span className="text-[10px] font-bold text-[#8A8A8A] uppercase tracking-wider">LMS Assignment Builder</span>
+              <span className={`inline-flex items-center px-2 py-0.5 rounded-[2px] text-[9px] font-bold uppercase ${
                 status === 'published' 
-                  ? 'bg-green-50 text-green-700 border border-green-100' 
+                  ? 'bg-[#A1CD44] text-[#171A21]' 
                   : status === 'scheduled'
-                    ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 border border-blue-100'
-                    : 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 border border-amber-100 dark:border-amber-800/50'
+                    ? 'bg-[#66C0F4] text-[#171A21]'
+                    : 'bg-white/10 text-[#C6D4DF]'
               }`}>
                 {status === 'published' ? 'Dipublikasikan' : status === 'scheduled' ? 'Djadwalkan' : 'Draft'}
               </span>
             </div>
-            <h1 className="text-md sm:text-lg font-display font-bold text-gray-900 dark:text-white truncate tracking-tight mt-0.5">
+            <h1 className="text-md sm:text-lg font-bold text-white truncate tracking-tight mt-0.5">
               {title || 'Tugas Baru Tanpa Judul'}
             </h1>
           </div>
         </div>
 
-        {/* Action Button Row - Icon Only & AI Generator Button */}
+        {/* Action Button Row */}
         <div className="flex items-center gap-2">
           {/* AI Generator Button */}
           <button
             type="button"
             onClick={() => setIsAiModalOpen(true)}
-            className="px-3.5 py-2 text-xs font-black flex items-center gap-2 cursor-pointer shadow-sm hover:opacity-95 active:scale-95 transition-all rounded-xl text-white bg-gradient-to-r from-purple-600 via-indigo-600 to-sky-600 border border-purple-400/30"
-            style={{ minHeight: '40px' }}
-            title="Buat Tugas Otomatis Menggunakan Gemini AI"
+            className="px-3.5 py-2 text-xs font-bold flex items-center gap-2 cursor-pointer transition-all rounded-[2px] text-white bg-[#66C0F4] hover:bg-[#5DADE2] shadow-[0_2px_6px_rgba(0,0,0,0.3)]"
+            style={{ minHeight: '38px' }}
+            title="Buat Tugas Otomatis Menggunakan AI"
           >
-            <Sparkles className="w-4 h-4 text-yellow-300 fill-yellow-300 animate-pulse" />
-            <span className="hidden sm:inline font-black uppercase tracking-wider">Buat dengan AI</span>
+            <Sparkles className="w-4 h-4 text-white fill-white" />
+            <span className="hidden sm:inline font-bold uppercase tracking-wider">Buat dengan AI</span>
           </button>
 
           <button
             type="button"
             onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className={`p-2.5 text-xs font-black cursor-pointer transition-all rounded-xl ${
+            className={`p-2 text-xs font-normal cursor-pointer transition-all rounded-[2px] border ${
               isPreviewMode 
-                ? 'btn-duo-blue' 
-                : 'btn-duo-slate'
+                ? 'bg-[#66C0F4] text-[#171A21] border-[#66C0F4] font-bold' 
+                : 'bg-transparent text-[#C6D4DF] border-white/20 hover:border-white/40'
             }`}
-            style={{ minWidth: '40px', minHeight: '40px' }}
+            style={{ minWidth: '38px', minHeight: '38px' }}
             title={isPreviewMode ? 'Keluar Pratinjau' : 'Pratinjau Siswa'}
             aria-label="Pratinjau Siswa"
           >
@@ -918,24 +918,24 @@ CATATAN KHUSUS:
           <button
             type="button"
             onClick={() => setIsSettingsOpen(true)}
-            className="btn-duo-slate p-2.5 text-xs font-black flex items-center justify-center cursor-pointer rounded-xl"
-            style={{ minWidth: '40px', minHeight: '40px' }}
+            className="bg-transparent text-[#C6D4DF] hover:text-white border border-white/20 hover:border-white/40 p-2 text-xs font-normal flex items-center justify-center cursor-pointer rounded-[2px] transition-all"
+            style={{ minWidth: '38px', minHeight: '38px' }}
             title="Pengaturan Tugas"
             aria-label="Pengaturan Tugas"
           >
-            <Settings className="w-4.5 h-4.5 text-gray-700 dark:text-slate-200" />
+            <Settings className="w-4.5 h-4.5" />
           </button>
 
           <button
             type="button"
             onClick={() => handleSave('draft')}
             disabled={saveLoading}
-            className="btn-duo-slate p-2.5 text-xs font-black flex items-center justify-center cursor-pointer disabled:opacity-50 rounded-xl"
-            style={{ minWidth: '40px', minHeight: '40px' }}
+            className="bg-transparent text-[#C6D4DF] hover:text-white border border-white/20 hover:border-white/40 p-2 text-xs font-normal flex items-center justify-center cursor-pointer disabled:opacity-50 rounded-[2px] transition-all"
+            style={{ minWidth: '38px', minHeight: '38px' }}
             title="Simpan Draft"
             aria-label="Simpan Draft"
           >
-            <Save className="w-4.5 h-4.5 text-gray-700 dark:text-slate-200" />
+            <Save className="w-4.5 h-4.5" />
           </button>
 
           {/* Most Prominent Publish Button */}
@@ -943,8 +943,8 @@ CATATAN KHUSUS:
             type="button"
             onClick={() => handleSave('published')}
             disabled={saveLoading}
-            className="btn-duo-green p-3 text-xs font-black flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-md hover:scale-105 active:scale-95 transition-all rounded-xl"
-            style={{ minHeight: '40px', minWidth: '48px' }}
+            className="bg-[#A1CD44] hover:bg-[#8FBA3B] text-[#171A21] p-2.5 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50 shadow-[0_2px_6px_rgba(0,0,0,0.3)] transition-all rounded-[2px]"
+            style={{ minHeight: '38px', minWidth: '48px' }}
             title="Publikasikan Tugas"
             aria-label="Publikasikan Tugas"
           >
@@ -1180,17 +1180,17 @@ CATATAN KHUSUS:
                   onDragStart={(e) => handleDragStart(e, index)}
                   onDragOver={handleDragOver}
                   onDrop={(e) => handleDrop(e, index)}
-                  className={`card-duo p-5 sm:p-6 space-y-4 relative ${
-                    draggedIndex === index ? 'opacity-40 border-dashed border-sky-500 bg-sky-50' : ''
+                  className={`bg-[#2F3138] border border-white/10 rounded-[3px] p-5 sm:p-6 space-y-4 relative shadow-[0_2px_8px_rgba(0,0,0,0.5)] ${
+                    draggedIndex === index ? 'opacity-40 border-dashed border-[#66C0F4] bg-black/40' : ''
                   }`}
                 >
                   {/* Header Question Actions */}
-                  <div className="flex items-center justify-between gap-4 pb-3 border-b border-gray-50">
+                  <div className="flex items-center justify-between gap-4 pb-3 border-b border-white/10">
                     <div className="flex items-center gap-2.5">
-                      <div className="cursor-grab text-gray-300 hover:text-gray-500 dark:text-slate-400 shrink-0" title="Tarik untuk Reorder">
+                      <div className="cursor-grab text-[#848E94] hover:text-white shrink-0" title="Tarik untuk Reorder">
                         <GripVertical className="w-4 h-4" />
                       </div>
-                      <span className="w-6 h-6 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-xs font-bold font-mono flex items-center justify-center">
+                      <span className="w-6 h-6 rounded-[2px] bg-[#66C0F4]/20 border border-[#66C0F4]/40 text-[#66C0F4] text-xs font-bold font-mono flex items-center justify-center">
                         {index + 1}
                       </span>
                       <div className="flex items-center gap-1.5">
@@ -1216,7 +1216,7 @@ CATATAN KHUSUS:
                         type="button"
                         onClick={() => moveUp(index)}
                         disabled={index === 0}
-                        className="p-1.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 disabled:opacity-30 cursor-pointer"
+                        className="p-1.5 text-[#8A8A8A] hover:text-white disabled:opacity-30 cursor-pointer"
                         title="Geser ke Atas"
                       >
                         <ChevronUp className="w-4 h-4" />
@@ -1225,7 +1225,7 @@ CATATAN KHUSUS:
                         type="button"
                         onClick={() => moveDown(index)}
                         disabled={index === questions.length - 1}
-                        className="p-1.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 disabled:opacity-30 cursor-pointer"
+                        className="p-1.5 text-[#8A8A8A] hover:text-white disabled:opacity-30 cursor-pointer"
                         title="Geser ke Bawah"
                       >
                         <ChevronDown className="w-4 h-4" />
@@ -1233,7 +1233,7 @@ CATATAN KHUSUS:
                       <button
                         type="button"
                         onClick={() => duplicateQuestion(index)}
-                        className="p-1.5 text-gray-400 hover:text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:bg-indigo-900/30 rounded-lg cursor-pointer"
+                        className="p-1.5 text-[#8A8A8A] hover:text-[#66C0F4] hover:bg-white/10 rounded-[2px] cursor-pointer"
                         title="Duplikat Soal"
                       >
                         <Copy className="w-3.5 h-3.5" />
@@ -1241,7 +1241,7 @@ CATATAN KHUSUS:
                       <button
                         type="button"
                         onClick={() => deleteQuestion(index)}
-                        className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg cursor-pointer"
+                        className="p-1.5 text-[#8A8A8A] hover:text-[#FF4B4B] hover:bg-white/10 rounded-[2px] cursor-pointer"
                         title="Hapus Soal"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -1249,7 +1249,7 @@ CATATAN KHUSUS:
                       <button
                         type="button"
                         onClick={() => updateQuestionField(index, 'isCollapsed', !q.isCollapsed)}
-                        className="p-1.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:bg-slate-700 rounded-lg font-bold text-[10px] uppercase cursor-pointer"
+                        className="p-1.5 text-[#8A8A8A] hover:text-white hover:bg-white/10 rounded-[2px] font-bold text-[10px] uppercase cursor-pointer"
                       >
                         {q.isCollapsed ? 'Expand' : 'Collapse'}
                       </button>
@@ -1261,21 +1261,21 @@ CATATAN KHUSUS:
                     <div className="space-y-4 pt-1 animate-fadeIn">
                       {/* Question Prompt Field */}
                       <div className="space-y-1.5">
-                        <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Pertanyaan Soal</label>
+                        <label className="block text-xs font-semibold text-white">Pertanyaan Soal</label>
                         <textarea
                           rows={3}
                           value={q.question}
                           onChange={(e) => updateQuestionField(index, 'question', e.target.value)}
                           placeholder="Tulis isi pertanyaan secara lengkap, jelas, dan lugas di sini..."
-                          className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-indigo-500 resize-none font-sans"
+                          className="block w-full px-3.5 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4] resize-none font-sans"
                         />
                       </div>
 
                       {/* 1. Multiple Choice Specific Inputs */}
                       {q.type === 'multiple_choice' && (
-                        <div className="space-y-3 pt-2 border-t border-gray-50">
+                        <div className="space-y-3 pt-2 border-t border-white/10">
                           <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">Opsi Pilihan Jawaban</span>
+                            <span className="text-[10px] font-bold text-[#66C0F4] uppercase tracking-wider block">Opsi Pilihan Jawaban</span>
                             <div className="flex items-center gap-1.5">
                               <button
                                 type="button"
@@ -1287,10 +1287,10 @@ CATATAN KHUSUS:
                                   updateQuestionField(index, 'choices', nextChoices);
                                   if (Number(q.correctAnswer) >= 3) updateQuestionField(index, 'correctAnswer', '0');
                                 }}
-                                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
+                                className={`px-2.5 py-1 rounded-[2px] text-[10px] font-bold transition-all cursor-pointer ${
                                   q.choices.length === 3
-                                    ? 'bg-indigo-600 text-white'
-                                    : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300'
+                                    ? 'bg-[#66C0F4] text-[#171A21]'
+                                    : 'bg-black/40 border border-white/15 text-[#C6D4DF]'
                                 }`}
                               >
                                 3 Opsi (A-C)
@@ -1298,16 +1298,16 @@ CATATAN KHUSUS:
                               <button
                                 type="button"
                                 onClick={() => {
-                                  const nextChoices = [...q.choices];
+                                  const nextChoices = q.choices.slice(0, 4);
                                   while (nextChoices.length < 4) {
                                     nextChoices.push(`Opsi ${String.fromCharCode(65 + nextChoices.length)}`);
                                   }
-                                  updateQuestionField(index, 'choices', nextChoices.slice(0, 4));
+                                  updateQuestionField(index, 'choices', nextChoices);
                                 }}
-                                className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all cursor-pointer ${
-                                  q.choices.length >= 4
-                                    ? 'bg-indigo-600 text-white'
-                                    : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300'
+                                className={`px-2.5 py-1 rounded-[2px] text-[10px] font-bold transition-all cursor-pointer ${
+                                  q.choices.length === 4
+                                    ? 'bg-[#66C0F4] text-[#171A21]'
+                                    : 'bg-black/40 border border-white/15 text-[#C6D4DF]'
                                 }`}
                               >
                                 4 Opsi (A-D)
@@ -1317,10 +1317,10 @@ CATATAN KHUSUS:
 
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {q.choices.map((choice, choiceIdx) => {
-                              const optLabel = String.fromCharCode(65 + choiceIdx); // A, B, C, D
+                              const optLabel = String.fromCharCode(65 + choiceIdx);
                               return (
                                 <div key={choiceIdx} className="flex items-center gap-2">
-                                  <span className="text-xs font-mono font-bold text-gray-400">{optLabel}</span>
+                                  <span className="text-xs font-mono font-bold text-[#8A8A8A] w-4 shrink-0 text-center">{optLabel}</span>
                                   <input
                                     type="text"
                                     value={choice}
@@ -1329,41 +1329,39 @@ CATATAN KHUSUS:
                                       nextChoices[choiceIdx] = e.target.value;
                                       updateQuestionField(index, 'choices', nextChoices);
                                     }}
-                                    placeholder={`Jawaban Pilihan ${optLabel}...`}
-                                    className="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                                    placeholder={`Jawaban Opsi ${optLabel}...`}
+                                    className="flex-1 px-3 py-2 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4]"
                                   />
                                 </div>
                               );
                             })}
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                            <div className="space-y-1.5">
-                              <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Kunci Jawaban Benar</label>
-                              <CustomDropdown
-                                value={q.correctAnswer}
-                                onChange={(val) => updateQuestionField(index, 'correctAnswer', val)}
-                                options={q.choices.map((_, cIdx) => ({
-                                  value: String(cIdx),
-                                  label: `Opsi ${String.fromCharCode(65 + cIdx)} (${cIdx === 0 ? 'Pertama' : cIdx === 1 ? 'Kedua' : cIdx === 2 ? 'Ketiga' : 'Keempat'})`
-                                }))}
-                              />
-                            </div>
+                          <div className="space-y-1.5 pt-1">
+                            <label className="block text-xs font-semibold text-white">Kunci Jawaban Benar</label>
+                            <CustomDropdown
+                              value={q.correctAnswer}
+                              onChange={(val) => updateQuestionField(index, 'correctAnswer', val)}
+                              options={q.choices.map((c, cIdx) => ({
+                                value: String(cIdx),
+                                label: `Opsi ${String.fromCharCode(65 + cIdx)}${c ? `: ${c}` : ''}`
+                              }))}
+                            />
                           </div>
                         </div>
                       )}
 
                       {/* 2. Essay Specific Inputs */}
                       {q.type === 'essay' && (
-                        <div className="space-y-2 pt-2 border-t border-gray-50">
+                        <div className="space-y-2 pt-2 border-t border-white/10">
                           <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Panduan Kunci Jawaban / Kisi-kisi (Opsional)</label>
+                            <label className="block text-xs font-semibold text-white">Panduan Kunci Jawaban / Kisi-kisi (Opsional)</label>
                             <textarea
                               rows={2}
                               value={q.answerGuide}
                               onChange={(e) => updateQuestionField(index, 'answerGuide', e.target.value)}
                               placeholder="Tulis indikator utama atau kata kunci yang diutamakan dari pengerjaan siswa..."
-                              className="block w-full px-4 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none resize-none font-sans"
+                              className="block w-full px-3.5 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none resize-none font-sans"
                             />
                           </div>
                         </div>
@@ -1371,18 +1369,18 @@ CATATAN KHUSUS:
 
                       {/* 3. True / False Specific Inputs */}
                       {q.type === 'true_false' && (
-                        <div className="space-y-2 pt-2 border-t border-gray-50">
-                          <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Kunci Jawaban Benar</label>
+                        <div className="space-y-2 pt-2 border-t border-white/10">
+                          <label className="block text-xs font-semibold text-white">Kunci Jawaban Benar</label>
                           <div className="flex gap-3">
                             {['true', 'false'].map((tfVal) => (
                               <button
                                 key={tfVal}
                                 type="button"
                                 onClick={() => updateQuestionField(index, 'correctAnswer', tfVal)}
-                                className={`px-4 py-2 rounded-xl border text-xs font-bold cursor-pointer transition-all ${
+                                className={`px-4 py-2 rounded-[2px] border text-xs font-bold cursor-pointer transition-all ${
                                   q.correctAnswer === tfVal 
-                                    ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-500 text-indigo-700 ring-1 ring-indigo-500' 
-                                    : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:border-gray-300 dark:border-slate-600'
+                                    ? 'bg-[#66C0F4] border-[#66C0F4] text-[#171A21]' 
+                                    : 'bg-black/40 border-white/15 text-[#C6D4DF] hover:border-white/30'
                                 }`}
                               >
                                 {tfVal === 'true' ? 'Benar (True)' : 'Salah (False)'}
@@ -1394,8 +1392,8 @@ CATATAN KHUSUS:
 
                       {/* 4. Matching Specific Inputs */}
                       {q.type === 'matching' && (
-                        <div className="space-y-3 pt-2 border-t border-gray-50">
-                          <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">Pasangan Menjodohkan</span>
+                        <div className="space-y-3 pt-2 border-t border-white/10">
+                          <span className="text-[10px] font-bold text-[#66C0F4] uppercase tracking-wider block">Pasangan Menjodohkan</span>
                           {q.matchingPairs?.map((pair, pIdx) => (
                             <div key={pIdx} className="flex items-center gap-3">
                               <input
@@ -1407,9 +1405,9 @@ CATATAN KHUSUS:
                                   updateQuestionField(index, 'matchingPairs', nextPairs);
                                 }}
                                 placeholder="Kiri (Pertanyaan)..."
-                                className="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white"
+                                className="flex-1 px-3 py-2 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white"
                               />
-                              <span className="text-gray-400">➔</span>
+                              <span className="text-[#848E94]">➔</span>
                               <input
                                 type="text"
                                 value={pair.right}
@@ -1419,7 +1417,7 @@ CATATAN KHUSUS:
                                   updateQuestionField(index, 'matchingPairs', nextPairs);
                                 }}
                                 placeholder="Kanan (Jawaban)..."
-                                className="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white"
+                                className="flex-1 px-3 py-2 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white"
                               />
                               <button
                                 type="button"
@@ -1427,7 +1425,7 @@ CATATAN KHUSUS:
                                   const nextPairs = (q.matchingPairs || []).filter((_, i) => i !== pIdx);
                                   updateQuestionField(index, 'matchingPairs', nextPairs);
                                 }}
-                                className="p-1.5 text-gray-400 hover:text-red-500 cursor-pointer"
+                                className="p-1.5 text-[#8A8A8A] hover:text-[#FF4B4B] cursor-pointer"
                               >
                                 <X className="w-4 h-4" />
                               </button>
@@ -1439,7 +1437,7 @@ CATATAN KHUSUS:
                               const nextPairs = [...(q.matchingPairs || []), { left: '', right: '' }];
                               updateQuestionField(index, 'matchingPairs', nextPairs);
                             }}
-                            className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-bold inline-flex items-center gap-1 cursor-pointer"
+                            className="text-xs text-[#66C0F4] hover:underline font-bold inline-flex items-center gap-1 cursor-pointer"
                           >
                             + Tambah Pasangan Menjodohkan
                           </button>
@@ -1448,11 +1446,10 @@ CATATAN KHUSUS:
 
                       {/* 5. Fill in the Blank Specific Inputs */}
                       {q.type === 'fill_blank' && (
-                        <div className="space-y-3 pt-2 border-t border-gray-50">
-                          <span className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider block">Kunci Jawaban Singkat</span>
-                          <p className="text-[9px] text-gray-400">Masukkan satu atau beberapa alternatif jawaban benar yang dapat diterima oleh sistem.</p>
+                        <div className="space-y-3 pt-2 border-t border-white/10">
+                          <span className="text-[10px] font-bold text-[#66C0F4] uppercase tracking-wider block">Alternatif Jawaban Isian Singkat</span>
                           {q.fillBlankAnswers?.map((ans, aIdx) => (
-                            <div key={aIdx} className="flex items-center gap-2">
+                            <div key={aIdx} className="flex items-center gap-3">
                               <input
                                 type="text"
                                 value={ans}
@@ -1461,8 +1458,8 @@ CATATAN KHUSUS:
                                   nextAns[aIdx] = e.target.value;
                                   updateQuestionField(index, 'fillBlankAnswers', nextAns);
                                 }}
-                                placeholder={`Alternatif Jawaban #${aIdx + 1}...`}
-                                className="flex-1 px-3 py-2 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white"
+                                placeholder={`Alternatif ${aIdx + 1}...`}
+                                className="flex-1 px-3 py-2 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white"
                               />
                               <button
                                 type="button"
@@ -1470,7 +1467,7 @@ CATATAN KHUSUS:
                                   const nextAns = (q.fillBlankAnswers || []).filter((_, i) => i !== aIdx);
                                   updateQuestionField(index, 'fillBlankAnswers', nextAns);
                                 }}
-                                className="p-1.5 text-gray-400 hover:text-red-500 cursor-pointer"
+                                className="p-1.5 text-[#8A8A8A] hover:text-[#FF4B4B] cursor-pointer"
                               >
                                 <X className="w-4 h-4" />
                               </button>
@@ -1482,7 +1479,7 @@ CATATAN KHUSUS:
                               const nextAns = [...(q.fillBlankAnswers || []), ''];
                               updateQuestionField(index, 'fillBlankAnswers', nextAns);
                             }}
-                            className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-bold inline-flex items-center gap-1 cursor-pointer"
+                            className="text-xs text-[#66C0F4] hover:underline font-bold inline-flex items-center gap-1 cursor-pointer"
                           >
                             + Tambah Alternatif Jawaban Benar
                           </button>
@@ -1491,9 +1488,9 @@ CATATAN KHUSUS:
 
                       {/* 6. Listening Specific Inputs */}
                       {q.type === 'listening' && (
-                        <div className="space-y-3 pt-2 border-t border-gray-50">
+                        <div className="space-y-3 pt-2 border-t border-white/10">
                           <div className="space-y-1.5">
-                            <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Tautan Berkas Audio Soal (URL)</label>
+                            <label className="block text-xs font-semibold text-white">Tautan Berkas Audio Soal (URL)</label>
                             <input
                               type="text"
                               value={q.audioUrl}
@@ -1567,45 +1564,45 @@ CATATAN KHUSUS:
 
         {/* 3. RIGHT SECTION: STICKY LIVE SUMMARY PANEL */}
         <aside className="w-full lg:w-1/4 lg:sticky lg:top-24 space-y-6">
-          <div className="card-duo p-6 space-y-5">
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Ringkasan Soal</h3>
+          <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-6 space-y-5 shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+            <h3 className="text-xs font-bold text-white uppercase tracking-wider border-b border-white/10 pb-2">Ringkasan Soal</h3>
             
-            <div className="space-y-3.5 divide-y divide-gray-50">
+            <div className="space-y-3 divide-y divide-white/5">
               <div className="flex items-center justify-between text-xs pt-1">
-                <span className="text-gray-500 dark:text-slate-400 font-medium">Total Pertanyaan:</span>
-                <span className="font-bold text-gray-800 dark:text-slate-100 font-mono text-sm">{questions.length} Soal</span>
+                <span className="text-[#C6D4DF] font-normal">Total Pertanyaan:</span>
+                <span className="font-bold text-white font-mono text-sm">{questions.length} Soal</span>
               </div>
-              <div className="flex items-center justify-between text-xs pt-3">
-                <span className="text-gray-500 dark:text-slate-400 font-medium">Pilihan Ganda:</span>
-                <span className="font-bold text-gray-800 dark:text-slate-100 font-mono">{mcCount}</span>
+              <div className="flex items-center justify-between text-xs pt-2.5">
+                <span className="text-[#C6D4DF] font-normal">Pilihan Ganda:</span>
+                <span className="font-bold text-white font-mono">{mcCount}</span>
               </div>
-              <div className="flex items-center justify-between text-xs pt-3">
-                <span className="text-gray-500 dark:text-slate-400 font-medium">Jawaban Singkat (Esai):</span>
-                <span className="font-bold text-gray-800 dark:text-slate-100 font-mono">{essayCount}</span>
+              <div className="flex items-center justify-between text-xs pt-2.5">
+                <span className="text-[#C6D4DF] font-normal">Jawaban Singkat (Esai):</span>
+                <span className="font-bold text-white font-mono">{essayCount}</span>
               </div>
               {otherCount > 0 && (
-                <div className="flex items-center justify-between text-xs pt-3">
-                  <span className="text-gray-500 dark:text-slate-400 font-medium">Tipe Lainnya (Scalable):</span>
-                  <span className="font-bold text-indigo-600 dark:text-indigo-400 font-mono">+{otherCount}</span>
+                <div className="flex items-center justify-between text-xs pt-2.5">
+                  <span className="text-[#C6D4DF] font-normal">Tipe Lainnya (Scalable):</span>
+                  <span className="font-bold text-[#66C0F4] font-mono">+{otherCount}</span>
                 </div>
               )}
-              <div className="flex items-center justify-between text-xs pt-3">
-                <span className="text-gray-500 dark:text-slate-400 font-medium">Akumulasi EXP:</span>
-                <span className="font-extrabold text-amber-500 font-mono text-sm">{totalPoints} EXP</span>
+              <div className="flex items-center justify-between text-xs pt-2.5">
+                <span className="text-[#C6D4DF] font-normal">Akumulasi EXP:</span>
+                <span className="font-bold text-[#B9A074] font-mono text-sm">{totalPoints} EXP</span>
               </div>
-              <div className="flex items-center justify-between text-xs pt-3">
-                <span className="text-gray-500 dark:text-slate-400 font-medium">Estimasi Durasi:</span>
-                <span className="font-bold text-gray-800 dark:text-slate-100 font-mono">{estimatedDuration} Menit</span>
+              <div className="flex items-center justify-between text-xs pt-2.5">
+                <span className="text-[#C6D4DF] font-normal">Estimasi Durasi:</span>
+                <span className="font-bold text-white font-mono">{estimatedDuration} Menit</span>
               </div>
-              <div className="flex items-center justify-between text-xs pt-3">
-                <span className="text-gray-500 dark:text-slate-400 font-medium">Tingkat Kesulitan:</span>
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300">
+              <div className="flex items-center justify-between text-xs pt-2.5">
+                <span className="text-[#C6D4DF] font-normal">Tingkat Kesulitan:</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-[2px] text-[10px] font-bold uppercase bg-white/10 text-white border border-white/20">
                   {difficulty}
                 </span>
               </div>
-              <div className="flex items-center justify-between text-xs pt-3">
-                <span className="text-gray-500 dark:text-slate-400 font-medium">Penerima Tugas:</span>
-                <span className="font-bold text-gray-800 dark:text-slate-100 truncate max-w-[120px]">
+              <div className="flex items-center justify-between text-xs pt-2.5">
+                <span className="text-[#C6D4DF] font-normal">Penerima Tugas:</span>
+                <span className="font-bold text-white truncate max-w-[120px]">
                   {targetType === 'INDIVIDUAL' 
                     ? (students.find(s => s.uid === selectedStudentId)?.fullName || 'Belum dipilih')
                     : (circles.find(c => c.id === selectedCircleId)?.name || 'Belum dipilih')
@@ -1614,11 +1611,11 @@ CATATAN KHUSUS:
               </div>
             </div>
 
-            <div className="pt-2 border-t border-gray-100 dark:border-slate-700/50">
+            <div className="pt-2 border-t border-white/10">
               <button
                 type="button"
                 onClick={() => setIsSettingsOpen(true)}
-                className="btn-duo-blue w-full py-3 text-xs font-black flex items-center justify-center gap-2 cursor-pointer"
+                className="bg-[#66C0F4] hover:bg-[#5DADE2] text-white w-full py-2.5 rounded-[2px] text-xs font-bold flex items-center justify-center gap-2 cursor-pointer transition-all shadow-[0_2px_4px_rgba(0,0,0,0.3)]"
               >
                 <Settings className="w-4 h-4 shrink-0" />
                 <span>Ubah Pengaturan Tugas</span>
@@ -1627,55 +1624,55 @@ CATATAN KHUSUS:
           </div>
 
           {/* COMPACT TAMBAH SOAL CARD IN SIDEBAR */}
-          <div className="card-duo p-5 space-y-3">
-            <div className="flex items-center gap-2">
-              <Plus className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <h3 className="text-xs font-bold text-gray-800 dark:text-slate-100 uppercase tracking-wider">Tambah Pertanyaan</h3>
+          <div className="bg-[#2F3138] border border-white/10 rounded-[3px] p-5 space-y-3 shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+            <div className="flex items-center gap-2 border-b border-white/10 pb-2">
+              <Plus className="w-4 h-4 text-[#66C0F4]" />
+              <h3 className="text-xs font-bold text-white uppercase tracking-wider">Tambah Pertanyaan</h3>
             </div>
             
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => addQuestion('multiple_choice')}
-                className="p-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100/80 rounded-xl text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-indigo-100 dark:border-indigo-800/40"
+                className="p-2 bg-transparent hover:bg-[#66C0F4]/15 border border-white/20 hover:border-[#66C0F4] text-white rounded-[2px] text-[11px] font-normal flex items-center gap-1.5 transition-all cursor-pointer"
               >
-                <BookOpen className="w-3.5 h-3.5 shrink-0" />
+                <BookOpen className="w-3.5 h-3.5 shrink-0 text-[#66C0F4]" />
                 <span>Pilihan Ganda</span>
               </button>
               
               <button
                 type="button"
                 onClick={() => addQuestion('essay')}
-                className="p-2 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100/80 rounded-xl text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-indigo-100 dark:border-indigo-800/40"
+                className="p-2 bg-transparent hover:bg-[#66C0F4]/15 border border-white/20 hover:border-[#66C0F4] text-white rounded-[2px] text-[11px] font-normal flex items-center gap-1.5 transition-all cursor-pointer"
               >
-                <FileText className="w-3.5 h-3.5 shrink-0" />
+                <FileText className="w-3.5 h-3.5 shrink-0 text-[#66C0F4]" />
                 <span>Esai / Jawaban</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => addQuestion('true_false')}
-                className="p-2 bg-gray-50 dark:bg-slate-700/60 text-gray-700 dark:text-slate-200 hover:bg-gray-100 rounded-xl text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-gray-200 dark:border-slate-700"
+                className="p-2 bg-transparent hover:bg-[#66C0F4]/15 border border-white/20 hover:border-[#66C0F4] text-white rounded-[2px] text-[11px] font-normal flex items-center gap-1.5 transition-all cursor-pointer"
               >
-                <Check className="w-3.5 h-3.5 shrink-0" />
+                <Check className="w-3.5 h-3.5 shrink-0 text-[#A1CD44]" />
                 <span>Benar / Salah</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => addQuestion('matching')}
-                className="p-2 bg-gray-50 dark:bg-slate-700/60 text-gray-700 dark:text-slate-200 hover:bg-gray-100 rounded-xl text-[11px] font-bold flex items-center gap-1.5 transition-all cursor-pointer border border-gray-200 dark:border-slate-700"
+                className="p-2 bg-transparent hover:bg-[#66C0F4]/15 border border-white/20 hover:border-[#66C0F4] text-white rounded-[2px] text-[11px] font-normal flex items-center gap-1.5 transition-all cursor-pointer"
               >
-                <Layers className="w-3.5 h-3.5 shrink-0" />
+                <Layers className="w-3.5 h-3.5 shrink-0 text-[#B9A074]" />
                 <span>Menjodohkan</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => addQuestion('fill_blank')}
-                className="col-span-2 p-2 bg-gray-50 dark:bg-slate-700/60 text-gray-700 dark:text-slate-200 hover:bg-gray-100 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer border border-gray-200 dark:border-slate-700"
+                className="col-span-2 p-2 bg-transparent hover:bg-[#66C0F4]/15 border border-white/20 hover:border-[#66C0F4] text-white rounded-[2px] text-[11px] font-normal flex items-center justify-center gap-1.5 transition-all cursor-pointer"
               >
-                <QuestionIcon className="w-3.5 h-3.5 shrink-0" />
+                <QuestionIcon className="w-3.5 h-3.5 shrink-0 text-[#66C0F4]" />
                 <span>Isian Singkat</span>
               </button>
             </div>
@@ -1697,16 +1694,16 @@ CATATAN KHUSUS:
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ duration: 0.15 }}
               onClick={(e) => e.stopPropagation()}
-              className="modal-duo w-[880px] h-[660px] max-w-[95vw] max-h-[90vh] p-6 sm:p-8 space-y-6 relative overflow-y-auto my-auto overscroll-contain"
+              className="bg-[#2F3138] border border-white/20 rounded-[4px] w-[880px] h-[660px] max-w-[95vw] max-h-[90vh] p-6 sm:p-8 space-y-6 relative overflow-y-auto my-auto overscroll-contain shadow-[0_6px_16px_rgba(0,0,0,0.6)] text-white"
             >
-              <div className="flex items-center justify-between pb-4 border-b border-gray-50">
+              <div className="flex items-center justify-between pb-4 border-b border-white/10">
                 <div className="flex items-center gap-2">
-                  <Settings className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-                  <h2 className="text-lg font-display font-bold text-gray-900 dark:text-white">Pengaturan Lembar Tugas</h2>
+                  <Settings className="w-5 h-5 text-[#66C0F4]" />
+                  <h2 className="text-lg font-bold text-white">Pengaturan Lembar Tugas</h2>
                 </div>
                 <button
                   onClick={() => setIsSettingsOpen(false)}
-                  className="p-1.5 text-gray-400 hover:text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:bg-slate-900 rounded-lg cursor-pointer"
+                  className="p-1.5 text-[#8A8A8A] hover:text-white hover:bg-white/10 rounded-[2px] cursor-pointer"
                   style={{ minWidth: '40px', minHeight: '40px' }}
                 >
                   <X className="w-5 h-5" />
@@ -1717,25 +1714,25 @@ CATATAN KHUSUS:
                 {/* COLUMN 1: BASIC INFORMATION & PROMINENT TARGET SELECTION */}
                 <div className="space-y-4">
                   {/* PROMINENT TARGET SELECTION FIRST */}
-                  <div className="bg-indigo-50/80 dark:bg-indigo-900/40 border-2 border-indigo-300 dark:border-indigo-600 p-4 rounded-2xl space-y-3 shadow-xs">
+                  <div className="bg-black/40 border border-white/15 p-4 rounded-[2px] space-y-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <UserCheck className="w-4.5 h-4.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
-                        <span className="text-xs font-black text-indigo-950 dark:text-indigo-100 uppercase tracking-wider">Target Penerima Tugas (Utama)</span>
+                        <UserCheck className="w-4.5 h-4.5 text-[#66C0F4] shrink-0" />
+                        <span className="text-xs font-bold text-white uppercase tracking-wider">Target Penerima Tugas (Utama)</span>
                       </div>
-                      <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase bg-indigo-200/80 text-indigo-900 dark:bg-indigo-800 dark:text-indigo-200">
+                      <span className="px-2 py-0.5 rounded-[2px] text-[9px] font-bold uppercase bg-[#66C0F4]/20 border border-[#66C0F4]/40 text-[#66C0F4]">
                         Wajib
                       </span>
                     </div>
 
-                    <div className="flex bg-white dark:bg-slate-800 p-1 rounded-xl border border-indigo-200 dark:border-indigo-800/60">
+                    <div className="flex bg-[#2F3138] p-1 rounded-[2px] border border-white/15">
                       <button
                         type="button"
                         onClick={() => setTargetType('INDIVIDUAL')}
-                        className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        className={`flex-1 py-1.5 rounded-[2px] text-xs font-bold transition-all cursor-pointer ${
                           targetType === 'INDIVIDUAL' 
-                            ? 'bg-indigo-600 text-white shadow-xs' 
-                            : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white'
+                            ? 'bg-[#66C0F4] text-[#171A21]' 
+                            : 'text-[#C6D4DF] hover:text-white'
                         }`}
                       >
                         Siswa Individu
@@ -1743,10 +1740,10 @@ CATATAN KHUSUS:
                       <button
                         type="button"
                         onClick={() => setTargetType('CIRCLE')}
-                        className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        className={`flex-1 py-1.5 rounded-[2px] text-xs font-bold transition-all cursor-pointer ${
                           targetType === 'CIRCLE' 
-                            ? 'bg-indigo-600 text-white shadow-xs' 
-                            : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white'
+                            ? 'bg-[#66C0F4] text-[#171A21]' 
+                            : 'text-[#C6D4DF] hover:text-white'
                         }`}
                       >
                         Kelompok Belajar (Circle)
@@ -1755,7 +1752,7 @@ CATATAN KHUSUS:
 
                     {targetType === 'INDIVIDUAL' ? (
                       <div className="space-y-1.5">
-                        <label className="block text-xs font-bold text-indigo-950 dark:text-indigo-200">Pilih Siswa Penerima <span className="text-red-500">*</span></label>
+                        <label className="block text-xs font-bold text-white">Pilih Siswa Penerima <span className="text-[#FF4B4B]">*</span></label>
                         <CustomDropdown
                           value={selectedStudentId}
                           placeholder="-- Pilih Siswa Penerima --"
@@ -1766,15 +1763,15 @@ CATATAN KHUSUS:
                             badge: {
                               text: s.classType || 'PRIVATE',
                               className: s.classType === 'CIRCLE'
-                                ? 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-100'
-                                : 'bg-teal-50 text-teal-700 border border-teal-100'
+                                ? 'bg-[#66C0F4]/20 text-[#66C0F4] border border-[#66C0F4]/40'
+                                : 'bg-[#A1CD44] text-[#171A21]'
                             }
                           }))}
                         />
                       </div>
                     ) : (
                       <div className="space-y-1.5">
-                        <label className="block text-xs font-bold text-indigo-950 dark:text-indigo-200">Pilih Kelompok Belajar Circle <span className="text-red-500">*</span></label>
+                        <label className="block text-xs font-bold text-white">Pilih Kelompok Belajar Circle <span className="text-[#FF4B4B]">*</span></label>
                         <CustomDropdown
                           value={selectedCircleId}
                           placeholder="-- Pilih Circle Penerima --"
@@ -1792,37 +1789,37 @@ CATATAN KHUSUS:
                     )}
                   </div>
 
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block border-b border-gray-50 pb-1">Informasi Dasar</span>
+                  <span className="text-[10px] font-bold text-[#8A8A8A] uppercase tracking-wider block border-b border-white/10 pb-1">Informasi Dasar</span>
 
                   {/* Title */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Judul Ujian / Tugas <span className="text-red-500">*</span></label>
+                    <label className="block text-xs font-semibold text-white">Judul Ujian / Tugas <span className="text-[#FF4B4B]">*</span></label>
                     <input
                       type="text"
                       required
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       placeholder="Contoh: English Mid-Semester Examination..."
-                      className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none focus:border-indigo-500"
+                      className="block w-full px-3.5 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4]"
                     />
                   </div>
 
                   {/* Description */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Petunjuk & Deskripsi Pengerjaan</label>
+                    <label className="block text-xs font-semibold text-white">Petunjuk & Deskripsi Pengerjaan</label>
                     <textarea
                       rows={3}
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="Contoh: Bacalah setiap soal dengan teliti. Jawablah soal esai dengan detail..."
-                      className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white focus:outline-none resize-none"
+                      className="block w-full px-3.5 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none resize-none"
                     />
                   </div>
 
                   {/* Deadline & Duration */}
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Batas Pengumpulan (Deadline)</label>
+                      <label className="block text-xs font-semibold text-white">Batas Pengumpulan (Deadline)</label>
                       <CustomDatePicker
                         value={deadline}
                         onChange={(val) => setDeadline(val)}
@@ -1830,21 +1827,21 @@ CATATAN KHUSUS:
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Durasi Pengerjaan (Menit)</label>
+                      <label className="block text-xs font-semibold text-white">Durasi Pengerjaan (Menit)</label>
                       <input
                         type="number"
                         min={5}
                         max={300}
                         value={estimatedDuration}
                         onChange={(e) => setEstimatedDuration(Number(e.target.value))}
-                        className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs"
+                        className="block w-full px-3.5 py-2 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white focus:outline-none focus:border-[#66C0F4]"
                       />
                     </div>
                   </div>
 
                   {/* Difficulty */}
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-semibold text-gray-700 dark:text-slate-200">Tingkat Kesulitan</label>
+                    <label className="block text-xs font-semibold text-white">Tingkat Kesulitan</label>
                     <CustomDropdown
                       value={difficulty}
                       onChange={(val) => setDifficulty(val as any)}
@@ -1859,7 +1856,7 @@ CATATAN KHUSUS:
 
                 {/* COLUMN 2: OPTIONS & VISIBILITY */}
                 <div className="space-y-5">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block border-b border-gray-50 pb-1">Opsi Tugas & Aturan</span>
+                  <span className="text-[10px] font-bold text-[#8A8A8A] uppercase tracking-wider block border-b border-white/10 pb-1">Opsi Tugas & Aturan</span>
 
                   <div className="space-y-3 pt-1">
                     {/* Checkbox settings */}
@@ -1900,8 +1897,8 @@ CATATAN KHUSUS:
                   </div>
 
                   {/* Status / Visibility Options */}
-                  <div className="space-y-2 pt-2 border-t border-gray-50">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Metode Publikasi</span>
+                  <div className="space-y-2 pt-2 border-t border-white/10">
+                    <span className="text-[10px] font-bold text-[#8A8A8A] uppercase tracking-wider block">Metode Publikasi</span>
                     <div className="grid grid-cols-3 gap-2">
                       {[
                         { val: 'draft', label: 'Draft / Simpan' },
@@ -1912,10 +1909,10 @@ CATATAN KHUSUS:
                           key={item.val}
                           type="button"
                           onClick={() => setStatus(item.val as any)}
-                          className={`p-2.5 rounded-xl border text-[10px] font-bold uppercase transition-all cursor-pointer text-center ${
+                          className={`p-2 rounded-[2px] border text-[10px] font-bold uppercase transition-all cursor-pointer text-center ${
                             status === item.val 
-                              ? 'bg-indigo-600 border-indigo-600 text-white shadow-xs' 
-                              : 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-300 hover:border-gray-300 dark:border-slate-600'
+                              ? 'bg-[#66C0F4] border-[#66C0F4] text-[#171A21]' 
+                              : 'bg-black/40 border-white/15 text-[#C6D4DF] hover:border-[#66C0F4]'
                           }`}
                         >
                           {item.label}
@@ -1925,12 +1922,12 @@ CATATAN KHUSUS:
 
                     {status === 'scheduled' && (
                       <div className="space-y-1.5 pt-2 animate-fadeIn">
-                        <label className="block text-[10px] font-bold text-gray-400 uppercase">Pilih Waktu Penjadwalan</label>
+                        <label className="block text-[10px] font-bold text-[#8A8A8A] uppercase">Pilih Waktu Penjadwalan</label>
                         <input
                           type="datetime-local"
                           value={scheduledDate}
                           onChange={(e) => setScheduledDate(e.target.value)}
-                          className="block w-full px-4 py-2.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl text-xs"
+                          className="block w-full px-3.5 py-2 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white"
                         />
                       </div>
                     )}
@@ -1938,11 +1935,11 @@ CATATAN KHUSUS:
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-gray-50 flex justify-end gap-3 shrink-0">
+              <div className="pt-4 border-t border-white/10 flex justify-end gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsSettingsOpen(false)}
-                  className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl cursor-pointer"
+                  className="px-5 py-2.5 bg-[#66C0F4] hover:bg-[#5DADE2] text-white text-xs font-bold rounded-[2px] cursor-pointer transition-all shadow-[0_2px_4px_rgba(0,0,0,0.3)]"
                 >
                   Terapkan Pengaturan
                 </button>
@@ -1954,29 +1951,29 @@ CATATAN KHUSUS:
         {/* AI GENERATOR MODAL POPUP */}
         {isAiModalOpen && (
           <div 
-            className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center p-4 z-50 overscroll-contain overflow-y-auto animate-fadeIn"
+            className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50 overscroll-contain overflow-y-auto animate-fadeIn"
             onWheel={(e) => e.stopPropagation()}
             onTouchMove={(e) => e.stopPropagation()}
           >
             <motion.div 
-              initial={{ scale: 0.95, opacity: 0, y: 15 }}
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 15 }}
-              transition={{ duration: 0.2 }}
-              className="bg-white dark:bg-slate-800 border border-indigo-100 dark:border-slate-700/60 rounded-3xl p-6 sm:p-8 max-w-2xl w-full shadow-2xl space-y-6 relative overflow-y-auto my-8 overscroll-contain"
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              transition={{ duration: 0.15 }}
+              className="bg-[#2F3138] border border-white/20 rounded-[4px] p-6 sm:p-8 max-w-2xl w-full shadow-[0_6px_16px_rgba(0,0,0,0.6)] space-y-6 relative overflow-y-auto my-8 overscroll-contain text-white"
             >
               {/* Header Accent Bar */}
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-indigo-600 via-violet-600 to-sky-500 rounded-t-3xl" />
+              <div className="absolute top-0 left-0 right-0 h-1 bg-[#66C0F4] rounded-t-[4px]" />
               
               <div className="flex items-start justify-between gap-4 pt-1">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-lg font-display font-bold text-gray-900 dark:text-white">Generator Tugas AI</h2>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-indigo-600 text-white shadow-xs">
+                    <h2 className="text-lg font-bold text-white">Generator Tugas AI</h2>
+                    <span className="px-2 py-0.5 rounded-[2px] text-[10px] font-bold uppercase tracking-wider bg-[#66C0F4] text-[#171A21]">
                       GEMINI AI
                     </span>
                   </div>
-                  <p className="text-xs text-gray-500 dark:text-slate-400 mt-1 leading-relaxed">
+                  <p className="text-xs text-[#C6D4DF] mt-1 leading-relaxed font-normal">
                     Rancang pertanyaan, kunci jawaban, dan bobot nilai secara otomatis berdasarkan materi tugas Anda.
                   </p>
                 </div>
@@ -1984,24 +1981,24 @@ CATATAN KHUSUS:
                 <button 
                   onClick={() => setIsAiModalOpen(false)}
                   disabled={aiGenerating}
-                  className="px-3 py-1.5 text-xs font-bold text-gray-500 hover:text-gray-800 dark:text-slate-400 dark:hover:text-slate-200 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 rounded-xl transition-colors disabled:opacity-50 cursor-pointer"
+                  className="px-3 py-1.5 text-xs font-normal text-white bg-transparent hover:bg-white/10 border border-white/20 rounded-[2px] transition-colors disabled:opacity-40 cursor-pointer"
                 >
                   Tutup
                 </button>
               </div>
 
               {aiError && (
-                <div className="p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800/50 rounded-2xl text-xs text-red-600 dark:text-red-300">
-                  <span className="font-black uppercase tracking-wider block mb-0.5">PERHATIAN</span>
-                  <p className="font-medium leading-relaxed">{aiError}</p>
+                <div className="p-3.5 bg-[#FF4B4B]/10 border border-[#FF4B4B]/30 rounded-[2px] text-xs text-[#FF4B4B]">
+                  <span className="font-bold uppercase tracking-wider block mb-0.5">PERHATIAN</span>
+                  <p className="font-normal leading-relaxed">{aiError}</p>
                 </div>
               )}
 
               <div className="space-y-5">
                 {/* 1. Prompt / Topic Input */}
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-gray-800 dark:text-slate-200 uppercase tracking-wider">
-                    Topik / Deskripsi Materi Tugas <span className="text-red-500">*</span>
+                  <label className="block text-xs font-bold text-white uppercase tracking-wider">
+                    Topik / Deskripsi Materi Tugas <span className="text-[#FF4B4B]">*</span>
                   </label>
                   <textarea
                     rows={3}
@@ -2009,7 +2006,7 @@ CATATAN KHUSUS:
                     value={aiPrompt}
                     onChange={(e) => setAiPrompt(e.target.value)}
                     disabled={aiGenerating}
-                    className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-2xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:bg-white dark:bg-slate-800 focus:border-indigo-500 transition-all font-sans leading-relaxed"
+                    className="w-full px-3.5 py-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4] transition-all font-sans leading-relaxed"
                   />
                 </div>
 
@@ -2018,10 +2015,10 @@ CATATAN KHUSUS:
                   {/* Jumlah Soal Input Stepper (- dan +) */}
                   <div className="space-y-1.5">
                     <div className="flex items-center justify-between">
-                      <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                      <label className="block text-[11px] font-bold text-[#C6D4DF] uppercase tracking-wider">
                         Jumlah Soal
                       </label>
-                      <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-bold">Maks. 20 Soal</span>
+                      <span className="text-[10px] text-[#66C0F4] font-bold">Maks. 20 Soal</span>
                     </div>
                     <CustomNumberStepper
                       value={aiQuestionCount}
@@ -2036,7 +2033,7 @@ CATATAN KHUSUS:
 
                   {/* Jenis Soal */}
                   <div className="space-y-1.5">
-                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                    <label className="block text-[11px] font-bold text-[#C6D4DF] uppercase tracking-wider">
                       Tipe / Jenis Soal
                     </label>
                     <CustomDropdown
@@ -2055,7 +2052,7 @@ CATATAN KHUSUS:
 
                   {/* Tingkat Kesulitan */}
                   <div className="space-y-1.5">
-                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                    <label className="block text-[11px] font-bold text-[#C6D4DF] uppercase tracking-wider">
                       Tingkat Kesulitan
                     </label>
                     <CustomDropdown
@@ -2072,7 +2069,7 @@ CATATAN KHUSUS:
 
                   {/* Bobot Nilai Per Soal */}
                   <div className="space-y-1.5">
-                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                    <label className="block text-[11px] font-bold text-[#C6D4DF] uppercase tracking-wider">
                       Bobot Nilai Per Soal (Poin)
                     </label>
                     <CustomNumberStepper
@@ -2089,7 +2086,7 @@ CATATAN KHUSUS:
 
                 {/* 3. Mode Pengaplikasian */}
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                  <label className="block text-[11px] font-bold text-[#C6D4DF] uppercase tracking-wider">
                     Mode Pengaplikasian Lembar Kerja
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -2097,16 +2094,16 @@ CATATAN KHUSUS:
                       type="button"
                       onClick={() => setAiMode('replace')}
                       disabled={aiGenerating}
-                      className={`p-3.5 rounded-2xl border text-xs font-bold transition-all text-left flex items-start gap-3 cursor-pointer ${
+                      className={`p-3 rounded-[2px] border text-xs font-bold transition-all text-left flex items-start gap-3 cursor-pointer ${
                         aiMode === 'replace'
-                          ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-300 dark:border-indigo-700 text-indigo-900 dark:text-indigo-100 ring-2 ring-indigo-500/20'
-                          : 'bg-gray-50 dark:bg-slate-900/50 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400'
+                          ? 'bg-[#66C0F4]/15 border-[#66C0F4] text-white'
+                          : 'bg-black/40 border-white/15 text-[#C6D4DF] hover:border-white/30'
                       }`}
                     >
-                      <div className={`w-3.5 h-3.5 rounded-full border mt-0.5 shrink-0 transition-all ${aiMode === 'replace' ? 'border-indigo-600 bg-indigo-600 ring-2 ring-indigo-200' : 'border-gray-300'}`} />
+                      <div className={`w-3.5 h-3.5 rounded-full border mt-0.5 shrink-0 transition-all ${aiMode === 'replace' ? 'border-[#66C0F4] bg-[#66C0F4]' : 'border-white/30'}`} />
                       <div>
                         <p className="font-bold">Gantikan Lembar Soal Saat Ini</p>
-                        <p className="text-[10px] font-normal text-gray-500 dark:text-slate-400 mt-0.5">Membuat draft soal baru sepenuhnya dari awal.</p>
+                        <p className="text-[10px] font-normal text-[#8A8A8A] mt-0.5">Membuat draft soal baru fully dari awal.</p>
                       </div>
                     </button>
 
@@ -2114,16 +2111,16 @@ CATATAN KHUSUS:
                       type="button"
                       onClick={() => setAiMode('append')}
                       disabled={aiGenerating}
-                      className={`p-3.5 rounded-2xl border text-xs font-bold transition-all text-left flex items-start gap-3 cursor-pointer ${
+                      className={`p-3 rounded-[2px] border text-xs font-bold transition-all text-left flex items-start gap-3 cursor-pointer ${
                         aiMode === 'append'
-                          ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-300 dark:border-indigo-700 text-indigo-900 dark:text-indigo-100 ring-2 ring-indigo-500/20'
-                          : 'bg-gray-50 dark:bg-slate-900/50 border-gray-200 dark:border-slate-700 text-gray-600 dark:text-slate-400'
+                          ? 'bg-[#66C0F4]/15 border-[#66C0F4] text-white'
+                          : 'bg-black/40 border-white/15 text-[#C6D4DF] hover:border-white/30'
                       }`}
                     >
-                      <div className={`w-3.5 h-3.5 rounded-full border mt-0.5 shrink-0 transition-all ${aiMode === 'append' ? 'border-indigo-600 bg-indigo-600 ring-2 ring-indigo-200' : 'border-gray-300'}`} />
+                      <div className={`w-3.5 h-3.5 rounded-full border mt-0.5 shrink-0 transition-all ${aiMode === 'append' ? 'border-[#66C0F4] bg-[#66C0F4]' : 'border-white/30'}`} />
                       <div>
                         <p className="font-bold">Tambahkan ke Soal Saat Ini</p>
-                        <p className="text-[10px] font-normal text-gray-500 dark:text-slate-400 mt-0.5">Menyelipkan hasil AI di bawah daftar soal yang sudah ada.</p>
+                        <p className="text-[10px] font-normal text-[#8A8A8A] mt-0.5">Menyelipkan hasil AI di bawah daftar soal yang ada.</p>
                       </div>
                     </button>
                   </div>
@@ -2131,7 +2128,7 @@ CATATAN KHUSUS:
 
                 {/* 4. Instruksi Khusus (Optional) */}
                 <div className="space-y-1.5">
-                  <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
+                  <label className="block text-[11px] font-bold text-[#C6D4DF] uppercase tracking-wider">
                     Instruksi Tambahan (Opsional)
                   </label>
                   <input
@@ -2140,18 +2137,18 @@ CATATAN KHUSUS:
                     value={aiCustomInstructions}
                     onChange={(e) => setAiCustomInstructions(e.target.value)}
                     disabled={aiGenerating}
-                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:bg-white dark:bg-slate-800 focus:border-indigo-500 transition-all font-sans"
+                    className="w-full px-3.5 py-2 bg-black/40 border border-white/15 rounded-[2px] text-xs text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4] transition-all font-sans"
                   />
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-4 border-t border-gray-100 dark:border-slate-700/50 flex items-center justify-end gap-3">
+              <div className="pt-4 border-t border-white/10 flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={() => setIsAiModalOpen(false)}
                   disabled={aiGenerating}
-                  className="px-5 py-2.5 bg-gray-100 dark:bg-slate-700 text-gray-700 dark:text-slate-200 font-bold text-xs rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50 cursor-pointer"
+                  className="px-4 py-2 bg-transparent hover:bg-white/10 text-white border border-white/20 font-normal text-xs rounded-[2px] transition-colors disabled:opacity-40 cursor-pointer"
                 >
                   Batal
                 </button>
@@ -2160,7 +2157,7 @@ CATATAN KHUSUS:
                   type="button"
                   onClick={handleGenerateAiAssignment}
                   disabled={aiGenerating || !aiPrompt.trim()}
-                  className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-bold text-xs rounded-xl shadow-lg hover:shadow-indigo-500/20 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2 bg-[#66C0F4] hover:bg-[#5DADE2] text-white font-bold text-xs rounded-[2px] shadow-[0_2px_4px_rgba(0,0,0,0.3)] transition-all disabled:opacity-40 cursor-pointer"
                 >
                   {aiGenerating ? (
                     <span className="animate-pulse">Merancang Soal AI...</span>

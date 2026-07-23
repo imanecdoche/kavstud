@@ -130,54 +130,56 @@ export default function CustomDatePicker({
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen(true)}
-        className="w-full min-h-[48px] px-4 py-2.5 bg-white dark:bg-slate-800 border border-[#C1C1C1] dark:border-slate-700 rounded-xl text-sm font-bold text-left flex items-center justify-between gap-2 cursor-pointer hover:border-[#1CB0F6] focus:outline-none focus:border-[#1CB0F6] focus:ring-2 focus:ring-[#1CB0F6]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full min-h-[38px] px-3.5 py-2 bg-black/40 border border-white/15 rounded-[2px] text-xs font-normal text-left flex items-center justify-between gap-2 cursor-pointer hover:border-[#66C0F4] focus:outline-none focus:border-[#66C0F4] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <span className={value ? 'text-[#3C3C3C] dark:text-white' : 'text-gray-400 font-normal'}>
+        <span className={value ? 'text-white font-normal' : 'text-[#8A8A8A] font-normal'}>
           {getFormattedDisplayText() || placeholder}
         </span>
-        <Calendar className="w-4 h-4 text-[#1CB0F6] shrink-0" />
+        <Calendar className="w-4 h-4 text-[#66C0F4] shrink-0" />
       </button>
 
       {/* Centered Modal Popup */}
       <AnimatePresence>
         {isOpen && (
           <div 
-            className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-[9999] animate-fadeIn"
+            className="fixed inset-0 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4 z-[9999] animate-fadeIn overscroll-contain"
+            onWheel={(e) => e.stopPropagation()}
+            style={{ overscrollBehavior: 'contain' }}
             onClick={() => setIsOpen(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.15 }}
               onClick={(e) => e.stopPropagation()}
-              className="modal-duo w-[360px] max-w-[95vw] p-6 space-y-5 relative my-auto shadow-2xl"
+              className="bg-[#2F3138] border border-white/20 rounded-[4px] w-[360px] max-w-[95vw] p-6 space-y-4 relative my-auto shadow-[0_6px_16px_rgba(0,0,0,0.6)] text-white"
             >
               {/* Modal Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-slate-700/50">
-                <div className="flex items-center gap-2 text-sky-600">
-                  <Calendar className="w-5 h-5" />
-                  <h3 className="text-sm font-black uppercase tracking-wider text-gray-900 dark:text-white">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <div className="flex items-center gap-2 text-[#66C0F4]">
+                  <Calendar className="w-5 h-5 text-[#66C0F4]" />
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-white">
                     Pilih Tanggal
                   </h3>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsOpen(false)}
-                  className="p-1.5 text-gray-400 hover:text-gray-700 dark:text-slate-200 hover:bg-gray-100 dark:bg-slate-700 rounded-xl transition-colors cursor-pointer"
+                  className="p-1 text-[#8A8A8A] hover:text-white hover:bg-white/10 rounded-[2px] transition-colors cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               {/* Month / Year Nav */}
-              <div className="flex items-center justify-between bg-sky-50/60 p-2 rounded-2xl border border-sky-100">
+              <div className="flex items-center justify-between bg-black/40 p-2 rounded-[2px] border border-white/15">
                 <button
                   type="button"
                   onClick={handlePrevMonth}
-                  className="p-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-sky-100 rounded-xl text-gray-700 dark:text-slate-200 cursor-pointer transition-colors"
+                  className="p-1.5 bg-[#2F3138] border border-white/15 hover:border-[#66C0F4] rounded-[2px] text-white cursor-pointer transition-colors"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-4 h-4 text-[#66C0F4]" />
                 </button>
 
                 <div className="flex items-center gap-1">
@@ -202,16 +204,16 @@ export default function CustomDatePicker({
                 <button
                   type="button"
                   onClick={handleNextMonth}
-                  className="p-1.5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 hover:bg-sky-100 rounded-xl text-gray-700 dark:text-slate-200 cursor-pointer transition-colors"
+                  className="p-1.5 bg-[#2F3138] border border-white/15 hover:border-[#66C0F4] rounded-[2px] text-white cursor-pointer transition-colors"
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-4 h-4 text-[#66C0F4]" />
                 </button>
               </div>
 
               {/* Day Headers Grid */}
               <div className="grid grid-cols-7 gap-1 text-center">
                 {DAY_NAMES_ID.map((dName, idx) => (
-                  <span key={idx} className="text-[10px] font-black text-gray-400 uppercase py-1">
+                  <span key={idx} className="text-[10px] font-bold text-[#8A8A8A] uppercase py-1">
                     {dName}
                   </span>
                 ))}
@@ -225,7 +227,7 @@ export default function CustomDatePicker({
                   return (
                     <div
                       key={`prev-${idx}`}
-                      className="p-2 text-xs font-bold text-gray-300 rounded-xl select-none"
+                      className="p-2 text-xs font-normal text-white/20 select-none"
                     >
                       {prevDayNum}
                     </div>
@@ -243,12 +245,12 @@ export default function CustomDatePicker({
                       key={`day-${dayNum}`}
                       type="button"
                       onClick={() => handleSelectDay(dayNum)}
-                      className={`p-2 text-xs font-bold rounded-xl transition-all cursor-pointer ${
+                      className={`p-2 text-xs font-normal rounded-[2px] transition-all cursor-pointer ${
                         active
-                          ? 'bg-[#1CB0F6] text-white border-b-4 border-[#0092E0] shadow-xs scale-105'
+                          ? 'bg-[#66C0F4] text-[#171A21] font-bold'
                           : today
-                            ? 'bg-amber-100 text-amber-800 border border-amber-200'
-                            : 'hover:bg-sky-50 text-gray-800 dark:text-slate-100'
+                            ? 'bg-[#A1CD44]/20 border border-[#A1CD44] text-[#A1CD44] font-bold'
+                            : 'hover:bg-white/10 text-white'
                       }`}
                     >
                       {dayNum}
@@ -258,11 +260,11 @@ export default function CustomDatePicker({
               </div>
 
               {/* Footer Action Buttons */}
-              <div className="flex items-center justify-between pt-3 border-t border-gray-100 dark:border-slate-700/50 gap-2">
+              <div className="flex items-center justify-between pt-3 border-t border-white/10 gap-2">
                 <button
                   type="button"
                   onClick={handleSetToday}
-                  className="btn-duo-slate px-3 py-2 text-xs font-black text-gray-600 dark:text-slate-300"
+                  className="bg-transparent hover:bg-white/10 text-[#C6D4DF] hover:text-white px-3 py-1.5 text-xs font-normal rounded-[2px] border border-white/15"
                 >
                   Hari Ini
                 </button>
@@ -271,7 +273,7 @@ export default function CustomDatePicker({
                   <button
                     type="button"
                     onClick={() => setIsOpen(false)}
-                    className="btn-duo-slate px-3 py-2 text-xs font-black text-gray-500 dark:text-slate-400"
+                    className="bg-transparent hover:bg-white/10 text-white px-3 py-1.5 text-xs font-normal rounded-[2px] border border-white/15"
                   >
                     Batal
                   </button>
@@ -279,7 +281,7 @@ export default function CustomDatePicker({
                     type="button"
                     onClick={handleConfirm}
                     disabled={!selectedDate}
-                    className="btn-duo-green px-4 py-2 text-xs font-black flex items-center gap-1 disabled:opacity-50"
+                    className="bg-[#66C0F4] hover:bg-[#5DADE2] text-white px-4 py-1.5 text-xs font-bold rounded-[2px] flex items-center gap-1 disabled:opacity-40"
                   >
                     <Check className="w-3.5 h-3.5" />
                     <span>Pilih</span>

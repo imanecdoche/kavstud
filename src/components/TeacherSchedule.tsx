@@ -385,25 +385,24 @@ export default function TeacherSchedule() {
   };
 
   return (
-    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 animate-fadeIn font-sans pb-16">
-      
+    <div className="p-4 sm:p-8 max-w-7xl mx-auto space-y-8 animate-fadeIn font-sans pb-16 text-white">
       {/* Header Banner */}
-      <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-6 sm:p-8 border-2 border-gray-200 dark:border-slate-700 border-b-8 border-b-gray-300 dark:border-b-slate-900 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+      <div className="bg-[#2F3138] rounded-[4px] p-6 sm:p-8 border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.6)] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div className="space-y-2">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-[#1CB0F6] text-white flex items-center justify-center shadow-md border-b-4 border-[#0092E0] shrink-0">
+            <div className="w-12 h-12 rounded-[2px] bg-[#66C0F4] text-[#171A21] flex items-center justify-center font-bold shrink-0 shadow-[0_2px_6px_rgba(0,0,0,0.3)]">
               <CalendarIcon className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="bg-[#1CB0F6] text-white text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider">
+                <span className="bg-[#A1CD44] text-[#171A21] text-[10px] font-bold px-2 py-0.5 rounded-[2px] uppercase tracking-wider">
                   MANAGEMENT KALENDER
                 </span>
               </div>
-              <h1 className="text-3xl sm:text-4xl font-black text-gray-900 dark:text-white uppercase tracking-tight font-display mt-0.5">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white uppercase tracking-tight mt-0.5">
                 JADWAL & BIMBINGAN GURU
               </h1>
-              <p className="text-xs font-bold text-gray-500 dark:text-slate-400">
+              <p className="text-xs text-[#C6D4DF]">
                 Kelola sesi bimbingan Private 1-on-1 dan Kavio Circle, atur tanggal, jam, dan perbaikan jadwal.
               </p>
             </div>
@@ -414,7 +413,7 @@ export default function TeacherSchedule() {
         <div className="flex flex-wrap items-center gap-3 self-stretch md:self-auto justify-between shrink-0">
           <button
             onClick={() => handleOpenAddModal()}
-            className="flex items-center gap-2 bg-[#58CC02] hover:bg-[#46A302] text-white text-xs font-black py-3 px-5 rounded-2xl border-b-4 border-[#3b8c00] active:border-b-0 active:translate-y-[4px] transition-all cursor-pointer shadow-xs uppercase tracking-wider"
+            className="bg-[#66C0F4] hover:bg-[#5DADE2] active:bg-[#52A4CC] text-white text-[13px] font-normal py-3 px-5 rounded-[2px] min-h-[44px] transition-all cursor-pointer shadow-[0_2px_6px_rgba(0,0,0,0.3)] flex items-center gap-2 uppercase tracking-wider font-bold"
             id="btn-add-schedule-teacher"
           >
             <Plus className="w-4 h-4" />
@@ -425,24 +424,24 @@ export default function TeacherSchedule() {
 
       {/* Summary Statistics Panel */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-slate-800 rounded-3xl p-5 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-b-gray-300 dark:border-b-slate-900 shadow-2xs space-y-1">
-          <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider block">SESI MINGGU INI</span>
-          <p className="text-2xl font-black text-gray-900 dark:text-white font-display">{weeklyCount} Sesi</p>
+        <div className="bg-[#2F3138] rounded-[3px] p-5 border border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.5)] space-y-1">
+          <span className="text-[10px] font-bold uppercase text-[#8A8A8A] tracking-wider block">SESI MINGGU INI</span>
+          <p className="text-2xl font-bold text-white">{weeklyCount} Sesi</p>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-3xl p-5 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-b-gray-300 dark:border-b-slate-900 shadow-2xs space-y-1">
-          <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider block">SESI BULAN INI</span>
-          <p className="text-2xl font-black text-gray-900 dark:text-white font-display">{monthlyCount} Sesi</p>
+        <div className="bg-[#2F3138] rounded-[3px] p-5 border border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.5)] space-y-1">
+          <span className="text-[10px] font-bold uppercase text-[#8A8A8A] tracking-wider block">SESI BULAN INI</span>
+          <p className="text-2xl font-bold text-white">{monthlyCount} Sesi</p>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-3xl p-5 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-b-gray-300 dark:border-b-slate-900 shadow-2xs space-y-1">
-          <span className="text-[10px] font-black uppercase text-[#1CB0F6] tracking-wider block">JADWAL PRIVATE</span>
-          <p className="text-2xl font-black text-[#1CB0F6] font-display">{privateCount} Sesi</p>
+        <div className="bg-[#2F3138] rounded-[3px] p-5 border border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.5)] space-y-1">
+          <span className="text-[10px] font-bold uppercase text-[#66C0F4] tracking-wider block">JADWAL PRIVATE</span>
+          <p className="text-2xl font-bold text-[#66C0F4]">{privateCount} Sesi</p>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-3xl p-5 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-b-gray-300 dark:border-b-slate-900 shadow-2xs space-y-1">
-          <span className="text-[10px] font-black uppercase text-[#CE82FF] tracking-wider block">JADWAL CIRCLE</span>
-          <p className="text-2xl font-black text-[#CE82FF] font-display">{circleCount} Sesi</p>
+        <div className="bg-[#2F3138] rounded-[3px] p-5 border border-white/10 shadow-[0_2px_8px_rgba(0,0,0,0.5)] space-y-1">
+          <span className="text-[10px] font-bold uppercase text-[#A1CD44] tracking-wider block">JADWAL CIRCLE</span>
+          <p className="text-2xl font-bold text-[#A1CD44]">{circleCount} Sesi</p>
         </div>
       </div>
 
@@ -450,17 +449,17 @@ export default function TeacherSchedule() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
         {/* Left 2-Cols: Interactive Calendar Grid */}
-        <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-[2.5rem] p-6 sm:p-8 border-2 border-gray-200 dark:border-slate-700 border-b-8 border-b-gray-300 dark:border-b-slate-900 shadow-sm space-y-6">
+        <div className="lg:col-span-2 bg-[#2F3138] rounded-[3px] p-6 sm:p-8 border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.6)] space-y-6">
           
           {/* Calendar Header Controls */}
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <h2 className="text-2xl font-black text-gray-900 dark:text-white uppercase font-display">
+              <h2 className="text-2xl font-bold text-white uppercase">
                 {monthNames[month]} {year}
               </h2>
               <button
                 onClick={handleToday}
-                className="text-[10px] font-black uppercase bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-slate-200 px-3 py-1 rounded-xl border border-gray-300 dark:border-slate-600 transition-all cursor-pointer"
+                className="text-[10px] font-bold uppercase bg-white/10 hover:bg-white/20 text-white px-3 py-1 rounded-[2px] border border-white/15 transition-all cursor-pointer"
               >
                 Hari Ini
               </button>
@@ -468,27 +467,27 @@ export default function TeacherSchedule() {
 
             {/* Month Nav Buttons & Type Filter */}
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 bg-gray-100 dark:bg-slate-700/80 p-1 rounded-2xl border border-gray-200 dark:border-slate-600">
+              <div className="flex items-center gap-1 bg-black/40 p-1 rounded-[2px] border border-white/15">
                 <button
                   onClick={() => setTypeFilter('ALL')}
-                  className={`px-2.5 py-1 rounded-xl text-[10px] font-black transition-all cursor-pointer ${
-                    typeFilter === 'ALL' ? 'bg-white dark:bg-slate-800 text-gray-900 dark:text-white shadow-xs' : 'text-gray-500'
+                  className={`px-2.5 py-1 rounded-[2px] text-[10px] font-bold transition-all cursor-pointer ${
+                    typeFilter === 'ALL' ? 'bg-[#66C0F4] text-[#171A21]' : 'text-[#C6D4DF] hover:text-white'
                   }`}
                 >
                   Semua
                 </button>
                 <button
                   onClick={() => setTypeFilter('PRIVATE')}
-                  className={`px-2.5 py-1 rounded-xl text-[10px] font-black transition-all cursor-pointer ${
-                    typeFilter === 'PRIVATE' ? 'bg-[#1CB0F6] text-white shadow-xs' : 'text-gray-500'
+                  className={`px-2.5 py-1 rounded-[2px] text-[10px] font-bold transition-all cursor-pointer ${
+                    typeFilter === 'PRIVATE' ? 'bg-[#66C0F4] text-[#171A21]' : 'text-[#C6D4DF] hover:text-white'
                   }`}
                 >
                   Private
                 </button>
                 <button
                   onClick={() => setTypeFilter('CIRCLE')}
-                  className={`px-2.5 py-1 rounded-xl text-[10px] font-black transition-all cursor-pointer ${
-                    typeFilter === 'CIRCLE' ? 'bg-[#CE82FF] text-white shadow-xs' : 'text-gray-500'
+                  className={`px-2.5 py-1 rounded-[2px] text-[10px] font-bold transition-all cursor-pointer ${
+                    typeFilter === 'CIRCLE' ? 'bg-[#A1CD44] text-[#171A21]' : 'text-[#C6D4DF] hover:text-white'
                   }`}
                 >
                   Circle
@@ -498,13 +497,15 @@ export default function TeacherSchedule() {
               <div className="flex items-center gap-1">
                 <button
                   onClick={handlePrevMonth}
-                  className="p-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-slate-200 rounded-xl cursor-pointer"
+                  className="p-2 bg-black/40 hover:bg-white/10 text-white border border-white/15 rounded-[2px] cursor-pointer"
+                  aria-label="Bulan Sebelumnya"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={handleNextMonth}
-                  className="p-2 bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 text-gray-700 dark:text-slate-200 rounded-xl cursor-pointer"
+                  className="p-2 bg-black/40 hover:bg-white/10 text-white border border-white/15 rounded-[2px] cursor-pointer"
+                  aria-label="Bulan Berikutnya"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
@@ -513,7 +514,7 @@ export default function TeacherSchedule() {
           </div>
 
           {/* Days of Week Header */}
-          <div className="grid grid-cols-7 gap-2 text-center text-xs font-black uppercase tracking-wider text-gray-400 border-b border-gray-100 dark:border-slate-700 pb-2">
+          <div className="grid grid-cols-7 gap-2 text-center text-xs font-bold uppercase tracking-wider text-[#8A8A8A] border-b border-white/10 pb-2">
             <div>Sen</div>
             <div>Sel</div>
             <div>Rab</div>
@@ -527,7 +528,7 @@ export default function TeacherSchedule() {
           <div className="grid grid-cols-7 gap-2">
             {calendarDays.map((item, idx) => {
               if (!item) {
-                return <div key={`pad-${idx}`} className="h-20 sm:h-24 bg-gray-50/50 dark:bg-slate-900/20 rounded-2xl" />;
+                return <div key={`pad-${idx}`} className="h-20 sm:h-24 bg-black/40 rounded-[2px] border border-white/5" />;
               }
 
               const isSelected = item.dateStr === selectedDateStr;
@@ -538,23 +539,23 @@ export default function TeacherSchedule() {
                 <div
                   key={item.dateStr}
                   onClick={() => setSelectedDateStr(item.dateStr)}
-                  className={`h-20 sm:h-24 p-2 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden ${
+                  className={`h-20 sm:h-24 p-2 rounded-[2px] border transition-all cursor-pointer flex flex-col justify-between relative overflow-hidden text-white ${
                     isSelected
-                      ? 'border-[#1CB0F6] bg-sky-50/60 dark:bg-sky-950/40 border-b-4 border-b-[#0092E0] shadow-sm'
+                      ? 'border-[#66C0F4] bg-[#66C0F4]/15 shadow-[0_2px_8px_rgba(0,0,0,0.5)]'
                       : isToday
-                      ? 'border-[#58CC02] bg-emerald-50/40 dark:bg-emerald-950/20'
-                      : 'border-gray-200 dark:border-slate-700/80 bg-white dark:bg-slate-800 hover:bg-gray-50'
+                      ? 'border-[#A1CD44] bg-[#A1CD44]/15'
+                      : 'border-white/10 bg-black/40 hover:bg-white/5'
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className={`text-xs font-black ${
-                      isToday ? 'bg-[#58CC02] text-white px-1.5 py-0.2 rounded-md' : 'text-gray-700 dark:text-slate-200'
+                    <span className={`text-xs font-bold ${
+                      isToday ? 'bg-[#A1CD44] text-[#171A21] px-1.5 py-0.2 rounded-[2px]' : 'text-white'
                     }`}>
                       {item.day}
                     </span>
 
                     {daySchedules.length > 0 && (
-                      <span className="bg-[#1CB0F6] text-white text-[9px] font-black px-1.5 py-0.2 rounded-md">
+                      <span className="bg-[#66C0F4] text-[#171A21] text-[9px] font-bold px-1.5 py-0.2 rounded-[2px]">
                         {daySchedules.length} Sesi
                       </span>
                     )}
@@ -565,17 +566,17 @@ export default function TeacherSchedule() {
                     {daySchedules.slice(0, 2).map((s) => (
                       <div
                         key={s.id}
-                        className={`text-[9px] font-black px-1.5 py-0.5 rounded-md truncate ${
+                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded-[2px] truncate ${
                           s.type === 'PRIVATE' 
-                            ? 'bg-[#1CB0F6]/15 text-[#1CB0F6] dark:text-[#1CB0F6]' 
-                            : 'bg-[#CE82FF]/15 text-[#CE82FF]'
+                            ? 'bg-[#66C0F4]/20 text-[#66C0F4]' 
+                            : 'bg-[#A1CD44]/20 text-[#A1CD44]'
                         }`}
                       >
-                        {s.type === 'PRIVATE' ? `👤 ${s.studentName || 'Private'}` : `👥 ${s.circleName || 'Circle'}`}
+                        {s.type === 'PRIVATE' ? `${s.studentName || 'Private'}` : `${s.circleName || 'Circle'}`}
                       </div>
                     ))}
                     {daySchedules.length > 2 && (
-                      <div className="text-[8px] font-bold text-gray-400 text-right">
+                      <div className="text-[8px] font-bold text-[#8A8A8A] text-right">
                         +{daySchedules.length - 2} lagi
                       </div>
                     )}
@@ -587,20 +588,20 @@ export default function TeacherSchedule() {
         </div>
 
         {/* Right 1-Col: Selected Date Detail Drawer */}
-        <div className="bg-white dark:bg-slate-800 rounded-[2.5rem] p-6 border-2 border-gray-200 dark:border-slate-700 border-b-8 border-b-gray-300 dark:border-b-slate-900 shadow-sm space-y-6 flex flex-col justify-between">
+        <div className="bg-[#2F3138] rounded-[3px] p-6 border border-white/10 shadow-[0_4px_16px_rgba(0,0,0,0.6)] space-y-6 flex flex-col justify-between text-white">
           
           <div className="space-y-4">
-            <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-700 pb-3">
+            <div className="flex items-center justify-between border-b border-white/10 pb-3">
               <div>
-                <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">DETAIL TANGGAL</span>
-                <h3 className="text-xl font-black text-gray-900 dark:text-white uppercase font-display">
+                <span className="text-[10px] font-bold uppercase text-[#8A8A8A] tracking-wider">DETAIL TANGGAL</span>
+                <h3 className="text-xl font-bold text-white uppercase">
                   {selectedDateStr}
                 </h3>
               </div>
 
               <button
                 onClick={() => handleOpenAddModal(selectedDateStr)}
-                className="p-2 bg-[#58CC02] text-white rounded-xl shadow-xs border-b-2 border-[#3b8c00] active:translate-y-[2px] cursor-pointer"
+                className="p-2 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] rounded-[2px] transition-all cursor-pointer shadow-md"
                 title="Tambah Sesi Tanggal Ini"
               >
                 <Plus className="w-4 h-4" />
@@ -609,34 +610,34 @@ export default function TeacherSchedule() {
 
             {/* List of Scheds on Selected Date */}
             {selectedDateSchedules.length === 0 ? (
-              <div className="p-8 text-center space-y-2 border-2 border-dashed border-gray-200 dark:border-slate-700 rounded-3xl">
-                <CalendarIcon className="w-8 h-8 text-gray-300 mx-auto" />
-                <p className="text-xs font-bold text-gray-400">Tidak ada sesi bimbingan pada tanggal ini.</p>
+              <div className="p-8 text-center space-y-2 border border-dashed border-white/10 rounded-[2px] bg-black/40">
+                <CalendarIcon className="w-8 h-8 text-[#8A8A8A] mx-auto" />
+                <p className="text-xs font-bold text-[#C6D4DF]">Tidak ada sesi bimbingan pada tanggal ini.</p>
               </div>
             ) : (
               <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
                 {selectedDateSchedules.map((s) => (
                   <div
                     key={s.id}
-                    className="bg-gray-50 dark:bg-slate-900 p-4 rounded-2xl border border-gray-200 dark:border-slate-700 space-y-2 relative"
+                    className="bg-black/40 p-4 rounded-[2px] border border-white/10 space-y-2 relative text-white"
                   >
                     <div className="flex items-center justify-between">
-                      <span className={`text-[9px] font-black px-2 py-0.5 rounded-md uppercase tracking-wider ${
-                        s.type === 'PRIVATE' ? 'bg-[#1CB0F6] text-white' : 'bg-[#CE82FF] text-white'
+                      <span className={`text-[9px] font-bold px-2 py-0.5 rounded-[2px] uppercase tracking-wider ${
+                        s.type === 'PRIVATE' ? 'bg-[#66C0F4] text-[#171A21]' : 'bg-[#A1CD44] text-[#171A21]'
                       }`}>
                         {s.type}
                       </span>
-                      <span className="text-[11px] font-black text-gray-500 flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5 text-gray-400" />
+                      <span className="text-[11px] font-bold text-[#C6D4DF] flex items-center gap-1 font-mono">
+                        <Clock className="w-3.5 h-3.5 text-[#8A8A8A]" />
                         <span>{s.timeLabel}</span>
                       </span>
                     </div>
 
                     <div>
-                      <h4 className="text-sm font-black text-gray-900 dark:text-white uppercase leading-snug">
+                      <h4 className="text-sm font-bold text-white uppercase leading-snug">
                         {s.title}
                       </h4>
-                      <p className="text-xs font-bold text-gray-500 dark:text-slate-400">
+                      <p className="text-xs font-bold text-[#C6D4DF] mt-0.5">
                         {s.type === 'PRIVATE' ? `Siswa: ${s.studentName || 'Private'}` : `Circle: ${s.circleName || 'Circle'}`}
                       </p>
                     </div>
@@ -646,7 +647,7 @@ export default function TeacherSchedule() {
                         href={s.meetingLink}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1CB0F6] hover:underline"
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#66C0F4] hover:underline"
                       >
                         <Video className="w-3.5 h-3.5" />
                         <span>Link Sesi Google Meet</span>
@@ -654,17 +655,18 @@ export default function TeacherSchedule() {
                     )}
 
                     {/* Actions */}
-                    <div className="pt-2 flex items-center justify-end gap-2 border-t border-gray-200/60 dark:border-slate-800">
+                    <div className="pt-2 flex items-center justify-end gap-2 border-t border-white/10">
                       <button
                         onClick={() => handleOpenEditModal(s)}
-                        className="p-1.5 bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 text-gray-700 dark:text-slate-200 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                        className="px-2.5 py-1.5 bg-black/40 hover:bg-white/10 text-white border border-white/15 rounded-[2px] text-xs font-bold flex items-center gap-1 cursor-pointer transition-all"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
                         <span>Edit / Pindah</span>
                       </button>
                       <button
                         onClick={() => handleDeleteSchedule(s.id!)}
-                        className="p-1.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
+                        className="p-1.5 bg-red-950/60 hover:bg-red-900/60 text-red-400 border border-red-500/30 rounded-[2px] text-xs font-bold flex items-center gap-1 cursor-pointer transition-all"
+                        aria-label="Hapus Jadwal"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -680,80 +682,85 @@ export default function TeacherSchedule() {
       {/* Add / Edit / Reschedule Modal */}
       <AnimatePresence>
         {isModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 overscroll-contain"
+            onWheel={(e) => e.stopPropagation()}
+            style={{ overscrollBehavior: 'contain' }}
+          >
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsModalOpen(false)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+              className="fixed inset-0 bg-black/75 backdrop-blur-xs"
             />
 
             <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
+              initial={{ scale: 0.97, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="relative w-full max-w-lg bg-white dark:bg-slate-800 rounded-[2.5rem] p-6 sm:p-8 shadow-2xl border-2 border-gray-200 dark:border-slate-700 border-b-8 border-b-gray-400 z-50 space-y-5"
+              exit={{ scale: 0.97, opacity: 0 }}
+              className="relative w-full max-w-lg bg-[#2F3138] border border-white/10 rounded-[3px] p-6 sm:p-8 shadow-[0_8px_32px_rgba(0,0,0,0.8)] z-50 space-y-5 text-white font-sans"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-gray-100 dark:border-slate-700">
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
                 <div>
-                  <span className="text-[10px] font-black uppercase text-[#1CB0F6] tracking-widest bg-[#1CB0F6]/10 px-2 py-0.5 rounded-md">
+                  <span className="text-[10px] font-bold uppercase text-[#66C0F4] tracking-wider bg-[#66C0F4]/10 px-2 py-0.5 rounded-[2px]">
                     {editingItem ? 'EDIT / PINDAH JADWAL' : 'TAMBAH JADWAL SESI BARU'}
                   </span>
-                  <h3 className="text-2xl font-black text-gray-900 dark:text-white uppercase font-display mt-1">
+                  <h3 className="text-xl font-bold text-white uppercase tracking-tight mt-1">
                     {editingItem ? 'ATUR ULANG SESI' : 'BUAT JADWAL BIMBINGAN'}
                   </h3>
                 </div>
 
                 <button
                   onClick={() => setIsModalOpen(false)}
-                  className="p-2 text-gray-400 hover:text-gray-600 rounded-xl cursor-pointer"
+                  className="p-1.5 text-[#8A8A8A] hover:text-white hover:bg-white/10 rounded-[2px] cursor-pointer transition-all"
+                  aria-label="Tutup"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-5 h-5" />
                 </button>
               </div>
 
               <form onSubmit={handleSaveSchedule} className="space-y-4">
                 {/* Type Switcher */}
-                <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 dark:bg-slate-900 rounded-2xl">
+                <div className="grid grid-cols-2 gap-2 p-1 bg-black/40 border border-white/10 rounded-[2px]">
                   <button
                     type="button"
                     onClick={() => setSessionType('PRIVATE')}
-                    className={`py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                      sessionType === 'PRIVATE' ? 'bg-[#1CB0F6] text-white shadow-xs' : 'text-gray-500'
+                    className={`py-2 rounded-[2px] text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                      sessionType === 'PRIVATE' ? 'bg-[#66C0F4] text-[#171A21] shadow-xs' : 'text-[#8A8A8A] hover:text-white'
                     }`}
                   >
-                    👤 Private 1-on-1
+                    Private 1-on-1
                   </button>
                   <button
                     type="button"
                     onClick={() => setSessionType('CIRCLE')}
-                    className={`py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                      sessionType === 'CIRCLE' ? 'bg-[#CE82FF] text-white shadow-xs' : 'text-gray-500'
+                    className={`py-2 rounded-[2px] text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                      sessionType === 'CIRCLE' ? 'bg-[#A1CD44] text-[#171A21] shadow-xs' : 'text-[#8A8A8A] hover:text-white'
                     }`}
                   >
-                    👥 Kavio Circle
+                    Kavio Circle
                   </button>
                 </div>
 
                 {/* Judul Sesi */}
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-gray-700 dark:text-slate-200">Judul Sesi / Topik</label>
+                  <label className="block text-xs font-bold text-white">Judul Sesi / Topik</label>
                   <input
                     type="text"
                     required
                     placeholder="Contoh: Bimbingan Intensif Matematika Dasar"
                     value={sessionTitle}
                     onChange={(e) => setSessionTitle(e.target.value)}
-                    className="w-full p-3 rounded-2xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold focus:border-[#1CB0F6] focus:outline-none"
+                    className="w-full p-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs font-medium text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4] transition-all"
                   />
                 </div>
 
                 {/* Nama Siswa / Circle Dropdown Suggestion from DB */}
                 <div className="space-y-1 relative">
-                  <label className="block text-xs font-bold text-gray-700 dark:text-slate-200 flex items-center justify-between">
+                  <label className="block text-xs font-bold text-white flex items-center justify-between">
                     <span>{sessionType === 'PRIVATE' ? 'Nama Siswa Private (Ambil dari DB / Ketik)' : 'Nama Kelompok Circle (Ambil dari DB / Ketik)'}</span>
-                    <span className="text-[10px] text-gray-400 font-semibold">
+                    <span className="text-[10px] text-[#8A8A8A] font-medium">
                       {sessionType === 'PRIVATE' ? `${dbStudents.length} Siswa Terdaftar` : `${dbCircles.length} Circle Terdaftar`}
                     </span>
                   </label>
@@ -771,21 +778,19 @@ export default function TeacherSchedule() {
                         else setSelectedCircleId('');
                         setShowSuggestions(true);
                       }}
-                      className={`w-full p-3 rounded-2xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold focus:outline-none ${
-                        sessionType === 'PRIVATE' ? 'focus:border-[#1CB0F6]' : 'focus:border-[#CE82FF]'
-                      }`}
+                      className="w-full p-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs font-medium text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4] transition-all"
                     />
 
                     {/* Suggestion Overlay Dropdown */}
                     {showSuggestions && (
-                      <div className="absolute left-0 right-0 top-full mt-1 bg-white dark:bg-slate-800 rounded-2xl border-2 border-gray-200 dark:border-slate-700 shadow-2xl z-50 max-h-52 overflow-y-auto divide-y divide-gray-100 dark:divide-slate-700/60">
+                      <div className="absolute left-0 right-0 top-full mt-1 bg-[#2F3138] rounded-[2px] border border-white/15 shadow-[0_4px_16px_rgba(0,0,0,0.6)] z-50 max-h-52 overflow-y-auto divide-y divide-white/10 text-white">
                         {sessionType === 'PRIVATE' ? (
                           dbStudents.filter(s => 
                             !studentOrCircleName.trim() || 
                             (s.fullName && s.fullName.toLowerCase().includes(studentOrCircleName.toLowerCase())) ||
                             (s.email && s.email.toLowerCase().includes(studentOrCircleName.toLowerCase()))
                           ).length === 0 ? (
-                            <div className="p-3.5 text-center text-xs font-semibold text-gray-400">
+                            <div className="p-3.5 text-center text-xs font-medium text-[#8A8A8A]">
                               Belum ada siswa terdaftar yang cocok di DB. Anda bisa tetap mengetikkan nama di atas.
                             </div>
                           ) : (
@@ -803,21 +808,21 @@ export default function TeacherSchedule() {
                                     setSelectedStudentId(student.uid || '');
                                     setShowSuggestions(false);
                                   }}
-                                  className="p-3 hover:bg-sky-50 dark:hover:bg-slate-700/60 cursor-pointer flex items-center justify-between transition-colors"
+                                  className="p-3 hover:bg-white/10 cursor-pointer flex items-center justify-between transition-colors"
                                 >
                                   <div className="flex items-center gap-2.5 min-w-0">
-                                    <div className="w-7 h-7 rounded-full bg-sky-100 text-[#1CB0F6] flex items-center justify-center text-xs font-black shrink-0">
+                                    <div className="w-7 h-7 rounded-full bg-black/40 text-[#66C0F4] flex items-center justify-center text-xs font-bold shrink-0 border border-white/10">
                                       {student.fullName?.charAt(0).toUpperCase() || 'S'}
                                     </div>
                                     <div className="min-w-0">
-                                      <p className="text-xs font-black text-gray-900 dark:text-white truncate leading-tight">
+                                      <p className="text-xs font-bold text-white truncate leading-tight">
                                         {student.fullName || 'Siswa'}
                                       </p>
-                                      <p className="text-[10px] text-gray-400 font-semibold truncate">{student.email}</p>
+                                      <p className="text-[10px] text-[#8A8A8A] truncate">{student.email}</p>
                                     </div>
                                   </div>
 
-                                  <span className="bg-[#1CB0F6]/10 text-[#1CB0F6] text-[9px] font-black px-2 py-0.5 rounded-md uppercase shrink-0">
+                                  <span className="bg-[#66C0F4]/10 text-[#66C0F4] text-[9px] font-bold px-2 py-0.5 rounded-[2px] uppercase shrink-0">
                                     {student.classType === 'CIRCLE' ? 'Circle' : 'Private'}
                                   </span>
                                 </div>
@@ -828,7 +833,7 @@ export default function TeacherSchedule() {
                             !studentOrCircleName.trim() || 
                             (c.name && c.name.toLowerCase().includes(studentOrCircleName.toLowerCase()))
                           ).length === 0 ? (
-                            <div className="p-3.5 text-center text-xs font-semibold text-gray-400">
+                            <div className="p-3.5 text-center text-xs font-medium text-[#8A8A8A]">
                               Belum ada Circle terdaftar yang cocok di DB. Anda bisa tetap mengetikkan nama Circle di atas.
                             </div>
                           ) : (
@@ -845,21 +850,21 @@ export default function TeacherSchedule() {
                                     setSelectedCircleId(circle.id);
                                     setShowSuggestions(false);
                                   }}
-                                  className="p-3 hover:bg-purple-50 dark:hover:bg-slate-700/60 cursor-pointer flex items-center justify-between transition-colors"
+                                  className="p-3 hover:bg-white/10 cursor-pointer flex items-center justify-between transition-colors"
                                 >
                                   <div className="flex items-center gap-2.5 min-w-0">
-                                    <div className="w-7 h-7 rounded-full bg-purple-100 text-[#CE82FF] flex items-center justify-center text-xs font-black shrink-0">
-                                      👥
+                                    <div className="w-7 h-7 rounded-full bg-black/40 text-[#A1CD44] flex items-center justify-center text-xs font-bold shrink-0 border border-white/10">
+                                      C
                                     </div>
                                     <div className="min-w-0">
-                                      <p className="text-xs font-black text-gray-900 dark:text-white truncate leading-tight">
+                                      <p className="text-xs font-bold text-white truncate leading-tight">
                                         {circle.name}
                                       </p>
-                                      <p className="text-[10px] text-gray-400 font-semibold truncate">Group Circle</p>
+                                      <p className="text-[10px] text-[#8A8A8A] truncate">Group Circle</p>
                                     </div>
                                   </div>
 
-                                  <span className="bg-[#CE82FF]/10 text-[#CE82FF] text-[9px] font-black px-2 py-0.5 rounded-md uppercase shrink-0">
+                                  <span className="bg-[#A1CD44]/10 text-[#A1CD44] text-[9px] font-bold px-2 py-0.5 rounded-[2px] uppercase shrink-0">
                                     Circle DB
                                   </span>
                                 </div>
@@ -874,30 +879,30 @@ export default function TeacherSchedule() {
                 {/* Tanggal & Jam */}
                 <div className="grid grid-cols-3 gap-3">
                   <div className="space-y-1">
-                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-200">Tanggal</label>
+                    <label className="block text-[11px] font-bold text-white">Tanggal</label>
                     <CustomDatePicker
                       value={formDate}
                       onChange={(val) => setFormDate(val)}
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-200">Jam Mulai</label>
+                    <label className="block text-[11px] font-bold text-white">Jam Mulai</label>
                     <input
                       type="time"
                       required
                       value={startTime}
                       onChange={(e) => setStartTime(e.target.value)}
-                      className="w-full p-2.5 rounded-xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold"
+                      className="w-full p-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs font-medium text-white focus:outline-none focus:border-[#66C0F4]"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-200">Jam Selesai</label>
+                    <label className="block text-[11px] font-bold text-white">Jam Selesai</label>
                     <input
                       type="time"
                       required
                       value={endTime}
                       onChange={(e) => setEndTime(e.target.value)}
-                      className="w-full p-2.5 rounded-xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold"
+                      className="w-full p-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs font-medium text-white focus:outline-none focus:border-[#66C0F4]"
                     />
                   </div>
                 </div>
@@ -905,7 +910,7 @@ export default function TeacherSchedule() {
                 {/* Status & Meeting Link */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-200">Status Sesi</label>
+                    <label className="block text-[11px] font-bold text-white">Status Sesi</label>
                     <CustomDropdown
                       value={status}
                       onChange={(val) => setStatus(val as any)}
@@ -919,26 +924,26 @@ export default function TeacherSchedule() {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-200">Link Zoom / GMeet</label>
+                    <label className="block text-[11px] font-bold text-white">Link Zoom / GMeet</label>
                     <input
                       type="url"
                       placeholder="https://meet.google.com/..."
                       value={meetingLink}
                       onChange={(e) => setMeetingLink(e.target.value)}
-                      className="w-full p-2.5 rounded-xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold"
+                      className="w-full p-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs font-medium text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4]"
                     />
                   </div>
                 </div>
 
                 {/* Notes */}
                 <div className="space-y-1">
-                  <label className="block text-xs font-bold text-gray-700 dark:text-slate-200">Catatan Sesi (Opsional)</label>
+                  <label className="block text-xs font-bold text-white">Catatan Sesi (Opsional)</label>
                   <textarea
                     rows={2}
                     placeholder="Masukkan catatan instruksi bimbingan..."
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="w-full p-2.5 rounded-2xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold"
+                    className="w-full p-2.5 bg-black/40 border border-white/15 rounded-[2px] text-xs font-medium text-white placeholder-[#8A8A8A] focus:outline-none focus:border-[#66C0F4] resize-none"
                   />
                 </div>
 
@@ -946,14 +951,14 @@ export default function TeacherSchedule() {
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="flex-1 bg-gray-200 dark:bg-slate-700 text-gray-800 dark:text-white text-xs font-black py-3 rounded-2xl border-b-4 border-gray-300 dark:border-slate-900 cursor-pointer"
+                    className="flex-1 h-[40px] bg-black/40 hover:bg-white/10 text-white border border-white/20 text-xs font-bold rounded-[2px] uppercase tracking-wider cursor-pointer transition-all flex items-center justify-center"
                   >
                     BATAL
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex-1 bg-[#58CC02] hover:bg-[#46A302] text-white text-xs font-black py-3 rounded-2xl shadow-lg border-b-4 border-[#3b8c00] active:border-b-0 active:translate-y-[4px] cursor-pointer uppercase tracking-wider"
+                    className="flex-1 h-[40px] bg-[#A1CD44] hover:bg-[#86AE33] disabled:opacity-50 text-[#171A21] text-xs font-bold rounded-[2px] shadow-md cursor-pointer uppercase tracking-wider transition-all flex items-center justify-center"
                   >
                     {isSubmitting ? 'Memproses...' : 'SIMPAN JADWAL'}
                   </button>

@@ -195,7 +195,7 @@ export default function App() {
 
   // Routing switch layout
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-800 text-gray-900 dark:text-white flex flex-col relative" id="app-root">
+    <div className="min-h-screen bg-[#171A21] text-white flex flex-col relative" id="app-root">
       {/* Global Loading Overlay */}
       {globalLoading && (
         <div className="fixed inset-0 bg-black/10 backdrop-blur-3xs flex items-center justify-center z-50 animate-fadeIn">

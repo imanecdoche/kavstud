@@ -13,6 +13,10 @@ export default function InteractiveOwl({ className = "w-64 h-64" }: InteractiveO
   const [rightPupil, setRightPupil] = useState({ x: 0, y: 0 });
   const [isBlinking, setIsBlinking] = useState(false);
 
+  // Manual interactive eye close states on click/press
+  const [isLeftEyeClosed, setIsLeftEyeClosed] = useState(false);
+  const [isRightEyeClosed, setIsRightEyeClosed] = useState(false);
+
   // Target pupil offsets
   const targetRef = useRef({ leftX: 0, leftY: 0, rightX: 0, rightY: 0 });
   const currentRef = useRef({ leftX: 0, leftY: 0, rightX: 0, rightY: 0 });
@@ -81,18 +85,39 @@ export default function InteractiveOwl({ className = "w-64 h-64" }: InteractiveO
   // Random eye blink interval for realistic lifelike feel
   useEffect(() => {
     const blinkInterval = setInterval(() => {
-      if (Math.random() > 0.2) {
+      if (Math.random() > 0.2 && !isLeftEyeClosed && !isRightEyeClosed) {
         setIsBlinking(true);
         setTimeout(() => setIsBlinking(false), 160);
       }
     }, 4200);
     return () => clearInterval(blinkInterval);
+  }, [isLeftEyeClosed, isRightEyeClosed]);
+
+  // Global mouse release safety listener
+  useEffect(() => {
+    const handleGlobalRelease = () => {
+      setIsLeftEyeClosed(false);
+      setIsRightEyeClosed(false);
+    };
+    window.addEventListener('mouseup', handleGlobalRelease);
+    window.addEventListener('touchend', handleGlobalRelease);
+    return () => {
+      window.removeEventListener('mouseup', handleGlobalRelease);
+      window.removeEventListener('touchend', handleGlobalRelease);
+    };
   }, []);
 
   return (
     <motion.div
       ref={containerRef}
-      className={`relative select-none ${className}`}
+      drag
+      dragSnapToOrigin
+      dragElastic={0.45}
+      dragTransition={{
+        bounceStiffness: 350,
+        bounceDamping: 22
+      }}
+      className={`relative select-none cursor-grab active:cursor-grabbing ${className}`}
       animate={{
         y: [0, -8, 0],
         rotateZ: [0, -1.5, 1.5, 0]
@@ -248,11 +273,15 @@ export default function InteractiveOwl({ className = "w-64 h-64" }: InteractiveO
             <circle cx="197" cy="121" r="2.8" fill="#FFFFFF" opacity="0.85" />
           </g>
 
-          {/* EYELIDS OVERLAY FOR REALISTIC BLINKING */}
-          {isBlinking && (
+          {/* EYELIDS OVERLAY FOR REALISTIC BLINKING & CLICK INTERACTION */}
+          {(isBlinking || isLeftEyeClosed) && (
             <>
               <ellipse cx="106" cy="115" rx="38" ry="38" fill="#4d2b14" />
               <path d="M 68 115 Q 106 140 144 115" stroke="#ffd700" strokeWidth="3.5" fill="none" strokeLinecap="round" />
+            </>
+          )}
+          {(isBlinking || isRightEyeClosed) && (
+            <>
               <ellipse cx="194" cy="115" rx="38" ry="38" fill="#4d2b14" />
               <path d="M 156 115 Q 194 140 232 115" stroke="#ffd700" strokeWidth="3.5" fill="none" strokeLinecap="round" />
             </>
@@ -268,6 +297,35 @@ export default function InteractiveOwl({ className = "w-64 h-64" }: InteractiveO
           />
           {/* Beak Highlight */}
           <polygon points="138,124 162,124 150,129" fill="#ffa733" opacity="0.6" />
+
+          {/* INTERACTIVE CLICK TARGET OVERLAYS FOR LEFT & RIGHT EYES */}
+          <circle 
+            cx="106" 
+            cy="115" 
+            r="45" 
+            fill="transparent" 
+            className="cursor-pointer"
+            onMouseDown={(e) => { e.stopPropagation(); setIsLeftEyeClosed(true); }}
+            onMouseUp={() => setIsLeftEyeClosed(false)}
+            onMouseLeave={() => setIsLeftEyeClosed(false)}
+            onTouchStart={(e) => { e.stopPropagation(); setIsLeftEyeClosed(true); }}
+            onTouchEnd={() => setIsLeftEyeClosed(false)}
+            onTouchCancel={() => setIsLeftEyeClosed(false)}
+          />
+
+          <circle 
+            cx="194" 
+            cy="115" 
+            r="45" 
+            fill="transparent" 
+            className="cursor-pointer"
+            onMouseDown={(e) => { e.stopPropagation(); setIsRightEyeClosed(true); }}
+            onMouseUp={() => setIsRightEyeClosed(false)}
+            onMouseLeave={() => setIsRightEyeClosed(false)}
+            onTouchStart={(e) => { e.stopPropagation(); setIsRightEyeClosed(true); }}
+            onTouchEnd={() => setIsRightEyeClosed(false)}
+            onTouchCancel={() => setIsRightEyeClosed(false)}
+          />
         </g>
       </svg>
     </motion.div>

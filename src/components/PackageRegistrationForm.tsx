@@ -152,7 +152,7 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+        className="fixed inset-0 bg-black/70 backdrop-blur-xs"
       />
 
       {/* Main Form Modal */}
@@ -160,44 +160,45 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
         initial={{ scale: 0.95, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.95, opacity: 0, y: 20 }}
-        className="relative w-full max-w-2xl max-h-[90vh] bg-white dark:bg-slate-800 rounded-[2.5rem] p-6 sm:p-8 shadow-2xl border-2 border-gray-200 dark:border-slate-700 border-b-8 border-b-gray-400 overflow-y-auto z-50 space-y-6 custom-scrollbar"
+        className="relative w-full max-w-2xl max-h-[90vh] bg-[#2F3138] rounded-[4px] p-6 sm:p-8 shadow-[0_6px_16px_rgba(0,0,0,0.6)] border border-white/20 overflow-y-auto z-50 space-y-6 custom-scrollbar text-white"
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-gray-100 dark:border-slate-700">
+        <div className="flex items-center justify-between pb-4 border-b border-white/10">
           <div>
-            <span className="text-[10px] font-black uppercase text-[#1CB0F6] tracking-widest bg-[#1CB0F6]/10 px-2.5 py-0.5 rounded-md border border-[#1CB0F6]/20">
+            <span className="text-[9px] font-bold uppercase text-[#66C0F4] tracking-wider bg-[#66C0F4]/15 px-2 py-0.5 rounded-[2px] border border-[#66C0F4]/30">
               FORMULIR PENDAFTARAN PAKET
             </span>
-            <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white uppercase leading-tight font-display mt-1">
+            <h2 className="text-xl sm:text-2xl font-bold text-white uppercase tracking-tight mt-1">
               PENDAFTARAN PAKET BELAJAR
             </h2>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 text-gray-400 hover:text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-xl cursor-pointer"
+            className="p-2 text-[#8A8A8A] hover:text-white hover:bg-white/10 rounded-[2px] transition-colors cursor-pointer"
+            aria-label="Tutup"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
         {isSuccess ? (
           /* Success Screen */
           <div className="py-8 text-center space-y-6 animate-scaleUp">
-            <div className="w-20 h-20 bg-[#58CC02] text-white rounded-3xl flex items-center justify-center mx-auto shadow-lg border-b-6 border-[#3b8c00]">
-              <CheckCircle2 className="w-12 h-12" />
+            <div className="w-16 h-16 bg-[#A1CD44]/20 border border-[#A1CD44]/40 text-[#A1CD44] rounded-[2px] flex items-center justify-center mx-auto shadow-md">
+              <CheckCircle2 className="w-10 h-10" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-2xl font-black text-gray-900 dark:text-white uppercase font-display">
-                PENDAFTARAN BERHASIL TERKIRIM! 🎉
+              <h3 className="text-xl font-bold text-white uppercase">
+                PENDAFTARAN BERHASIL TERKIRIM
               </h3>
-              <p className="text-xs font-bold text-gray-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed">
-                Terima kasih! Data pendaftaran Anda untuk paket <strong className="text-indigo-600 dark:text-indigo-400">{selectedPackageName}</strong> telah diterima oleh Tim Kavio Edu. Admin kami akan menghubungi WhatsApp Wali dalam 1x24 jam.
+              <p className="text-xs font-medium text-[#C6D4DF] max-w-md mx-auto leading-relaxed">
+                Terima kasih. Data pendaftaran Anda untuk paket <strong className="text-[#66C0F4]">{selectedPackageName}</strong> telah diterima oleh Tim Kavio Edu. Admin kami akan menghubungi WhatsApp Wali dalam 1x24 jam.
               </p>
             </div>
             <button
               onClick={onClose}
-              className="bg-[#58CC02] text-white text-sm font-black py-3 px-8 rounded-2xl shadow-lg border-b-4 border-[#3b8c00] active:border-b-0 active:translate-y-[4px] cursor-pointer uppercase tracking-wider"
+              className="h-[40px] px-8 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-xs font-bold uppercase rounded-[2px] shadow-md transition-all cursor-pointer"
             >
               SELESAI
             </button>
@@ -206,7 +207,7 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
           /* Form Content */
           <form onSubmit={handleSubmitInit} className="space-y-5">
             {formError && (
-              <div className="p-4 bg-red-50 border border-red-200 rounded-2xl text-xs font-bold text-red-600 flex items-center gap-2">
+              <div className="p-3 bg-[#FF4B4B]/20 border border-[#FF4B4B]/30 rounded-[2px] text-xs font-bold text-[#FF4B4B] flex items-center gap-2">
                 <AlertCircle className="w-4 h-4 shrink-0" />
                 <span>{formError}</span>
               </div>
@@ -214,37 +215,37 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Nama Wali */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-gray-700 dark:text-slate-200">
-                  Nama Wali Siswa <span className="text-red-500">*</span>
+              <div className="space-y-1">
+                <label className="block text-[10px] font-bold text-[#C6D4DF] uppercase tracking-wider">
+                  Nama Wali Siswa <span className="text-[#FF4B4B]">*</span>
                 </label>
                 <div className="relative">
-                  <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8A8A8A]" />
                   <input
                     type="text"
                     required
                     placeholder="Contoh: Bpk. Ahmad Subagyo"
                     value={guardianName}
                     onChange={(e) => setGuardianName(e.target.value)}
-                    className="w-full pl-10 pr-3.5 py-3 rounded-2xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold focus:border-[#1CB0F6] focus:outline-none"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-[2px] bg-black/40 border border-white/15 text-white text-xs font-medium placeholder-[#8A8A8A] focus:border-[#66C0F4] focus:outline-none transition-colors"
                   />
                 </div>
               </div>
 
               {/* Nama Siswa */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-gray-700 dark:text-slate-200">
-                  Nama Lengkap Siswa <span className="text-red-500">*</span>
+              <div className="space-y-1">
+                <label className="block text-[10px] font-bold text-[#C6D4DF] uppercase tracking-wider">
+                  Nama Lengkap Siswa <span className="text-[#FF4B4B]">*</span>
                 </label>
                 <div className="relative">
-                  <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8A8A8A]" />
                   <input
                     type="text"
                     required
                     placeholder="Contoh: Faiz Ahmad"
                     value={studentName}
                     onChange={(e) => setStudentName(e.target.value)}
-                    className="w-full pl-10 pr-3.5 py-3 rounded-2xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold focus:border-[#1CB0F6] focus:outline-none"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-[2px] bg-black/40 border border-white/15 text-white text-xs font-medium placeholder-[#8A8A8A] focus:border-[#66C0F4] focus:outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -252,13 +253,13 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
 
             {/* Tanggal Lahir & Age Auto-Calculator */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label className="block text-xs font-bold text-gray-700 dark:text-slate-200">
-                    Tanggal Lahir Siswa <span className="text-red-500">*</span>
+                  <label className="block text-[10px] font-bold text-[#C6D4DF] uppercase tracking-wider">
+                    Tanggal Lahir Siswa <span className="text-[#FF4B4B]">*</span>
                   </label>
                   {studentDob && (
-                    <span className="text-[10px] font-black text-[#58CC02] bg-[#58CC02]/10 px-2 py-0.5 rounded-md">
+                    <span className="text-[9px] font-bold text-[#A1CD44] bg-[#A1CD44]/20 border border-[#A1CD44]/40 px-2 py-0.5 rounded-[2px] uppercase">
                       Umur: {studentAge} Tahun
                     </span>
                   )}
@@ -271,46 +272,46 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
               </div>
 
               {/* No. WA Wali */}
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-gray-700 dark:text-slate-200">
-                  No. WhatsApp Wali <span className="text-red-500">*</span>
+              <div className="space-y-1">
+                <label className="block text-[10px] font-bold text-[#C6D4DF] uppercase tracking-wider">
+                  No. WhatsApp Wali <span className="text-[#FF4B4B]">*</span>
                 </label>
                 <div className="relative">
-                  <Phone className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                  <Phone className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8A8A8A]" />
                   <input
                     type="tel"
                     required
                     placeholder="Contoh: 081234567890"
                     value={guardianPhone}
                     onChange={(e) => setGuardianPhone(e.target.value)}
-                    className="w-full pl-10 pr-3.5 py-3 rounded-2xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold focus:border-[#1CB0F6] focus:outline-none"
+                    className="w-full pl-9 pr-3 py-2.5 rounded-[2px] bg-black/40 border border-white/15 text-white text-xs font-medium placeholder-[#8A8A8A] focus:border-[#66C0F4] focus:outline-none transition-colors"
                   />
                 </div>
               </div>
             </div>
 
             {/* Alamat Siswa */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-gray-700 dark:text-slate-200">
-                Alamat Lengkap Rumah Siswa <span className="text-red-500">*</span>
+            <div className="space-y-1">
+              <label className="block text-[10px] font-bold text-[#C6D4DF] uppercase tracking-wider">
+                Alamat Lengkap Rumah Siswa <span className="text-[#FF4B4B]">*</span>
               </label>
               <div className="relative">
-                <MapPin className="w-4 h-4 absolute left-3.5 top-3 text-gray-400" />
+                <MapPin className="w-4 h-4 absolute left-3 top-3 text-[#8A8A8A]" />
                 <textarea
                   required
                   rows={2}
                   placeholder="Masukkan jalan, RT/RW, kelurahan, kecamatan, dan kota tempat tinggal..."
                   value={studentAddress}
                   onChange={(e) => setStudentAddress(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold focus:border-[#1CB0F6] focus:outline-none"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-[2px] bg-black/40 border border-white/15 text-white text-xs font-medium placeholder-[#8A8A8A] focus:border-[#66C0F4] focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
             {/* Selection Options: Paket & Jenjang */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-gray-700 dark:text-slate-200">
+              <div className="space-y-1">
+                <label className="block text-[10px] font-bold text-[#C6D4DF] uppercase tracking-wider">
                   Paket Yang Dipilih
                 </label>
                 <CustomDropdown
@@ -324,8 +325,8 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
                 />
               </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-xs font-bold text-gray-700 dark:text-slate-200">
+              <div className="space-y-1">
+                <label className="block text-[10px] font-bold text-[#C6D4DF] uppercase tracking-wider">
                   Tingkat Sekolah / Kelas Siswa
                 </label>
                 <CustomDropdown
@@ -342,8 +343,8 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
             </div>
 
             {/* Opsi Waktu / Jadwal Favorit */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-gray-700 dark:text-slate-200">
+            <div className="space-y-1">
+              <label className="block text-[10px] font-bold text-[#C6D4DF] uppercase tracking-wider">
                 Pilihan Sesi Waktu Bimbingan (Favorit)
               </label>
               <CustomDropdown
@@ -359,18 +360,18 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
             </div>
 
             {/* Instruksi Khusus Untuk Tutor */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-gray-700 dark:text-slate-200">
+            <div className="space-y-1">
+              <label className="block text-[10px] font-bold text-[#C6D4DF] uppercase tracking-wider">
                 Instruksi Khusus untuk Tutor (Opsional)
               </label>
               <div className="relative">
-                <MessageSquare className="w-4 h-4 absolute left-3.5 top-3 text-gray-400" />
+                <MessageSquare className="w-4 h-4 absolute left-3 top-3 text-[#8A8A8A]" />
                 <textarea
                   rows={2}
                   placeholder="Contoh: Siswa agak pemalu, mohon diajarkan secara perlahan & santai. Atau butuh fokus perbaikan di Matematika Dasar."
                   value={tutorInstructions}
                   onChange={(e) => setTutorInstructions(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-2.5 rounded-2xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold focus:border-[#1CB0F6] focus:outline-none"
+                  className="w-full pl-9 pr-3 py-2.5 rounded-[2px] bg-black/40 border border-white/15 text-white text-xs font-medium placeholder-[#8A8A8A] focus:border-[#66C0F4] focus:outline-none transition-colors"
                 />
               </div>
             </div>
@@ -380,17 +381,17 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 bg-gray-200 dark:bg-slate-700 text-gray-800 dark:text-white text-xs font-black py-3 rounded-2xl border-b-4 border-gray-300 dark:border-slate-900 active:border-b-0 active:translate-y-[4px] cursor-pointer"
+                className="h-[40px] flex-1 bg-black/40 hover:bg-white/10 text-white border border-white/20 text-xs font-bold uppercase rounded-[2px] transition-all cursor-pointer flex items-center justify-center"
               >
                 BATAL
               </button>
 
               <button
                 type="submit"
-                className="flex-1 bg-[#58CC02] hover:bg-[#46A302] text-white text-xs font-black py-3 rounded-2xl shadow-lg border-b-4 border-[#3b8c00] active:border-b-0 active:translate-y-[4px] transition-all cursor-pointer uppercase tracking-wider flex items-center justify-center gap-2"
+                className="h-[40px] flex-1 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-xs font-bold uppercase rounded-[2px] shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5"
                 id="btn-submit-registration-init"
               >
-                <Send className="w-4 h-4" />
+                <Send className="w-4 h-4 text-[#171A21]" />
                 <span>DAFTAR</span>
               </button>
             </div>
@@ -407,53 +408,53 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowConfirmModal(false)}
-              className="fixed inset-0 bg-black/70 backdrop-blur-xs"
+              className="fixed inset-0 bg-black/75 backdrop-blur-xs"
             />
 
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-lg bg-white dark:bg-slate-800 rounded-[2.5rem] p-6 sm:p-8 shadow-2xl border-2 border-gray-200 dark:border-slate-700 border-b-8 border-b-gray-400 z-60 space-y-6"
+              className="relative w-full max-w-lg bg-[#2F3138] rounded-[4px] p-6 sm:p-8 shadow-[0_6px_16px_rgba(0,0,0,0.6)] border border-white/20 z-60 space-y-6 text-white"
             >
               <div className="text-center space-y-2">
-                <div className="w-14 h-14 bg-[#FFC800] text-gray-900 rounded-2xl flex items-center justify-center mx-auto shadow-md border-b-4 border-[#cca000]">
-                  <Sparkles className="w-7 h-7" />
+                <div className="w-12 h-12 bg-black/40 border border-white/20 text-[#B9A074] rounded-[2px] flex items-center justify-center mx-auto shadow-md">
+                  <Sparkles className="w-6 h-6" />
                 </div>
-                <h3 className="text-2xl font-black text-gray-900 dark:text-white uppercase font-display">
+                <h3 className="text-xl font-bold text-white uppercase tracking-tight">
                   APAKAH DATA SUDAH BENAR?
                 </h3>
-                <p className="text-xs font-bold text-gray-500 dark:text-slate-400">
+                <p className="text-xs font-medium text-[#C6D4DF]">
                   Mohon periksa kembali rincian data pendaftaran Anda sebelum dikirim.
                 </p>
               </div>
 
               {/* Data Summary List */}
-              <div className="bg-gray-50 dark:bg-slate-900 rounded-2xl p-4 space-y-2 border border-gray-200 dark:border-slate-700 text-xs font-bold text-gray-800 dark:text-slate-200">
-                <div className="flex justify-between py-1 border-b border-gray-200/60 dark:border-slate-800">
-                  <span className="text-gray-400">Wali Siswa:</span>
-                  <span className="font-extrabold">{guardianName}</span>
+              <div className="bg-black/40 rounded-[2px] p-4 space-y-2 border border-white/10 text-xs font-bold text-white">
+                <div className="flex justify-between py-1 border-b border-white/10">
+                  <span className="text-[#8A8A8A]">Wali Siswa:</span>
+                  <span className="text-white font-bold">{guardianName}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-gray-200/60 dark:border-slate-800">
-                  <span className="text-gray-400">Nama Siswa:</span>
-                  <span className="font-extrabold">{studentName} ({studentAge} Tahun)</span>
+                <div className="flex justify-between py-1 border-b border-white/10">
+                  <span className="text-[#8A8A8A]">Nama Siswa:</span>
+                  <span className="text-white font-bold">{studentName} ({studentAge} Tahun)</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-gray-200/60 dark:border-slate-800">
-                  <span className="text-gray-400">No. WA Wali:</span>
-                  <span className="font-extrabold">{guardianPhone}</span>
+                <div className="flex justify-between py-1 border-b border-white/10">
+                  <span className="text-[#8A8A8A]">No. WA Wali:</span>
+                  <span className="text-white font-bold">{guardianPhone}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-gray-200/60 dark:border-slate-800">
-                  <span className="text-gray-400">Paket Dipilih:</span>
-                  <span className="font-extrabold text-[#1CB0F6]">{selectedPackageName}</span>
+                <div className="flex justify-between py-1 border-b border-white/10">
+                  <span className="text-[#8A8A8A]">Paket Dipilih:</span>
+                  <span className="text-[#66C0F4] font-bold">{selectedPackageName}</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-gray-200/60 dark:border-slate-800">
-                  <span className="text-gray-400">Pilihan Waktu:</span>
-                  <span className="font-extrabold">{preferredSchedule}</span>
+                <div className="flex justify-between py-1 border-b border-white/10">
+                  <span className="text-[#8A8A8A]">Pilihan Waktu:</span>
+                  <span className="text-white font-bold">{preferredSchedule}</span>
                 </div>
                 {tutorInstructions && (
                   <div className="pt-1">
-                    <span className="text-gray-400 block mb-0.5">Instruksi Tutor:</span>
-                    <span className="font-medium text-gray-600 dark:text-slate-300 block bg-white dark:bg-slate-800 p-2 rounded-xl border border-gray-200/60">
+                    <span className="text-[#8A8A8A] block mb-0.5">Instruksi Tutor:</span>
+                    <span className="font-medium text-[#C6D4DF] block bg-[#171A21] p-2 rounded-[2px] border border-white/10">
                       "{tutorInstructions}"
                     </span>
                   </div>
@@ -465,7 +466,7 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
                 <button
                   type="button"
                   onClick={() => setShowConfirmModal(false)}
-                  className="flex-1 bg-gray-200 dark:bg-slate-700 text-gray-800 dark:text-white text-xs font-black py-3 rounded-2xl border-b-4 border-gray-300 dark:border-slate-900 active:border-b-0 active:translate-y-[4px] cursor-pointer flex items-center justify-center gap-1.5"
+                  className="h-[40px] flex-1 bg-black/40 hover:bg-white/10 text-white border border-white/20 text-xs font-bold uppercase rounded-[2px] transition-all cursor-pointer flex items-center justify-center gap-1.5"
                   id="btn-confirm-edit"
                 >
                   <Edit3 className="w-4 h-4" />
@@ -476,17 +477,17 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
                   type="button"
                   disabled={isSubmitting}
                   onClick={handleFinalSubmit}
-                  className="flex-1 bg-[#58CC02] hover:bg-[#46A302] text-white text-xs font-black py-3 rounded-2xl shadow-lg border-b-4 border-[#3b8c00] active:border-b-0 active:translate-y-[4px] transition-all cursor-pointer uppercase tracking-wider flex items-center justify-center gap-1.5"
+                  className="h-[40px] flex-1 bg-[#A1CD44] hover:bg-[#86AE33] text-[#171A21] text-xs font-bold uppercase rounded-[2px] shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5"
                   id="btn-confirm-submit"
                 >
                   {isSubmitting ? (
                     <span className="flex items-center gap-1">
-                      <span className="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span className="w-3 h-3 border-2 border-[#171A21] border-t-transparent rounded-full animate-spin" />
                       Memproses...
                     </span>
                   ) : (
                     <>
-                      <CheckCircle2 className="w-4 h-4" />
+                      <CheckCircle2 className="w-4 h-4 text-[#171A21]" />
                       <span>SUDAH BENAR</span>
                     </>
                   )}
