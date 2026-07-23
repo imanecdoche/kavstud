@@ -19,7 +19,8 @@ import {
   Inbox,
   FileSpreadsheet,
   Wrench,
-  Calendar
+  Calendar,
+  Terminal
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Logo from './Logo';
@@ -117,10 +118,9 @@ export default function NavigationSidebar({
       ]
     },
     {
-      title: 'DEV TOOLS',
+      title: 'DEVELOPER CONTROL',
       items: [
-        { id: 'registrations' as const, label: 'Pendaftaran Paket', icon: FileSpreadsheet },
-        { id: 'devtools' as const, label: 'Kontrol Maintenance', icon: Wrench }
+        { id: 'devtools' as const, label: 'DEV TOOLS CENTER', icon: Terminal }
       ]
     }
   ] : [

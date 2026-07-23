@@ -18,6 +18,8 @@ import {
 } from 'lucide-react';
 import { PackageData } from './PackageDetail';
 import { db, auth } from '../firebase';
+import CustomDropdown from './CustomDropdown';
+import CustomDatePicker from './CustomDatePicker';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 interface PackageRegistrationFormProps {
@@ -261,16 +263,11 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
                     </span>
                   )}
                 </div>
-                <div className="relative">
-                  <Calendar className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                  <input
-                    type="date"
-                    required
-                    value={studentDob}
-                    onChange={(e) => setStudentDob(e.target.value)}
-                    className="w-full pl-10 pr-3.5 py-3 rounded-2xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold focus:border-[#1CB0F6] focus:outline-none"
-                  />
-                </div>
+                <CustomDatePicker
+                  value={studentDob}
+                  onChange={(val) => setStudentDob(val)}
+                  placeholder="Pilih Tanggal Lahir"
+                />
               </div>
 
               {/* No. WA Wali */}
@@ -316,41 +313,31 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
                 <label className="block text-xs font-bold text-gray-700 dark:text-slate-200">
                   Paket Yang Dipilih
                 </label>
-                <div className="relative">
-                  <Package className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                  <select
-                    value={selectedPackageId}
-                    onChange={(e) => {
-                      setSelectedPackageId(e.target.value);
-                      const found = packageList.find(p => p.id === e.target.value);
-                      if (found) setSelectedPackageName(found.name);
-                    }}
-                    className="w-full pl-10 pr-3.5 py-3 rounded-2xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold focus:border-[#1CB0F6] focus:outline-none cursor-pointer"
-                  >
-                    {packageList.map(p => (
-                      <option key={p.id} value={p.id}>{p.name}</option>
-                    ))}
-                  </select>
-                </div>
+                <CustomDropdown
+                  value={selectedPackageId}
+                  onChange={(val) => {
+                    setSelectedPackageId(val);
+                    const found = packageList.find(p => p.id === val);
+                    if (found) setSelectedPackageName(found.name);
+                  }}
+                  options={packageList.map(p => ({ value: p.id, label: p.name }))}
+                />
               </div>
 
               <div className="space-y-1.5">
                 <label className="block text-xs font-bold text-gray-700 dark:text-slate-200">
                   Tingkat Sekolah / Kelas Siswa
                 </label>
-                <div className="relative">
-                  <GraduationCap className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                  <select
-                    value={gradeLevel}
-                    onChange={(e) => setGradeLevel(e.target.value)}
-                    className="w-full pl-10 pr-3.5 py-3 rounded-2xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold focus:border-[#1CB0F6] focus:outline-none cursor-pointer"
-                  >
-                    <option value="SD">SD (Sekolah Dasar)</option>
-                    <option value="SMP">SMP (Sekolah Menengah Pertama)</option>
-                    <option value="SMA">SMA / SMK (Sekolah Menengah Atas)</option>
-                    <option value="Umum">Umum / Persiapan Ujian</option>
-                  </select>
-                </div>
+                <CustomDropdown
+                  value={gradeLevel}
+                  onChange={(val) => setGradeLevel(val)}
+                  options={[
+                    { value: 'SD', label: 'SD (Sekolah Dasar)' },
+                    { value: 'SMP', label: 'SMP (Sekolah Menengah Pertama)' },
+                    { value: 'SMA', label: 'SMA / SMK (Sekolah Menengah Atas)' },
+                    { value: 'Umum', label: 'Umum / Persiapan Ujian' }
+                  ]}
+                />
               </div>
             </div>
 
@@ -359,19 +346,16 @@ export default function PackageRegistrationForm({ initialPackage, onClose, onSuc
               <label className="block text-xs font-bold text-gray-700 dark:text-slate-200">
                 Pilihan Sesi Waktu Bimbingan (Favorit)
               </label>
-              <div className="relative">
-                <Clock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
-                <select
-                  value={preferredSchedule}
-                  onChange={(e) => setPreferredSchedule(e.target.value)}
-                  className="w-full pl-10 pr-3.5 py-3 rounded-2xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold focus:border-[#1CB0F6] focus:outline-none cursor-pointer"
-                >
-                  <option value="Pagi (09.00 - 11.00 WIB)">Pagi (09.00 - 11.00 WIB)</option>
-                  <option value="Siang (13.00 - 15.00 WIB)">Siang (13.00 - 15.00 WIB)</option>
-                  <option value="Sore (15.30 - 17.00 WIB)">Sore (15.30 - 17.00 WIB)</option>
-                  <option value="Malam (19.00 - 20.30 WIB)">Malam (19.00 - 20.30 WIB)</option>
-                </select>
-              </div>
+              <CustomDropdown
+                value={preferredSchedule}
+                onChange={(val) => setPreferredSchedule(val)}
+                options={[
+                  { value: 'Pagi (09.00 - 11.00 WIB)', label: 'Pagi (09.00 - 11.00 WIB)' },
+                  { value: 'Siang (13.00 - 15.00 WIB)', label: 'Siang (13.00 - 15.00 WIB)' },
+                  { value: 'Sore (15.30 - 17.00 WIB)', label: 'Sore (15.30 - 17.00 WIB)' },
+                  { value: 'Malam (19.00 - 20.30 WIB)', label: 'Malam (19.00 - 20.30 WIB)' }
+                ]}
+              />
             </div>
 
             {/* Instruksi Khusus Untuk Tutor */}

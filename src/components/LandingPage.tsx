@@ -393,10 +393,10 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
               </div>
             </div>
 
-            {/* Right Column: 55% Mascot & Interactive Visual Frame */}
-            <div className="lg:col-span-6 relative flex items-center justify-center min-h-[340px] sm:min-h-[420px]">
-              <div className="w-full max-w-[460px] h-[360px] sm:h-[420px] rounded-2xl bg-gradient-to-b from-[#1CB0F6]/10 via-transparent to-transparent flex items-center justify-center p-4 relative">
-                <SplineMascot3D className="w-full h-full object-contain" />
+            {/* Right Column: Mascot (Background on Mobile, Grid Column on Desktop) */}
+            <div className="absolute inset-0 z-0 pointer-events-none flex items-end justify-end overflow-hidden opacity-[0.15] lg:relative lg:inset-auto lg:col-span-6 lg:flex lg:items-center lg:justify-center lg:min-h-[400px] sm:lg:min-h-[480px] lg:opacity-100 lg:pointer-events-auto lg:overflow-visible">
+              <div className="w-[320px] h-[320px] translate-x-12 translate-y-12 lg:w-full lg:max-w-none lg:h-[500px] lg:translate-x-8 lg:translate-y-6 lg:scale-125 flex items-center justify-center relative">
+                <SplineMascot3D className="w-full h-full object-contain blur-[2px] lg:blur-none drop-shadow-2xl" />
               </div>
             </div>
           </div>
@@ -1006,7 +1006,7 @@ export default function LandingPage({ onNavigate, userProfile }: LandingPageProp
         href="https://wa.me/6282111500190"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all group"
+        className="fixed bottom-24 lg:bottom-6 right-4 lg:right-6 z-50 w-14 h-14 bg-[#25D366] text-white rounded-full flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all group"
         aria-label="Konsultasi WhatsApp"
         title="Konsultasi Gratis via WhatsApp"
       >

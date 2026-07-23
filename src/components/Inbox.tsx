@@ -21,6 +21,7 @@ import {
 import { UserProfile } from '../types';
 import { auth, db } from '../firebase';
 import { collection, onSnapshot } from 'firebase/firestore';
+import CustomDropdown from './CustomDropdown';
 
 interface NotificationItem {
   id: string;
@@ -528,24 +529,20 @@ export default function Inbox({ onNavigate, onSelectTab, userProfile, role }: In
           </div>
 
           {/* Auto-Clean Retention Selector Dropdown */}
-          <div className="relative flex items-center bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 border-b-4 rounded-2xl px-3 py-1">
-            <Clock className="w-4 h-4 text-indigo-500 shrink-0 mr-2" />
-            <div className="flex-1 min-w-0">
-              <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none">
-                Pembersihan Otomatis
-              </label>
-              <select
-                value={autoCleanDays}
-                onChange={(e) => handleAutoCleanChange(e.target.value as any)}
-                className="w-full bg-transparent text-xs font-black text-gray-800 dark:text-slate-100 focus:outline-none cursor-pointer py-1"
-                id="select-autoclean-inbox"
-              >
-                <option value="never" className="bg-white dark:bg-slate-800">Jangan Hapus Otomatis</option>
-                <option value="3" className="bg-white dark:bg-slate-800">Hapus setelah 3 Hari</option>
-                <option value="7" className="bg-white dark:bg-slate-800">Hapus setelah 7 Hari</option>
-                <option value="30" className="bg-white dark:bg-slate-800">Hapus setelah 30 Hari</option>
-              </select>
-            </div>
+          <div className="flex flex-col min-w-[180px] shrink-0">
+            <label className="block text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1 ml-1">
+              Pembersihan Otomatis
+            </label>
+            <CustomDropdown
+              value={autoCleanDays}
+              onChange={(val) => handleAutoCleanChange(val as any)}
+              options={[
+                { value: 'never', label: 'Jangan Hapus Otomatis' },
+                { value: '3', label: 'Hapus setelah 3 Hari' },
+                { value: '7', label: 'Hapus setelah 7 Hari' },
+                { value: '30', label: 'Hapus setelah 30 Hari' }
+              ]}
+            />
           </div>
         </div>
 

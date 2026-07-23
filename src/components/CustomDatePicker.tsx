@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, ChevronLeft, ChevronRight, X, Check } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import CustomDropdown from './CustomDropdown';
 
 interface CustomDatePickerProps {
   value: string; // YYYY-MM-DD format
@@ -180,25 +181,22 @@ export default function CustomDatePicker({
                 </button>
 
                 <div className="flex items-center gap-1">
-                  <select
-                    value={currentMonth}
-                    onChange={(e) => setViewDate(new Date(currentYear, parseInt(e.target.value, 10), 1))}
-                    className="bg-transparent font-black text-xs text-gray-900 dark:text-white cursor-pointer focus:outline-none"
-                  >
-                    {MONTH_NAMES_ID.map((name, idx) => (
-                      <option key={idx} value={idx}>{name}</option>
-                    ))}
-                  </select>
-
-                  <select
-                    value={currentYear}
-                    onChange={(e) => setViewDate(new Date(parseInt(e.target.value, 10), currentMonth, 1))}
-                    className="bg-transparent font-black text-xs text-sky-600 cursor-pointer focus:outline-none font-mono"
-                  >
-                    {Array.from({ length: 80 }, (_, i) => 1960 + i).map((yr) => (
-                      <option key={yr} value={yr}>{yr}</option>
-                    ))}
-                  </select>
+                  <CustomDropdown
+                    value={currentMonth.toString()}
+                    onChange={(val) => setViewDate(new Date(currentYear, parseInt(val, 10), 1))}
+                    options={MONTH_NAMES_ID.map((name, idx) => ({ value: idx.toString(), label: name }))}
+                    size="sm"
+                    variant="minimal"
+                    dropdownWidth="w-32"
+                  />
+                  <CustomDropdown
+                    value={currentYear.toString()}
+                    onChange={(val) => setViewDate(new Date(parseInt(val, 10), currentMonth, 1))}
+                    options={Array.from({ length: 80 }, (_, i) => 1960 + i).map((yr) => ({ value: yr.toString(), label: yr.toString() }))}
+                    size="sm"
+                    variant="minimal"
+                    dropdownWidth="w-24"
+                  />
                 </div>
 
                 <button

@@ -45,6 +45,7 @@ import ModuleLibrary from './ModuleLibrary';
 import Packages from './Packages';
 import Inbox from './Inbox';
 import MaintenanceView from './MaintenanceView';
+import DevToolsCenter from './DevToolsCenter';
 import StudentSchedule from './StudentSchedule';
 import { getLocalFeatureFlags } from '../utils/featureFlags';
 import { calculateLevelData } from '../utils/leveling';
@@ -1064,6 +1065,15 @@ export default function StudentDashboard({ onNavigate, onSetLoading }: StudentDa
               {/* TAB: SCHEDULES */}
               {activeTab === 'schedules' && (
                 <StudentSchedule userProfile={studentProfile} />
+              )}
+
+              {/* TAB: DEV TOOLS CENTER (SPOTIFY DESIGN SYSTEM POWERED) */}
+              {activeTab === 'devtools' && (
+                <DevToolsCenter 
+                  userProfile={studentProfile}
+                  onNavigate={onNavigate}
+                  onSetLoading={onSetLoading}
+                />
               )}
 
               {/* TAB 5: SETTINGS INLINE */}

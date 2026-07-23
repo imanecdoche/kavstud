@@ -12,6 +12,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import CustomCheckbox from './CustomCheckbox';
 
 interface Student {
   id: string;
@@ -166,11 +167,9 @@ export default function TableShowcase() {
               <thead>
                 <tr className="bg-gray-50 dark:bg-slate-900/50 border-b border-gray-100 dark:border-slate-700/50 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                   <th className="py-4 px-5 w-12">
-                    <input
-                      type="checkbox"
+                    <CustomCheckbox
                       checked={filteredStudents.length > 0 && selectedStudentIds.length === filteredStudents.length}
                       onChange={handleSelectAllStudents}
-                      className="rounded border-gray-300 dark:border-slate-600 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500"
                     />
                   </th>
                   <th className="py-4 px-4">
@@ -204,11 +203,9 @@ export default function TableShowcase() {
                         className={`hover:bg-gray-50 dark:bg-slate-900/25 transition-colors ${isSelected ? 'bg-indigo-50 dark:bg-indigo-900/30/10' : ''}`}
                       >
                         <td className="py-3.5 px-5">
-                          <input
-                            type="checkbox"
+                          <CustomCheckbox
                             checked={isSelected}
                             onChange={() => handleSelectStudentRow(student.id)}
-                            className="rounded border-gray-300 dark:border-slate-600 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500"
                           />
                         </td>
                         <td className="py-3.5 px-4 font-semibold text-gray-900 dark:text-white">
@@ -255,11 +252,9 @@ export default function TableShowcase() {
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-center gap-3">
-                        <input
-                          type="checkbox"
+                        <CustomCheckbox
                           checked={isSelected}
                           onChange={() => handleSelectStudentRow(student.id)}
-                          className="rounded border-gray-300 dark:border-slate-600 text-indigo-600 dark:text-indigo-400 focus:ring-indigo-500"
                         />
                         <div>
                           <p className="text-xs font-semibold text-gray-900 dark:text-white leading-snug">{student.name}</p>

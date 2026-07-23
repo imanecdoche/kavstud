@@ -47,6 +47,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { UserProfile, Circle, Assignment, Question } from '../types';
 import CustomDropdown from './CustomDropdown';
 import CustomDatePicker from './CustomDatePicker';
+import CustomCheckbox from './CustomCheckbox';
 
 interface AssignmentBuilderProps {
   assignmentId?: string; // If provided, we are in Edit Mode
@@ -1862,70 +1863,40 @@ CATATAN KHUSUS:
 
                   <div className="space-y-3 pt-1">
                     {/* Checkbox settings */}
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700/50 transition-colors cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={allowResubmission}
-                        onChange={(e) => setAllowResubmission(e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 dark:text-indigo-400 rounded border-gray-300 dark:border-slate-600 focus:ring-indigo-500 mt-0.5"
-                      />
-                      <div className="text-xs">
-                        <p className="font-semibold text-gray-800 dark:text-slate-100">Izinkan Pengumpulan Ulang (Resubmission)</p>
-                        <p className="text-[10px] text-gray-400 mt-0.5">Siswa dapat mengirimkan pengerjaan revisi / perbaikan.</p>
-                      </div>
-                    </label>
+                    <CustomCheckbox
+                      checked={allowResubmission}
+                      onChange={setAllowResubmission}
+                      label="Izinkan Pengumpulan Ulang (Resubmission)"
+                      description="Siswa dapat mengirimkan pengerjaan revisi / perbaikan."
+                    />
 
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700/50 transition-colors cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={shuffleQuestions}
-                        onChange={(e) => setShuffleQuestions(e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 dark:text-indigo-400 rounded border-gray-300 dark:border-slate-600 focus:ring-indigo-500 mt-0.5"
-                      />
-                      <div className="text-xs">
-                        <p className="font-semibold text-gray-800 dark:text-slate-100">Acak Urutan Pertanyaan (Shuffle Questions)</p>
-                        <p className="text-[10px] text-gray-400 mt-0.5">Urutan pertanyaan akan diacak untuk setiap siswa secara acak.</p>
-                      </div>
-                    </label>
+                    <CustomCheckbox
+                      checked={shuffleQuestions}
+                      onChange={setShuffleQuestions}
+                      label="Acak Urutan Pertanyaan (Shuffle Questions)"
+                      description="Urutan pertanyaan akan diacak untuk setiap siswa secara acak."
+                    />
 
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700/50 transition-colors cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={shuffleChoices}
-                        onChange={(e) => setShuffleChoices(e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 dark:text-indigo-400 rounded border-gray-300 dark:border-slate-600 focus:ring-indigo-500 mt-0.5"
-                      />
-                      <div className="text-xs">
-                        <p className="font-semibold text-gray-800 dark:text-slate-100">Acak Opsi Pilihan Ganda (Shuffle Choices)</p>
-                        <p className="text-[10px] text-gray-400 mt-0.5">Mencegah siswa menyontek dengan mengacak posisi opsi pilihan ganda A, B, C, D.</p>
-                      </div>
-                    </label>
+                    <CustomCheckbox
+                      checked={shuffleChoices}
+                      onChange={setShuffleChoices}
+                      label="Acak Opsi Pilihan Ganda (Shuffle Choices)"
+                      description="Mencegah siswa menyontek dengan mengacak posisi opsi pilihan ganda A, B, C, D."
+                    />
 
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700/50 transition-colors cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={requireAll}
-                        onChange={(e) => setRequireAll(e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 dark:text-indigo-400 rounded border-gray-300 dark:border-slate-600 focus:ring-indigo-500 mt-0.5"
-                      />
-                      <div className="text-xs">
-                        <p className="font-semibold text-gray-800 dark:text-slate-100">Wajibkan Menjawab Semua Pertanyaan</p>
-                        <p className="text-[10px] text-gray-400 mt-0.5">Siswa tidak dapat mengumpulkan lembar ujian jika ada soal kosong.</p>
-                      </div>
-                    </label>
+                    <CustomCheckbox
+                      checked={requireAll}
+                      onChange={setRequireAll}
+                      label="Wajibkan Menjawab Semua Pertanyaan"
+                      description="Siswa tidak dapat mengumpulkan lembar ujian jika ada soal kosong."
+                    />
 
-                    <label className="flex items-start gap-3 p-3 hover:bg-gray-50 dark:bg-slate-900 rounded-xl border border-gray-100 dark:border-slate-700/50 transition-colors cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={showScore}
-                        onChange={(e) => setShowScore(e.target.checked)}
-                        className="w-4 h-4 text-indigo-600 dark:text-indigo-400 rounded border-gray-300 dark:border-slate-600 focus:ring-indigo-500 mt-0.5"
-                      />
-                      <div className="text-xs">
-                        <p className="font-semibold text-gray-800 dark:text-slate-100">Tampilkan Nilai Langsung Ke Siswa</p>
-                        <p className="text-[10px] text-gray-400 mt-0.5">Siswa dapat langsung melihat skor autograde setelah selesai mengumpulkan.</p>
-                      </div>
-                    </label>
+                    <CustomCheckbox
+                      checked={showScore}
+                      onChange={setShowScore}
+                      label="Tampilkan Nilai Langsung Ke Siswa"
+                      description="Siswa dapat langsung melihat skor autograde setelah selesai mengumpulkan."
+                    />
                   </div>
 
                   {/* Status / Visibility Options */}
@@ -2068,18 +2039,18 @@ CATATAN KHUSUS:
                     <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
                       Tipe / Jenis Soal
                     </label>
-                    <select
+                    <CustomDropdown
                       value={aiQuestionType}
-                      onChange={(e) => setAiQuestionType(e.target.value as any)}
+                      onChange={(val) => setAiQuestionType(val as any)}
                       disabled={aiGenerating}
-                      className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 cursor-pointer"
-                    >
-                      <option value="all">Campuran Semua Jenis Soal</option>
-                      <option value="essay">Jawaban Teks (Manual Guru)</option>
-                      <option value="multiple_choice">Pilihan Ganda (A-C / A-D)</option>
-                      <option value="true_false">Benar / Salah (A-C / A-D)</option>
-                      <option value="matching">Matching / Menjodohkan (Opsi Unik)</option>
-                    </select>
+                      options={[
+                        { value: 'all', label: 'Campuran Semua Jenis Soal' },
+                        { value: 'essay', label: 'Jawaban Teks (Manual Guru)' },
+                        { value: 'multiple_choice', label: 'Pilihan Ganda (A-C / A-D)' },
+                        { value: 'true_false', label: 'Benar / Salah (A-C / A-D)' },
+                        { value: 'matching', label: 'Matching / Menjodohkan (Opsi Unik)' }
+                      ]}
+                    />
                   </div>
 
                   {/* Tingkat Kesulitan */}
@@ -2087,16 +2058,16 @@ CATATAN KHUSUS:
                     <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wider">
                       Tingkat Kesulitan
                     </label>
-                    <select
+                    <CustomDropdown
                       value={aiDifficulty}
-                      onChange={(e) => setAiDifficulty(e.target.value as any)}
+                      onChange={(val) => setAiDifficulty(val as any)}
                       disabled={aiGenerating}
-                      className="w-full px-3.5 py-2.5 bg-gray-50 dark:bg-slate-900/50 border border-gray-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-gray-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 cursor-pointer"
-                    >
-                      <option value="Mudah">Mudah</option>
-                      <option value="Sedang">Sedang</option>
-                      <option value="Sulit">Sulit / HOTS</option>
-                    </select>
+                      options={[
+                        { value: 'Mudah', label: 'Mudah' },
+                        { value: 'Sedang', label: 'Sedang' },
+                        { value: 'Sulit', label: 'Sulit / HOTS' }
+                      ]}
+                    />
                   </div>
 
                   {/* Bobot Nilai Per Soal */}

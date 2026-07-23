@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import Logo from './Logo';
+import CustomCheckbox from './CustomCheckbox';
 
 export default function LayoutPreviews() {
   const [activeLayout, setActiveLayout] = useState<'teacher-dash' | 'student-dash' | 'login' | 'register' | 'assignment-detail' | 'profile' | '404-page'>('teacher-dash');
@@ -35,6 +36,7 @@ export default function LayoutPreviews() {
   const [demoLoginPass, setDemoLoginPass] = useState('••••••••••••');
   const [demoRegName, setDemoRegName] = useState('');
   const [demoRegEmail, setDemoRegEmail] = useState('');
+  const [demoTerms, setDemoTerms] = useState(false);
 
   // 1. LOADING COMPONENT (Skeleton Block Helper)
   const SkeletonLine = ({ width = 'w-full', height = 'h-3' }) => (
@@ -421,9 +423,13 @@ export default function LayoutPreviews() {
                   />
                 </div>
 
-                <div className="flex items-center gap-2 pt-1">
-                  <input type="checkbox" id="terms-check" className="rounded text-indigo-600 dark:text-indigo-400" />
-                  <label htmlFor="terms-check" className="text-[10px] text-gray-400">Saya setuju dengan syarat & ketentuan Kavio Edu.</label>
+                <div className="flex items-start gap-2 pt-1">
+                  <CustomCheckbox
+                    checked={demoTerms}
+                    onChange={setDemoTerms}
+                    size="sm"
+                    label={<span className="text-[10px] text-gray-400 font-normal">Saya setuju dengan syarat & ketentuan Kavio Edu.</span>}
+                  />
                 </div>
 
                 <button className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold rounded-xl transition-all cursor-pointer">

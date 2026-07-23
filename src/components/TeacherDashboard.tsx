@@ -51,6 +51,7 @@ import Packages from './Packages';
 import Inbox from './Inbox';
 import PackageRegistrationsDev from './PackageRegistrationsDev';
 import DevToolsMaintenance from './DevToolsMaintenance';
+import DevToolsCenter from './DevToolsCenter';
 import MaintenanceView from './MaintenanceView';
 import TeacherSchedule from './TeacherSchedule';
 import { getLocalFeatureFlags } from '../utils/featureFlags';
@@ -1169,9 +1170,13 @@ export default function TeacherDashboard({ onNavigate, onSetLoading }: TeacherDa
                 <PackageRegistrationsDev />
               )}
 
-              {/* TAB: DEV TOOLS (MAINTENANCE CONTROL) */}
+              {/* TAB: DEV TOOLS CENTER (SPOTIFY DESIGN SYSTEM POWERED) */}
               {activeTab === 'devtools' && (
-                <DevToolsMaintenance />
+                <DevToolsCenter 
+                  userProfile={teacherProfile}
+                  onNavigate={onNavigate}
+                  onSetLoading={onSetLoading}
+                />
               )}
 
               {/* TAB: SCHEDULES */}

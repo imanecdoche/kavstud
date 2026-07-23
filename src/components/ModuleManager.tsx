@@ -42,6 +42,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import defaultModules from '../assets/default_modules.json';
 import CustomDropdown from './CustomDropdown';
 import CustomDatePicker from './CustomDatePicker';
+import CustomCheckbox from './CustomCheckbox';
 import { Dialog } from '@capacitor/dialog';
 
 // Simple Custom Markdown Renderer (for Preview mode)
@@ -1246,8 +1247,7 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
                         const checked = selectedModuleIds.includes(m.id);
                         return (
                           <label key={m.id} className="flex items-center gap-3 p-2 bg-white dark:bg-slate-800 border border-gray-150 rounded-xl cursor-pointer hover:border-indigo-200 transition-colors select-none">
-                            <input
-                              type="checkbox"
+                            <CustomCheckbox
                               checked={checked}
                               onChange={() => {
                                 if (checked) {
@@ -1256,7 +1256,6 @@ export default function ModuleManager({ onSetLoading }: ModuleManagerProps) {
                                   setSelectedModuleIds(prev => [...prev, m.id]);
                                 }
                               }}
-                              className="w-4 h-4 text-indigo-600 dark:text-indigo-400 rounded border-gray-350 focus:ring-indigo-500 cursor-pointer"
                             />
                             <div className="min-w-0">
                               <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{m.level}</span>

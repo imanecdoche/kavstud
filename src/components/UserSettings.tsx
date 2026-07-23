@@ -1371,214 +1371,45 @@ export default function UserSettings({ onNavigate, onSetLoading }: UserSettingsP
 
               {activeTab === 'dev' && currentUserProfile?.email === 'fatih@kavio.tec.edu' && (
                 <div className="space-y-6">
-                  <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-700/50 pb-3">
+                  <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-700/50 pb-4">
                     <div>
-                      <h2 className="text-sm font-black text-red-650 uppercase tracking-wider">DEVELOPER & ADMINISTRATOR TOOLS</h2>
-                      <p className="text-[10px] text-gray-400 mt-0.5">Akses bypass tingkat sistem untuk manajemen pengguna dan konfigurasi global.</p>
-                    </div>
-                    
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setActiveTab('account');
-                        setTimeout(() => setActiveTab('dev'), 100);
-                      }}
-                      className="p-2 text-gray-500 dark:text-slate-400 hover:text-indigo-650 hover:bg-gray-100 dark:bg-slate-700 rounded-xl transition-all cursor-pointer"
-                      title="Segarkan Data"
-                    >
-                      <RefreshCw className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  {/* Dev Settings Blocks */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* Maintenance Mode */}
-                    <div className="p-5 bg-red-50/30 border border-red-100 rounded-2xl space-y-3">
-                      <div className="flex gap-2.5">
-                        <ShieldAlert className="w-5 h-5 text-red-600 shrink-0" />
-                        <div>
-                          <h4 className="text-xs font-black text-red-950 uppercase tracking-wide">Mode Pemeliharaan (Maintenance)</h4>
-                          <p className="text-[10px] text-red-700/90 leading-relaxed mt-0.5">
-                            Aktifkan ini untuk memblokir siswa masuk ke dashboard sementara sistem diperbarui.
-                          </p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center justify-between pt-2">
-                        <span className="text-[10px] font-black uppercase text-gray-400">Status: {systemMaintenance ? 'AKTIF (BLOCKED)' : 'NONAKTIF'}</span>
-                        <button
-                          type="button"
-                          onClick={handleToggleMaintenance}
-                          className={`px-4 py-2 rounded-xl text-[10px] font-black cursor-pointer shadow-xs transition-all ${
-                            systemMaintenance
-                              ? 'bg-red-600 hover:bg-red-700 text-white border-b-4 border-red-800'
-                              : 'bg-white dark:bg-slate-800 hover:bg-gray-50 dark:bg-slate-900 text-gray-700 dark:text-slate-200 border border-gray-250'
-                          }`}
-                        >
-                          {systemMaintenance ? 'Matikan Mode' : 'Aktifkan Mode'}
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Stats summary */}
-                    <div className="p-5 bg-gray-50 dark:bg-slate-900 border border-gray-150 rounded-2xl flex flex-col justify-between">
-                      <div>
-                        <h4 className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wide">Informasi DB Kavio</h4>
-                        <p className="text-[10px] text-gray-400 mt-0.5">Data terdaftar di cloud database saat ini.</p>
-                      </div>
-                      <div className="grid grid-cols-3 gap-2 text-center pt-2">
-                        <div className="p-2 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700/50">
-                          <span className="block text-base font-black text-indigo-650">{devUsers.length}</span>
-                          <span className="block text-[8px] font-bold text-gray-400 uppercase">Pengguna</span>
-                        </div>
-                        <div className="p-2 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700/50">
-                          <span className="block text-base font-black text-amber-600 dark:text-amber-400">{devUsers.filter(u => u.role === 'teacher').length}</span>
-                          <span className="block text-[8px] font-bold text-gray-400 uppercase">Guru</span>
-                        </div>
-                        <div className="p-2 bg-white dark:bg-slate-800 rounded-xl border border-gray-100 dark:border-slate-700/50">
-                          <span className="block text-base font-black text-emerald-600 dark:text-emerald-400">{devUsers.filter(u => u.role === 'student').length}</span>
-                          <span className="block text-[8px] font-bold text-gray-400 uppercase">Siswa</span>
-                        </div>
-                      </div>
+                      <h2 className="text-sm font-black text-indigo-650 uppercase tracking-wider">DEVELOPER & ADMINISTRATOR TOOLS</h2>
+                      <p className="text-[10px] text-gray-400 mt-0.5">Seluruh alat pengembang, pemeliharaan sistem, feature flags, dan inspektor database telah dipusatkan pada DEV TOOLS CENTER.</p>
                     </div>
                   </div>
 
-                  {/* Users Management list */}
-                  <div className="space-y-4">
-                    <h3 className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-wider">Kelola Seluruh Pengguna ({devUsers.length})</h3>
+                  {/* Spotify Styled Redirection Banner */}
+                  <div className="bg-[#121212] text-white p-6 sm:p-8 rounded-3xl space-y-6 shadow-2xl border border-[#282828] font-sans">
+                    <div className="flex items-center gap-3">
+                      <span className="bg-[#1DB954] text-black font-extrabold text-[10px] px-3 py-1 rounded-full uppercase tracking-wider">
+                        SPOTIFY DESIGN SYSTEM
+                      </span>
+                      <span className="bg-[#282828] text-[#B3B3B3] font-bold text-[10px] px-3 py-1 rounded-full uppercase border border-[#3E3E3E]">
+                        PENGALIHAN TERPUSAT
+                      </span>
+                    </div>
 
-                    {devLoading ? (
-                      <div className="flex items-center justify-center p-12"><Loader2 className="w-8 h-8 text-indigo-600 dark:text-indigo-400 animate-spin" /></div>
-                    ) : (
-                      <div className="space-y-3">
-                        {devUsers.map((u) => {
-                          const isTargetEditing = editingDevUser?.uid === u.uid;
+                    <div className="space-y-2">
+                      <h3 className="text-xl sm:text-2xl font-black text-white uppercase tracking-tight font-display">
+                        DEV TOOLS CENTER TELAH SIAP
+                      </h3>
+                      <p className="text-xs text-[#B3B3B3] leading-relaxed max-w-xl">
+                        Untuk pengalaman pengelolaan yang lebih cepat, aman, dan terorganisir, seluruh fitur developer (User Bypass, Feature Flags, Maintenance Mode, Package Registrations, dan Terminal Logs) telah dipindahkan ke <strong className="text-white">DEV TOOLS CENTER</strong> pada Sidebar utama.
+                      </p>
+                    </div>
 
-                          return (
-                            <div key={u.uid} className="p-5 bg-white dark:bg-slate-800 border border-gray-150 rounded-2xl space-y-4 hover:border-gray-300 dark:border-slate-600 transition-colors shadow-3xs">
-                              {/* Header info */}
-                              <div className="flex items-start justify-between gap-4">
-                                <div className="min-w-0 space-y-1">
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs font-black text-gray-900 dark:text-white">{u.fullName}</span>
-                                    <span className={`inline-flex items-center px-1.5 py-0.2 rounded text-[8px] font-black uppercase border ${
-                                      u.role === 'teacher' ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 border-indigo-200' : 'bg-emerald-50 dark:bg-emerald-900/30 text-emerald-700 border-emerald-200'
-                                    }`}>
-                                      {u.role}
-                                    </span>
-                                  </div>
-                                  <p className="text-[10px] text-gray-400 font-mono">{u.email}</p>
-                                  {u.phone && <p className="text-[9px] text-gray-500 dark:text-slate-400 font-medium">Tlp: {u.phone}</p>}
-                                </div>
-
-                                <div className="flex items-center gap-2 shrink-0">
-                                  <button
-                                    type="button"
-                                    onClick={() => {
-                                      if (isTargetEditing) {
-                                        setEditingDevUser(null);
-                                      } else {
-                                        setEditingDevUser(u);
-                                        setDevNewEmail(u.email || '');
-                                        setDevEditFullName(u.fullName || '');
-                                        setDevEditPhone(u.phone || '');
-                                      }
-                                    }}
-                                    className="px-3 py-1.5 bg-gray-50 dark:bg-slate-900 hover:bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 rounded-xl text-[10px] font-bold border border-gray-250 cursor-pointer"
-                                  >
-                                    {isTargetEditing ? 'Batal' : 'Edit / Bypass'}
-                                  </button>
-                                  
-                                  {u.email !== 'fatih@fatihfarhat.com' && u.email !== 'fatih@kavio.tec.edu' && (
-                                    <button
-                                      type="button"
-                                      onClick={() => handleDevDeleteUser(u)}
-                                      className="p-2 bg-red-50 hover:bg-red-100 text-red-650 rounded-xl cursor-pointer transition-colors"
-                                      title="Hapus Permanen"
-                                    >
-                                      <Trash2 className="w-3.5 h-3.5" />
-                                    </button>
-                                  )}
-                                </div>
-                              </div>
-
-                              {/* Action Options (If Editing) */}
-                              {isTargetEditing && (
-                                <div className="p-4 bg-gray-50 dark:bg-slate-900 rounded-xl space-y-4 border border-gray-200 dark:border-slate-700 text-xs text-gray-800 dark:text-slate-100 animate-fadeIn">
-                                  {/* Bypass Password resetting */}
-                                  <div className="flex items-center justify-between gap-4 border-b border-gray-200 dark:border-slate-700 pb-3">
-                                    <div>
-                                      <h5 className="font-black text-gray-900 dark:text-white uppercase text-[9px] tracking-wider">Autentikasi & Sandi</h5>
-                                      <p className="text-[9px] text-gray-500 dark:text-slate-400 mt-0.5">Kirim email reset bypass instan ke kotak masuk siswa.</p>
-                                    </div>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleDevResetPassword(u)}
-                                      className="px-3.5 py-2 bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-250 text-indigo-750 text-[10px] font-black rounded-lg transition-colors cursor-pointer shadow-3xs"
-                                    >
-                                      Kirim Reset Password
-                                    </button>
-                                  </div>
-
-                                  {/* Change Email Form */}
-                                  <div className="space-y-2 border-b border-gray-200 dark:border-slate-700 pb-3">
-                                    <h5 className="font-black text-gray-900 dark:text-white uppercase text-[9px] tracking-wider">Ubah Email Database</h5>
-                                    <div className="flex gap-2">
-                                      <input
-                                        type="email"
-                                        value={devNewEmail}
-                                        onChange={(e) => setDevNewEmail(e.target.value)}
-                                        placeholder="Email baru"
-                                        className="flex-1 px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-250 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none"
-                                      />
-                                      <button
-                                        type="button"
-                                        onClick={() => handleDevUpdateEmail(u)}
-                                        className="px-3 py-1.5 bg-indigo-650 hover:bg-indigo-700 text-white rounded-lg font-bold cursor-pointer"
-                                      >
-                                        Update Email
-                                      </button>
-                                    </div>
-                                  </div>
-
-                                  {/* Change Profile Details Form */}
-                                  <div className="space-y-2">
-                                    <h5 className="font-black text-gray-900 dark:text-white uppercase text-[9px] tracking-wider">Ubah Profil (Nama & Telepon)</h5>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                      <div className="space-y-1">
-                                        <label className="text-[8px] uppercase tracking-wider text-gray-400 font-bold">Nama Lengkap</label>
-                                        <input
-                                          type="text"
-                                          value={devEditFullName}
-                                          onChange={(e) => setDevEditFullName(e.target.value)}
-                                          className="w-full px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-250 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none"
-                                        />
-                                      </div>
-                                      <div className="space-y-1">
-                                        <label className="text-[8px] uppercase tracking-wider text-gray-400 font-bold">No. Telepon</label>
-                                        <input
-                                          type="text"
-                                          value={devEditPhone}
-                                          onChange={(e) => setDevEditPhone(e.target.value)}
-                                          className="w-full px-3 py-1.5 bg-white dark:bg-slate-800 border border-gray-250 rounded-lg text-xs text-gray-900 dark:text-white focus:outline-none"
-                                        />
-                                      </div>
-                                    </div>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleDevUpdateProfile(u)}
-                                      className="px-4 py-2 mt-2 bg-indigo-650 hover:bg-indigo-700 text-white rounded-lg font-bold cursor-pointer inline-flex items-center"
-                                    >
-                                      Simpan Profil
-                                    </button>
-                                  </div>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          onNavigate?.('/teacher');
+                        }}
+                        className="px-6 py-3 bg-[#1DB954] hover:bg-[#1ED760] text-black text-xs font-black rounded-full transition-all cursor-pointer inline-flex items-center gap-2 shadow-lg"
+                      >
+                        <Terminal className="w-4 h-4" />
+                        <span>Buka DEV TOOLS CENTER di Sidebar</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}

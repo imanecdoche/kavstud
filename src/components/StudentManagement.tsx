@@ -31,6 +31,7 @@ import { initializeApp, getApps } from 'firebase/app';
 import { getAuth, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import { doc, setDoc, updateDoc, deleteDoc, collection, query, orderBy, getDocs } from 'firebase/firestore';
 import CustomDropdown from './CustomDropdown';
+import CustomCheckbox from './CustomCheckbox';
 import { motion, AnimatePresence } from 'motion/react';
 import { Dialog } from '@capacitor/dialog';
 
@@ -893,16 +894,10 @@ export default function StudentManagement({
                           {/* Parent (Level Header) */}
                           <div className="flex items-center justify-between border-b border-gray-100 dark:border-slate-700/50 pb-2.5">
                             <label className="flex items-center gap-2.5 cursor-pointer select-none">
-                              <input
-                                type="checkbox"
+                              <CustomCheckbox
                                 checked={allChecked}
-                                ref={(el) => {
-                                  if (el) {
-                                    el.indeterminate = someChecked;
-                                  }
-                                }}
+                                indeterminate={someChecked}
                                 onChange={handleToggleLevelParent}
-                                className="w-4.5 h-4.5 text-indigo-600 dark:text-indigo-400 rounded border-gray-350 focus:ring-indigo-500 cursor-pointer"
                               />
                               <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider border ${
                                 level === 'elementary' ? 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 border-amber-200' :
@@ -925,8 +920,7 @@ export default function StudentManagement({
                                 <label key={m.id} className={`flex items-center gap-3 p-3 bg-white dark:bg-slate-800 border rounded-xl cursor-pointer hover:border-indigo-200 transition-colors select-none ${
                                   hasAccess ? 'border-indigo-100 dark:border-indigo-800/50 shadow-3xs' : 'border-gray-150'
                                 }`}>
-                                  <input
-                                    type="checkbox"
+                                  <CustomCheckbox
                                     checked={hasAccess}
                                     onChange={() => {
                                       if (hasAccess) {
@@ -935,7 +929,6 @@ export default function StudentManagement({
                                         setStudentAccessModuleIds(prev => [...prev, m.id]);
                                       }
                                     }}
-                                    className="w-4.5 h-4.5 text-indigo-600 dark:text-indigo-400 rounded border-gray-350 focus:ring-indigo-500 cursor-pointer"
                                   />
                                   <div className="min-w-0">
                                     <p className="text-xs font-bold text-gray-800 dark:text-slate-100 truncate leading-snug">{m.title}</p>

@@ -22,6 +22,8 @@ import {
 import { ScheduleItem, UserProfile } from '../types';
 import { db, auth } from '../firebase';
 import { collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
+import CustomDropdown from './CustomDropdown';
+import CustomDatePicker from './CustomDatePicker';
 
 export default function TeacherSchedule() {
   const [schedules, setSchedules] = useState<ScheduleItem[]>([]);
@@ -873,12 +875,9 @@ export default function TeacherSchedule() {
                 <div className="grid grid-cols-3 gap-3">
                   <div className="space-y-1">
                     <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-200">Tanggal</label>
-                    <input
-                      type="date"
-                      required
+                    <CustomDatePicker
                       value={formDate}
-                      onChange={(e) => setFormDate(e.target.value)}
-                      className="w-full p-2.5 rounded-xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold"
+                      onChange={(val) => setFormDate(val)}
                     />
                   </div>
                   <div className="space-y-1">
@@ -907,16 +906,16 @@ export default function TeacherSchedule() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <label className="block text-[11px] font-bold text-gray-700 dark:text-slate-200">Status Sesi</label>
-                    <select
+                    <CustomDropdown
                       value={status}
-                      onChange={(e) => setStatus(e.target.value as any)}
-                      className="w-full p-2.5 rounded-xl bg-gray-50 dark:bg-slate-900 border-2 border-gray-200 dark:border-slate-700 text-xs font-bold cursor-pointer"
-                    >
-                      <option value="scheduled">Scheduled (Terjadwal)</option>
-                      <option value="completed">Completed (Selesai)</option>
-                      <option value="rescheduled">Rescheduled (Dipindah)</option>
-                      <option value="cancelled">Cancelled (Dibatalkan)</option>
-                    </select>
+                      onChange={(val) => setStatus(val as any)}
+                      options={[
+                        { value: 'scheduled', label: 'Scheduled (Terjadwal)' },
+                        { value: 'completed', label: 'Completed (Selesai)' },
+                        { value: 'rescheduled', label: 'Rescheduled (Dipindah)' },
+                        { value: 'cancelled', label: 'Cancelled (Dibatalkan)' }
+                      ]}
+                    />
                   </div>
 
                   <div className="space-y-1">
