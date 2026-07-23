@@ -11,6 +11,10 @@
   --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
 }
 
+html {
+  font-size: 90%; /* Global 10% UI scaling reduction across all rem-based typography, spacing, gaps, paddings & sizes */
+}
+
 @theme {
   /* Typography Tokens */
   --font-sans: "DIN Next Rounded LT W04 Medium", "Plus Jakarta Sans", "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif;
@@ -240,22 +244,25 @@ h1, h2, h3, h4, h5, h6 {
   animation: slideUp 300ms var(--ease-out) forwards;
 }
 
-/* Duolingo 3D Tactile Buttons */
-/* Unified Button Base */
+/* Duolingo 3D Tactile Buttons & Component Utilities */
+/* Unified Button Base - 10% Compact Scaled */
 .btn-duo, 
 [class*="btn-duo-"] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
-  border-radius: 1rem; /* 16px - rounded-2xl to match premium aesthetics */
-  font-weight: 800;
+  min-width: 40px;
+  height: 45px;
+  padding: 0px 14px;
+  border-radius: 11px; /* 10% scaled radius */
+  font-size: 13.5px;
+  font-weight: 700;
+  line-height: 16px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  transition: transform 160ms var(--ease-out), background-color 160ms var(--ease-out), border-color 160ms var(--ease-out), color 160ms var(--ease-out), filter 160ms var(--ease-out);
+  transition: all 200ms ease;
   cursor: pointer;
-  border-bottom: 4px solid transparent; /* will be overridden per variant */
+  border-bottom: 3.5px solid transparent;
 }
 
 /* Variant Colors */
@@ -264,97 +271,124 @@ h1, h2, h3, h4, h5, h6 {
   color: #ffffff;
   border-bottom-color: #46A302;
 }
-.btn-duo-green:hover { background-color: #61E002; }
-.btn-duo-green:active { transform: translateY(2px) scale(0.97); border-bottom-width: 2px; }
+.btn-duo-green:hover { background-color: #61E002; transform: scale(1.02); }
+.btn-duo-green:active { transform: translateY(2px) scale(0.98); border-bottom-width: 2px; }
 
 .btn-duo-blue {
   background-color: var(--color-macaw);
   color: #ffffff;
   border-bottom-color: #0092E0;
 }
-.btn-duo-blue:hover { background-color: #2CB8FF; }
-.btn-duo-blue:active { transform: translateY(2px) scale(0.97); border-bottom-width: 2px; }
+.btn-duo-blue:hover { background-color: #0099D1; transform: scale(1.02); }
+.btn-duo-blue:active { background-color: #007BA5; transform: translateY(2px) scale(0.98); border-bottom-width: 2px; }
 
 .btn-duo-orange {
   background-color: var(--color-fox);
   color: #ffffff;
   border-bottom-color: #E58500;
 }
-.btn-duo-orange:hover { background-color: #FFAB33; }
-.btn-duo-orange:active { transform: translateY(2px) scale(0.97); border-bottom-width: 2px; }
+.btn-duo-orange:hover { background-color: #FFAB33; transform: scale(1.02); }
+.btn-duo-orange:active { transform: translateY(2px) scale(0.98); border-bottom-width: 2px; }
 
 .btn-duo-red {
   background-color: var(--color-cardinal);
   color: #ffffff;
   border-bottom-color: #EA2B2B;
 }
-.btn-duo-red:hover { background-color: #FF5C5C; }
-.btn-duo-red:active { transform: translateY(2px) scale(0.97); border-bottom-width: 2px; }
+.btn-duo-red:hover { background-color: #FF5C5C; transform: scale(1.02); }
+.btn-duo-red:active { transform: translateY(2px) scale(0.98); border-bottom-width: 2px; }
 
 .btn-duo-slate {
-  background-color: #F1F5F9; /* light slate */
-  color: #334155;
+  background-color: #F1F5F9;
+  color: #3C3C3C;
   border-bottom-color: #CBD5E1;
 }
-.btn-duo-slate:hover { background-color: #E2E8F0; color: #0F172A; }
-.btn-duo-slate:active { transform: translateY(2px) scale(0.97); border-bottom-width: 2px; }
+.btn-duo-slate:hover { background-color: #E2E8F0; color: #000000; transform: scale(1.02); }
+.btn-duo-slate:active { transform: translateY(2px) scale(0.98); border-bottom-width: 2px; }
+
+/* Outlined Secondary Button */
+.btn-duo-outline {
+  background-color: transparent;
+  color: #1CB0F6;
+  border: 2px solid #1CB0F6;
+  border-radius: 11px;
+  height: 45px;
+}
+.btn-duo-outline:hover { background-color: rgba(28, 176, 246, 0.08); transform: scale(1.02); }
+.btn-duo-outline:active { background-color: rgba(28, 176, 246, 0.15); transform: scale(0.98); }
+
+/* Ghost Button */
+.btn-duo-ghost {
+  background-color: transparent;
+  color: #0000EE;
+  border: none;
+  border-radius: 11px;
+  height: 45px;
+}
+.btn-duo-ghost:hover { background-color: rgba(0, 0, 238, 0.08); text-decoration: underline; }
+.btn-duo-ghost:active { color: #0000AA; }
 
 /* Dark mode overrides */
 .dark .btn-duo {
-  border-bottom: 4px solid transparent;
+  border-bottom: 3.5px solid transparent;
 }
 .dark .btn-duo-green { background-color: #3D8F01; border-bottom-color: #2E6B01; }
 .dark .btn-duo-green:hover { background-color: #4AA801; }
 .dark .btn-duo-slate { background-color: #334155; color: #F8FAFC; border-bottom-color: #1E293B; }
 .dark .btn-duo-slate:hover { background-color: #475569; color: #FFFFFF; }
 
-/* Duolingo 3D Tactile Cards */
+/* Duolingo Standard Cards & Containers - 10% Compact Scaled */
 .card-duo {
   background-color: #FFFFFF;
+  color: #3C3C3C;
   border: 2px solid #E5E7EB;
-  border-bottom: 5px solid #E5E7EB;
-  border-radius: 1.5rem;
-  transition: all 150ms ease;
+  border-bottom: 4px solid #E5E7EB;
+  border-radius: 11px;
+  padding: 20px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08); /* Raised elevation */
+  transition: all 200ms ease;
 }
 
 .card-duo-interactive {
   background-color: #FFFFFF;
+  color: #3C3C3C;
   border: 2px solid #E5E7EB;
-  border-bottom: 5px solid #D1D5DB;
-  border-radius: 1.5rem;
-  transition: all 150ms ease;
+  border-bottom: 4px solid #E5E7EB;
+  border-radius: 11px;
+  padding: 20px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 200ms ease;
   cursor: pointer;
 }
 
 .card-duo-interactive:hover {
-  border-color: #84D8FF;
-  border-bottom-color: #1CB0F6;
+  border-color: #1CB0F6;
+  border-bottom-color: #0092E0;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.12); /* Floating elevation */
   transform: translateY(-2px);
 }
 
 .dark .card-duo {
   background-color: #1E293B;
   border-color: #334155;
-  border-bottom-color: #334155;
 }
 
 .dark .card-duo-interactive {
   background-color: #1E293B;
   border-color: #334155;
-  border-bottom-color: #0F172A;
 }
 
 .dark .card-duo-interactive:hover {
   border-color: #38BDF8;
-  border-bottom-color: #0EA5E9;
 }
 
 .card-duo-yellow {
   background-color: #FFC800;
   color: #3C3C3C;
   border: 2px solid #E5B200;
-  border-bottom: 6px solid #CC9E00;
-  border-radius: 1.75rem;
+  border-bottom: 4px solid #CC9E00;
+  border-radius: 14px;
+  padding: 20px;
 }
 
 .dark .card-duo-yellow {
@@ -368,42 +402,86 @@ h1, h2, h3, h4, h5, h6 {
   background-color: #FF9600;
   color: #FFFFFF;
   border: 2px solid #E58500;
-  border-bottom: 6px solid #CC7600;
-  border-radius: 1.75rem;
+  border-bottom: 4px solid #CC7600;
+  border-radius: 14px;
+  padding: 20px;
 }
 
 .card-duo-blue {
   background-color: #1CB0F6;
   color: #FFFFFF;
   border: 2px solid #0092E0;
-  border-bottom: 6px solid #007AB8;
-  border-radius: 1.75rem;
+  border-bottom: 4px solid #007AB8;
+  border-radius: 14px;
+  padding: 20px;
 }
 
+/* Modals - 10% Compact Scaled */
 .modal-duo {
   background-color: #FFFFFF;
-  border: 2px solid #E5E7EB;
-  border-bottom: 6px solid #CBD5E1;
-  border-radius: 2rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  border: 1px solid #E5E5E5;
+  border-radius: 20px; /* Generous 20px radius for compact modals */
+  padding: 20px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.16); /* Modal elevation */
 }
 
 .dark .modal-duo {
   background-color: #1E293B;
   border-color: #334155;
-  border-bottom-color: #0F172A;
 }
 
-/* Badge Component Tokens */
+/* Input Fields - 10% Compact Scaled */
+.input-duo {
+  background-color: #FFFFFF;
+  color: #3C3C3C;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 22px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 14px;
+  padding-right: 14px;
+  min-height: 40px;
+  border-radius: 11px;
+  border: 1px solid #C1C1C1;
+  transition: all 200ms ease;
+  width: 100%;
+}
+
+.input-duo-has-icon-left {
+  padding-left: 42px !important;
+}
+
+.input-duo-has-icon-right {
+  padding-right: 42px !important;
+}
+
+.input-duo-has-icon-both {
+  padding-left: 42px !important;
+  padding-right: 42px !important;
+}
+
+.input-duo:focus {
+  outline: none;
+  border: 2px solid #1CB0F6;
+  box-shadow: 0px 0px 0px 3px rgba(28, 176, 246, 0.1);
+}
+
+.input-duo-error {
+  border: 2px solid #FF4B4B;
+  color: #FF4B4B;
+}
+
+/* Badge Component Tokens - 10% Compact Scaled */
 .badge-duo {
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
-  padding: 0.25rem 0.625rem;
-  border-radius: 0.75rem;
-  font-size: 0.6875rem;
-  font-weight: 800;
+  gap: 0.35rem;
+  padding: 0.22rem 0.55rem;
+  border-radius: 11px;
+  font-size: 13.5px;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 2px solid transparent;
 }
+

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
@@ -17,6 +17,11 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Safely clear any stuck global loading overlay on mount
+  useEffect(() => {
+    onSetLoading(false);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,30 +81,30 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
         </div>
 
         <div className="space-y-1.5">
-          <h2 className="text-2xl sm:text-3xl font-display font-black text-gray-900 tracking-tight uppercase">
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-[#3C3C3C] tracking-tight uppercase">
             Masuk ke Akun Anda
           </h2>
-          <p className="text-xs text-gray-600 max-w-sm mx-auto font-bold">
+          <p className="text-sm text-[#4B4B4B] max-w-sm mx-auto font-medium">
             Akses dashboard LMS Kavio Edu untuk memulai kegiatan belajar mengajar secara real-time.
           </p>
         </div>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white border-2 border-gray-200 border-b-6 border-b-gray-300 rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl relative">
+        <div className="card-duo !bg-white space-y-6 shadow-[0px_8px_24px_rgba(0,0,0,0.12)] relative rounded-2xl p-6 sm:p-8 border border-[#E5E5E5]">
           {error && (
-            <div className="p-4 bg-red-50 border-2 border-red-200 rounded-2xl text-xs text-red-600 flex items-start gap-2.5 animate-fadeIn" id="login-error-alert">
+            <div className="p-4 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600 flex items-start gap-2.5 animate-fadeIn" id="login-error-alert">
               <span className="font-bold shrink-0">Kesalahan:</span>
               <p className="leading-relaxed font-semibold">{error}</p>
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4" id="login-form">
+          <form onSubmit={handleSubmit} className="space-y-5" id="login-form">
             <div className="space-y-1.5">
-              <label htmlFor="email" className="block text-xs font-black text-gray-700 uppercase tracking-wider">
-                Email / Username <span className="text-red-500">*</span>
+              <label htmlFor="email" className="block text-xs font-bold text-[#3C3C3C] uppercase tracking-wider">
+                Email / Username <span className="text-[#FF4B4B]">*</span>
               </label>
-              <div className="relative rounded-xl shadow-3xs">
+              <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                   <Mail className="h-4 w-4" />
                 </div>
@@ -111,7 +116,7 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="block w-full pl-10 pr-4 py-3 bg-white border-2 border-gray-200 border-b-4 border-b-gray-300 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1CB0F6]"
+                  className="input-duo input-duo-has-icon-left !bg-white !text-[#3C3C3C]"
                   placeholder="name@kavio.stud.edu"
                   disabled={isSubmitting}
                 />
@@ -119,10 +124,10 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="password" className="block text-xs font-black text-gray-700 uppercase tracking-wider">
-                Kata Sandi <span className="text-red-500">*</span>
+              <label htmlFor="password" className="block text-xs font-bold text-[#3C3C3C] uppercase tracking-wider">
+                Kata Sandi <span className="text-[#FF4B4B]">*</span>
               </label>
-              <div className="relative rounded-xl shadow-3xs">
+              <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
                   <Lock className="h-4 w-4" />
                 </div>
@@ -134,7 +139,7 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="block w-full pl-10 pr-10 py-3 bg-white border-2 border-gray-200 border-b-4 border-b-gray-300 rounded-xl text-xs font-bold text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#1CB0F6]"
+                  className="input-duo input-duo-has-icon-both !bg-white !text-[#3C3C3C]"
                   placeholder="Masukkan kata sandi"
                   disabled={isSubmitting}
                 />
@@ -154,8 +159,7 @@ export default function Login({ onNavigate, onSetLoading }: LoginProps) {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full btn-duo-green py-3 px-4 text-xs font-black flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-              style={{ minHeight: '44px' }}
+              className="w-full btn-duo-green h-[50px] text-[15px] font-bold uppercase tracking-wider flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
               id="login-submit-button"
             >
               {isSubmitting ? (

@@ -129,12 +129,12 @@ export default function CustomDatePicker({
         type="button"
         disabled={disabled}
         onClick={() => setIsOpen(true)}
-        className="w-full px-4 py-2.5 bg-white dark:bg-slate-800 border-2 border-gray-200 dark:border-slate-700 border-b-4 border-gray-300 dark:border-slate-600 rounded-xl text-xs font-bold text-left flex items-center justify-between gap-2 cursor-pointer hover:border-sky-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full min-h-[48px] px-4 py-2.5 bg-white dark:bg-slate-800 border border-[#C1C1C1] dark:border-slate-700 rounded-xl text-sm font-bold text-left flex items-center justify-between gap-2 cursor-pointer hover:border-[#1CB0F6] focus:outline-none focus:border-[#1CB0F6] focus:ring-2 focus:ring-[#1CB0F6]/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <span className={value ? 'text-gray-900 dark:text-white' : 'text-gray-400 font-normal'}>
+        <span className={value ? 'text-[#3C3C3C] dark:text-white' : 'text-gray-400 font-normal'}>
           {getFormattedDisplayText() || placeholder}
         </span>
-        <Calendar className="w-4 h-4 text-sky-500 shrink-0" />
+        <Calendar className="w-4 h-4 text-[#1CB0F6] shrink-0" />
       </button>
 
       {/* Centered Modal Popup */}

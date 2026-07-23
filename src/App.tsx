@@ -16,6 +16,8 @@ import UserSettings from './components/UserSettings';
 import CircleProfile from './components/CircleProfile';
 import AssignmentBuilder from './components/AssignmentBuilder';
 import KavioBlog from './components/KavioBlog';
+import TermsAndConditions from './components/TermsAndConditions';
+import FaqPage from './components/FaqPage';
 import NotFound from './components/NotFound';
 import Logo from './components/Logo';
 import LogoutConfirmModal from './components/LogoutConfirmModal';
@@ -93,6 +95,7 @@ export default function App() {
   const navigate = (newPath: string) => {
     window.history.pushState({}, '', newPath);
     setPath(newPath);
+    setGlobalLoading(false);
   };
 
   // Auth real-time listener
@@ -134,7 +137,7 @@ export default function App() {
         
         // Redirect anonymous users on protected pages
         const currentPath = window.location.pathname;
-        if (currentPath !== '/' && currentPath !== '/login' && currentPath !== '/register' && currentPath !== '/blog') {
+        if (currentPath !== '/' && currentPath !== '/login' && currentPath !== '/register' && currentPath !== '/blog' && currentPath !== '/terms' && currentPath !== '/syarat-ketentuan' && currentPath !== '/faq') {
           navigate('/login');
         }
       }
@@ -145,26 +148,20 @@ export default function App() {
   }, []);
 
   // Parameter parsing logic for dynamic routes
-  // Matches: /student/:id
   const isStudentProfilePath = path.startsWith('/student/') && path !== '/student';
   const studentIdParam = isStudentProfilePath ? path.split('/')[2] : '';
 
-  // Matches: /circle/:id
   const isCircleProfilePath = path.startsWith('/circle/') && path !== '/circle';
   const circleIdParam = isCircleProfilePath ? path.split('/')[2] : '';
 
-  // Matches: /assignment/:id
   const isAssignmentDetailPath = path.startsWith('/assignment/');
   const assignmentIdParam = isAssignmentDetailPath ? path.split('/')[2] : '';
 
-  // Matches: /submission/:id
   const isSubmissionDetailPath = path.startsWith('/submission/');
   const submissionIdParam = isSubmissionDetailPath ? path.split('/')[2] : '';
 
-  // Matches: /teacher/assignments/create
   const isCreateAssignmentPath = path === '/teacher/assignments/create';
 
-  // Matches: /teacher/assignments/:id/edit
   const isEditAssignmentPath = path.startsWith('/teacher/assignments/') && path.endsWith('/edit');
   const editAssignmentIdParam = isEditAssignmentPath ? path.split('/')[3] : '';
 
@@ -177,6 +174,8 @@ export default function App() {
     else if (path === '/student') title = 'Dashboard Siswa - KAVIO Edu';
     else if (path === '/settings') title = 'Pengaturan - KAVIO Edu';
     else if (path === '/blog') title = 'KAVIO Blog - Solusi Belajar Seru';
+    else if (path === '/terms' || path === '/syarat-ketentuan') title = 'Syarat & Ketentuan - KAVIO Edu';
+    else if (path === '/faq') title = 'FAQ & Pusat Bantuan - KAVIO Edu';
     else if (isStudentProfilePath) title = 'Profil Siswa - KAVIO Edu';
     else if (isCircleProfilePath) title = 'KAVIO Circle - KAVIO Edu';
     else if (isAssignmentDetailPath) title = 'Detail Tugas - KAVIO Edu';
@@ -194,41 +193,7 @@ export default function App() {
     isEditAssignmentPath
   ]);
 
-  // Show a beautiful full-screen loader during initial auth check
-  if (isAuthChecking) {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col justify-center items-center space-y-4">
-        <div className="text-center space-y-3">
-          <Logo className="h-10 w-auto text-indigo-600 dark:text-indigo-400 animate-pulse mx-auto" />
-          <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">Mengautentikasi Sistem...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show Maintenance screen for students if active
-  if (isMaintenanceActive && userProfile && userProfile.role === 'student' && userProfile.email !== 'fatih@kavio.tec.edu') {
-    return (
-      <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col justify-center items-center p-6 space-y-6 text-center select-none" id="maintenance-mode-page">
-        <div className="p-4 bg-indigo-50 dark:bg-indigo-900/30 border-2 border-indigo-100 dark:border-indigo-800/50 rounded-3xl shrink-0">
-          <Logo className="h-12 w-auto text-indigo-650 animate-bounce mx-auto" />
-        </div>
-        <div className="max-w-md space-y-2">
-          <h1 className="text-xl sm:text-2xl font-display font-black text-gray-900 dark:text-white leading-tight uppercase">SISTEM SEDANG DIPELIHARA 🛠️</h1>
-          <p className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed font-medium">
-            Halo! Kavio Edu sedang ditingkatkan demi performa belajar yang lebih baik. Kami akan kembali online secepatnya. Terima kasih atas kesabaran Anda!
-          </p>
-        </div>
-        <button
-          onClick={() => auth.signOut()}
-          className="btn-duo-slate px-6 py-2.5 text-xs font-black cursor-pointer"
-        >
-          Keluar dari Akun
-        </button>
-      </div>
-    );
-  }
-
+  // Routing switch layout
   return (
     <div className="min-h-screen bg-white dark:bg-slate-800 text-gray-900 dark:text-white flex flex-col relative" id="app-root">
       {/* Global Loading Overlay */}
@@ -257,6 +222,10 @@ export default function App() {
           <UserSettings onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : path === '/blog' ? (
           <KavioBlog onNavigate={navigate} userProfile={userProfile} onLogout={triggerGlobalLogout} />
+        ) : path === '/terms' || path === '/syarat-ketentuan' ? (
+          <TermsAndConditions onNavigate={navigate} userProfile={userProfile} />
+        ) : path === '/faq' ? (
+          <FaqPage onNavigate={navigate} userProfile={userProfile} />
         ) : isStudentProfilePath ? (
           <StudentProfile studentId={studentIdParam} onNavigate={navigate} onSetLoading={setGlobalLoading} />
         ) : isCircleProfilePath ? (

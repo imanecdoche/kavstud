@@ -121,21 +121,21 @@ export default function Sidebar({ activeTab, setActiveTab, isOpen, setIsOpen }: 
                   setActiveTab(item.id);
                   setIsOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 group cursor-pointer ${
+                className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold transition-all duration-150 group cursor-pointer ${
                   isActive 
-                    ? 'bg-indigo-50 dark:bg-indigo-900/30/75 text-indigo-600 dark:text-indigo-400' 
-                    : 'text-gray-500 dark:text-slate-400 hover:text-black hover:bg-gray-50 dark:bg-slate-900'
+                    ? 'bg-[#1CB0F6]/10 text-[#0284C7] dark:text-[#1CB0F6] font-extrabold' 
+                    : 'text-[#3C3C3C] dark:text-slate-400 hover:text-black hover:bg-slate-100/70 dark:bg-slate-900'
                 }`}
                 id={`menu-item-${item.id}`}
               >
                 <IconComponent className={`w-4 h-4 shrink-0 transition-transform ${
-                  isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-400 group-hover:text-gray-600 dark:text-slate-300'
+                  isActive ? 'text-[#0284C7] dark:text-[#1CB0F6]' : 'text-gray-400 group-hover:text-gray-600 dark:text-slate-300'
                 }`} />
                 <span>{item.label}</span>
                 {isActive && (
                   <motion.div 
                     layoutId="active-indicator" 
-                    className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-600"
+                    className="ml-auto w-2 h-2 rounded-full bg-[#1CB0F6]"
                   />
                 )}
               </button>
